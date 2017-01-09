@@ -1,0 +1,149 @@
+@import "tabs";
+@import "buttons";
+@import (inline) "./node_modules/codemirror/lib/codemirror.css";
+
+
+html, body, #app {
+    height: 100%;
+		min-height: 100% !important;
+    margin: 0;
+    padding: 0;
+}
+
+html.popup {
+	width: 400px;
+}
+
+#main-grid {
+  display: flex;
+  height: 100%;
+}
+
+#navigation {
+  flex-basis: 200px;
+  padding: 0px;
+  margin: 0px;
+  border-right: 1px solid #ccc;
+}
+
+#navigation li {
+  padding: 8px;
+    border-bottom: 1px solid #ccc;
+}
+
+#content {
+  display: flex;
+  flex-grow: 1;
+  flex-direction: column;
+}
+
+#settings {
+  flex-basis: 40px;
+  display: flex;
+  border-bottom: 1px solid #ccc;
+}
+
+#inner-content, #editor, #text-editor {
+  padding: 8px;
+  height: 93%;
+}
+
+#variables-editor {
+  display: flex;
+  flex-direction: column;
+  margin: 8px;
+}
+
+#variables-editor .row {
+  display: flex;
+}
+
+#variables-editor input {
+  flex-grow: 2;
+  height: 100%;
+  margin: 8px;
+}
+
+#variables-editor label {
+  display: block;
+  margin: 12px 0;
+  height: 100%;
+  line-height: 100%;
+  width: 60px;
+  vertical-align: middle;
+  font-weight: bold;
+}
+
+#variables-editor .help {
+  flex-grow: 3;
+  display: block;
+  margin: 12px 0;
+  height: 100%;
+  line-height: 100%;
+  width: 60px;
+  font-size: 90%
+}
+
+.CodeMirror {
+    border: 1px solid #ccc;
+    height: 100%;
+}
+
+.ReactCodeMirror {
+  height: 100%;
+}
+
+#navigation li {
+  padding: 0;
+}
+
+#navigation li h2 {
+  font-weight: bold;
+  display: block;
+  margin: 0;
+  padding: 8px;
+  background-color: #ccc;
+}
+
+#navigation li ul {
+  margin: 0;
+  padding: 0;
+}
+
+#navigation li ul li {
+  padding: 8px;
+}
+
+#configuration-title {
+
+}
+
+#settings b {
+  margin: 12px 1em;
+  height: 100%;
+  display: block;
+  vertical-align: middle;
+}
+
+#settings .toggle-box {
+  margin: 12px 1em;
+  height: 100%;
+  display: block;
+  vertical-align: middle;
+}
+
+#settings select, #settings input {
+  flex-grow: 1;
+  margin: 8px;
+}
+
+
+
+#no-configurations, #no-templates {
+  color: #ccc;
+  font-style: italic;
+}
+
+#welcome {
+  margin-left: 24px;
+}
