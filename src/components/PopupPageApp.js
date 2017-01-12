@@ -1,11 +1,12 @@
-import React from 'react';
+import React from 'react'
 import Tabs from './Tabs'
 import Pane from './Pane'
+import Manifest from './Manifest'
 import {connect} from 'react-redux'
 import ToggleButton from 'react-toggle-button'
 
 class ToggleConfiguration extends React.Component {
-    toggle(id) {      
+    toggle(id) {
       this.props.actions.toggleConfiguration(id)
     }
 
@@ -31,22 +32,28 @@ class ToggleConfiguration extends React.Component {
     }
 }
 
+const manifest = new Manifest();
+
 const App = ({configurations, currentView, actions}) => (
     <div>
         <Tabs>
             <Pane label="Apply">
                 {configurations.map(configuration => (
-                  <ToggleConfiguration actions={actions} configuration={configuration}/>
+                  <ToggleConfiguration key={configuration.id} actions={actions} configuration={configuration}/>
                 ))}
             </Pane>
             <Pane label="Help">
                 <div>
-                    <span>Author:</span>
-                    <span>{chrome.runtime.getManifest().author.split("<")[0]}</span>
+                    <b>Author: </b>
+                    {manifest.author()}
                 </div>
                 <div>
-                    <span>Homepage:</span>
-                    <a href={chrome.runtime.getManifest().homepage_url} target="_blank">{chrome.runtime.getManifest().homepage_url}</a>
+                    <b>Homepage: </b>
+                    {manifest.homepage()}
+                </div>
+                <div>
+                    <b>Version: </b>
+                    {manifest.version()}
                 </div>
             </Pane>
             <Pane link={(e) => {

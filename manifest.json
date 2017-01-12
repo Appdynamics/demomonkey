@@ -3,7 +3,7 @@
 
   "name": "DemoMonkey",
   "description": "Tamper the AppDynamics UI to demo almost anything",
-  "version": "0.1",
+  "version": "0.3",
   "author": "Severin Neumann <severin.neumann@appdynamics.com>",
   "homepage_url": "https://singularity.jira.com/wiki/x/OQBuD",
 
@@ -15,6 +15,12 @@
   "web_accessible_resources": [
     "manifest.json",
     "templates/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["js/monkey.js"]
+    }
   ],
   "options_page": "options.html",
   "browser_action": {

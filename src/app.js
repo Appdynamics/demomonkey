@@ -27,13 +27,11 @@ chrome.storage.local.get(persistentStates, function(state) {
     const store = createStore(reducers, state);
 
     store.subscribe(function() {
-
         chrome.storage.local.set({configurations: store.getState().configurations});
-
         if (window.location.hash !== "#" + store.getState().currentView) {
+            console.log("Setting hash by subscribe: #" + store.getState().currentView)
             history.pushState(null, null, "#" + store.getState().currentView);
         }
-
     });
     var root = document.getElementById('app')
     console.log("Loading application:", root.getAttribute('data-app'));

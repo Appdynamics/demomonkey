@@ -5,14 +5,18 @@ import ToggleButton from 'react-toggle-button';
 import CodeMirror from 'react-codemirror';
 import Welcome from './Welcome';
 import ini from 'ini';
+import tamper from '../functions/tamper';
+import {getVariablesFromIni, getConfigurationFromIni} from '../functions/configuration'
 
 require('codemirror/mode/properties/properties');
+require('codemirror/addon/edit/trailingspace');
 
 class Content extends React.Component {
 
     constructor(props) {
         super(props);
         this.handleNameChange = this.handleNameChange.bind(this);
+        this.handleTestChange = this.handleTestChange.bind(this);
     }
 
     handleNameChange(event) {
@@ -29,6 +33,15 @@ class Content extends React.Component {
             current: {
                 ...this.state.current,
                 content: content
+            }
+        });
+    }
+
+    handleTestChange(event) {
+        this.setState({
+            current: {
+                ...this.state.current,
+                test: event.target.value
             }
         });
     }
@@ -59,6 +72,7 @@ class Content extends React.Component {
                 current: {
                     name: '',
                     content: '',
+                    test: '',
                     enabled: false,
                     id: undefined
                 }
@@ -74,6 +88,7 @@ class Content extends React.Component {
                 current: {
                     name: '',
                     content: '; You can write comments using. Sections are optional, but make things more clear.\n' + '[Variables]\n' + '$prospect=AppDynamics//Set the name of your prospect. This will be used to name the application\n' + '$domain=appdynamics.com//Set the main domain of your prospect. This will be used in the User Experience Section\n' + '\n' + '[Application]\n' + '; Write simple replacements like this:\n' + 'Inventory-Services=Self-Service-Portal\n' + '; Insert variables anywhere\n' + 'ECommerce=$prospect Customer Care\n' + 'api.shipping.com=api.$domain\n' + '; Spaces around the = sign are not required, but make the configuration more readable\n' + 'Order-Processing = Invoice-Processing\n',
+                    test: 'Inventory-Services',
                     enabled: false,
                     id: 'new'
                 }
@@ -83,6 +98,18 @@ class Content extends React.Component {
 
     componentWillMount() {
         this._setCurrent(this.props);
+    }
+
+    _tamper() {
+        var node = document.getElementById("testarea");
+        var configuration = getConfigurationFromIni(this.state.current.content);
+        if (node) {
+            tamper(node, configuration);
+        }
+    }
+
+    componentDidMount() {
+        setInterval(() => this._tamper(), 150);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -96,8 +123,6 @@ class Content extends React.Component {
         var toggleButtonVisible = {};
 
         var current = this.state.current;
-
-        console.log('ID', current.id);
 
         var visible = typeof current.id !== 'undefined'
             ? {}
@@ -120,33 +145,11 @@ class Content extends React.Component {
         var options = {
             lineNumbers: true,
             mode: 'properties',
-            height: "100%"
+            height: "100%",
+            showTrailingSpace: true
         };
 
-        var filterVariable = function(content) {
-            return function(result, key) {
-              console.log(content[key]);
-                // By default ini.parse sets "true" as the value
-                if (key.charAt(0) == '$' && content[key] !== true) {
-                    var t = content[key].split("//");
-                    result.push({
-                      name: key.substring(1),
-                      placeholder:t[0],
-                      description:t[1] ? t[1] : ''
-                    });
-                    return result;
-                } else if ("object" === typeof content[key]) {
-                    return result.concat(Object.keys(content[key]).reduce(filterVariable(content[key]), []));
-                }
-                return result;
-            }
-        };
-
-
-        var content = this.state.current.content ? ini.parse(this.state.current.content) : [];
-        var variables = Object.keys(content).reduce(filterVariable(content), []);
-
-        console.log(variables);
+        var variables = getVariablesFromIni(this.state.current.content);
 
         return <div id="content">
             <div id="editor" style={visible}>
@@ -160,16 +163,28 @@ class Content extends React.Component {
                 <div id="inner-content">
                     <Tabs selected={0}>
                         <Pane label="Variables">
+                            {variables.length > 0
+                                ? ""
+                                : <div className="no-variables">No variables defined</div>}
                             {variables.map(function(variable, index) {
-                            console.log("VARIABLE", variable);
-                            return <div key={index} className="row">
-                                <label htmlFor="variable-1">{variable.name}</label><input type="" placeholder={variable.placeholder}/>
-                                <div className="help">{variable.description}</div>
-                            </div>;
-                          })}
+                                return <div key={index} className="variable-box">
+                                    <label htmlFor="variable-1">{variable.name}</label><input type="" placeholder={variable.placeholder}/>
+                                    <div className="help">{variable.description}</div>
+                                </div>;
+                            })}
                         </Pane>
                         <Pane label="Configuration">
                             <CodeMirror value={current.content} onChange={(content) => this.handleContentChange(content)} options={options}/>
+                        </Pane>
+                        <Pane label="Testing">
+                            <textarea value={current.test} style={{
+                                width: "100%",
+                                height: "50%"
+                            }} onChange={this.handleTestChange}/>
+                            <textarea value={current.test} id="testarea" readOnly="readOnly" style={{
+                                width: "100%",
+                                height: "50%"
+                            }}/>
                         </Pane>
                     </Tabs>
                 </div>

@@ -12,17 +12,24 @@ var rename = require("gulp-rename");
 var less = require('gulp-less');
 var path = require('path');
 
-gulp.task('compile', function() {
-  var bundler = browserify('./src/index.js', {debug: true}).transform(babel);
+function compile(file) {
+    return function() {
+        var bundler = browserify('./src/'+file+'.js', {debug: true}).transform(babel);
 
-  return bundler.bundle().on('error', function(err) {
-          console.error(err);
-          this.emit('end');
-      }).pipe(source('app.js')).pipe(buffer()).pipe(sourcemaps.init({loadMaps: true})).pipe(sourcemaps.write('./')).pipe(gulp.dest('./build/js'));
-});
+        return bundler.bundle().on('error', function(err) {
+            console.error(err);
+            this.emit('end');
+        }).pipe(source(file+'.js')).pipe(buffer()).pipe(sourcemaps.init({loadMaps: true})).pipe(sourcemaps.write('./')).pipe(gulp.dest('./build/js'));
+    }
+}
+
+gulp.task('app', compile("app"));
+gulp.task('monkey', compile("monkey"))
+
 gulp.task('watch', function() {
-  gulp.watch(['styles/**/*.less'], ['styles']);
-  gulp.watch(['src/**/*.js'], ['compile']);
+    gulp.watch(['styles/**/*.less'], ['styles']);
+    gulp.watch(['src/**/*.js'], ['app', 'monkey']);
+    gulp.watch(['icons/**/*.png', 'manifest.json', 'pages/**/*.html'], ['copy']);
 });
 
 gulp.task('clean', function() {
@@ -30,7 +37,7 @@ gulp.task('clean', function() {
 })
 
 gulp.task('mrproper', ['clean'], function() {
-  return gulp.src('node_modules').pipe(clean());
+    return gulp.src('node_modules').pipe(clean());
 })
 
 gulp.task('copy', function() {
@@ -51,7 +58,7 @@ gulp.task('styles', function() {
     })).pipe(gulp.dest('./build/css'));
 });
 
-var tasks = ['copy', 'icons', 'styles', 'compile'];
+var tasks = ['copy', 'icons', 'styles', 'app', 'monkey'];
 
 gulp.task('build', tasks);
 
