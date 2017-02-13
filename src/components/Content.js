@@ -56,6 +56,23 @@ class Content extends React.Component {
         }
     }
 
+    handleCopy(event) {
+      event.preventDefault();
+      var copy = Object.assign({}, this.state.current);
+      copy.name = "Copy of " + copy.name;
+      copy.id = "new";
+      this.props.actions.addConfiguration(copy);
+      this.props.actions.setCurrentView("");
+    }
+
+    handleDownload(event) {
+      event.preventDefault();
+      chrome.downloads.download({
+        url: "data:text/octet-stream;base64,"+btoa(this.state.current.content),
+        filename: this.state.current.name+".mnky" // Optional
+      });
+    }
+
     handleDelete(event) {
         event.preventDefault();
         this.props.actions.setCurrentView("");
@@ -157,7 +174,8 @@ class Content extends React.Component {
                     <b>Title:</b>
                     <input type="text" value={this.state.current.name} onChange={this.handleNameChange}/>
                     <button className="save-button" onClick={(event) => this.handleSave(event)}>Save</button>
-                    <button className="copy-button" style={hiddenIfNew} onClick={(event) => this.handleDelete(event)}>Duplicate</button>
+                    <button className="copy-button" style={hiddenIfNew} onClick={(event) => this.handleCopy(event)}>Duplicate</button>
+                    <button className="download-button" style={hiddenIfNew} onClick={(event) => this.handleDownload(event)}>Download</button>
                     <button className="delete-button" style={hiddenIfNew} onClick={(event) => this.handleDelete(event)}>Delete</button>
                 </div>
                 <div id="inner-content">

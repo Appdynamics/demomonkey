@@ -4,6 +4,8 @@ import {getVariablesFromIni, getConfigurationFromIni} from './functions/configur
 (function(scope) {
     "use strict";
 
+    var intervals = [];
+
     function enable(configuration) {
         return setInterval(function() {
         var text, texts = scope.document.evaluate('//body//text()[ normalize-space(.) != ""]', document, null, 6, null);
@@ -17,26 +19,31 @@ import {getVariablesFromIni, getConfigurationFromIni} from './functions/configur
     }
 
     function runAll(configurations) {
-        configurations.forEach(function(configuration) {
+        return configurations.reduce(function(result, configuration) {
             if (!configuration.enabled) {
                 // TODO: Terminate Interval if running
-                return;
+                return result;
             }
 
-            enable(getConfigurationFromIni(configuration.content));
+            result.push(enable(getConfigurationFromIni(configuration.content)));
 
-        });
+            return result;
+
+        }, []);
     }
 
     console.log("DemoMonkey enabled. Tampering the content.")
 
     chrome.storage.local.get("configurations", function(storage) {
-        runAll(storage.configurations);
+        intervals = runAll(storage.configurations);
     });
 
     chrome.storage.onChanged.addListener(function(changes, namespace) {
-        if (namesapce === local) {
-            console.log(changes, namespace);
+        if (namespace === "local") {
+          // Currently we don't check the changes, we just reset everything
+          console.log(changes);
+          intervals.forEach(function(interval) { clearInterval(interval); });
+          intervals = runAll(changes.configurations.newValue);
         }
     });
 

@@ -24,12 +24,13 @@ function compile(file) {
 }
 
 gulp.task('app', compile("app"));
-gulp.task('monkey', compile("monkey"))
+gulp.task('monkey', compile("monkey"));
+gulp.task('background', compile("background"));
 
 gulp.task('watch', function() {
     gulp.watch(['styles/**/*.less'], ['styles']);
-    gulp.watch(['src/**/*.js'], ['app', 'monkey']);
-    gulp.watch(['icons/**/*.png', 'manifest.json', 'pages/**/*.html'], ['copy']);
+    gulp.watch(['src/**/*.js'], ['app', 'monkey', 'background']);
+    gulp.watch(['icons/**/*.png', 'manifest.json', 'pages/**/*.html', '_locales/**/*.json'], ['copy']);
 });
 
 gulp.task('clean', function() {
@@ -41,7 +42,7 @@ gulp.task('mrproper', ['clean'], function() {
 })
 
 gulp.task('copy', function() {
-    return gulp.src(['manifest.json', 'pages/options.html', 'pages/popup.html']).pipe(gulp.dest("build/"));
+    return gulp.src(['manifest.json', 'pages/options.html', 'pages/popup.html', 'pages/background.html', '_locales/**/*.json']).pipe(gulp.dest("build/"));
 });
 
 gulp.task('icons', function() {
@@ -58,7 +59,7 @@ gulp.task('styles', function() {
     })).pipe(gulp.dest('./build/css'));
 });
 
-var tasks = ['copy', 'icons', 'styles', 'app', 'monkey'];
+var tasks = ['copy', 'icons', 'styles', 'app', 'monkey', 'background'];
 
 gulp.task('build', tasks);
 

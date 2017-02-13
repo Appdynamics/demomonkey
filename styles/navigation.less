@@ -1,0 +1,63 @@
+#navigation {
+    flex-basis: 200px;
+    padding: 0;
+    margin: 0;
+    border-right: 1px solid #ccc;
+}
+
+#navigation-actions {
+  display: flex;
+  border-bottom: 1px solid #ccc;
+}
+
+#navigation-actions li {
+  list-style-type: none;
+  border-right: 1px solid #ccc;
+}
+
+#navigation-items li {
+    padding: 8px;
+    border-bottom: 1px solid #ccc;
+}
+
+#navigation li {
+    padding: 0;
+}
+
+#navigation li h2 {
+    font-weight: bold;
+    display: block;
+    margin: 0;
+    padding: 8px;
+    background-color: #ccc;
+}
+
+#navigation li ul {
+    margin: 0;
+    padding: 0;
+}
+
+#navigation li ul li {
+    padding: 8px;
+}
+
+.navigation-item a, .navigation-action a {
+    &:hover {
+        text-decoration: underline;
+    }
+
+    display: block;
+    text-decoration: none;
+}
+
+.navigation-item a:before {
+    content: "\270E\00A0";
+}
+
+.navigation-action a {
+    font-weight: bold;
+}
+
+#uploadForm {
+  display: none;
+}

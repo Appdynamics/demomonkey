@@ -1,5 +1,6 @@
 @import "tabs";
 @import "buttons";
+@import "navigation";
 @import (inline) "./node_modules/codemirror/lib/codemirror.css";
 
 #app,
@@ -20,17 +21,7 @@ html.popup {
     height: 100%;
 }
 
-#navigation {
-    flex-basis: 200px;
-    padding: 0;
-    margin: 0;
-    border-right: 1px solid #ccc;
-}
 
-#navigation li {
-    padding: 8px;
-    border-bottom: 1px solid #ccc;
-}
 
 #content {
     display: flex;
@@ -96,26 +87,7 @@ html.popup {
     height: 100%;
 }
 
-#navigation li {
-    padding: 0;
-}
 
-#navigation li h2 {
-    font-weight: bold;
-    display: block;
-    margin: 0;
-    padding: 8px;
-    background-color: #ccc;
-}
-
-#navigation li ul {
-    margin: 0;
-    padding: 0;
-}
-
-#navigation li ul li {
-    padding: 8px;
-}
 
 #configuration-title {}
 
@@ -149,25 +121,7 @@ html.popup {
     margin-left: 24px;
 }
 
-.navigation-item a {
-    &:hover {
-        text-decoration: underline;
-    }
 
-    &:before {
-        content: "\270E\00A0";
-    }
-    display: block;
-    text-decoration: none;
-}
-
-.create-new-button a {
-    font-weight: bold;
-
-    &:before {
-        content: "+ ";
-    }
-}
 
 .variable-box {
     margin-bottom: 1em;

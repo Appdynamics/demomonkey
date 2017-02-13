@@ -21,7 +21,7 @@ export function getVariablesFromIni(iniFile) {
                 return result;
             }
 
-            if ("object" === typeof content[key]) {
+            if ("object" === typeof content[key] && null !== content[key]) {
                 return result.concat(Object.keys(content[key]).reduce(filterVariable(content[key]), []));
             }
 
@@ -67,7 +67,12 @@ export function getConfigurationFromIni(iniFile) {
                 return result;
             }
 
-            if ("object" === typeof content[key]) {
+            // skip true
+            if (true === content[key]) {
+                return result;
+            }
+
+            if ("object" === typeof content[key] && null !== content[key]) {
                 return result.concat(Object.keys(content[key]).reduce(filterConfiguration(content[key]), []));
             }
 

@@ -2,12 +2,12 @@
   "description": "Tamper the AppDynamics UI to demo almost anything",
   "dependencies": {
     "codemirror": "^5.22.0",
+    "ini": "^1.3.4",
     "react": "^15.4.1",
     "react-codemirror": "^0.3.0",
     "react-dom": "^15.4.1",
     "react-redux": "^5.0.1",
     "react-toggle-button": "^2.1.0",
-    "ini": "^1.3.4",
     "redux": "^3.6.0",
     "uuid": "^3.0.1"
   },
