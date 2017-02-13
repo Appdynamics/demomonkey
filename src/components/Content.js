@@ -50,7 +50,7 @@ class Content extends React.Component {
         event.preventDefault();
         if (this.state.current.id === 'new') {
             this.props.actions.addConfiguration(this.state.current);
-            this.props.actions.setCurrentView("");
+            this.props.actions.setCurrentView("configuration/latest");
         } else {
             this.props.actions.saveConfiguration(this.state.current.id, this.state.current);
         }
@@ -62,7 +62,7 @@ class Content extends React.Component {
       copy.name = "Copy of " + copy.name;
       copy.id = "new";
       this.props.actions.addConfiguration(copy);
-      this.props.actions.setCurrentView("");
+      this.props.actions.setCurrentView("configuration/latest");
     }
 
     handleDownload(event) {
@@ -98,19 +98,30 @@ class Content extends React.Component {
         }
 
         var id = props.currentView.split('/')[1];
-        if (id !== 'create') {
-            this.setState({current: props.configurations[id]})
-        } else {
-            this.setState({
-                current: {
-                    name: '',
-                    content: '; You can write comments using. Sections are optional, but make things more clear.\n' + '[Variables]\n' + '$prospect=AppDynamics//Set the name of your prospect. This will be used to name the application\n' + '$domain=appdynamics.com//Set the main domain of your prospect. This will be used in the User Experience Section\n' + '\n' + '[Application]\n' + '; Write simple replacements like this:\n' + 'Inventory-Services=Self-Service-Portal\n' + '; Insert variables anywhere\n' + 'ECommerce=$prospect Customer Care\n' + 'api.shipping.com=api.$domain\n' + '; Spaces around the = sign are not required, but make the configuration more readable\n' + 'Order-Processing = Invoice-Processing\n',
-                    test: 'Inventory-Services',
-                    enabled: false,
-                    id: 'new'
-                }
-            })
+
+        console.log("Current id is " + id);
+
+        if (id === 'latest') {
+            var latestId = props.configurations.length - 1;
+            this.setState({current: props.configurations[latestId]});
+            this.props.actions.setCurrentView("configuration/" + latestId);
+            return;
         }
+
+        if (id !== 'create') {
+            this.setState({current: props.configurations[id]});
+            return;
+        }
+
+        this.setState({
+              current: {
+                  name: '',
+                  content: '; You can write comments using ;. Sections are optional, but make things more clear.\n' + '[Variables]\n' + '$prospect=AppDynamics//Set the name of your prospect. This will be used to name the application\n' + '$domain=appdynamics.com//Set the main domain of your prospect. This will be used in the User Experience Section\n' + '\n' + '[Application]\n' + '; Write simple replacements like this:\n' + 'Inventory-Services=Self-Service-Portal\n' + '; Insert variables anywhere\n' + 'ECommerce=$prospect Customer Care\n' + 'api.shipping.com=api.$domain\n' + '; Spaces around the = sign are not required, but make the configuration more readable\n' + 'Order-Processing = Invoice-Processing\n',
+                  test: 'Inventory-Services',
+                  enabled: false,
+                  id: 'new'
+              }
+        });
     }
 
     componentWillMount() {

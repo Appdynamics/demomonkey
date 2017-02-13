@@ -27,7 +27,7 @@ class ToggleConfiguration extends React.Component {
             <ToggleButton value={ this.props.configuration.enabled } onToggle={() => {this.toggle(this.props.configuration.id)}}/>
             <div style={{
                 margin: "8px"
-            }}><a href="#" onClick={(event) => this.openEditor(event, this.props.configuration.id)}>{this.props.configuration.name}</a></div>
+            }}><a href="#" onClick={(event) => this.openEditor(event, this.props.index)}>{this.props.configuration.name}</a></div>
         </div>
     }
 }
@@ -38,8 +38,8 @@ const App = ({configurations, currentView, actions}) => (
     <div>
         <Tabs>
             <Pane label="Apply">
-                {configurations.map(configuration => (
-                  <ToggleConfiguration key={configuration.id} actions={actions} configuration={configuration}/>
+                {configurations.map( (configuration, index) => (
+                  <ToggleConfiguration key={configuration.id} index={index} actions={actions} configuration={configuration}/>
                 ))}
             </Pane>
             <Pane label="Help">

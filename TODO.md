@@ -2,7 +2,7 @@
 - Global "Turn Off"
 - Options (Interval Length)
 - Implement "Disable"
-- Implement "Duplicate"
 - Implement Storage (=> Google Drive?)
 - Restructure less files
 - Localization
+- Index/ID Matching Issue

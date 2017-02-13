@@ -2,23 +2,12 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {createStore} from 'redux'
 import {Provider} from 'react-redux'
+import {Store} from 'react-chrome-redux';
 import reducers from './reducers'
 import OptionsPageApp from './components/OptionsPageApp'
 import PopupPageApp from './components/PopupPageApp'
 
-const persistentStates = {
-    configurations: [
-        {
-            "id": 0,
-            "name": "Customer Care Solution",
-            "enabled": true
-        }, {
-            "id": 1,
-            "name": "Online Banking",
-            "enabled": false
-        }
-    ]
-};
+const persistentStates = {configurations: []};
 
 function renderOptionsPageApp(root, store) {
     if (window.location.hash.substring(1) != '') {
