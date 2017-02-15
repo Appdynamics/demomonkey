@@ -6,7 +6,7 @@ import CodeMirror from 'react-codemirror';
 import Welcome from './Welcome';
 import ini from 'ini';
 import tamper from '../functions/tamper';
-import {getVariablesFromIni, getConfigurationFromIni, getOptionsFromIni} from '../functions/configuration'
+import Configuration from '../models/Configuration'
 
 require('codemirror/mode/properties/properties');
 require('codemirror/addon/edit/trailingspace');
@@ -48,8 +48,6 @@ class Content extends React.Component {
 
     handleSave(event) {
         event.preventDefault();
-
-        console.log(getOptionsFromIni(this.state.current.content));
 
         if (this.state.current.id === 'new') {
             this.props.actions.addConfiguration(this.state.current);
@@ -134,7 +132,7 @@ class Content extends React.Component {
 
     _tamper() {
         var node = document.getElementById("testarea");
-        var configuration = getConfigurationFromIni(this.state.current.content);
+        var configuration = (new Configuration(this.state.current.content)).getConfiguration();
         if (node) {
             tamper(node, configuration);
         }
@@ -181,7 +179,7 @@ class Content extends React.Component {
             showTrailingSpace: true
         };
 
-        var variables = getVariablesFromIni(this.state.current.content);
+        var variables = (new Configuration(this.state.current.content)).getVariables();
 
         return <div id="content">
             <div id="editor" style={visible}>

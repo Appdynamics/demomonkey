@@ -1,5 +1,5 @@
 import tamper from './functions/tamper';
-import {getVariablesFromIni, getConfigurationFromIni, getOptionsFromIni} from './functions/configuration'
+import Configuration from './models/Configuration'
 
 (function(scope) {
     "use strict";
@@ -8,14 +8,15 @@ import {getVariablesFromIni, getConfigurationFromIni, getOptionsFromIni} from '.
 
     function enable(configuration) {
         return setInterval(function() {
-        var text, texts = scope.document.evaluate('//body//text()[ normalize-space(.) != ""]', document, null, 6, null);
-        for (var i = 0; (text = texts.snapshotItem(i)) !== null; i += 1) {
-            tamper(text, configuration, "data");
-        }
+            var text,
+                texts = scope.document.evaluate('//body//text()[ normalize-space(.) != ""]', document, null, 6, null);
+            for (var i = 0; (text = texts.snapshotItem(i)) !== null; i += 1) {
+                tamper(text, configuration, "data");
+            }
 
-        tamper(scope.document, configuration, "title");
+            tamper(scope.document, configuration, "title");
 
-      }, 100);
+        }, 100);
     }
 
     function runAll(configurations) {
@@ -25,31 +26,31 @@ import {getVariablesFromIni, getConfigurationFromIni, getOptionsFromIni} from '.
                 return result;
             }
 
-            var options = getOptionsFromIni(configuration.content);
+            var c = new Configuration(configuration.content);
 
-            if("undefined" !== typeof options.include) {
+            var options = c.getOptions();
 
+            if ("undefined" !== typeof options.include) {
 
-
-              if (!options.include.reduce(function(carry, urlPattern) {
-                return carry || (new RegExp(urlPattern.substr(1,urlPattern.length-2))).test(window.location.href);
-              }, false)) {
-                console.log("Disabling configuration since no include rule matches: " + configuration.name);
-                return result;
-              };
+                if (!options.include.reduce(function(carry, urlPattern) {
+                    return carry || (new RegExp(urlPattern.substr(1, urlPattern.length - 2))).test(window.location.href);
+                }, false)) {
+                    console.log("Disabling configuration since no include rule matches: " + configuration.name);
+                    return result;
+                };
             }
 
-            if("undefined" !== typeof options.exclude) {
-              if (options.exclude.reduce(function(carry, urlPattern) {
-                return carry || (new RegExp(urlPattern.substr(1,urlPattern.length-2))).test(window.location.href);
-              }, false)) {
-                console.log("Disabling configuration since at least one exclude rule matches: " + configuration.name);
-                return result;
-              };
+            if ("undefined" !== typeof options.exclude) {
+                if (options.exclude.reduce(function(carry, urlPattern) {
+                    return carry || (new RegExp(urlPattern.substr(1, urlPattern.length - 2))).test(window.location.href);
+                }, false)) {
+                    console.log("Disabling configuration since at least one exclude rule matches: " + configuration.name);
+                    return result;
+                };
             }
 
             console.log("Enabling configuration: ", configuration.name);
-            result.push(enable(getConfigurationFromIni(configuration.content)));
+            result.push(enable(c.getConfiguration()));
 
             return result;
 
@@ -64,10 +65,12 @@ import {getVariablesFromIni, getConfigurationFromIni, getOptionsFromIni} from '.
 
     chrome.storage.onChanged.addListener(function(changes, namespace) {
         if (namespace === "local") {
-          // Currently we don't check the changes, we just reset everything
-          console.log(changes);
-          intervals.forEach(function(interval) { clearInterval(interval); });
-          intervals = runAll(changes.configurations.newValue);
+            // Currently we don't check the changes, we just reset everything
+            console.log(changes);
+            intervals.forEach(function(interval) {
+                clearInterval(interval);
+            });
+            intervals = runAll(changes.configurations.newValue);
         }
     });
 
