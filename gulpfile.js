@@ -4,6 +4,7 @@ var clean = require("gulp-clean");
 var browserify = require("browserify");
 var watchify = require('watchify');
 var babel = require('babelify');
+var stringify = require('stringify');
 var sourcemaps = require('gulp-sourcemaps');
 var source = require('vinyl-source-stream');
 var buffer = require('vinyl-buffer');
@@ -14,7 +15,7 @@ var path = require('path');
 
 function compile(file) {
     return function() {
-        var bundler = browserify('./src/'+file+'.js', {debug: true}).transform(babel);
+        var bundler = browserify('./src/'+file+'.js', {debug: true}).transform(stringify, {appliesTo:{includeExtensions: ['.mnky']}}).transform(babel);
 
         return bundler.bundle().on('error', function(err) {
             console.error(err);

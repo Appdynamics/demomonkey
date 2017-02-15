@@ -7,7 +7,6 @@ import reducers from './reducers'
 import OptionsPageApp from './components/OptionsPageApp'
 import PopupPageApp from './components/PopupPageApp'
 
-const persistentStates = {configurations: []};
 
 function renderOptionsPageApp(root, store) {
     if (window.location.hash.substring(1) != '') {
@@ -39,17 +38,17 @@ function renderPopupPageApp(root, store) {
     }, 150);
 }
 
-chrome.storage.local.get(persistentStates, function(state) {
+const store = new Store({
+  portName: 'DEMO_MONKEY_STORE' // communication port name
+});
 
-    const store = createStore(reducers, state),
-        root = document.getElementById('app');
+//chrome.storage.local.get(persistentStates, function(state) {
+store.ready().then(() => {
+    //const store = createStore(reducers, state),
+    const root = document.getElementById('app');
 
-    // Synchronize chrome storage and current view on subscription update
+    // Synchronize current view on subscription update
     store.subscribe(function() {
-
-        // Save configurations
-        chrome.storage.local.set({configurations: store.getState().configurations});
-
         // Update view
         if (window.location.hash !== "#" + store.getState().currentView) {
             console.log("Setting hash by subscribe: #" + store.getState().currentView)

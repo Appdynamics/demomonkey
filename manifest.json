@@ -3,7 +3,7 @@
 
   "name": "DemoMonkey",
   "description": "Tamper the AppDynamics UI to demo almost anything",
-  "version": "0.3",
+  "version": "0.4.0",
   "author": "Severin Neumann <severin.neumann@appdynamics.com>",
   "homepage_url": "https://singularity.jira.com/wiki/x/OQBuD",
   "content_security_policy": "script-src 'self' https://apis.google.com; object-src 'self'",

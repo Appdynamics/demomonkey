@@ -7,27 +7,31 @@ import ToggleButton from 'react-toggle-button'
 
 class ToggleConfiguration extends React.Component {
     toggle(id) {
-      this.props.actions.toggleConfiguration(id)
+        this.props.actions.toggleConfiguration(id)
     }
 
     openEditor(event, id) {
-      event.preventDefault();
-      chrome.runtime.openOptionsPage(function() {
-        chrome.runtime.sendMessage({
-          receiver: "options",
-          anchor: "configuration/"+id
+        event.preventDefault();
+        chrome.runtime.openOptionsPage(function() {
+            chrome.runtime.sendMessage({
+                receiver: "options",
+                anchor: "configuration/" + id
+            });
         });
-      });
     }
 
     render() {
         return <div style={{
             display: "flex"
         }}>
-            <ToggleButton value={ this.props.configuration.enabled } onToggle={() => {this.toggle(this.props.configuration.id)}}/>
+            <ToggleButton value={this.props.configuration.enabled} onToggle={() => {
+                this.toggle(this.props.configuration.id)
+            }}/>
             <div style={{
                 margin: "8px"
-            }}><a href="#" onClick={(event) => this.openEditor(event, this.props.index)}>{this.props.configuration.name}</a></div>
+            }}>
+                <a href="#" onClick={(event) => this.openEditor(event, this.props.index)}>{this.props.configuration.name}</a>
+            </div>
         </div>
     }
 }
@@ -38,21 +42,32 @@ const App = ({configurations, currentView, actions}) => (
     <div>
         <Tabs>
             <Pane label="Apply">
-                {configurations.map( (configuration, index) => (
-                  <ToggleConfiguration key={configuration.id} index={index} actions={actions} configuration={configuration}/>
-                ))}
+                {configurations.map((configuration, index) => (<ToggleConfiguration key={configuration.id} index={index} actions={actions} configuration={configuration}/>))}
+                {configurations.length < 1
+                    ? <i>
+                        No configuration found.
+                        Open the <a href="#" onClick={(e) => {
+                            e.preventDefault();
+                            chrome.runtime.openOptionsPage()
+                        }}>Dashboard</a> to create configurations
+                      </i>
+                    : ''
+                }
             </Pane>
             <Pane label="Help">
                 <div>
-                    <b>Author: </b>
+                    <b>Author:
+                    </b>
                     {manifest.author()}
                 </div>
                 <div>
-                    <b>Homepage: </b>
+                    <b>Homepage:
+                    </b>
                     {manifest.homepage()}
                 </div>
                 <div>
-                    <b>Version: </b>
+                    <b>Version:
+                    </b>
                     {manifest.version()}
                 </div>
             </Pane>
@@ -72,8 +87,8 @@ state => {
 // map dispatch to props
 dispatch => ({
     actions: {
-      toggleConfiguration: (id) => {
-          dispatch({'type': 'TOGGLE_CONFIGURATION', id: id})
+        toggleConfiguration: (id) => {
+            dispatch({'type': 'TOGGLE_CONFIGURATION', id: id})
         }
     }
 }))(App);
