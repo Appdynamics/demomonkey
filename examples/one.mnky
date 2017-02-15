@@ -1,6 +1,13 @@
 ; You can write comments using ;
 ; Sections are optional, but make things more clear
-; For example you can create a section for your variables:
+; For example, you can create a section for options...
+[Options]
+; Introduce a option using @
+; Use @include to specify a list of urls where these replacements should be applied
+@include[] = /^https?://.*appdynamics\.com/.*$/
+@include[] = /^http://172.28.128.3:8090/.*$/
+
+; ... or you can create a section for your variables:
 [Variables]
 ; Introduce variables using $
 ; The value after = is used as placeholder

@@ -6,7 +6,7 @@ import CodeMirror from 'react-codemirror';
 import Welcome from './Welcome';
 import ini from 'ini';
 import tamper from '../functions/tamper';
-import {getVariablesFromIni, getConfigurationFromIni} from '../functions/configuration'
+import {getVariablesFromIni, getConfigurationFromIni, getOptionsFromIni} from '../functions/configuration'
 
 require('codemirror/mode/properties/properties');
 require('codemirror/addon/edit/trailingspace');
@@ -48,6 +48,9 @@ class Content extends React.Component {
 
     handleSave(event) {
         event.preventDefault();
+
+        console.log(getOptionsFromIni(this.state.current.content));
+
         if (this.state.current.id === 'new') {
             this.props.actions.addConfiguration(this.state.current);
             this.props.actions.setCurrentView("configuration/latest");

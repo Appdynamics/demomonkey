@@ -1,5 +1,36 @@
 import ini from 'ini';
 
+export function getOptionsFromIni(iniFile) {
+  var content = iniFile
+      ? ini.parse(iniFile)
+      : [];
+      var filterOption = function(content) {
+          return function(result, key) {
+              // By default ini.parse sets "true" as the value
+              if (key.charAt(0) == '@' && content[key] !== true) {
+
+                  var value = content[key];
+
+                  if("string" === typeof value) {
+                    value = [value];
+                  }
+
+                  result[key.substring(1)] = value;
+                  return result;
+              }
+
+              if ("object" === typeof content[key] && null !== content[key]) {
+                  //return result.concat();
+                  return Object.keys(content[key]).reduce(filterOption(content[key]), result);
+              }
+
+              return result;
+          }
+      };
+
+      return Object.keys(content).reduce(filterOption(content), {});
+}
+
 export function getVariablesFromIni(iniFile) {
 
     var content = iniFile
@@ -76,7 +107,7 @@ export function getConfigurationFromIni(iniFile) {
     var filterConfiguration = function(content) {
         return function(result, key) {
             // skip all variables
-            if (key.charAt(0) == '$') {
+            if (key.charAt(0) == '$' || key.charAt(0) == '@') {
                 return result;
             }
 
