@@ -11,46 +11,25 @@ import Configuration from './models/Configuration'
             var text,
                 texts = scope.document.evaluate('//body//text()[ normalize-space(.) != ""]', document, null, 6, null);
             for (var i = 0; (text = texts.snapshotItem(i)) !== null; i += 1) {
-                tamper(text, configuration, "data");
+                //tamper(text, configuration, "data");
+                configuration.apply(text, "data");
             }
 
-            tamper(scope.document, configuration, "title");
+            //tamper(scope.document, configuration, "title");
+            configuration.apply(scope.document, "title");
 
         }, 100);
     }
 
     function runAll(configurations) {
-        return configurations.reduce(function(result, configuration) {
-            if (!configuration.enabled) {
-                // TODO: Terminate Interval if running
-                return result;
+        return configurations.reduce(function(result, rawConfig) {
+
+            var c = new Configuration(rawConfig.content, rawConfig.enabled);
+
+            if (configuration.isEnabledForUrl()) {
+              console.log("Enabling configuration: ", configuration.name);
+              result.push(enable(c));
             }
-
-            var c = new Configuration(configuration.content);
-
-            var options = c.getOptions();
-
-            if ("undefined" !== typeof options.include) {
-
-                if (!options.include.reduce(function(carry, urlPattern) {
-                    return carry || (new RegExp(urlPattern.substr(1, urlPattern.length - 2))).test(window.location.href);
-                }, false)) {
-                    console.log("Disabling configuration since no include rule matches: " + configuration.name);
-                    return result;
-                };
-            }
-
-            if ("undefined" !== typeof options.exclude) {
-                if (options.exclude.reduce(function(carry, urlPattern) {
-                    return carry || (new RegExp(urlPattern.substr(1, urlPattern.length - 2))).test(window.location.href);
-                }, false)) {
-                    console.log("Disabling configuration since at least one exclude rule matches: " + configuration.name);
-                    return result;
-                };
-            }
-
-            console.log("Enabling configuration: ", configuration.name);
-            result.push(enable(c.getConfiguration()));
 
             return result;
 

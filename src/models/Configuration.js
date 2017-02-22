@@ -1,13 +1,52 @@
 import ini from 'ini';
+import Pattern from './Pattern';
 
 class Configuration {
 
-  constructor(iniFile) {
-    this.iniFile = iniFile;
-    this.content = iniFile ? ini.parse(iniFile) : [];
-  }
+    constructor(iniFile, enabled = true) {
+        this.iniFile = iniFile;
+        this.content = iniFile
+            ? ini.parse(iniFile)
+            : [];
+        this.patterns = false;
+        this.enabled = enabled;
+    }
 
-  getOptions() {
+    isEnabledForUrl(url) {
+        if (!this.enabled) {
+            return false;
+        }
+
+        var options = this.getOptions();
+
+        if ("undefined" !== typeof options.include) {
+
+            if (!options.include.reduce(function(carry, urlPattern) {
+                return carry || (new RegExp(urlPattern.substr(1, urlPattern.length - 2))).test(window.location.href);
+            }, false)) {
+                console.log("Disabling configuration since no include rule matches: " + configuration.name);
+                return result;
+            };
+        }
+
+        if ("undefined" !== typeof options.exclude) {
+            if (options.exclude.reduce(function(carry, urlPattern) {
+                return carry || (new RegExp(urlPattern.substr(1, urlPattern.length - 2))).test(window.location.href);
+            }, false)) {
+                console.log("Disabling configuration since at least one exclude rule matches: " + configuration.name);
+                return result;
+            };
+        }
+
+    }
+
+    apply(node, key = "value") {
+        this._getConfiguration().forEach(function(pattern) {
+            node[key] = pattern.apply(node[key])
+        });
+    }
+
+    getOptions() {
         var filterOption = function(content) {
             return function(result, key) {
                 // By default ini.parse sets "true" as the value
@@ -15,8 +54,8 @@ class Configuration {
 
                     var value = content[key];
 
-                    if("string" === typeof value) {
-                      value = [value];
+                    if ("string" === typeof value) {
+                        value = [value];
                     }
 
                     result[key.substring(1)] = value;
@@ -33,100 +72,75 @@ class Configuration {
         };
 
         return Object.keys(this.content).reduce(filterOption(this.content), {});
-  }
+    }
 
-  getVariables() {
-      var filterVariable = function(content) {
-          return function(result, key) {
-              // By default ini.parse sets "true" as the value
-              if (key.charAt(0) == '$' && content[key] !== true) {
-                  var t = content[key].split("//");
-                  result.push({
-                      name: key.substring(1),
-                      placeholder: t[0],
-                      description: t[1]
-                          ? t[1]
-                          : ''
-                  });
-                  return result;
-              }
-
-              if ("object" === typeof content[key] && null !== content[key]) {
-                  return result.concat(Object.keys(content[key]).reduce(filterVariable(content[key]), []));
-              }
-
-              return result;
-          }
-      };
-
-      return Object.keys(this.content).reduce(filterVariable(this.content), []);
-  }
-
-  getConfiguration() {
-
-      function buildRegex(search, replace) {
-
-          var escapeRegExp = function(str) {
-              return str.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&");
-          }
-
-          var regex = search.match(/^\/(.+)\/([gimp]+)?$/)
-
-          if (!regex) {
-              return [new RegExp(escapeRegExp(search), "g"), replace];
-          }
-
-          var modifiers = "undefined" !== typeof regex[2]
-              ? regex[2] + "g"
-              : "g";
-
-          if(modifiers.includes("p")) {
-            return [new RegExp(regex[1], modifiers.replace("p", "")), function(match) {
-                console.log(match);
-                if(match.toUpperCase() === match) {
-                    replace = replace.toUpperCase();
+    getVariables() {
+        var filterVariable = function(content) {
+            return function(result, key) {
+                // By default ini.parse sets "true" as the value
+                if (key.charAt(0) == '$' && content[key] !== true) {
+                    var t = content[key].split("//");
+                    result.push({
+                        name: key.substring(1),
+                        placeholder: t[0],
+                        description: t[1]
+                            ? t[1]
+                            : ''
+                    });
+                    return result;
                 }
-                if(match.toLowerCase() === match) {
-                    replace = replace.toLowerCase();
+
+                if ("object" === typeof content[key] && null !== content[key]) {
+                    return result.concat(Object.keys(content[key]).reduce(filterVariable(content[key]), []));
                 }
-                return match.replace(new RegExp(regex[1], modifiers.replace("p", "")), replace);
-            }];
-          }
 
-          return [new RegExp(regex[1], modifiers), replace];
-      }
+                return result;
+            }
+        };
 
-      // get all variables upfront
-      var variables = this.getVariables();
+        return Object.keys(this.content).reduce(filterVariable(this.content), []);
+    }
 
-      var filterConfiguration = function(content) {
-          return function(result, key) {
-              // skip all variables
-              if (key.charAt(0) == '$' || key.charAt(0) == '@') {
-                  return result;
-              }
+    _getConfiguration() {
 
-              // skip true
-              if (true === content[key]) {
-                  return result;
-              }
+        if (this.patterns == false) {
 
-              if ("object" === typeof content[key] && null !== content[key]) {
-                  return result.concat(Object.keys(content[key]).reduce(filterConfiguration(content[key]), []));
-              }
+            // get all variables upfront
+            var variables = this.getVariables();
 
-              var value = variables.reduce(function(value, variable) {
-                  return value.replace("$" + variable.name, variable.placeholder)
-              }, content[key])
+            var filterConfiguration = function(content) {
+                return function(result, key) {
+                    // skip all variables
+                    if (key.charAt(0) == '$' || key.charAt(0) == '@') {
+                        return result;
+                    }
 
-              result.push(buildRegex(key, value));
+                    // skip true
+                    if (true === content[key]) {
+                        return result;
+                    }
 
-              return result
-          }
-      }
+                    if ("object" === typeof content[key] && null !== content[key]) {
+                        return result.concat(Object.keys(content[key]).reduce(filterConfiguration(content[key]), []));
+                    }
 
-      return Object.keys(this.content).reduce(filterConfiguration(this.content), []);
-  }
+                    var value = variables.reduce(function(value, variable) {
+                        return value.replace("$" + variable.name, variable.placeholder)
+                    }, content[key])
+
+                    //result.push(buildRegex(key, value));
+                    result.push(new Pattern(key, value));
+
+                    return result
+                }
+            }
+
+            this.patterns = Object.keys(this.content).reduce(filterConfiguration(this.content), []);
+
+        }
+
+        return this.patterns;
+    }
 }
 
 export default Configuration

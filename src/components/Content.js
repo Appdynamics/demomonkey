@@ -132,9 +132,9 @@ class Content extends React.Component {
 
     _tamper() {
         var node = document.getElementById("testarea");
-        var configuration = (new Configuration(this.state.current.content)).getConfiguration();
+        var configuration = new Configuration(this.state.current.content);
         if (node) {
-            tamper(node, configuration);
+            configuration.apply(node);
         }
     }
 

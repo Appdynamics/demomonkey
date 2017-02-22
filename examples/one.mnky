@@ -26,4 +26,9 @@ Order-Processing = Invoice-Processing
 
 [EUM]
 www.ecommerce.com = www.$domain
-/cart/ip = issue
+; commands (like regex) are introduced with a ! ...
+!/cart/ip = issue
+; ... so you can use / without quoting ...
+/en/ = /de/
+; ... and there are other "commands", like search by css selector:
+!s()

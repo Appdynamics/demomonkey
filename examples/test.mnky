@@ -1,17 +1,14 @@
+[Variables]
+$x=1
+$y=2//Set y
+
 [Options]
 @include[] = a
 @include[] = b
 
-[Variables]
-$prospect=AppDynamics//Set the name of your prospect. This will be used to name the application
-$domain=appdynamics.com//Set the main domain of your prospect. This will be used in the User Experience Section
+[A]
+ix = yi
+ab = $x$y
 
-[Application]
-Inventory-Services=Self-Service-Portal
-ECommerce=$prospect Customer Care
-api.shipping.com=api.$domain
-Order-Processing = Invoice-Processing
-
-[EUM]
-www.ecommerce.com = www.$domain
-/cart/ip = issue
+[B]
+/xx/i = 13
