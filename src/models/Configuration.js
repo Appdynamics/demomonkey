@@ -92,7 +92,7 @@ class Configuration {
             var filterConfiguration = function(content) {
                 return function(result, key) {
                     // skip all variables
-                    if (key.charAt(0) == '$' || key.charAt(0) == '@') {
+                      if (key.charAt(0) == '$' || key.charAt(0) == '@' || key.charAt(0) == '+') {
                         return result;
                     }
 

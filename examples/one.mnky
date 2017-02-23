@@ -33,5 +33,3 @@ www.ecommerce.com = www.$domain
 !/cart/ip = issue
 ; ... so you can use / without quoting ...
 /en/ = /de/
-; ... and there are other "commands", like search by css selector:
-!s()

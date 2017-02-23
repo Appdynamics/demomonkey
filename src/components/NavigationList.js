@@ -45,7 +45,7 @@ class NavigationList extends React.Component {
           <div>
             <ul id="navigation-actions">
               <li className="navigation-action"><a href={"#"+this.props.type+"/create"} onClick={(event) => this.showNewEditor(event)} >Create</a></li>
-              <li className="navigation-action"><form id="uploadForm"><input multiple id="upload" type="file"/></form><a href={"#"+this.props.type+"/upload"} onClick={(event) => this.showUploadDialog(event)} >Upload</a></li>              
+              <li className="navigation-action"><form id="uploadForm"><input accept=".mnky,.js,.ini" multiple id="upload" type="file"/></form><a href={"#"+this.props.type+"/upload"} onClick={(event) => this.showUploadDialog(event)} >Upload</a></li>              
             </ul>
             <ul id="navigation-items">
               {Object.keys(this.props.items).map((key, index) => <li className="navigation-item" key={index}><a href={"#"+this.props.type+"/"+key} onClick={(event) => this.showItemEditor(event, key)} >{this.props.items[key].name}</a></li>)}
