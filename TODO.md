@@ -9,8 +9,9 @@
   * XPath
   * "Plugin"
 - Implement "Disable"
-- Variables
 - Implement Storage (=> Google Drive?)
 - Restructure less files
 - Localization
 - Index/ID Matching Issue
+- Mixin/import
+- Quoting for !,$,...

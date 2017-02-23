@@ -17,6 +17,7 @@ before(function(done) {
 var emptyConfiguration = new Configuration("");
 var simpleConfiguration = new Configuration("a = b")
 var configurationWithOption = new Configuration("@a = b")
+var configurationWithInclude = new Configuration("@include = /www/")
 var configurationWithVariable = new Configuration("$a = b")
 
 describe('Configuration', function() {
@@ -76,6 +77,22 @@ describe('Configuration', function() {
             };
             simpleConfiguration.apply(node);
             assert.equal(node.value, 'x');
+        });
+    });
+
+    describe('#isEnabledForUrl', function() {
+        it('should return true for empty rules', function() {
+            assert.equal(simpleConfiguration.isEnabledForUrl('http://www.example.com'), true)
+        });
+    });
+
+    describe('#isEnabledForUrl', function() {
+        it('should return true for matching include and false for mismatch', function() {
+
+            assert.deepEqual(configurationWithInclude.getOptions(), {include: ["/www/"]});
+
+            assert.equal(configurationWithInclude.isEnabledForUrl('http://www.example.com'), true)
+            assert.equal(configurationWithInclude.isEnabledForUrl('http://example.com'), false)
         });
     });
 

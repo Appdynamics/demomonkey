@@ -8,6 +8,11 @@ describe('MatchRule', function() {
             assert.equal( new MatchRule([],[]).test('asdf') , true);
         });
 
+        it('should always return true for undefined rules', function() {
+            var options = {};
+            assert.equal( new MatchRule(options.includes,options.excludes).test('asdf') , true);
+        });
+
         it('should return false if no include rule matches', function() {
             assert.equal( new MatchRule(['/asdx/'],[]).test('asdf'), false);
         });

@@ -15,6 +15,9 @@
 $prospect=AppDynamics//Set the name of your prospect. This will be used to name the application
 $domain=appdynamics.com//Set the main domain of your prospect. This will be used in the User Experience Section
 
+[Imports]
++Cities
+
 [Application]
 ; Write simple replacements like this:
 Inventory-Services=Self-Service-Portal

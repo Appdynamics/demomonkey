@@ -1,5 +1,6 @@
 import ini from 'ini';
 import Pattern from './Pattern';
+import MatchRule from './MatchRule';
 
 class Configuration {
 
@@ -16,28 +17,8 @@ class Configuration {
         if (!this.enabled) {
             return false;
         }
-
         var options = this.getOptions();
-
-        if ("undefined" !== typeof options.include) {
-
-            if (!options.include.reduce(function(carry, urlPattern) {
-                return carry || (new RegExp(urlPattern.substr(1, urlPattern.length - 2))).test(window.location.href);
-            }, false)) {
-                console.log("Disabling configuration since no include rule matches: " + configuration.name);
-                return result;
-            };
-        }
-
-        if ("undefined" !== typeof options.exclude) {
-            if (options.exclude.reduce(function(carry, urlPattern) {
-                return carry || (new RegExp(urlPattern.substr(1, urlPattern.length - 2))).test(window.location.href);
-            }, false)) {
-                console.log("Disabling configuration since at least one exclude rule matches: " + configuration.name);
-                return result;
-            };
-        }
-
+        return new MatchRule(options.include, options.exclude).test(url)
     }
 
     apply(node, key = "value") {

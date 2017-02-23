@@ -1,6 +1,6 @@
 class MatchRule {
 
-  constructor(includes, excludes) {
+  constructor(includes = [], excludes = []) {
     this.includes = includes;
     this.excludes = excludes;
   }
@@ -14,7 +14,7 @@ class MatchRule {
         var excluded = this.excludes.length > 0 && (this.excludes.reduce(function(carry, pattern) {
             return carry || (new RegExp(pattern.substr(1, pattern.length - 2))).test(str);
         }, false));
-
+        
         return included && !excluded;
   }
 
