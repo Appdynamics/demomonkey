@@ -15,7 +15,7 @@ var path = require('path');
 
 function compile(file) {
     return function() {
-        var bundler = browserify('./src/'+file+'.js', {debug: true}).transform(stringify, {appliesTo:{includeExtensions: ['.mnky']}}).transform(babel);
+        var bundler = browserify('./src/'+file+'.js', {debug: true}).transform(stringify, {appliesTo:{includeExtensions: ['.mnky','.md']}}).transform(babel);
 
         return bundler.bundle().on('error', function(err) {
             console.error(err);
@@ -31,7 +31,7 @@ gulp.task('background', compile("background"));
 gulp.task('watch', function() {
     gulp.watch(['styles/**/*.less'], ['styles']);
     gulp.watch(['src/**/*.js'], ['app', 'monkey', 'background']);
-    gulp.watch(['icons/**/*.png', 'manifest.json', 'pages/**/*.html', '_locales/**/*.json'], ['copy']);
+    gulp.watch(['icons/**/*.png', 'manifest.json', 'pages/**/*.html', '_locales/**/*.json', 'README.md'], ['copy']);
 });
 
 gulp.task('clean', function() {
@@ -43,7 +43,7 @@ gulp.task('mrproper', ['clean'], function() {
 })
 
 gulp.task('copy', function() {
-    return gulp.src(['manifest.json', 'pages/options.html', 'pages/popup.html', 'pages/background.html', '_locales/**/*.json']).pipe(gulp.dest("build/"));
+    return gulp.src(['README.md', 'manifest.json', 'pages/options.html', 'pages/popup.html', 'pages/background.html', '_locales/**/*.json']).pipe(gulp.dest("build/"));
 });
 
 gulp.task('icons', function() {

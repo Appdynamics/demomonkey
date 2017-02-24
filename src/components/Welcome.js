@@ -1,14 +1,17 @@
 import React from 'react';
+import showdown from 'showdown';
 
 class Welcome extends React.Component {
     render() {
+
+        var readme = require('../../README.md');
+        var converter = new showdown.Converter();
+
+        var html = converter.makeHtml(readme);
+
         return (
-            <div>
-                <h1>Welcome to DemoMonkey!</h1>
-                <p>DemoMonkey allows you to apply search&replace patterns on any website.
-                  Use The "Create" or "Upload" button in the left menu to add a configuration.
-                </p>
-            </div>
+          <div className="content" dangerouslySetInnerHTML={{__html: html}}></div>
+
         );
     }
 }

@@ -1,12 +1,14 @@
-- Commands with !
-  * RegExp
 - Mixin/import
-- Quoting for !,$,...
 - tampermonkey support
 - Create README.MD
 
 ---
 
+- Additional tests/refactoring for
+  * components
+  * reducers
+  * monkey.js
+  * backgrouns.js
 - Global "Turn Off"
 - Options:
   * Interval Length
@@ -14,6 +16,7 @@
 - Further commands:
  * CSS Selector
  * XPath
+ * Hide
  * "Plugin"
 - Implement "Disable"
 - Implement Storage (=> Google Drive? Github?)
