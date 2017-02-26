@@ -1,6 +1,8 @@
 # DemoMonkey
 Tamper your application's UI to demo anything
 
+***Note:*** *This is still a alpha version. Many core features might not work properly. Please help to improve DemoMonkey by giving back your feedback.*
+
 ## Introduction
 Giving custom demos in the verticals of your prospects, shows them that you understand their specific requirements and that you did our homework. Although building meaningful demos is a time-consuming task, so not every demo is setup in the environment of our customers. DemoMonkey gives you a simple way of building custom demos for HTML5 based application. By providing text replacements you can go within minutes from an e-commerce demo application to a customer care center or flight booking service.
 
@@ -51,5 +53,8 @@ api.payment.com = payment.$customer
 ## License
 This program is free software; see LICENSE for more details.
 
-# Attribution
+## Attribution
 The monkey icon was made by Freepik from www.flaticon.com
+
+## Contact ###
+For any questions you can contact Severin Neumann <severin.neumann@altmuehlnet.de>
