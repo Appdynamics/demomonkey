@@ -4,8 +4,8 @@ import MatchRule from './MatchRule';
 
 class Configuration {
 
-    constructor(iniFile, enabled = true) {
-        this.iniFile = iniFile;
+    constructor(iniFile, repository, enabled = true) {
+        this.repository = repository;
         this.content = iniFile
             ? ini.parse(iniFile)
             : [];
@@ -53,6 +53,23 @@ class Configuration {
         };
 
         return Object.keys(this.content).reduce(filterOption(this.content), {});
+    }
+
+    getImports() {
+      var filterImport = function(content) {
+          return function(result, key) {
+              if (key.charAt(0) == '+') {
+                  result.push(key.substring(1));
+              }
+
+              if ("object" === typeof content[key] && null !== content[key]) {
+                  return result.concat(Object.keys(content[key]).reduce(filterImport(content[key]), []));
+              }
+
+              return result;
+          }
+      };
+      return Object.keys(this.content).reduce(filterImport(this.content), []);
     }
 
     getVariables() {

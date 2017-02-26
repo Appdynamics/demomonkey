@@ -1,6 +1,7 @@
-import {createStore} from 'redux'
+import {createStore} from 'redux';
 import {wrapStore} from 'react-chrome-redux';
-import reducers from './reducers'
+import reducers from './reducers';
+const uuidV4 = require('uuid/v4');
 
 function updateBadge(store) {
   const count = store.getState().configurations.filter(config => config.enabled).length;
@@ -11,7 +12,22 @@ function updateBadge(store) {
 (function(scope) {
     "use strict";
 
-    const persistentStates = {configurations: []};
+    const persistentStates = {configurations: [
+      {
+          name: 'Example',
+          content: require('../examples/one.mnky'),
+          test: 'Inventory-Services\nCart\nCART\nSan Francisco',
+          enabled: false,
+          id: uuidV4()
+      },
+      {
+          name: 'Cities',
+          content: require('../examples/cities.mnky'),
+          test: 'San Francisco\nSeattle\nLondon',
+          enabled: false,
+          id: uuidV4()
+      }
+    ]};
 
     chrome.storage.local.get(persistentStates, function(state) {
 

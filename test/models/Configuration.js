@@ -19,6 +19,7 @@ var simpleConfiguration = new Configuration("a = b")
 var configurationWithOption = new Configuration("@a = b")
 var configurationWithInclude = new Configuration("@include = /www/")
 var configurationWithVariable = new Configuration("$a = b")
+var configurationWithImport = new Configuration("+Cities")
 
 describe('Configuration', function() {
 
@@ -78,6 +79,21 @@ describe('Configuration', function() {
             simpleConfiguration.apply(node);
             assert.equal(node.value, 'x');
         });
+
+        it('should apply patterns from imported configurations', function() {
+            var node = {
+                value: 'a'
+            };
+
+            var repository = {
+              getByName: function(name) {
+                return simpleConfiguration;
+              }
+            };
+
+            (new Configuration('+other',repository)).apply(node);
+            assert.equal(node.value, 'b');
+        })
     });
 
     describe('#isEnabledForUrl', function() {
@@ -94,6 +110,21 @@ describe('Configuration', function() {
             assert.equal(configurationWithInclude.isEnabledForUrl('http://www.example.com'), true)
             assert.equal(configurationWithInclude.isEnabledForUrl('http://example.com'), false)
         });
+    });
+
+    describe('#getImports', function() {
+        it('should return empty array when an empty ini was provided', function() {
+            assert.deepEqual(emptyConfiguration.getImports(), []);
+        });
+        it('should return empty array when no import is set', function() {
+            assert.deepEqual(simpleConfiguration.getImports(), []);
+        });
+        it('ini +Cities should return array with one import', function() {
+            assert.deepEqual(configurationWithImport.getImports(), ['Cities']);
+        });
+        it('complex ini should return object with one import', function() {
+            assert.deepEqual(complexConfiguration.getImports(), ['A'])
+        })
     });
 
     describe('#getOptions', function() {

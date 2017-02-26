@@ -154,17 +154,17 @@ class Content extends React.Component {
 
         var current = this.state.current;
 
-        var visible = typeof current.id !== 'undefined'
-            ? {}
-            : {
-                display: "none"
-            };
+        var visible = {};
+        var hidden = {display: "none"};
 
-        var hidden = typeof current.id !== 'undefined'
-            ? {
-                display: "none"
-            }
-            : {};
+        console.log(current.id);
+
+        if(typeof current.id === 'undefined') {
+            visible = hidden;
+            hidden = {};
+        }
+
+        console.log(hidden, visible);
 
         var hiddenIfNew = current.id === "new"
             ? {

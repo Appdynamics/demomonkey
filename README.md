@@ -40,10 +40,9 @@ api.payment.com = payment.$customer
 ; Options are introduced by '@'. You can use them to change the behavior of tampermonkey.
 ; A common use case is introducing include and exclude rules for domains:
 @include =
-@exclude = 
+@exclude =
 
 ```
-
 
 ## Installation
 
@@ -51,3 +50,6 @@ api.payment.com = payment.$customer
 
 ## License
 This program is free software; see LICENSE for more details.
+
+# Attribution
+The monkey icon was made by Freepik from www.flaticon.com

@@ -31,7 +31,7 @@ gulp.task('background', compile("background"));
 gulp.task('watch', function() {
     gulp.watch(['styles/**/*.less'], ['styles']);
     gulp.watch(['src/**/*.js'], ['app', 'monkey', 'background']);
-    gulp.watch(['icons/**/*.png', 'manifest.json', 'pages/**/*.html', '_locales/**/*.json', 'README.md'], ['copy']);
+    gulp.watch(['icons/**/*.png', 'manifest.json', 'pages/**/*.html', 'README.md'], ['copy']);
 });
 
 gulp.task('clean', function() {
@@ -43,7 +43,7 @@ gulp.task('mrproper', ['clean'], function() {
 })
 
 gulp.task('copy', function() {
-    return gulp.src(['README.md', 'manifest.json', 'pages/options.html', 'pages/popup.html', 'pages/background.html', '_locales/**/*.json']).pipe(gulp.dest("build/"));
+    return gulp.src(['README.md', 'manifest.json', 'pages/options.html', 'pages/popup.html', 'pages/background.html']).pipe(gulp.dest("build/"));
 });
 
 gulp.task('icons', function() {
