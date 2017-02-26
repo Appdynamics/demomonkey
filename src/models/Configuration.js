@@ -1,16 +1,18 @@
 import ini from 'ini';
 import Pattern from './Pattern';
+import Variable from './Variable';
 import MatchRule from './MatchRule';
 
 class Configuration {
 
-    constructor(iniFile, repository, enabled = true) {
+    constructor(iniFile, repository, enabled = true, values = {}) {
         this.repository = repository;
         this.content = iniFile
             ? ini.parse(iniFile)
             : [];
         this.patterns = false;
         this.enabled = enabled;
+        this.values = values;
     }
 
     isEnabledForUrl(url) {
@@ -78,13 +80,7 @@ class Configuration {
                 // By default ini.parse sets "true" as the value
                 if (key.charAt(0) == '$' && content[key] !== true) {
                     var t = content[key].split("//");
-                    result.push({
-                        name: key.substring(1),
-                        placeholder: t[0],
-                        description: t[1]
-                            ? t[1]
-                            : ''
-                    });
+                    result.push(new Variable(key.substring(1), t[0], t[1] ? t[1] : ''));
                     return result;
                 }
 
@@ -96,7 +92,12 @@ class Configuration {
             }
         };
 
-        return Object.keys(this.content).reduce(filterVariable(this.content), []);
+        var variables =  Object.keys(this.content).reduce(filterVariable(this.content), []);
+
+        return variables.map((variable) => {
+          return variable.bind(this.values[variable.name])
+        });
+
     }
 
     _getConfiguration() {
@@ -105,6 +106,8 @@ class Configuration {
 
             // get all variables upfront
             var variables = this.getVariables();
+
+
 
             var filterConfiguration = function(content) {
                 return function(result, key) {
@@ -122,8 +125,8 @@ class Configuration {
                         return result.concat(Object.keys(content[key]).reduce(filterConfiguration(content[key]), []));
                     }
 
-                    var value = variables.reduce(function(value, variable) {
-                        return value.replace("$" + variable.name, variable.placeholder)
+                    var value = variables.reduce((value, variable) => {
+                        return variable.apply(value);
                     }, content[key])
 
                     //result.push(buildRegex(key, value));

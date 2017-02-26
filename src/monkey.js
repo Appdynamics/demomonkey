@@ -24,7 +24,7 @@ import Configuration from './models/Configuration'
     function runAll(configurations) {
         return configurations.reduce(function(result, rawConfig) {
 
-            var configuration = new Configuration(rawConfig.content, null, rawConfig.enabled);
+            var configuration = new Configuration(rawConfig.content, null, rawConfig.enabled, rawConfig.values);
 
             if (configuration.isEnabledForUrl()) {
               console.log("Enabling configuration: ", rawConfig.name);

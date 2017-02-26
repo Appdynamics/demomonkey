@@ -1,7 +1,7 @@
 import React from 'react'
 import Tabs from './Tabs'
 import Pane from './Pane'
-import Manifest from './Manifest'
+import Manifest from '../models/Manifest'
 import {connect} from 'react-redux'
 import ToggleButton from 'react-toggle-button'
 

@@ -18,6 +18,7 @@ function updateBadge(store) {
           content: require('../examples/one.mnky'),
           test: 'Inventory-Services\nCart\nCART\nSan Francisco',
           enabled: false,
+          values: {},
           id: uuidV4()
       },
       {
@@ -25,6 +26,7 @@ function updateBadge(store) {
           content: require('../examples/cities.mnky'),
           test: 'San Francisco\nSeattle\nLondon',
           enabled: false,
+          values: {},
           id: uuidV4()
       }
     ]};

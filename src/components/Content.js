@@ -3,6 +3,7 @@ import Tabs from './Tabs';
 import Pane from './Pane';
 import ToggleButton from 'react-toggle-button';
 import CodeMirror from 'react-codemirror';
+import Variable from './Variable';
 import Welcome from './Welcome';
 import ini from 'ini';
 import tamper from '../functions/tamper';
@@ -17,6 +18,7 @@ class Content extends React.Component {
         super(props);
         this.handleNameChange = this.handleNameChange.bind(this);
         this.handleTestChange = this.handleTestChange.bind(this);
+        this.updateVariable = this.updateVariable.bind(this);
     }
 
     handleNameChange(event) {
@@ -33,6 +35,19 @@ class Content extends React.Component {
             current: {
                 ...this.state.current,
                 content: content
+            }
+        });
+    }
+
+    updateVariable(name, value) {
+        var values = this.state.current.values;
+
+        values[name] = value;
+
+        this.setState({
+            current: {
+                ...this.state.current,
+                values: values
             }
         });
     }
@@ -58,20 +73,20 @@ class Content extends React.Component {
     }
 
     handleCopy(event) {
-      event.preventDefault();
-      var copy = Object.assign({}, this.state.current);
-      copy.name = "Copy of " + copy.name;
-      copy.id = "new";
-      this.props.actions.addConfiguration(copy);
-      this.props.actions.setCurrentView("configuration/latest");
+        event.preventDefault();
+        var copy = Object.assign({}, this.state.current);
+        copy.name = "Copy of " + copy.name;
+        copy.id = "new";
+        this.props.actions.addConfiguration(copy);
+        this.props.actions.setCurrentView("configuration/latest");
     }
 
     handleDownload(event) {
-      event.preventDefault();
-      chrome.downloads.download({
-        url: "data:text/octet-stream;base64,"+btoa(this.state.current.content),
-        filename: this.state.current.name+".mnky" // Optional
-      });
+        event.preventDefault();
+        chrome.downloads.download({
+            url: "data:text/octet-stream;base64," + btoa(this.state.current.content),
+            filename: this.state.current.name + ".mnky" // Optional
+        });
     }
 
     handleDelete(event) {
@@ -90,6 +105,7 @@ class Content extends React.Component {
                 current: {
                     name: '',
                     content: '',
+                    values: {},
                     test: '',
                     enabled: false,
                     id: undefined
@@ -99,8 +115,6 @@ class Content extends React.Component {
         }
 
         var id = props.currentView.split('/')[1];
-
-        console.log("Current id is " + id);
 
         if (id === 'latest') {
             var latestId = props.configurations.length - 1;
@@ -115,14 +129,14 @@ class Content extends React.Component {
         }
 
         this.setState({
-              current: {
-                  name: '',
-                  content: require('../../examples/one.mnky'),
-                  //ontent: '; You can write comments using ;. Sections are optional, but make things more clear.\n' + '[Variables]\n' + '$prospect=AppDynamics//Set the name of your prospect. This will be used to name the application\n' + '$domain=appdynamics.com//Set the main domain of your prospect. This will be used in the User Experience Section\n' + '\n' + '[Application]\n' + '; Write simple replacements like this:\n' + 'Inventory-Services=Self-Service-Portal\n' + '; Insert variables anywhere\n' + 'ECommerce=$prospect Customer Care\n' + 'api.shipping.com=api.$domain\n' + '; Spaces around the = sign are not required, but make the configuration more readable\n' + 'Order-Processing = Invoice-Processing\n',
-                  test: 'Inventory-Services\nCart\nCART',
-                  enabled: false,
-                  id: 'new'
-              }
+            current: {
+                name: '',
+                content: require('../../examples/one.mnky'),
+                values: {},
+                test: 'Inventory-Services\nCart\nCART',
+                enabled: false,
+                id: 'new'
+            }
         });
     }
 
@@ -155,16 +169,14 @@ class Content extends React.Component {
         var current = this.state.current;
 
         var visible = {};
-        var hidden = {display: "none"};
+        var hidden = {
+            display: "none"
+        };
 
-        console.log(current.id);
-
-        if(typeof current.id === 'undefined') {
+        if (typeof current.id === 'undefined') {
             visible = hidden;
             hidden = {};
         }
-
-        console.log(hidden, visible);
 
         var hiddenIfNew = current.id === "new"
             ? {
@@ -179,7 +191,7 @@ class Content extends React.Component {
             showTrailingSpace: true
         };
 
-        var variables = (new Configuration(this.state.current.content)).getVariables();
+        var variables = (new Configuration(this.state.current.content, null, false, this.state.current.values)).getVariables();
 
         return <div id="content">
             <div id="editor" style={visible}>
@@ -197,11 +209,8 @@ class Content extends React.Component {
                             {variables.length > 0
                                 ? ""
                                 : <div className="no-variables">No variables defined</div>}
-                            {variables.map(function(variable, index) {
-                                return <div key={index} className="variable-box">
-                                    <label htmlFor="variable-1">{variable.name}</label><input type="" placeholder={variable.placeholder}/>
-                                    <div className="help">{variable.description}</div>
-                                </div>;
+                            {variables.map((variable, index) => {
+                                return <Variable key={index} onValueUpdate={(name, value) => this.updateVariable(name, value)} variable={variable}/>
                             })}
                         </Pane>
                         <Pane label="Configuration">

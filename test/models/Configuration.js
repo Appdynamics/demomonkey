@@ -18,7 +18,8 @@ var emptyConfiguration = new Configuration("");
 var simpleConfiguration = new Configuration("a = b")
 var configurationWithOption = new Configuration("@a = b")
 var configurationWithInclude = new Configuration("@include = /www/")
-var configurationWithVariable = new Configuration("$a = b")
+var configurationWithVariable = new Configuration("$a = default\rx = $a", null, true, {a: 'v'})
+var configurationWithUnsetVariable = new Configuration("$a = default\rv = $a", null, true, {})
 var configurationWithImport = new Configuration("+Cities")
 
 describe('Configuration', function() {
@@ -30,11 +31,11 @@ describe('Configuration', function() {
         it('should return empty object when no variable is defined', function() {
             assert.deepEqual(simpleConfiguration.getVariables(), []);
         });
-        it('ini $a = b should return array with one variable set', function() {
+        it('ini $a = default should return array with one variable set', function() {
             assert.deepEqual(configurationWithVariable.getVariables(), [
                 {
                     name: 'a',
-                    placeholder: 'b',
+                    value: 'v',
                     description: ''
                 }
             ]);
@@ -43,11 +44,11 @@ describe('Configuration', function() {
             assert.deepEqual(complexConfiguration.getVariables(), [
                 {
                     name: 'x',
-                    placeholder: '1',
+                    value: '1',
                     description: ''
                 }, {
                     name: 'y',
-                    placeholder: '2',
+                    value: '2',
                     description: 'Set y'
                 }
             ])
@@ -80,7 +81,19 @@ describe('Configuration', function() {
             assert.equal(node.value, 'x');
         });
 
-        it('should apply patterns from imported configurations', function() {
+        it('should apply patterns with set variables', function() {
+          var node = {
+              value: 'x'
+          };
+          configurationWithVariable.apply(node);
+          assert.equal(node.value, 'v');
+
+          configurationWithUnsetVariable.apply(node);
+          assert.equal(node.value, 'default');
+
+        })
+
+        /*it('should apply patterns from imported configurations', function() {
             var node = {
                 value: 'a'
             };
@@ -93,7 +106,7 @@ describe('Configuration', function() {
 
             (new Configuration('+other',repository)).apply(node);
             assert.equal(node.value, 'b');
-        })
+        })*/
     });
 
     describe('#isEnabledForUrl', function() {
