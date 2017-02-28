@@ -3,9 +3,9 @@
 
     "name": "DemoMonkey",
     "description": "Tamper your application's UI to demo almost anything",
-    "version": "0.4.1",
+    "version": "0.4.9",
     "author": "Severin Neumann <severin.neumann@appdynamics.com>",
-    "homepage_url": "https://singularity.jira.com/wiki/x/OQBuD",
+    "homepage_url": "https://github.com/svrnm/demomonkey/",
     "content_security_policy": "script-src 'self' https://apis.google.com; object-src 'self'",
     "icons": {
         "16": "icons/monkey_16.png",

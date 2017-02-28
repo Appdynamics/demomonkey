@@ -7,7 +7,8 @@ class Welcome extends React.Component {
         var readme = require('../../README.md');
         var converter = new showdown.Converter({
           'prefixHeaderId':'welcome ',
-          'ghCompatibleHeaderId': true
+          'ghCompatibleHeaderId': true,
+          'simplifiedAutoLink': true
         });
 
         var html = converter.makeHtml(readme);

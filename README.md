@@ -47,8 +47,32 @@ api.payment.com = payment.$customer
 ```
 
 ## Installation
+To add the latest version as extension to chrome, use the following link:
+
+https://chrome.google.com/webstore/detail/demomonkey/jgbhioialphpgjgofopnplfibkeehgjd
 
 ## Contribute
+If you want to contribute to the development of DemoMonkey, you can help by reporting issues, fixing bug or developing new features. To get a running development environment, you need to get the latest version via git:
+
+```
+git clone https://github.com/svrnm/demomonkey.git
+cd demomonkey
+```
+
+Before you can go on, make sure you have *npm*, *gulp* and *mocha* installed.
+
+Now, you need to setup the development environment:
+
+```
+npm install
+gulp
+```
+
+Running gulp will monitor the current directory for changes and it will continuously update the folder `build`. You can use this folder as unpacked extension in chrome.
+
+
+
+
 
 ## License
 This program is free software; see LICENSE for more details.
