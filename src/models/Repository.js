@@ -1,10 +1,15 @@
+import Configuration from './Configuration'
+
 class Repository {
     constructor(configurations) {
       this.configurations = configurations
     }
 
     findByName(name) {
-      return this.configurations[name];
+      if(typeof this.configurations[name] === "object") {
+        return this.configurations[name];
+      }
+      return new Configuration('', null, false, {});
     }
 }
 

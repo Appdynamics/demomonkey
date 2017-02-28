@@ -41,7 +41,7 @@ class Content extends React.Component {
     }
 
     updateVariable(name, value) {
-        var values = this.state.current.values;
+        var values = this.state.current.values ? this.state.current.values : {};
 
         values[name] = value;
 
@@ -158,7 +158,7 @@ class Content extends React.Component {
         setInterval(() => {
           var node = document.getElementById("testarea");
           var configuration = new Configuration(this.state.current.content, this.getRepository(), true, this.state.current.values);
-          
+
           if (node) {
               configuration.apply(node);
           }
@@ -219,7 +219,7 @@ class Content extends React.Component {
                                 ? ""
                                 : <div className="no-variables">No variables defined</div>}
                             {variables.map((variable, index) => {
-                                return <Variable key={index} onValueUpdate={(name, value) => this.updateVariable(name, value)} variable={variable}/>
+                                return <Variable key={variable.name} onValueUpdate={(name, value) => this.updateVariable(name, value)} variable={variable}/>
                             })}
                         </Pane>
                         <Pane label="Configuration">
