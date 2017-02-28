@@ -1,4 +1,5 @@
 import Configuration from '../../src/models/Configuration';
+import Repository from '../../src/models/Repository';
 
 var assert = require('assert');
 var fs = require('fs');
@@ -39,6 +40,17 @@ describe('Configuration', function() {
                     description: ''
                 }
             ]);
+        });
+        it('should return the variables from imported configurations', function() {
+
+          var repository = new Repository({'other': configurationWithVariable});
+          assert.deepEqual((new Configuration('+other',repository)).getVariables(), [
+              {
+                  name: 'a',
+                  value: 'v',
+                  description: ''
+              }
+          ]);
         });
         it('complex ini should return object 2 variables', function() {
             assert.deepEqual(complexConfiguration.getVariables(), [
@@ -93,20 +105,27 @@ describe('Configuration', function() {
 
         })
 
-        /*it('should apply patterns from imported configurations', function() {
+        it('should apply patterns from imported configurations', function() {
             var node = {
                 value: 'a'
             };
 
-            var repository = {
-              getByName: function(name) {
-                return simpleConfiguration;
-              }
-            };
+            var repository = new Repository({'other': simpleConfiguration});
 
             (new Configuration('+other',repository)).apply(node);
             assert.equal(node.value, 'b');
-        })*/
+        })
+
+        it('should apply variables from imported configurations', function() {
+            var node = {
+                value: 'x'
+            };
+
+            var repository = new Repository({'other': configurationWithVariable});
+
+            (new Configuration('+other',repository,true,{'a':'b'})).apply(node);
+            assert.equal(node.value, 'b');
+        })
     });
 
     describe('#isEnabledForUrl', function() {

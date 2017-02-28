@@ -15,6 +15,12 @@ class Configuration {
         this.values = values;
     }
 
+    updateValues(values) {
+      this.values = Object.assign(this.values, values);
+      this.patterns = false;
+      return this;
+    }
+
     isEnabledForUrl(url) {
         if (!this.enabled) {
             return false;
@@ -58,30 +64,39 @@ class Configuration {
     }
 
     getImports() {
-      var filterImport = function(content) {
-          return function(result, key) {
-              if (key.charAt(0) == '+') {
-                  result.push(key.substring(1));
-              }
+        var filterImport = function(content) {
+            return function(result, key) {
+                if (key.charAt(0) == '+') {
+                    result.push(key.substring(1));
+                }
 
-              if ("object" === typeof content[key] && null !== content[key]) {
-                  return result.concat(Object.keys(content[key]).reduce(filterImport(content[key]), []));
-              }
+                if ("object" === typeof content[key] && null !== content[key]) {
+                    return result.concat(Object.keys(content[key]).reduce(filterImport(content[key]), []));
+                }
 
-              return result;
-          }
-      };
-      return Object.keys(this.content).reduce(filterImport(this.content), []);
+                return result;
+            }
+        };
+        return Object.keys(this.content).reduce(filterImport(this.content), []);
     }
 
     getVariables() {
+
+        var repository = this.repository;
+
         var filterVariable = function(content) {
             return function(result, key) {
                 // By default ini.parse sets "true" as the value
                 if (key.charAt(0) == '$' && content[key] !== true) {
                     var t = content[key].split("//");
-                    result.push(new Variable(key.substring(1), t[0], t[1] ? t[1] : ''));
+                    result.push(new Variable(key.substring(1), t[0], t[1]
+                        ? t[1]
+                        : ''));
                     return result;
+                }
+
+                if (typeof repository == 'object' && key.charAt(0) == '+') {
+                    return result.concat(repository.findByName(key.substring(1)).getVariables());
                 }
 
                 if ("object" === typeof content[key] && null !== content[key]) {
@@ -92,10 +107,10 @@ class Configuration {
             }
         };
 
-        var variables =  Object.keys(this.content).reduce(filterVariable(this.content), []);
+        var variables = Object.keys(this.content).reduce(filterVariable(this.content), []);
 
         return variables.map((variable) => {
-          return variable.bind(this.values[variable.name])
+            return variable.bind(this.values[variable.name])
         });
 
     }
@@ -106,14 +121,19 @@ class Configuration {
 
             // get all variables upfront
             var variables = this.getVariables();
-
-
+            var values = this.values;
+            var repository = this.repository;
 
             var filterConfiguration = function(content) {
                 return function(result, key) {
                     // skip all variables
-                      if (key.charAt(0) == '$' || key.charAt(0) == '@' || key.charAt(0) == '+') {
+                    if (key.charAt(0) == '$' || key.charAt(0) == '@') {
                         return result;
+                    }
+
+                    if (key.charAt(0) == '+') {
+                        var x= result.concat(repository.findByName(key.substring(1)).updateValues(values)._getConfiguration());
+                        return x;
                     }
 
                     // skip true
@@ -124,7 +144,6 @@ class Configuration {
                     if ("object" === typeof content[key] && null !== content[key]) {
                         return result.concat(Object.keys(content[key]).reduce(filterConfiguration(content[key]), []));
                     }
-
                     var value = variables.reduce((value, variable) => {
                         return variable.apply(value);
                     }, content[key])

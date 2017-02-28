@@ -4,6 +4,7 @@ import Pane from './Pane';
 import ToggleButton from 'react-toggle-button';
 import CodeMirror from 'react-codemirror';
 import Variable from './Variable';
+import Repository from '../models/Repository';
 import Welcome from './Welcome';
 import ini from 'ini';
 import tamper from '../functions/tamper';
@@ -144,16 +145,24 @@ class Content extends React.Component {
         this._setCurrent(this.props);
     }
 
-    _tamper() {
-        var node = document.getElementById("testarea");
-        var configuration = new Configuration(this.state.current.content);
-        if (node) {
-            configuration.apply(node);
-        }
+    getRepository() {
+      var configurations = this.props.configurations.reduce(function(repo, rawConfig) {
+          repo[rawConfig.name] = new Configuration(rawConfig.content);
+          return repo;
+      }, {})
+
+      return new Repository(configurations);
     }
 
     componentDidMount() {
-        setInterval(() => this._tamper(), 150);
+        setInterval(() => {
+          var node = document.getElementById("testarea");
+          var configuration = new Configuration(this.state.current.content, this.getRepository(), true, this.state.current.values);
+          
+          if (node) {
+              configuration.apply(node);
+          }
+        }, 150);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -191,7 +200,7 @@ class Content extends React.Component {
             showTrailingSpace: true
         };
 
-        var variables = (new Configuration(this.state.current.content, null, false, this.state.current.values)).getVariables();
+        var variables = (new Configuration(this.state.current.content, this.getRepository(), false, this.state.current.values)).getVariables()
 
         return <div id="content">
             <div id="editor" style={visible}>
