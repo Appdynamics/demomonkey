@@ -32,5 +32,9 @@ describe('MatchRule', function() {
         it('should return false if include and exclude rule match', function() {
             assert.equal( new MatchRule(['/as/'],['/df/']).test('asdf'), false);
         });
+
+        it('should return false if include and exclude rule match', function() {
+            assert.equal( new MatchRule(['/^https?:\/\/.*appdynamics\.com\/.*$/'],[]).test('http://demo2.appdynamics.com/controller/#/location=ANALYTICS_ADQL_SEARCH&timeRange=last_15_minutes.BEFORE_NOW.-1.-1.15&searchId=2'), true);
+        });
     });
 });

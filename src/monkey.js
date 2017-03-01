@@ -1,5 +1,6 @@
 import tamper from './functions/tamper';
 import Configuration from './models/Configuration'
+import Repository from './models/Repository'
 
 (function(scope) {
     "use strict";
@@ -23,12 +24,17 @@ import Configuration from './models/Configuration'
 
     function runAll(configurations) {
         return configurations.reduce(function(result, rawConfig) {
+          var repository = new Repository(configurations.reduce(function(repo, rawConfig) {
+              repo[rawConfig.name] = new Configuration(rawConfig.content);
+              return repo;
+          }, {}));
+            var configuration = new Configuration(rawConfig.content, repository, rawConfig.enabled, rawConfig.values);
 
-            var configuration = new Configuration(rawConfig.content, null, rawConfig.enabled, rawConfig.values);
-
-            if (configuration.isEnabledForUrl()) {
+            if (configuration.isEnabledForUrl(window.location.href)) {
               console.log("Enabling configuration: ", rawConfig.name);
               result.push(enable(configuration));
+            } else if(rawConfig.enabled){
+              console.log("Configuration is disabled: ", rawConfig.name);
             }
 
             return result;
