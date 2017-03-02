@@ -1,6 +1,6 @@
 /* global chrome */
-import createStore from 'redux'
-import wrapStore from 'react-chrome-redux'
+import {createStore} from 'redux'
+import {wrapStore} from 'react-chrome-redux'
 import reducers from './reducers'
 import uuidV4 from 'uuid/v4'
 function updateBadge(store) {
