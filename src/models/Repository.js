@@ -5,6 +5,10 @@ class Repository {
       this.configurations = configurations
     }
 
+    addConfiguration(name, configuration) {
+      this.configurations[name] = configuration;
+    }
+
     findByName(name) {
       if(typeof this.configurations[name] === "object") {
         return this.configurations[name];
