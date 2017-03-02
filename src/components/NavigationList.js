@@ -1,36 +1,34 @@
-import React from 'react';
-import ConfigurationUpload from './ConfigurationUpload';
+import React from 'react'
+import ConfigurationUpload from './ConfigurationUpload'
 
 class NavigationList extends React.Component {
-    showItemEditor(event, key) {
-        event.preventDefault();
-        this.props.actions.setCurrentView(this.props.type+"/"+key)
-    }
+  showItemEditor(event, key) {
+    event.preventDefault()
+    this.props.actions.setCurrentView(this.props.type + '/' + key)
+  }
 
-    showNewEditor(event) {
-      event.preventDefault();
-      this.props.actions.setCurrentView(this.props.type+"/create")
-    }
+  showNewEditor(event) {
+    event.preventDefault()
+    this.props.actions.setCurrentView(this.props.type + '/create')
+  }
 
-
-
-    render() {
-        return (
-          <div>
-            <ul id="navigation-actions">
-              <li className="navigation-action">
-                <a href={"#"+this.props.type+"/create"} onClick={(event) => this.showNewEditor(event)} >Create</a>
+  render() {
+    return (
+      <div>
+            <ul id='navigation-actions'>
+              <li className='navigation-action'>
+                <a href={'#' + this.props.type + '/create'} onClick={(event) => this.showNewEditor(event)} >Create</a>
               </li>
-              <li className="navigation-action">
-                <ConfigurationUpload actions={this.props.actions} type={this.props.type} id="upload" />
+              <li className='navigation-action'>
+                <ConfigurationUpload actions={this.props.actions} type={this.props.type} id='upload' />
               </li>
             </ul>
-            <ul id="navigation-items">
-              {Object.keys(this.props.items).map((key, index) => <li className="navigation-item" key={index}><a href={"#"+this.props.type+"/"+key} onClick={(event) => this.showItemEditor(event, key)} >{this.props.items[key].name}</a></li>)}
+            <ul id='navigation-items'>
+              {Object.keys(this.props.items).map((key, index) => <li className='navigation-item' key={index}><a href={'#' + this.props.type + '/' + key} onClick={(event) => this.showItemEditor(event, key)} >{this.props.items[key].name}</a></li>)}
             </ul>
           </div>
-        )
-    }
+    )
+  }
 }
 
 export default NavigationList

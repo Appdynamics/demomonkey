@@ -1,61 +1,62 @@
 #navigation {
-    flex-basis: 200px;
-    padding: 0;
-    margin: 0;
-    border-right: 1px solid #ccc;
+  border-right: 1px solid #cccccc;
+  flex-basis: 200px;
+  margin: 0px;
+  padding: 0px;
 }
 
 #navigation-actions {
+  border-bottom: 1px solid #cccccc;
   display: flex;
-  border-bottom: 1px solid #ccc;
 }
 
 #navigation-actions li {
+  border-right: 1px solid #cccccc;
   list-style-type: none;
-  border-right: 1px solid #ccc;
 }
 
 #navigation-items li {
-    padding: 8px;
-    border-bottom: 1px solid #ccc;
+  border-bottom: 1px solid #cccccc;
+  padding: 8px;
 }
 
 #navigation li {
-    padding: 0;
+  padding: 0px;
 }
 
 #navigation li h2 {
-    font-weight: bold;
-    display: block;
-    margin: 0;
-    padding: 8px;
-    background-color: #ccc;
+  background-color: #cccccc;
+  display: block;
+  font-weight: bold;
+  margin: 0px;
+  padding: 8px;
 }
 
 #navigation li ul {
-    margin: 0;
-    padding: 0;
+  margin: 0px;
+  padding: 0px;
 }
 
 #navigation li ul li {
-    padding: 8px;
+  padding: 8px;
 }
 
-.navigation-item a, .navigation-action a {
-    &:hover {
-        text-decoration: underline;
-    }
+.navigation-action a,
+.navigation-item a {
+  &:hover {
+    text-decoration: underline;
+  }
 
-    display: block;
-    text-decoration: none;
+  display: block;
+  text-decoration: none;
 }
 
 .navigation-item a:before {
-    content: "\270E\00A0";
+  content: '\270E\00A0';
 }
 
 .navigation-action a {
-    font-weight: bold;
+  font-weight: bold;
 }
 
 #uploadForm {

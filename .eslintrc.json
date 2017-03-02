@@ -1,0 +1,25 @@
+{
+    "parserOptions": {
+        "ecmaVersion": 8,
+        "sourceType": "module",
+        "ecmaFeatures": {
+            "experimentalObjectRestSpread": true,
+            "jsx": true
+        }
+    },
+    "extends": "standard",
+    "plugins": [
+        "standard",
+        "promise",
+        "json",
+        "react"
+    ],
+    "rules": {
+        "react/jsx-uses-vars": 1,
+        "space-before-function-paren": ["error", {
+            "anonymous": "always",
+            "named": "ignore",
+            "asyncArrow": "ignore"
+        }]
+    }
+}

@@ -1,176 +1,168 @@
-@import "tabs";
-@import "buttons";
-@import "navigation";
-@import "welcome";
-@import (inline) "./node_modules/codemirror/lib/codemirror.css";
+@import 'tabs';
+@import 'buttons';
+@import 'navigation';
+@import 'welcome';
+@import (inline) '../node_modules/codemirror/lib/codemirror.css';
 
 #app,
 body,
 html {
-    height: 100%;
-    min-height: 100% !important;
-    margin: 0;
-    padding: 0;
+  height: 100%;
+  margin: 0px;
+  min-height: 100% !important;
+  padding: 0px;
 }
 
 html.popup {
-    width: 400px;
+  width: 400px;
 }
 
 #main-grid {
-    display: flex;
-    height: 100%;
+  display: flex;
+  height: 100%;
 }
 
-
-
 #content {
-    display: flex;
-    flex-grow: 1;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
 }
 
 #settings {
-    flex-basis: 40px;
-    display: flex;
-    border-bottom: 1px solid #ccc;
+  border-bottom: 1px solid #cccccc;
+  display: flex;
+  flex-basis: 40px;
 }
 
 #editor,
 #inner-content,
 #text-editor {
-    padding: 8px;
-    height: 93%;
+  height: 93%;
+  padding: 8px;
 }
 
 #variables-editor {
-    display: flex;
-    flex-direction: column;
-    margin: 8px;
+  display: flex;
+  flex-direction: column;
+  margin: 8px;
 }
 
 #variables-editor .row {
-    display: flex;
+  display: flex;
 }
 
 #variables-editor input {
-    flex-grow: 2;
-    height: 100%;
-    margin: 8px;
+  flex-grow: 2;
+  height: 100%;
+  margin: 8px;
 }
 
 #variables-editor label {
-    display: block;
-    margin: 12px 0;
-    height: 100%;
-    line-height: 100%;
-    width: 60px;
-    vertical-align: middle;
-    font-weight: bold;
+  display: block;
+  font-weight: bold;
+  height: 100%;
+  line-height: 100%;
+  margin: 12px 0px;
+  vertical-align: middle;
+  width: 60px;
 }
 
 #variables-editor .help {
-    flex-grow: 3;
-    display: block;
-    margin: 12px 0;
-    height: 100%;
-    line-height: 100%;
-    width: 60px;
-    font-size: 90%;
+  display: block;
+  flex-grow: 3;
+  font-size: 90%;
+  height: 100%;
+  line-height: 100%;
+  margin: 12px 0px;
+  width: 60px;
 }
 
 .CodeMirror {
-    border: 1px solid #ccc;
-    height: 100%;
+  border: 1px solid #cccccc;
+  height: 100%;
 }
 
 .ReactCodeMirror {
-    height: 100%;
+  height: 100%;
 }
 
-
-
-#configuration-title {}
-
 #settings b {
-    margin: 12px 1em;
-    height: 100%;
-    display: block;
-    vertical-align: middle;
+  display: block;
+  height: 100%;
+  margin: 12px 1em;
+  vertical-align: middle;
 }
 
 #settings .toggle-box {
-    margin: 12px 1em;
-    height: 100%;
-    display: block;
-    vertical-align: middle;
+  display: block;
+  height: 100%;
+  margin: 12px 1em;
+  vertical-align: middle;
 }
 
 #settings input,
 #settings select {
-    flex-grow: 1;
-    margin: 8px;
+  flex-grow: 1;
+  margin: 8px;
 }
 
 #no-configurations,
 #no-templates {
-    color: #ccc;
-    font-style: italic;
+  color: #cccccc;
+  font-style: italic;
 }
 
 #welcome {
-    margin-left: 24px;
+  margin-left: 24px;
 }
 
-
-
 .variable-box {
-    margin-bottom: 1em;
+  margin-bottom: 1em;
 
-    & label {
-        margin-right: 1em;
-        display: block;
-        font-weight: bold;
-        color: #333;
+  & label {
+    color: #333333;
+    display: block;
+    font-weight: bold;
+    margin-right: 1em;
 
-        &:before {
-            content: "$";
-        }
+    &:before {
+      content: '$';
     }
+  }
 
-    & input {
-        margin: 0.5em 0;
-        display: block;
-        min-width: 300px;
-        max-width: 600px;
-        width: 50%;
-    }
+  & input {
+    display: block;
+    margin: 0.5em 0em;
+    max-width: 600px;
+    min-width: 300px;
+    width: 50%;
+  }
 
-    & .help {
-        font-size: 95%;
-        color: #999;
-    }
+  & .help {
+    color: #999999;
+    font-size: 95%;
+  }
 }
 
 .no-variables {
-    border: 1px solid darken(#ffd24d, 25%);
-    margin: 1em;
-    padding: 1em;
-    color: darken(#ffd24d, 25%);
-    background: lighten(#ffd24d, 25%);
+  background: lighten(#ffd24d, 25%);
+  border: 1px solid darken(#ffd24d, 25%);
+  color: darken(#ffd24d, 25%);
+  margin: 1em;
+  padding: 1em;
 
-    &:before {
-        content: "\26A0\00A0";
-    }
+  &:before {
+    content: '\26A0\00A0';
+  }
 }
 
 .cm-trailingspace {
-    background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAACCAYAAAB/qH1jAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3QUXCToH00Y1UgAAACFJREFUCNdjPMDBUc/AwNDAAAFMTAwMDA0OP34wQgX/AQBYgwYEx4f9lQAAAABJRU5ErkJggg==");
-    background-position: bottom left;
-    background-repeat: repeat-x;
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAACCAYAAAB/qH1jAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3QUXCToH00Y1UgAAACFJREFUCNdjPMDBUc/AwNDAAAFMTAwMDA0OP34wQgX/AQBYgwYEx4f9lQAAAABJRU5ErkJggg==');
+  background-position: bottom left;
+  background-repeat: repeat-x;
 }
 
 #testarea {
-  border: 1px solid #ccc;
   background: #efefef;
+  border: 1px solid #cccccc;
 }

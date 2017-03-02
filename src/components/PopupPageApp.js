@@ -1,56 +1,50 @@
+/* global chrome */
 import React from 'react'
 import Tabs from './Tabs'
 import Pane from './Pane'
 import Manifest from '../models/Manifest'
-import {connect} from 'react-redux'
+import { connect } from 'react-redux'
 import ToggleButton from 'react-toggle-button'
 
 class ToggleConfiguration extends React.Component {
-    toggle(id) {
-        this.props.actions.toggleConfiguration(id)
-    }
+  toggle(id) {
+    this.props.actions.toggleConfiguration(id)
+  }
 
-    openEditor(event, id) {
-        event.preventDefault();
-        chrome.runtime.openOptionsPage(function() {
-            chrome.runtime.sendMessage({
-                receiver: "options",
-                anchor: "configuration/" + id
-            });
-        });
-    }
+  openEditor(event, id) {
+    event.preventDefault()
+    chrome.runtime.openOptionsPage(function () {
+      chrome.runtime.sendMessage({
+        receiver: 'options',
+        anchor: 'configuration/' + id
+      })
+    })
+  }
 
-    render() {
-        return <div style={{
-            display: "flex"
-        }}>
-            <ToggleButton value={this.props.configuration.enabled} onToggle={() => {
-                this.toggle(this.props.configuration.id)
-            }}/>
-            <div style={{
-                margin: "8px"
-            }}>
+  render() {
+    return <div style={{display: 'flex'}}>
+            <ToggleButton value={this.props.configuration.enabled} onToggle={() => { this.toggle(this.props.configuration.id) }}/>
+            <div style={{margin: '8px'}}>
                 <a href="#" onClick={(event) => this.openEditor(event, this.props.index)}>{this.props.configuration.name}</a>
             </div>
         </div>
-    }
+  }
 }
 
-const manifest = new Manifest();
+const manifest = new Manifest()
 
-const App = ({configurations, currentView, actions}) => (
-    <div>
+const App = ({ configurations, currentView, actions }) => (
+  <div>
         <Tabs>
             <Pane label="Apply">
-                {configurations.map((configuration, index) => (<ToggleConfiguration key={configuration.id} index={index} actions={actions} configuration={configuration}/>))}
-                {configurations.length < 1
-                    ? <i>
-                        No configuration found.
-                        Open the <a href="#" onClick={(e) => {
-                            e.preventDefault();
-                            chrome.runtime.openOptionsPage()
-                        }}>Dashboard</a> to create configurations
-                      </i>
+            {configurations.map((configuration, index) => (<ToggleConfiguration key={configuration.id} index={index} actions={actions} configuration={configuration}/>))}
+            {configurations.length < 1
+                  ? <i>
+                    No configuration found. Open the <a href="#" onClick={(e) => {
+                      e.preventDefault()
+                      chrome.runtime.openOptionsPage()
+                    }}>Dashboard</a> to create configurations
+                  </i>
                     : ''
                 }
             </Pane>
@@ -72,25 +66,25 @@ const App = ({configurations, currentView, actions}) => (
                 </div>
             </Pane>
             <Pane link={(e) => {
-                e.preventDefault();
-                chrome.runtime.openOptionsPage()
+              e.preventDefault()
+              chrome.runtime.openOptionsPage()
             }} label="Dashboard"/>
         </Tabs>
     </div>
 )
 
 const PopupPageApp = connect(
-// map state to props
-state => {
-    return {configurations: state.configurations}
-},
-// map dispatch to props
-dispatch => ({
+  // map state to props
+  state => {
+    return { configurations: state.configurations }
+  },
+  // map dispatch to props
+  dispatch => ({
     actions: {
-        toggleConfiguration: (id) => {
-            dispatch({'type': 'TOGGLE_CONFIGURATION', id: id})
-        }
+      toggleConfiguration: (id) => {
+        dispatch({ 'type': 'TOGGLE_CONFIGURATION', id: id })
+      }
     }
-}))(App);
+  }))(App)
 
 export default PopupPageApp
