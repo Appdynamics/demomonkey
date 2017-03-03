@@ -1,4 +1,3 @@
-/* global chrome, history */
 import React from 'react'
 import ReactDOM from 'react-dom'
 import {Provider} from 'react-redux'
@@ -14,7 +13,15 @@ function renderOptionsPageApp(root, store) {
       view: window.location.hash.substring(1)
     })
   }
-  chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+
+  window.addEventListener('hashchange', function () {
+    store.dispatch({
+      'type': 'SET_CURRENT_VIEW',
+      view: window.location.hash.substring(1)
+    })
+  })
+
+  window.chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     if (request.receiver && request.receiver === 'options' && request.anchor) {
       store.dispatch({
         'type': 'SET_CURRENT_VIEW',
@@ -46,7 +53,7 @@ store.ready().then(() => {
     // Update view
     if (window.location.hash !== '#' + store.getState().currentView) {
       console.log('Setting hash by subscribe: #' + store.getState().currentView)
-      history.pushState(null, null, '#' + store.getState().currentView)
+      window.history.pushState(null, null, '#' + store.getState().currentView)
     }
   })
   if (root.getAttribute('data-app') === 'OptionsPageApp') {

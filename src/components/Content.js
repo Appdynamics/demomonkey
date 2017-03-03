@@ -135,9 +135,9 @@ class Content extends React.Component {
     this.setState({
       current: {
         name: '',
-        content: require('../../examples/one.mnky'),
+        content: '',
         values: {},
-        test: 'Inventory-Services\nCart\nCART',
+        test: '',
         enabled: false,
         id: 'new'
       }
@@ -180,6 +180,8 @@ class Content extends React.Component {
 
     var visible = {}
     var hidden = { display: 'none' }
+
+    console.log('Current id is', current.id)
 
     if (typeof current.id === 'undefined') {
       visible = hidden

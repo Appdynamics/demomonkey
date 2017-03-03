@@ -18,10 +18,18 @@ class NavigationList extends React.Component {
     this.props.actions.setCurrentView(this.props.type + '/create')
   }
 
+  showWelcomeScreen(event) {
+    event.preventDefault()
+    this.props.actions.setCurrentView('')
+  }
+
   render() {
     return (
       <div>
             <ul id='navigation-actions'>
+              <li className='navigation-action'>
+                <a href={'#'} onClick={(event) => this.showWelcomeScreen(event)} >Home</a>
+              </li>
               <li className='navigation-action'>
                 <a href={'#' + this.props.type + '/create'} onClick={(event) => this.showNewEditor(event)} >Create</a>
               </li>

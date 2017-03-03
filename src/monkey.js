@@ -1,56 +1,16 @@
-/* global chrome */
-import Configuration from './models/Configuration'
-import Repository from './models/Repository'
+import Monkey from './models/Monkey'
 
 (function (scope) {
   'use strict'
+  scope.chrome.storage.local.get('configurations', function (storage) {
+    console.log('DemoMonkey enabled. Tampering the content.')
+    var monkey = new Monkey(storage.configurations, scope)
+    monkey.start()
 
-  var intervals = []
-
-  function enable (configuration) {
-    return setInterval(function () {
-      var text
-      var texts = scope.document.evaluate('//body//text()[ normalize-space(.) != ""]', document, null, 6, null)
-      for (var i = 0; (text = texts.snapshotItem(i)) !== null; i += 1) {
-        configuration.apply(text, 'data')
+    scope.chrome.storage.onChanged.addListener(function (changes, namespace) {
+      if (namespace === 'local') {
+        monkey.restart()
       }
-      configuration.apply(scope.document, 'title')
-    }, 100)
-  }
-
-  function runAll (configurations) {
-    return configurations.reduce(function (result, rawConfig) {
-      var repository = new Repository(configurations.reduce(function (repo, rawConfig) {
-        repo[rawConfig.name] = new Configuration(rawConfig.content)
-        return repo
-      }, {}))
-      var configuration = new Configuration(rawConfig.content, repository, rawConfig.enabled, rawConfig.values)
-
-      if (configuration.isEnabledForUrl(window.location.href)) {
-        console.log('Enabling configuration: ', rawConfig.name)
-        result.push(enable(configuration))
-      } else if (rawConfig.enabled) {
-        console.log('Configuration is disabled: ', rawConfig.name)
-      }
-
-      return result
-    }, [])
-  }
-
-  console.log('DemoMonkey enabled. Tampering the content.')
-
-  chrome.storage.local.get('configurations', function (storage) {
-    intervals = runAll(storage.configurations)
-  })
-
-  chrome.storage.onChanged.addListener(function (changes, namespace) {
-    if (namespace === 'local') {
-      // Currently we don't check the changes, we just reset everything
-      console.log(changes)
-      intervals.forEach(function (interval) {
-        clearInterval(interval)
-      })
-      intervals = runAll(changes.configurations.newValue)
-    }
+    })
   })
 })(window)
