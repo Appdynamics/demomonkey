@@ -3,17 +3,26 @@ import Content from './Content'
 import NavigationList from './NavigationList'
 import {connect} from 'react-redux'
 
-const App = ({ configurations, currentView, actions }) => (
-  <div id="main-grid">
-        <ul id="navigation">
-            <li>
-                <h2>Configurations</h2>
-                <NavigationList type="configuration" actions={actions} items={configurations} currentView={currentView}/>
-            </li>
-        </ul>
-        <Content actions={actions} configurations={configurations} currentView={currentView}/>
-    </div>
-)
+/* The OptionsPageApp will be defined below */
+class App extends React.Component {
+  static propTypes = {
+    actions: React.PropTypes.objectOf(React.PropTypes.func).isRequired,
+    configurations: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
+    currentView: React.PropTypes.string.isRequired
+  }
+
+  render() {
+    return <div id="main-grid">
+          <ul id="navigation">
+              <li>
+                  <h2>Configurations</h2>
+                  <NavigationList type="configuration" actions={this.props.actions} items={this.props.configurations} currentView={this.props.currentView}/>
+              </li>
+          </ul>
+          <Content actions={this.props.actions} configurations={this.props.configurations} currentView={this.props.currentView}/>
+      </div>
+  }
+}
 
 const OptionsPageApp = connect(
   // map state to props
