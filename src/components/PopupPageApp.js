@@ -7,6 +7,12 @@ import { connect } from 'react-redux'
 import ToggleButton from 'react-toggle-button'
 
 class ToggleConfiguration extends React.Component {
+  static propTypes = {
+    actions: React.PropTypes.objectOf(React.PropTypes.func).isRequired,
+    configuration: React.PropTypes.object,
+    index: React.PropTypes.number
+  }
+
   toggle(id) {
     this.props.actions.toggleConfiguration(id)
   }

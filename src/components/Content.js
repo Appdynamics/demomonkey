@@ -12,6 +12,12 @@ require('codemirror/mode/properties/properties')
 require('codemirror/addon/edit/trailingspace')
 
 class Content extends React.Component {
+  static propTypes = {
+    actions: React.PropTypes.objectOf(React.PropTypes.func).isRequired,
+    configurations: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
+    currentView: React.PropTypes.string.isRequired
+  }
+
   constructor(props) {
     super(props)
     this.handleNameChange = this.handleNameChange.bind(this)

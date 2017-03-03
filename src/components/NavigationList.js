@@ -2,6 +2,12 @@ import React from 'react'
 import ConfigurationUpload from './ConfigurationUpload'
 
 class NavigationList extends React.Component {
+  static propTypes = {
+    actions: React.PropTypes.objectOf(React.PropTypes.func).isRequired,
+    type: React.PropTypes.string.isRequired,
+    items: React.PropTypes.arrayOf(React.PropTypes.object).isRequired
+  }
+
   showItemEditor(event, key) {
     event.preventDefault()
     this.props.actions.setCurrentView(this.props.type + '/' + key)

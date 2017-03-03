@@ -6,10 +6,7 @@ import {Store} from 'react-chrome-redux'
 import OptionsPageApp from './components/OptionsPageApp'
 import PopupPageApp from './components/PopupPageApp'
 
-console.log('Starting')
-
 function renderOptionsPageApp(root, store) {
-  console.log('Render Options Page')
   if (window.location.hash.substring(1) !== '') {
     console.log('Updating current view', window.location.hash.substring(1))
     store.dispatch({
@@ -37,14 +34,12 @@ function renderPopupPageApp(root, store) {
         <Provider store={store}><PopupPageApp/></Provider>, root)
     }, 150)
 }
+
 const store = new Store({
   portName: 'DEMO_MONKEY_STORE' // communication port name
 })
 
-console.log(store)
-
 store.ready().then(() => {
-  console.log('Store is ready')
   const root = document.getElementById('app')
   // Synchronize current view on subscription update
   store.subscribe(function () {
