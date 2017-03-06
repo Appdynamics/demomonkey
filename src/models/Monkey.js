@@ -13,12 +13,40 @@ class Monkey {
   }
 
   apply(configuration) {
+    var xpath = '//body//text()[ normalize-space(.) != ""]'
     var text
-    var texts = this.scope.document.evaluate('//body//text()[ normalize-space(.) != ""]', this.scope.document, null, 6,
-        null)
-    for (var i = 0;
-      (text = texts.snapshotItem(i)) !== null; i += 1) {
+    var texts = this.scope.document.evaluate(xpath, this.scope.document, null, 6, null)
+    for (var i = 0; (text = texts.snapshotItem(i)) !== null; i += 1) {
       configuration.apply(text, 'data')
+      if (text.parentNode.tagName === 'title' &&
+          text.parentNode.parentNode !== null &&
+          text.parentNode.parentNode.tagName === 'text') {
+        var pp = text.parentNode.parentNode
+        var content = []
+        pp.querySelectorAll('tspan').forEach(function (tspan) {
+          content = content.concat(tspan.textContent.split(' '))
+        })
+        var counter = content.length
+
+        var pseudoNode = {
+          'value': content.join(' ')
+        }
+
+        configuration.apply(pseudoNode)
+
+        var words = pseudoNode.value.split(' ')
+
+        if (words.length > counter) {
+          words = words.slice(0, counter)
+          words[counter - 1] = '...'
+        }
+        var wordCounter = 0
+        pp.querySelectorAll('tspan').forEach(function (tspan) {
+          tspan.textContent = words.slice(wordCounter,
+          wordCounter + tspan.textContent.split(' ').length).join(' ')
+          wordCounter += tspan.textContent.split(' ').length
+        })
+      }
     }
     configuration.apply(this.scope.document, 'title')
   }
