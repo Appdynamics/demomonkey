@@ -9,7 +9,9 @@ import Monkey from './models/Monkey'
 
     scope.chrome.storage.onChanged.addListener(function (changes, namespace) {
       if (namespace === 'local') {
-        monkey.restart()
+        monkey.stop()
+        monkey = new Monkey(changes.configurations.newValue, scope)
+        monkey.start()
       }
     })
   })

@@ -33,12 +33,13 @@ import uuidV4 from 'uuid/v4'
   scope.chrome.storage.local.get(persistentStates, function (state) {
     var store = createStore(reducers, state)
     wrapStore(store, { portName: 'DEMO_MONKEY_STORE' })
+    updateBadge(store, scope)
 
     console.log('Background Script started')
     store.subscribe(function () {
       console.log('Synchronize changes')
       scope.chrome.storage.local.set({ configurations: store.getState().configurations })
-      updateBadge(store)
+      updateBadge(store, scope)
     })
     scope.chrome.contextMenus.create({
       'title': 'Create Replacement',

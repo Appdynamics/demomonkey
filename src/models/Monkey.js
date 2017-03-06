@@ -65,11 +65,6 @@ class Monkey {
     })
   }
 
-  restart() {
-    this.stop()
-    this.start()
-  }
-
   runAll() {
     return this.configurations.reduce((result, cfg) => {
       var configuration = cfg[1]
