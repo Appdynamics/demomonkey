@@ -24,7 +24,7 @@ class ToggleConfiguration extends React.Component {
   }
 
   render() {
-    return <div style={{display: 'flex'}}>
+    return <div style={{display: 'flex'}} className="toggle-configuration">
             <ToggleButton value={this.props.configuration.enabled} onToggle={() => { this.toggle(this.props.configuration.id) }}/>
             <div style={{margin: '8px'}}>
                 <a href="#" onClick={(event) => this.openEditor(event, this.props.index)}>{this.props.configuration.name}</a>

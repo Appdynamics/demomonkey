@@ -21,6 +21,9 @@
     "babel-preset-es2015": "^6.16.0",
     "babel-preset-react": "^6.16.0",
     "babelify": "^7.3.0",
+    "chai": "^3.5.0",
+    "chai-webdriver": "^1.2.0",
+    "chromedriver": "^2.27.3",
     "eslint": "^3.16.1",
     "eslint-config-standard": "^7.0.0",
     "eslint-plugin-import": "^2.2.0",
@@ -36,6 +39,7 @@
     "gulp-sourcemaps": "^1.9.1",
     "less": "^2.7.2",
     "mocha": "^3.2.0",
+    "selenium-webdriver": "^3.3.0",
     "stringify": "^5.1.0",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0"

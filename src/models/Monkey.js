@@ -18,6 +18,8 @@ class Monkey {
     var texts = this.scope.document.evaluate(xpath, this.scope.document, null, 6, null)
     for (var i = 0; (text = texts.snapshotItem(i)) !== null; i += 1) {
       configuration.apply(text, 'data')
+      // The following is a workaround to cover <tspan> in SVG.
+      // This will only work if a <title> is set.
       if (text.parentNode.tagName === 'title' &&
           text.parentNode.parentNode !== null &&
           text.parentNode.parentNode.tagName === 'text') {
