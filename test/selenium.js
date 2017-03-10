@@ -30,7 +30,6 @@ after('Quit Webdriver', function (done) {
   driver.quit().then(function () {
     done()
   })
-  done()
 })
 
 describe('UI', function () {
@@ -76,6 +75,7 @@ describe('Un-tampered webpage', function () {
 
 describe('tampered webpage', function () {
   this.timeout(5000)
+  this.retries(4)
   it('will have testape in its title', function (done) {
     driver.get(popupUrl)
     driver.wait(until.elementsLocated(By.className('toggle-configuration'))).then(function () {

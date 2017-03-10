@@ -1,5 +1,5 @@
 import ini from 'ini'
-import Pattern from './Pattern'
+import CommandBuilder from '../commands/CommandBuilder'
 import Variable from './Variable'
 import MatchRule from './MatchRule'
 
@@ -27,8 +27,12 @@ class Configuration {
   }
 
   apply(node, key = 'value') {
-    this._getConfiguration().forEach(function (pattern) {
-      node[key] = pattern.apply(node[key])
+    this._getConfiguration().forEach(function (command) {
+      if (command.isAppliedToNodeValue()) {
+        node[key] = command.apply(node[key])
+      } else {
+        command.apply(node, key)
+      }
     })
   }
 
@@ -108,8 +112,11 @@ class Configuration {
     if (this.patterns === false) {
       // get all variables upfront
       var variables = this.getVariables()
+      var options = this.getOptions()
       var values = this.values
       var repository = this.repository
+
+      var commandBuilder = new CommandBuilder(Array.isArray(options.namespace) ? options.namespace : [])
 
       var filterConfiguration = function (content) {
         return function (result, key) {
@@ -123,8 +130,8 @@ class Configuration {
             return x
           }
 
-          // skip true
-          if (content[key] === true) {
+          // skip true for non-commands
+          if (key.charAt(0) !== '!' && content[key] === true) {
             return result
           }
 
@@ -135,7 +142,7 @@ class Configuration {
             return variable.apply(value)
           }, content[key])
 
-          result.push(new Pattern(key, value))
+          result.push(commandBuilder.build(key, value))
 
           return result
         }

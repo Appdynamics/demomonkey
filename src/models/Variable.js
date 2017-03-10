@@ -10,7 +10,10 @@ class Variable {
   }
 
   apply(value) {
-    return value.replace('$' + this.name, this.value)
+    if (typeof value.replace === 'function') {
+      return value.replace('$' + this.name, this.value)
+    }
+    return value
   }
 }
 
