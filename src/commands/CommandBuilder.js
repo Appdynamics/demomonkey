@@ -5,7 +5,7 @@ import HideApplication from './appdynamics/HideApplication'
 import Command from './Command'
 
 class CommandBuilder {
-  constructor(namespaces) {
+  constructor(namespaces = []) {
     this.namespaces = namespaces
   }
 
@@ -40,17 +40,63 @@ class CommandBuilder {
     return new Command()
   }
 
+  _extractForCustomCommand(command) {
+    if (typeof command !== 'string' || command === '') {
+      return {extracted: false}
+    }
+
+    var namespace = ''
+    var parameters = []
+
+    if (command.indexOf('(') !== -1) {
+      if (command.substr(-1) !== ')') {
+        return {extracted: false}
+      }
+      // parameters = command.slice(command.indexOf('(') + 1, -1).split(/\s*,\s*/).filter(elem => elem !== '')
+      var index = 0
+      var params = command.slice(command.indexOf('(') + 1, -1)
+      parameters.push('')
+      var open = ''
+      params.split('').forEach(letter => {
+        if (open !== '\'' && letter === '"') {
+          open = open === '"' ? '' : letter
+        }
+        if (open !== '"' && letter === '\'') {
+          open = open === '\'' ? '' : letter
+        }
+        if (open === '' && letter === ',') {
+          index++
+          parameters.push('')
+          return
+        }
+        parameters[index] += letter
+      })
+
+      parameters = parameters.map(e => e.trim().replace(/"(.*)"|'(.*)'/, '$1$2')).filter(e => e !== '')
+
+      command = command.split('(')[0]
+    }
+
+    if (command.indexOf('.') !== -1) {
+      namespace = command.slice(0, command.lastIndexOf('.'))
+      command = command.slice(command.lastIndexOf('.') + 1)
+    }
+
+    return {extracted: true, command: command, namespace: namespace, parameters: parameters}
+  }
+
   _buildCommand(key, value) {
     // handle regular expressions
     var regex = key.match(/^\/(.+)\/([gimp]+)?$/)
     if (regex !== null) {
       return this._buildRegex(regex[1], regex[2], value)
     }
-    var cmd = key.match(/(?:([a-zA-Z0-9_-]+)\.)?([a-zA-Z0-9_-]+)\(([^)]+)\)/)
-    if (cmd !== null) {
-      return this._buildCustomCommand(cmd[1], cmd[2], cmd[3].split(/\s*,\s*/), value)
-    }
 
+    var rawCommand = this._extractForCustomCommand(key)
+
+    if (rawCommand.extracted) {
+      return this._buildCustomCommand(rawCommand.namespace, rawCommand.command, rawCommand.parameters, value)
+    }
     return new Command()
   }
 
