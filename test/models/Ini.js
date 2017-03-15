@@ -10,9 +10,5 @@ describe('Ini', function () {
       assert.deepEqual(new Ini('a = b').parse(), { a: 'b' })
       assert.deepEqual(new Ini('[section]\ra=b\r;comment\rx = y').parse(), { section: { a: 'b', x: 'y' } })
     })
-
-    it('supports quoted =', function () {
-      assert.deepEqual(new Ini('"a \\= b " = x = y').parse(), { 'a = b': 'x = y' })
-    })
   })
 })
