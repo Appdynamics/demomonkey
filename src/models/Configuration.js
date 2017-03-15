@@ -1,4 +1,4 @@
-import ini from 'ini'
+import Ini from './Ini'
 import CommandBuilder from '../commands/CommandBuilder'
 import Variable from './Variable'
 import MatchRule from './MatchRule'
@@ -6,7 +6,7 @@ import MatchRule from './MatchRule'
 class Configuration {
   constructor(iniFile, repository, enabled = true, values = {}) {
     this.repository = repository
-    this.content = iniFile ? ini.parse(iniFile) : []
+    this.content = iniFile ? (new Ini(iniFile)).parse() : []
     this.patterns = false
     this.enabled = enabled
     this.values = values

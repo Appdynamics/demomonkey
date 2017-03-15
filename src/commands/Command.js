@@ -17,7 +17,7 @@ class Command {
     }
 
     if (node.parentElement !== null) {
-      return this._walk(node.parentElement, count-1)
+      return this._walk(node.parentElement, count - 1)
     }
 
     return false
