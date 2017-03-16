@@ -35,6 +35,17 @@ class Content extends React.Component {
   }
 
   handleContentChange(content) {
+    // This is a workaround since the react-codemirror component does not work properly with selenium/webdriver scripts
+    if (window.isTesting === true) {
+      this.setState({
+        current: {
+          ...this.state.current,
+          content: content.target.value
+        }
+      })
+      return
+    }
+
     this.setState({
       current: {
         ...this.state.current,
@@ -204,7 +215,7 @@ class Content extends React.Component {
             <div id="editor" style={visible}>
                 <div id="settings">
                     <b>Title:</b>
-                    <input type="text" value={this.state.current.name} onChange={this.handleNameChange}/>
+                    <input type="text" id="configuration-title" value={this.state.current.name} onChange={this.handleNameChange}/>
                     <button className="save-button" onClick={(event) => this.handleSave(event)}>Save</button>
                     <button className="copy-button" style={hiddenIfNew} onClick={(event) => this.handleCopy(event)}>Duplicate</button>
                     <button className="download-button" style={hiddenIfNew} onClick={(event) => this.handleDownload(event)}>Download</button>
@@ -218,8 +229,11 @@ class Content extends React.Component {
                               return <Variable key={variable.name} onValueUpdate={(name, value) => this.updateVariable(name, value)} variable={variable}/>
                             })}
                         </Pane>
-                        <Pane label="Configuration">
-                            <CodeMirror value={current.content} onChange={(content) => this.handleContentChange(content)} options={options}/>
+                        <Pane label="Configuration" id="current-configuration-editor">
+                          {window.isTesting === true
+                            ? <textarea id="contentarea" value={current.content} onChange={(content) => this.handleContentChange(content)} />
+                            : <CodeMirror value={current.content} onChange={(content) => this.handleContentChange(content)} options={options}/>
+                          }
                         </Pane>
                         <Pane label="Testing">
                             <textarea value={current.test} style={{

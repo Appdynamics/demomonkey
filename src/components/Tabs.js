@@ -32,7 +32,7 @@ class Tabs extends React.Component {
       } else {
         let activeClass = (this.state.selected === index ? 'active' : '')
         return (
-          <li key={index}>
+          <li key={index} id={child.props.id}>
                         <a href="#" className={activeClass} onClick={this.handleClick.bind(this, index)}>
                             {child.props.label}
                         </a>
