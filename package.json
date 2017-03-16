@@ -42,6 +42,7 @@
     "mocha": "^3.2.0",
     "selenium-webdriver": "^3.3.0",
     "stringify": "^5.1.0",
+    "uglifyify": "^3.0.4",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0"
   }

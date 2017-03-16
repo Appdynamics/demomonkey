@@ -6,11 +6,45 @@ import uuidV4 from 'uuid/v4'
 (function (scope) {
   'use strict'
 
-  function updateBadge(store, scope) {
-    const count = store.getState().configurations.filter(config => config.enabled).length
-    scope.chrome.browserAction.setBadgeText({ text: count > 0 ? count + '' : 'off' })
-    scope.chrome.browserAction.setBadgeBackgroundColor({ 'color': count > 0 ? '#8E2800' : '#468966' })
+  var selectedTabId = -1
+  var counts = []
+
+  function updateBadge() {
+    var count = counts[selectedTabId]
+    console.log('Updating badge for tab', selectedTabId, count)
+    scope.chrome.browserAction.setBadgeText({
+      text: count > 0 ? count + '' : 'off',
+      tabId: selectedTabId
+    })
+    scope.chrome.browserAction.setBadgeBackgroundColor({
+      color: count > 0 ? '#8E2800' : '#468966',
+      tabId: selectedTabId
+    })
   }
+
+  scope.chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+    console.log(request, request.receiver, request.count)
+    if (request.receiver && request.receiver === 'background' && typeof request.count === 'number') {
+      counts[sender.tab.id] = request.count
+      updateBadge()
+    }
+  })
+
+  scope.chrome.tabs.onUpdated.addListener(function (tabId, props) {
+    if (props.status === 'complete' && tabId === selectedTabId) {
+      updateBadge()
+    }
+  })
+
+  scope.chrome.tabs.onSelectionChanged.addListener(function (tabId, props) {
+    selectedTabId = tabId
+    updateBadge()
+  })
+
+  scope.chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
+    selectedTabId = tabs[0].id
+    updateBadge()
+  })
 
   const persistentStates = {
     configurations: [{
@@ -33,13 +67,13 @@ import uuidV4 from 'uuid/v4'
   scope.chrome.storage.local.get(persistentStates, function (state) {
     var store = createStore(reducers, state)
     wrapStore(store, { portName: 'DEMO_MONKEY_STORE' })
-    updateBadge(store, scope)
+    //  updateBadge(store, scope)
 
     console.log('Background Script started')
     store.subscribe(function () {
       console.log('Synchronize changes')
       scope.chrome.storage.local.set({ configurations: store.getState().configurations })
-      updateBadge(store, scope)
+      // updateBadge(store, scope)
     })
     scope.chrome.contextMenus.create({
       'title': 'Create Replacement',

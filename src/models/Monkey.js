@@ -59,6 +59,7 @@ class Monkey {
 
   start() {
     this.intervals = this.runAll()
+    return this.intervals.length
   }
 
   stop() {

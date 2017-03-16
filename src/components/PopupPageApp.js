@@ -32,17 +32,17 @@ class App extends React.Component {
                 </Pane>
                 <Pane label="Help">
                     <div>
-                        <b>Author:
+                        <b>Author:&nbsp;
                         </b>
                         {manifest.author()}
                     </div>
                     <div>
-                        <b>Homepage:
+                        <b>Homepage:&nbsp;
                         </b>
                         {manifest.homepage()}
                     </div>
                     <div>
-                        <b>Version:
+                        <b>Version:&nbsp;
                         </b>
                         {manifest.version()}
                     </div>

@@ -12,7 +12,7 @@ var rename = require('gulp-rename')
 var less = require('gulp-less')
 var path = require('path')
 
-function compile (file) {
+function compile(file) {
   return function () {
     var bundler = browserify('./src/' + file + '.js', {
       debug: true
@@ -52,7 +52,8 @@ gulp.task('mrproper', ['clean'], function () {
 })
 
 gulp.task('copy', function () {
-  return gulp.src(['README.md', 'manifest.json', 'pages/options.html', 'pages/popup.html', 'pages/background.html']).pipe(gulp.dest('build/'))
+  return gulp.src(['README.md', 'manifest.json', 'pages/options.html', 'pages/popup.html', 'pages/background.html'])
+    .pipe(gulp.dest('build/'))
 })
 
 gulp.task('icons', function () {
