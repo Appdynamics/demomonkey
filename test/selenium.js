@@ -3,7 +3,6 @@ import chrome from 'selenium-webdriver/chrome'
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 
-const assert = chai.assert
 const expect = chai.expect
 chai.use(chaiAsPromised)
 const By = selenium.By

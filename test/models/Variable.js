@@ -1,6 +1,5 @@
-import Variable from '../../src/models/Variable';
-
-var assert = require('assert');
+import Variable from '../../src/models/Variable'
+import assert from 'assert'
 
 describe('Variable', function () {
   describe('#bind', function () {
