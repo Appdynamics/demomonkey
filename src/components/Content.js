@@ -3,6 +3,7 @@ import React from 'react'
 import Tabs from './Tabs'
 import Pane from './Pane'
 import CodeMirror from 'react-codemirror'
+import Popup from 'react-popup'
 import Variable from './Variable'
 import Repository from '../models/Repository'
 import Welcome from './Welcome'
@@ -106,8 +107,25 @@ class Content extends React.Component {
 
   handleDelete(event) {
     event.preventDefault()
-    this.props.actions.setCurrentView('')
-    this.props.actions.deleteConfiguration(this.state.current.id)
+    Popup.create({
+      title: 'Please confirm',
+      content: 'Click on "Delete", if you really want to remove ' + this.state.current.name + '?',
+      buttons: {
+        left: [{
+          text: 'Cancel',
+          action: () => Popup.close()
+        }],
+        right: [{
+          text: 'Delete',
+          className: 'danger',
+          action: () => {
+            Popup.close()
+            this.props.actions.setCurrentView('')
+            this.props.actions.deleteConfiguration(this.state.current.id)
+          }
+        }]
+      }
+    })
   }
 
   toggleEnabled() {
@@ -212,6 +230,7 @@ class Content extends React.Component {
       .getVariables()
 
     return <div id="content">
+            <Popup className="popup" btnClass="popup__btn" />
             <div id="editor" style={visible}>
                 <div id="settings">
                     <b>Title:</b>
