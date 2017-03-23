@@ -1,3 +1,2 @@
 --recursive
 --compilers js:babel-core/register
---require co-mocha
