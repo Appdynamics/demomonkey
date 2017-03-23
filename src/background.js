@@ -73,7 +73,6 @@ import uuidV4 from 'uuid/v4'
     store.subscribe(function () {
       console.log('Synchronize changes')
       scope.chrome.storage.local.set({ configurations: store.getState().configurations })
-      // updateBadge(store, scope)
     })
     scope.chrome.contextMenus.create({
       'title': 'Create Replacement',

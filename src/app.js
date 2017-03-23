@@ -21,14 +21,6 @@ function renderOptionsPageApp(root, store) {
     })
   })
 
-  window.chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-    if (request.receiver && request.receiver === 'options' && request.anchor) {
-      store.dispatch({
-        'type': 'SET_CURRENT_VIEW',
-        view: request.anchor
-      })
-    }
-  })
   ReactDOM.render(
     <Provider store={store}><OptionsPageApp/></Provider>, root)
 }
@@ -42,6 +34,13 @@ function renderPopupPageApp(root, store) {
     }, 150)
 }
 
+function updateCurrentPage() {
+  if (window.location.hash !== '#' + store.getState().currentView) {
+    console.log('Setting hash by subscribe: #' + store.getState().currentView)
+    window.history.pushState(null, null, '#' + store.getState().currentView)
+  }
+}
+
 const store = new Store({
   portName: 'DEMO_MONKEY_STORE' // communication port name
 })
@@ -49,13 +48,10 @@ const store = new Store({
 store.ready().then(() => {
   const root = document.getElementById('app')
   // Synchronize current view on subscription update
-  store.subscribe(function () {
-    // Update view
-    if (window.location.hash !== '#' + store.getState().currentView) {
-      console.log('Setting hash by subscribe: #' + store.getState().currentView)
-      window.history.pushState(null, null, '#' + store.getState().currentView)
-    }
-  })
+  store.subscribe(updateCurrentPage)
+
+  updateCurrentPage()
+
   if (root.getAttribute('data-app') === 'OptionsPageApp') {
     renderOptionsPageApp(root, store)
   } else {

@@ -15,13 +15,8 @@ class ToggleConfiguration extends React.Component {
 
   openEditor(event, id) {
     event.preventDefault()
-    chrome.runtime.openOptionsPage(function () {
-      setTimeout(function () {
-        chrome.runtime.sendMessage({
-          receiver: 'options',
-          anchor: 'configuration/' + id
-        })
-      }, 150)
+    chrome.runtime.openOptionsPage(() => {
+      this.props.actions.setCurrentView('configuration/' + id)
     })
   }
 

@@ -86,6 +86,7 @@ describe('Selenium Tests', function () {
     this.retries(4)
     it('github page of this project will have testape in its title', function () {
       driver.get(url)
+      driver.sleep(1000)
       return expect(driver.getTitle()).to.eventually.include('testape')
     })
   })

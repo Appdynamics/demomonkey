@@ -64,6 +64,9 @@ const PopupPageApp = connect(
   // map dispatch to props
   dispatch => ({
     actions: {
+      setCurrentView: (key) => {
+        dispatch({ 'type': 'SET_CURRENT_VIEW', view: key })
+      },
       toggleConfiguration: (id) => {
         dispatch({ 'type': 'TOGGLE_CONFIGURATION', id: id })
       }
