@@ -1,3 +1,5 @@
+@import 'colors';
+
 .tabs {
   display: flex;
   flex-direction: column;
@@ -23,11 +25,11 @@
 }
 
 .tabs__labels li a.active {
-  border-bottom-color: #337ab7;
+  border-bottom-color: @base;
 }
 
 .tabs__labels li a.link {
-  color: #337ab7;
+  color: @base;
 }
 
 .tabs__labels li a.link:before {

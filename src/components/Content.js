@@ -233,8 +233,8 @@ class Content extends React.Component {
             <Popup className="popup" btnClass="popup__btn" />
             <div id="editor" style={visible}>
                 <div id="settings">
-                    <b>Title:</b>
-                    <input type="text" id="configuration-title" value={this.state.current.name} onChange={this.handleNameChange}/>
+                    <b>Title</b>
+                    <input type="text" id="configuration-title" placeholder="Please provide a title for your configuration" value={this.state.current.name} onChange={this.handleNameChange}/>
                     <button className="save-button" onClick={(event) => this.handleSave(event)}>Save</button>
                     <button className="copy-button" style={hiddenIfNew} onClick={(event) => this.handleCopy(event)}>Duplicate</button>
                     <button className="download-button" style={hiddenIfNew} onClick={(event) => this.handleDownload(event)}>Download</button>

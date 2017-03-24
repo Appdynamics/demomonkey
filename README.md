@@ -9,14 +9,14 @@ Giving custom demos in the verticals of your prospects, shows them that you unde
 ## Usage
 DemoMonkey is driven by __configurations__, that contain replace patterns in the following format:
 
-```
+```ini
 eCommerce = Booking Service
 Checkout = Book flight
 ```
 
 This is the most simple format. The configurations are parsed as ini files, so you can use sections and comments for structure:
 
-```
+```ini
 [Frontend]
 ; Change the main domain
 shop.example.com = fly.example.org
@@ -27,7 +27,7 @@ New York = London
 
 Additionally you have commands for complex replacements, variables and imports for improved reusability and options for changing the behavior of your demo monkey:
 
-```
+```ini
 ; Commands are introduced by '!'. For example you can use regular expressions:
 !/Order/i = Flight
 
@@ -43,7 +43,6 @@ api.payment.com = payment.$customer
 ; A common use case is introducing include and exclude rules for domains:
 @include =
 @exclude =
-
 ```
 
 ## Installation
@@ -54,7 +53,7 @@ https://chrome.google.com/webstore/detail/demomonkey/jgbhioialphpgjgofopnplfibke
 ## Contribute
 If you want to contribute to the development of DemoMonkey, you can help by reporting issues, fixing bug or developing new features. To get a running development environment, you need to get the latest version via git:
 
-```
+```shell
 git clone https://github.com/svrnm/demomonkey.git
 cd demomonkey
 ```
@@ -63,7 +62,7 @@ Before you can go on, make sure you have *npm*, *gulp* and *mocha* installed.
 
 Now, you need to setup the development environment:
 
-```
+```shell
 npm install
 gulp
 ```

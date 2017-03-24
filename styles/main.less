@@ -1,3 +1,4 @@
+@import 'colors';
 @import 'tabs';
 @import 'buttons';
 @import 'navigation';
@@ -8,10 +9,39 @@
 #app,
 body,
 html {
-  height: 100%;
+  min-height: 100vh !important;
   margin: 0px;
-  min-height: 100% !important;
+  height: 100vh !important;
   padding: 0px;
+}
+
+a {
+  color: @base;
+
+  &:hover {
+    color: lighten(@base, 20%);
+  }
+}
+
+
+
+textarea {
+  border: 1px solid lighten(@base, 40%);
+}
+
+input[type='text'],
+textarea,
+button {
+  outline: none;
+  transition: all 0.30s ease-in-out;
+}
+
+
+
+input[type='text']:focus,
+textarea:focus {
+  box-shadow: 0 0 10px lighten(@base, 20%);
+  border: 1px solid @base;
 }
 
 html.popup-app {
@@ -20,27 +50,64 @@ html.popup-app {
 
 #main-grid {
   display: flex;
-  height: 100%;
+  height: 100vh;
+  min-height: 100vh;
 }
 
 #content {
+  background: #ffffff;
   display: flex;
   flex-direction: column;
   flex-grow: 1;
+  overflow: scroll;
 }
 
 #settings {
-  border-bottom: 1px solid #cccccc;
+  background-color: @base;
+  border-bottom: 1px solid @base;
+  color: #ffffff;
   display: flex;
-  flex-basis: 40px;
+  padding: 2px;
+  padding-left: 8px;
+}
+
+#settings b {
+  display: block;
+  font-size: 120%;
+  height: 100%;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  padding: 8px;
+  color: @base;
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+  background-color: lighten(@base, 60%);
+  display: block;
+  border: 1px solid darken(@base, 20%);
+  border-right: 0px;
 }
 
 #editor,
 #inner-content,
 #text-editor {
   height: 93%;
-  padding: 8px;
 }
+
+#inner-content {
+    margin: 8px;
+}
+
+#settings input {
+  border: 1px solid darken(@base, 20%);
+  border-bottom-right-radius: 4px;
+  border-top-right-radius: 4px;
+  padding: 8px;
+  font-size: 110%;
+  flex-grow: 1;
+  margin: 8px;
+  margin-left: 0px;
+}
+
 
 #variables-editor {
   display: flex;
@@ -87,12 +154,7 @@ html.popup-app {
   height: 100%;
 }
 
-#settings b {
-  display: block;
-  height: 100%;
-  margin: 12px 1em;
-  vertical-align: middle;
-}
+
 
 #settings .toggle-box {
   display: block;
@@ -101,11 +163,7 @@ html.popup-app {
   vertical-align: middle;
 }
 
-#settings input,
-#settings select {
-  flex-grow: 1;
-  margin: 8px;
-}
+
 
 #no-configurations,
 #no-templates {
@@ -121,7 +179,8 @@ html.popup-app {
   margin-bottom: 1em;
 
   & label {
-    color: #333333;
+    color: @success;
+    font-size: 110%;
     display: block;
     font-weight: bold;
     margin-right: 1em;
@@ -134,9 +193,11 @@ html.popup-app {
   & input {
     display: block;
     margin: 0.5em 0em;
+    font-size: 110%;
     max-width: 600px;
     min-width: 300px;
     width: 50%;
+    border: 1px solid lighten(@base, 40%);
   }
 
   & .help {

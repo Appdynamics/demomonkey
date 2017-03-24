@@ -1,22 +1,30 @@
+@import 'colors';
+
 #navigation {
-  border-right: 1px solid #cccccc;
+  background: lighten(@base, 60%);
+  border-right: 1px solid @base;
   flex-basis: 200px;
   margin: 0px;
   padding: 0px;
+  min-height: vmax;
+  height: vmax;
+}
+
+#navigation a {
+  color: @base;
 }
 
 #navigation-actions {
-  border-bottom: 1px solid #cccccc;
+  border-bottom: 1px solid @base;
   display: flex;
 }
 
 #navigation-actions li {
-  border-right: 1px solid #cccccc;
   list-style-type: none;
 }
 
 #navigation-items li {
-  border-bottom: 1px solid #cccccc;
+  border-bottom: 1px solid @base;
   padding: 8px;
 }
 
@@ -25,11 +33,13 @@
 }
 
 #navigation li h2 {
-  background-color: #cccccc;
+  background-color: @base;
+  border-bottom: 1px solid @base;
+  color: #ffffff;
   display: block;
   font-weight: bold;
   margin: 0px;
-  padding: 8px;
+  padding: 16px;
 }
 
 #navigation li ul {
@@ -37,17 +47,15 @@
   padding: 0px;
 }
 
-#navigation li ul li {
-  padding: 8px;
-}
-
 .navigation-action a,
 .navigation-item a {
   &:hover {
+    background: #ffffff;
     text-decoration: underline;
   }
 
   display: block;
+  padding: 8px;
   text-decoration: none;
 }
 

@@ -1,25 +1,50 @@
+@import 'colors';
+
 button {
   background-color: white;
   border: 1px solid #cccccc;
   margin: 8px 1px;
+
+
+  &:focus,
+  &:hover {
+    box-shadow: 0px 0px 10px lighten(@base, 20%);
+  }
 }
 
 .save-button {
-  background-color: #468966;
+  background-color: @success;
   color: #ffffff;
+
+  &:hover {
+  background-color: lighten(@success, 5%);
+  }
 }
 
 .copy-button {
-  background-color: #ffb03b;
+  background-color: lighten(@success, 5%);
   color: #ffffff;
+  &:hover {
+  background-color: lighten(@success, 10%);
+  }
 }
 
 .delete-button {
-  background-color: #8e2800;
+  background-color: @danger;
   color: #ffffff;
+
+  &:focus,
+  &:hover {
+    border-color: #cccccc;
+    background: lighten(@danger, 5%);
+    box-shadow: 0px 0px 5px lighten(@danger, 20%);
+  }
 }
 
 .download-button {
-  background-color: #b64926;
+  background-color: lighten(@success, 10%);
   color: #ffffff;
+  &:hover {
+  background-color: lighten(@success, 15%);
+  }
 }

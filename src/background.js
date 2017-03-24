@@ -17,7 +17,7 @@ import uuidV4 from 'uuid/v4'
       tabId: selectedTabId
     })
     scope.chrome.browserAction.setBadgeBackgroundColor({
-      color: count > 0 ? '#8E2800' : '#468966',
+      color: count > 0 ? '#952613' : '#5c832f',
       tabId: selectedTabId
     })
   }

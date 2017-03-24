@@ -1,3 +1,5 @@
+@import 'colors';
+
 .popup {
   background: rgba(0, 0, 0, 0.1);
   display: none;
@@ -72,9 +74,15 @@
 }
 
 .popup__btn--danger {
-  background-color: #c5545c;
-  border-color: #c5545c;
+  background-color: @danger;
   color: #ffffff;
+  border: 1px solid #cccccc;
+  &:focus,
+  &:hover {
+    border-color: #cccccc;
+    background: lighten(@danger, 5%);
+    box-shadow: 0px 0px 5px lighten(@danger, 20%);
+  }
 }
 
 .popup__box {
@@ -92,7 +100,7 @@
 }
 
 .popup__box__header {
-  background: #edf5f7;
+  background: lighten(@base, 60%);
   color: #454b4d;
   padding: 15px 20px;
 }
