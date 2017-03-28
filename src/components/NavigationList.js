@@ -25,7 +25,7 @@ class NavigationList extends React.Component {
 
   showSettingsScreen(event) {
     event.preventDefault()
-    this.props.actions.setCurrentView('')
+    this.props.actions.setCurrentView('settings')
   }
 
   render() {
@@ -42,7 +42,7 @@ class NavigationList extends React.Component {
                 <ConfigurationUpload actions={this.props.actions} type={this.props.type} id='upload' />
               </li>
               <li className='navigation-action'>
-                <a href='#' onClick={(event) => this.showSettingsScreen(event)} >Settings</a>
+                <a href='#settings' onClick={(event) => this.showSettingsScreen(event)} >Settings</a>
               </li>
             </ul>
             <ul id='navigation-items'>

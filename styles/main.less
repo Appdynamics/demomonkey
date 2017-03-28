@@ -26,7 +26,7 @@ a {
 
 
 textarea {
-  border: 1px solid lighten(@base, 40%);
+  border: 1px solid desaturate(lighten(@base, 40%), 30%);
 }
 
 input[type='text'],
@@ -81,7 +81,7 @@ html.popup-app {
   color: @base;
   border-top-left-radius: 4px;
   border-bottom-left-radius: 4px;
-  background-color: lighten(@base, 60%);
+  background-color: desaturate(lighten(@base, 79%), 40%);
   display: block;
   border: 1px solid darken(@base, 20%);
   border-right: 0px;
@@ -94,7 +94,7 @@ html.popup-app {
 }
 
 #inner-content {
-    margin: 8px;
+  margin: 8px;
 }
 
 #settings input {
@@ -171,9 +171,6 @@ html.popup-app {
   font-style: italic;
 }
 
-#welcome {
-  margin-left: 24px;
-}
 
 .variable-box {
   margin-bottom: 1em;
@@ -197,7 +194,7 @@ html.popup-app {
     max-width: 600px;
     min-width: 300px;
     width: 50%;
-    border: 1px solid lighten(@base, 40%);
+    border: 1px solid desaturate(lighten(@base, 40%), 30%);
   }
 
   & .help {
@@ -227,4 +224,15 @@ html.popup-app {
 #testarea {
   background: #efefef;
   border: 1px solid #cccccc;
+}
+
+#global-settings {
+  margin-left: 24px;
+  max-width: 800px;
+
+  h1,
+  h2 {
+    border-bottom: 1px solid #eeeeee;
+    padding-bottom: 8px;
+  }
 }

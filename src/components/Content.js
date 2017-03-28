@@ -7,6 +7,7 @@ import Popup from 'react-popup'
 import Variable from './Variable'
 import Repository from '../models/Repository'
 import Welcome from './Welcome'
+import Settings from './Settings'
 import Configuration from '../models/Configuration'
 
 require('codemirror/mode/properties/properties')
@@ -133,7 +134,7 @@ class Content extends React.Component {
   }
 
   _setCurrent(props) {
-    if (props.currentView === '') {
+    if (props.currentView === '' || props.currentView === 'settings') {
       this.setState({
         current: {
           name: '',
@@ -209,12 +210,18 @@ class Content extends React.Component {
 
     var visible = {}
     var hidden = { display: 'none' }
-
-    console.log('Current id is', current.id)
+    var hiddenSettings = { display: 'none' }
 
     if (typeof current.id === 'undefined') {
       visible = hidden
       hidden = {}
+    }
+
+    // TODO: Restructure, it is currently not obvious what is happening...
+    if (this.props.currentView === 'settings') {
+      hiddenSettings = {}
+      visible = { display: 'none' }
+      hidden = { display: 'none' }
     }
 
     var hiddenIfNew = current.id === 'new' ? { display: 'none' } : {}
@@ -268,6 +275,7 @@ class Content extends React.Component {
                 </div>
             </div>
             <div id="welcome" style={hidden}><Welcome/></div>
+            <div id="global-settings" style={hiddenSettings}><Settings/></div>
         </div>
   }
 }
