@@ -50,7 +50,7 @@ class ConfigurationUpload extends React.Component {
 
   render() {
     return <div>
-            <form id={this.props.id + 'Form'}>
+            <form id={this.props.id + 'Form'} className="upload-form">
                 <input multiple id={this.props.id} type="file"/>
             </form>
             <a href={'#configuration/upload'} onClick={(event) => this.showUploadDialog(event)}>

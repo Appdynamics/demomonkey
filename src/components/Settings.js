@@ -5,7 +5,8 @@ import 'codemirror/addon/edit/trailingspace'
 
 class Settings extends React.Component {
   static propTypes = {
-    settings: React.PropTypes.object.isRequired
+    settings: React.PropTypes.object.isRequired,
+    onSetBaseTemplate: React.PropTypes.func.isRequired
   }
 
   render() {
@@ -17,7 +18,7 @@ class Settings extends React.Component {
     }
 
     return (
-      <div className="inner-content">
+      <div className="inner-content settings">
         <h1>Settings</h1>
         <div className="template-box">
           <label htmlFor="template">New configuration template (will auto-save):</label>

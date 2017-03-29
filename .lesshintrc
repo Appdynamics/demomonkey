@@ -1,6 +1,3 @@
 {
-  "importantRule": false,
-  "idSelector": false,
-  "maxCharPerLine": false,
-  "qualifyingElement": false
+  "importantRule": false
 }

@@ -70,7 +70,6 @@ import uuidV4 from 'uuid/v4'
   scope.chrome.storage.local.get(persistentStates, function (state) {
     var store = createStore(reducers, state)
     wrapStore(store, { portName: 'DEMO_MONKEY_STORE' })
-    //  updateBadge(store, scope)
 
     console.log('Background Script started')
     store.subscribe(function () {

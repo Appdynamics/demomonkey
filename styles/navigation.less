@@ -38,9 +38,6 @@
       text-decoration: underline;
     }
 
-    &:before {
-      content: '\270E\00A0';
-    }
   }
 
   .actions {
@@ -57,9 +54,7 @@
     }
 
     a {
-      font-weight: bold;
-      padding-right: 4px;
-      padding-left: 4px;
+      font-weight: bold;      
     }
   }
 
@@ -67,9 +62,13 @@
     li {
       border-bottom: 1px solid @base;
     }
+
+    a:before {
+            content: '\270E\00A0';
+    }
   }
 
-  #uploadForm {
+  .upload-form {
     display: none;
   }
 }
