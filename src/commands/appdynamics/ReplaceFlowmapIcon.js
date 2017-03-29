@@ -40,7 +40,13 @@ class ReplaceFlowmapIcon extends Command {
     'tibco': 'svg/tibco.svg',
     'tibco async': 'svg/tibcoAsync.svg',
     'topic': 'svg/topic.svg',
-    'ws': 'svg/ws.svg'
+    'ws': 'svg/ws.svg',
+    'amazon aws': 'images/exitPointTypes/amazonAWS.svg',
+    'amazon s3': 'images/exitPointTypes/amazonS3.svg',
+    'amazon sns': 'images/exitPointTypes/amazonSNS.svg',
+    'cassandra cql': 'images/exitPointTypes/cassandra_CQL.svg',
+    'mongodb': 'images/exitPointTypes/mongoDB.svg',
+    'websphere mq': 'images/exitPointTypes/webSphere_mq.svg'
   }
   constructor(appName, newIcon) {
     super(false)
