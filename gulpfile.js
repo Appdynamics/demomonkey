@@ -39,7 +39,7 @@ gulp.task('watch', function () {
   gulp.watch(['styles/**/*.less'], ['styles'])
   gulp.watch(['src/**/*.js'], ['app', 'monkey', 'background'])
   gulp.watch([
-    'icons/**/*.png', 'manifest.json', 'pages/**/*.html', 'README.md'
+    'icons/**/*.png', 'manifest.json', 'pages/**/*.html', 'README.md', 'LICENSE'
   ], ['copy'])
 })
 
@@ -52,7 +52,7 @@ gulp.task('mrproper', ['clean'], function () {
 })
 
 gulp.task('copy', function () {
-  return gulp.src(['README.md', 'manifest.json', 'pages/options.html', 'pages/popup.html', 'pages/background.html'])
+  return gulp.src(['README.md', 'LICENSE', 'manifest.json', 'pages/options.html', 'pages/popup.html', 'pages/background.html'])
     .pipe(gulp.dest('build/'))
 })
 

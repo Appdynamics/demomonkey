@@ -1,79 +1,75 @@
 @import 'colors';
 
-#navigation {
+.navigation {
   background: desaturate(lighten(@base, 79%), 40%);
   border-right: 1px solid @base;
   flex-basis: 200px;
-  margin: 0px;
-  padding: 0px;
-  min-height: 100%;
   height: 100%;
-}
-
-#navigation a {
-  color: @base;
-}
-
-#navigation-actions {
-  border-bottom: 1px solid @base;
-  display: flex;
-}
-
-#navigation-actions li {
-  list-style-type: none;
-  border-right: 1px solid @base;
-
-  &:last-of-type {
-    border-right: 0px;
-  }
-}
-
-
-
-#navigation-items li {
-  border-bottom: 1px solid @base;
-  padding: 8px;
-}
-
-#navigation li {
-  padding: 0px;
-}
-
-#navigation li h2 {
-  background-color: @base;
-  border-bottom: 1px solid @base;
-  color: #ffffff;
-  display: block;
-  font-weight: bold;
   margin: 0px;
-  padding: 16px;
-}
-
-#navigation li ul {
-  margin: 0px;
+  min-height: 100%;
   padding: 0px;
-}
 
-.navigation-action a,
-.navigation-item a {
-  &:hover {
-    background: #ffffff;
-    text-decoration: underline;
+  li {
+    padding: 0px;
+
+    h2 {
+      background-color: @base;
+      border-bottom: 1px solid @base;
+      color: #ffffff;
+      display: block;
+      font-weight: bold;
+      margin: 0px;
+      padding: 16px;
+    }
+
+    ul {
+      margin: 0px;
+      padding: 0px;
+    }
   }
 
-  display: block;
-  padding: 8px;
-  text-decoration: none;
-}
+  a {
+    display: block;
+    padding: 8px;
+    text-decoration: none;
 
-.navigation-item a:before {
-  content: '\270E\00A0';
-}
+    &:hover {
+      background: #ffffff;
+      text-decoration: underline;
+    }
 
-.navigation-action a {
-  font-weight: bold;
-}
+    &:before {
+      content: '\270E\00A0';
+    }
+  }
 
-#uploadForm {
-  display: none;
+  .actions {
+    border-bottom: 1px solid @base;
+    display: flex;
+
+    li {
+      border-right: 1px solid @base;
+      list-style-type: none;
+
+      &:last-of-type {
+        border-right: 0px;
+      }
+    }
+
+    a {
+      font-weight: bold;
+      padding-right: 4px;
+      padding-left: 4px;
+    }
+  }
+
+  .items {
+    li {
+      border-bottom: 1px solid @base;
+    }
+  }
+
+  #uploadForm {
+    display: none;
+  }
 }

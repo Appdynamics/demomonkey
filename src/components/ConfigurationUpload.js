@@ -4,8 +4,7 @@ import Json2Ini from '../models/Json2Ini'
 class ConfigurationUpload extends React.Component {
   static propTypes = {
     id: React.PropTypes.string.isRequired,
-    type: React.PropTypes.string.isRequired,
-    actions: React.PropTypes.objectOf(React.PropTypes.func).isRequired
+    onUpload: React.PropTypes.func.isRequired
   }
 
   getIni(result, extension) {
@@ -37,8 +36,7 @@ class ConfigurationUpload extends React.Component {
               enabled: false,
               id: 'new'
             }
-            this.props.actions.addConfiguration(configuration)
-            this.props.actions.setCurrentView('')
+            this.props.onUpload(configuration)
           } else {
             window.alert('Unknown extension: ' + extension + '! Please specify a .mnky or .json file!')
           }
@@ -55,7 +53,7 @@ class ConfigurationUpload extends React.Component {
             <form id={this.props.id + 'Form'}>
                 <input multiple id={this.props.id} type="file"/>
             </form>
-            <a href={'#' + this.props.type + '/upload'} onClick={(event) => this.showUploadDialog(event)}>
+            <a href={'#configuration/upload'} onClick={(event) => this.showUploadDialog(event)}>
                 Upload
             </a>
         </div>

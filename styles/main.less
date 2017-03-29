@@ -4,14 +4,15 @@
 @import 'navigation';
 @import 'welcome';
 @import 'popup';
+@import 'editor';
 @import (inline) '../node_modules/codemirror/lib/codemirror.css';
 
-#app,
 body,
-html {
-  min-height: 100vh !important;
-  margin: 0px;
+html,
+.app-container {
   height: 100vh !important;
+  margin: 0px;
+  min-height: 100vh !important;
   padding: 0px;
 }
 
@@ -23,8 +24,6 @@ a {
   }
 }
 
-
-
 textarea {
   border: 1px solid desaturate(lighten(@base, 40%), 30%);
 }
@@ -35,8 +34,6 @@ button {
   outline: none;
   transition: all 0.30s ease-in-out;
 }
-
-
 
 input[type='text']:focus,
 textarea:focus {
@@ -59,90 +56,31 @@ html.popup-app {
   display: flex;
   flex-direction: column;
   flex-grow: 1;
-  overflow: scroll;
 }
 
-#settings {
-  background-color: @base;
-  border-bottom: 1px solid @base;
-  color: #ffffff;
-  display: flex;
-  padding: 2px;
-  padding-left: 8px;
+.content {
+  overflow: auto;
 }
 
-#settings b {
-  display: block;
-  font-size: 120%;
-  height: 100%;
-  margin-top: 8px;
-  margin-bottom: 8px;
-  padding: 8px;
-  color: @base;
-  border-top-left-radius: 4px;
-  border-bottom-left-radius: 4px;
-  background-color: desaturate(lighten(@base, 79%), 40%);
-  display: block;
-  border: 1px solid darken(@base, 20%);
-  border-right: 0px;
-}
-
-#editor,
-#inner-content,
-#text-editor {
+#global-settings,
+.inner-content {
   height: 93%;
 }
 
-#inner-content {
+.template-box {
+  min-height: 200px;
+}
+
+.inner-content {
   margin: 8px;
 }
 
-#settings input {
-  border: 1px solid darken(@base, 20%);
-  border-bottom-right-radius: 4px;
-  border-top-right-radius: 4px;
-  padding: 8px;
-  font-size: 110%;
-  flex-grow: 1;
-  margin: 8px;
-  margin-left: 0px;
-}
-
-
-#variables-editor {
-  display: flex;
-  flex-direction: column;
-  margin: 8px;
-}
-
-#variables-editor .row {
-  display: flex;
-}
-
-#variables-editor input {
-  flex-grow: 2;
-  height: 100%;
-  margin: 8px;
-}
-
-#variables-editor label {
+label {
   display: block;
   font-weight: bold;
-  height: 100%;
   line-height: 100%;
   margin: 12px 0px;
   vertical-align: middle;
-  width: 60px;
-}
-
-#variables-editor .help {
-  display: block;
-  flex-grow: 3;
-  font-size: 90%;
-  height: 100%;
-  line-height: 100%;
-  margin: 12px 0px;
-  width: 60px;
 }
 
 .CodeMirror {
@@ -154,54 +92,12 @@ html.popup-app {
   height: 100%;
 }
 
-
-
-#settings .toggle-box {
-  display: block;
-  height: 100%;
-  margin: 12px 1em;
-  vertical-align: middle;
-}
-
-
-
-#no-configurations,
-#no-templates {
+#no-configurations {
   color: #cccccc;
   font-style: italic;
 }
 
 
-.variable-box {
-  margin-bottom: 1em;
-
-  & label {
-    color: @success;
-    font-size: 110%;
-    display: block;
-    font-weight: bold;
-    margin-right: 1em;
-
-    &:before {
-      content: '$';
-    }
-  }
-
-  & input {
-    display: block;
-    margin: 0.5em 0em;
-    font-size: 110%;
-    max-width: 600px;
-    min-width: 300px;
-    width: 50%;
-    border: 1px solid desaturate(lighten(@base, 40%), 30%);
-  }
-
-  & .help {
-    color: #999999;
-    font-size: 95%;
-  }
-}
 
 .no-variables {
   background: lighten(#ffd24d, 25%);
@@ -221,7 +117,7 @@ html.popup-app {
   background-repeat: repeat-x;
 }
 
-#testarea {
+.read-only {
   background: #efefef;
   border: 1px solid #cccccc;
 }

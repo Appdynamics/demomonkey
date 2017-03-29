@@ -13,7 +13,9 @@ class Welcome extends React.Component {
     var html = converter.makeHtml(readme)
 
     return (
-      <div className="content" dangerouslySetInnerHTML={{__html: html}}></div>
+      <div className="content">
+        <div className="welcome" dangerouslySetInnerHTML={{__html: html}}></div>
+    </div>
     )
   }
 }

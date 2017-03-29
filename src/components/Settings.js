@@ -1,18 +1,27 @@
 import React from 'react'
+import CodeMirror from 'react-codemirror'
+import 'codemirror/mode/properties/properties'
+import 'codemirror/addon/edit/trailingspace'
 
 class Settings extends React.Component {
-  render() {
-    return (
-      <div className="content">
-        <h1>Settings</h1>
-        <div>
-          New configuration template:
-          <textarea>
+  static propTypes = {
+    settings: React.PropTypes.object.isRequired
+  }
 
-          </textarea>
-        </div>
-        <div>
-          <input type="checkbox"> Autosave on <b>Newline</b>
+  render() {
+    var options = {
+      lineNumbers: true,
+      mode: 'properties',
+      height: '100%',
+      showTrailingSpace: true
+    }
+
+    return (
+      <div className="inner-content">
+        <h1>Settings</h1>
+        <div className="template-box">
+          <label htmlFor="template">New configuration template (will auto-save):</label>
+          <CodeMirror value={this.props.settings.baseTemplate} name="template" onChange={this.props.onSetBaseTemplate} options={options}/>
         </div>
       </div>
     )

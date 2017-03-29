@@ -28,9 +28,9 @@ describe('Selenium Tests', function () {
     })
   })
 
-  after('Quit Webdriver', function () {
+  /*after('Quit Webdriver', function () {
     return driver.quit()
-  })
+  })*/
 
   describe('Un-tampered webpage', function () {
     this.timeout(5000)
@@ -54,10 +54,11 @@ describe('Selenium Tests', function () {
       driver.findElement(By.css("a[href='#configuration/create']")).click()
       driver.findElement(By.id('configuration-title')).sendKeys('Selenium Test')
       driver.findElement(By.css('li#current-configuration-editor a')).click()
+      driver.findElement(By.id('contentarea')).clear()
       driver.findElement(By.id('contentarea')).sendKeys('demomonkey = testape')
       driver.findElement(By.className('save-button')).click()
       return Promise.all([
-        expect(driver.findElement(By.id('navigation-items')).getText()).to.eventually.include(
+        expect(driver.findElement(By.css('.navigation .items')).getText()).to.eventually.include(
           'Selenium Test'),
         expect(driver.findElement(By.id('contentarea')).getText()).to.eventually.include(
           'demomonkey = testape')
@@ -69,7 +70,9 @@ describe('Selenium Tests', function () {
       return expect(driver.findElement(By.id('app')).getAttribute('data-app')).to.eventually.equal(
         'PopupPageApp')
     })
+
     it('has toggle buttons on the popup menu', function () {
+      this.retries(4)
       var button = By.xpath('//*[contains(text(), "Selenium Test")]/../preceding-sibling::div')
       driver.get(popupUrl)
       driver.wait(until.elementsLocated(By.className('toggle-configuration')))

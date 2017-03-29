@@ -34,8 +34,8 @@ describe('ReplaceFlowmapIcon', function () {
     })
 
     it('leaves the icon unchanged for an unknown replace pattern', function () {
-      new ReplaceFlowmapIcon('Inventory-Service', 'UNKNOWN').apply(node, 'data')
-      assert.equal(href.baseVal, 'images/icon_nodetype_python_100x100.png')
+      new ReplaceFlowmapIcon('Inventory-Service', 'images/icon_nodetype_ruby_100x100.png').apply(node, 'data')
+      assert.equal(href.baseVal, 'images/icon_nodetype_ruby_100x100.png')
     })
   })
 })

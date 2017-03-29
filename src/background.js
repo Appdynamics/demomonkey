@@ -61,7 +61,10 @@ import uuidV4 from 'uuid/v4'
       enabled: false,
       values: {},
       id: uuidV4()
-    }]
+    }],
+    settings: {
+      baseTemplate: require('../examples/baseTemplate.mnky')
+    }
   }
 
   scope.chrome.storage.local.get(persistentStates, function (state) {

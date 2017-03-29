@@ -69,12 +69,8 @@ gulp
 
 Running gulp will monitor the current directory for changes and it will continuously update the folder `build`. You can use this folder as unpacked extension in chrome.
 
-
-
-
-
 ## License
-This program is free software; see LICENSE for more details.
+This program is free software; see [LICENSE](./LICENSE) for more details.
 
 ## Attribution
 The monkey icon was made by Freepik from www.flaticon.com

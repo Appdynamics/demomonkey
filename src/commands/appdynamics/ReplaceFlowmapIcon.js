@@ -45,7 +45,7 @@ class ReplaceFlowmapIcon extends Command {
   constructor(appName, newIcon) {
     super(false)
     this.appName = appName
-    this.newIcon = ReplaceFlowmapIcon.icons[newIcon.toLowerCase()]
+    this.newIcon = ReplaceFlowmapIcon.icons[newIcon.toLowerCase()] ? ReplaceFlowmapIcon.icons[newIcon.toLowerCase()] : newIcon
   }
 
   apply(node, key) {
