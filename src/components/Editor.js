@@ -5,6 +5,7 @@ import CodeMirror from 'react-codemirror'
 import Variable from './Variable'
 import Configuration from '../models/Configuration'
 import Repository from '../models/Repository'
+import Mousetrap from 'mousetrap'
 
 class Editor extends React.Component {
   static propTypes = {
@@ -57,6 +58,26 @@ class Editor extends React.Component {
         configuration.apply(node)
       }
     }, 150)
+    Mousetrap.prototype.stopCallback = function (e, element, combo) {
+      if (combo === 'mod+s') {
+        return false
+      }
+      if ((' ' + element.className + ' ').indexOf(' mousetrap ') > -1) {
+        return false
+      }
+      return element.tagName === 'INPUT' || element.tagName === 'SELECT' || element.tagName === 'TEXTAREA' || (
+        element.contentEditable && element.contentEditable === 'true')
+    }
+
+    Mousetrap.bind('mod+s', (event) => {
+      event.preventDefault()
+      this.props.onSave(this.props.currentConfiguration, this.state.currentConfiguration)
+      return false
+    })
+  }
+
+  componentWillUnmount() {
+    Mousetrap.unbind('mod+s')
   }
 
   handleClick(event, action) {
