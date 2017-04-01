@@ -7,8 +7,8 @@ class SearchAndReplace extends Command {
     this.replace = replace
   }
 
-  apply(target) {
-    return target.replace(this.search, this.replace)
+  apply(target, key = 'value') {
+    target[key] = target[key].replace(this.search, this.replace)
   }
 
   toString() {

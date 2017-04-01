@@ -1,4 +1,3 @@
-// https://gist.github.com/danharper/3ca2273125f500429945
 var gulp = require('gulp')
 var clean = require('gulp-clean')
 var browserify = require('browserify')
@@ -10,7 +9,10 @@ var buffer = require('vinyl-buffer')
 var imageResize = require('gulp-image-resize')
 var rename = require('gulp-rename')
 var less = require('gulp-less')
+var zip = require('gulp-zip')
+var replace = require('gulp-replace')
 var path = require('path')
+var fs = require('fs')
 
 function compile(file) {
   return function () {
@@ -52,13 +54,15 @@ gulp.task('mrproper', ['clean'], function () {
 })
 
 gulp.task('copy', function () {
-  return gulp.src(['README.md', 'LICENSE', 'manifest.json', 'pages/options.html', 'pages/popup.html', 'pages/background.html'])
+  return gulp.src(['README.md', 'LICENSE', 'manifest.json', 'pages/options.html', 'pages/popup.html',
+      'pages/background.html'
+    ])
     .pipe(gulp.dest('build/'))
 })
 
 gulp.task('icons', function () {
   return [128, 48, 16].forEach(function (w) {
-    return gulp.src('icons/monkey.png').pipe(imageResize({
+    return gulp.src(['icons/monkey.png', 'icons/monkey-dev.png']).pipe(imageResize({
       width: w
     })).pipe(rename(function (path) {
       path.basename += '_' + w
@@ -82,6 +86,34 @@ var tasks = [
 ]
 
 gulp.task('build', tasks)
+
+gulp.task('pack', [], function () {
+  var json = JSON.parse(fs.readFileSync('./manifest.json'))
+  return gulp.src('build/**').pipe(zip('DemoMonkey-' + json.version + '.zip')).pipe(gulp.dest('.'))
+})
+
+gulp.task('dev:copy', function () {
+  return gulp.src('build/**').pipe(gulp.dest('build-dev/'))
+})
+
+gulp.task('dev:clean', ['dev:pack'], function () {
+  return gulp.src('build-dev').pipe(clean())
+})
+
+gulp.task('dev:manifest', ['dev:copy'], function () {
+  return gulp.src('build-dev/manifest.json')
+    .pipe(clean())
+    .pipe(replace(/"name": "([^"]*)"/g, '"name": "$1 (dev-channel)"'))
+    .pipe(replace(/"default_icon": "([^.]*)([^"]*)"/g, '"default_icon": "$1-dev$2"'))
+    .pipe(gulp.dest('build-dev/'))
+})
+
+gulp.task('dev:pack', ['dev:manifest'], function () {
+  var json = JSON.parse(fs.readFileSync('./manifest.json'))
+  return gulp.src('build-dev/**').pipe(zip('DemoMonkey-' + json.version + '-dev.zip')).pipe(gulp.dest('.'))
+})
+
+gulp.task('pack-dev', ['dev:clean'])
 
 gulp.task('default', [
   ...tasks,

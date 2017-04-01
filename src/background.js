@@ -6,6 +6,8 @@ import uuidV4 from 'uuid/v4'
 (function (scope) {
   'use strict'
 
+  console.log('Setup...')
+
   var selectedTabId = -1
   var counts = []
 

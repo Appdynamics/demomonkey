@@ -106,8 +106,19 @@ describe('Command', function () {
       expect(command.search).to.be.an.instanceof(RegExp)
       expect(command.replace).to.be.a('function')
 
-      assert.equal(command.apply('TestCase'), 'CaseTested')
-      assert.equal(command.apply('TESTCASE'), 'CASETESTED')
+      var n1 = {
+        value: 'TestCase'
+      }
+
+      var n2 = {
+        value: 'TESTCASE'
+      }
+
+      command.apply(n1, 'value')
+      command.apply(n2, 'value')
+
+      assert.equal(n1.value, 'CaseTested')
+      assert.equal(n2.value, 'CASETESTED')
     })
 
     it('should create a SearchAndReplace for a quoted ! at position 0', function () {

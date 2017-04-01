@@ -2,7 +2,7 @@ import Command from '../Command'
 
 class HideApplication extends Command {
   constructor(appName, _) {
-    super(false)
+    super()
     this.appName = appName
   }
 

@@ -28,11 +28,11 @@ class Configuration {
 
   apply(node, key = 'value') {
     this._getConfiguration().forEach(function (command) {
-      if (command.isAppliedToNodeValue()) {
+      /* if (command.isAppliedToNodeValue()) {
         node[key] = command.apply(node[key])
-      } else {
-        command.apply(node, key)
-      }
+      } else { */
+      command.apply(node, key)
+      // }
     })
   }
 

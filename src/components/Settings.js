@@ -1,6 +1,6 @@
 import React from 'react'
 import CodeMirror from 'react-codemirror'
-import 'codemirror/mode/properties/properties'
+import '../codemirror/mode-mnky'
 import 'codemirror/addon/edit/trailingspace'
 
 class Settings extends React.Component {
