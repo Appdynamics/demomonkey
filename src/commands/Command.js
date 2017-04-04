@@ -1,12 +1,4 @@
 class Command {
-  constructor(appliedToNodeValue = true) {
-    this.appliedToNodeValue = appliedToNodeValue
-  }
-
-  isAppliedToNodeValue() {
-    return this.appliedToNodeValue
-  }
-
   apply(target) {
     return target
   }

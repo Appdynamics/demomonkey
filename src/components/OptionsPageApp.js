@@ -95,8 +95,12 @@ class App extends React.Component {
     return this.props.configurations[id]
   }
 
+  toggleOptionalFeature(feature) {
+    console.log(feature)
+    this.props.actions.toggleOptionalFeature(feature)
+  }
+
   setBaseTemplate(baseTemplate) {
-    console.log(baseTemplate)
     this.props.actions.setBaseTemplate(baseTemplate)
   }
 
@@ -112,7 +116,7 @@ class App extends React.Component {
 
     switch (segments[0]) {
       case 'settings':
-        return <Settings settings={this.props.settings} onSetBaseTemplate={(baseTemplate) => this.setBaseTemplate(baseTemplate)}/>
+        return <Settings settings={this.props.settings} onToggleOptionalFeature={(feature) => this.toggleOptionalFeature(feature)} onSetBaseTemplate={(baseTemplate) => this.setBaseTemplate(baseTemplate)}/>
       case 'configuration':
         var configuration = this.getConfiguration(segments[1])
         return <Editor repository={this.getRepository()} currentConfiguration={configuration} options={options}
@@ -166,6 +170,9 @@ const OptionsPageApp = connect(
       },
       setBaseTemplate: (baseTemplate) => {
         dispatch({ 'type': 'SET_BASE_TEMPLATE', baseTemplate })
+      },
+      toggleOptionalFeature: (optionalFeature) => {
+        dispatch({ 'type': 'TOGGLE_OPTIONAL_FEATURE', optionalFeature })
       }
     }
   }))(App)

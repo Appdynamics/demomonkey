@@ -1,4 +1,5 @@
 import Command from '../Command'
+import UndoElement from '../UndoElement'
 
 class ReplaceFlowmapIcon extends Command {
   static icons = {
@@ -49,7 +50,7 @@ class ReplaceFlowmapIcon extends Command {
     'websphere mq': 'images/exitPointTypes/webSphere_mq.svg'
   }
   constructor(appName, newIcon) {
-    super(false)
+    super()
     this.appName = appName
     this.newIcon = ReplaceFlowmapIcon.icons[newIcon.toLowerCase()] ? ReplaceFlowmapIcon.icons[newIcon.toLowerCase()] : newIcon
   }
@@ -60,10 +61,15 @@ class ReplaceFlowmapIcon extends Command {
       if (parent !== false) {
         var image = parent.querySelector('image')
         if (image !== null) {
+          var original = image.href.baseVal
           image.href.baseVal = this.newIcon
+          if (original !== this.newIcon) {
+            return new UndoElement(image.href, 'baseVal', original, this.newIcon)
+          }
         }
       }
     }
+    return false
   }
 }
 

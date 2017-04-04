@@ -2,9 +2,11 @@ import Configuration from './Configuration'
 import Repository from './Repository'
 
 class Monkey {
-  constructor(rawConfigurations, scope) {
+  constructor(rawConfigurations, scope, withUndo = true) {
     this.scope = scope
+    this.undo = []
     this.repository = new Repository({})
+    this.withUndo = withUndo
     this.configurations = rawConfigurations.map((rawConfig) => {
       var config = new Configuration(rawConfig.content, this.repository, rawConfig.enabled, rawConfig.values)
       this.repository.addConfiguration(rawConfig.name, config)
@@ -12,12 +14,18 @@ class Monkey {
     })
   }
 
+  addUndo(arr) {
+    if (this.withUndo) {
+      this.undo = this.undo.concat(arr)
+    }
+  }
+
   apply(configuration) {
     var xpath = '//body//text()[ normalize-space(.) != ""]'
     var text
     var texts = this.scope.document.evaluate(xpath, this.scope.document, null, 6, null)
     for (var i = 0; (text = texts.snapshotItem(i)) !== null; i += 1) {
-      configuration.apply(text, 'data')
+      this.addUndo(configuration.apply(text, 'data'))
       // The following is a workaround to cover <tspan> in SVG.
       // This will only work if a <title> is set.
       if (text.parentNode.tagName === 'title' &&
@@ -50,7 +58,7 @@ class Monkey {
         })
       }
     }
-    configuration.apply(this.scope.document, 'title')
+    this.addUndo(configuration.apply(this.scope.document, 'title'))
   }
 
   run(configuration) {
@@ -66,6 +74,14 @@ class Monkey {
     this.intervals.forEach((interval) => {
       this.scope.clearInterval(interval)
     })
+
+    if (this.withUndo) {
+      this.undo.reverse().forEach(undo => {
+        undo.apply()
+      })
+
+      this.undo = []
+    }
   }
 
   runAll() {

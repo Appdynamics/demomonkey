@@ -65,18 +65,26 @@ import uuidV4 from 'uuid/v4'
       id: uuidV4()
     }],
     settings: {
-      baseTemplate: require('../examples/baseTemplate.mnky')
+      baseTemplate: require('../examples/baseTemplate.mnky'),
+      optionalFeatures: {undo: false, autoReplace: true}
     }
   }
 
   scope.chrome.storage.local.get(persistentStates, function (state) {
+    if (typeof persistentStates.settings.optionalFeatures === 'undefined') {
+      persistentStates.settings.optionalFeatures = {}
+    }
+
     var store = createStore(reducers, state)
     wrapStore(store, { portName: 'DEMO_MONKEY_STORE' })
 
     console.log('Background Script started')
     store.subscribe(function () {
       console.log('Synchronize changes')
-      scope.chrome.storage.local.set({ configurations: store.getState().configurations })
+      scope.chrome.storage.local.set({
+        configurations: store.getState().configurations,
+        settings: store.getState().settings
+      })
     })
     scope.chrome.contextMenus.create({
       'title': 'Create Replacement',

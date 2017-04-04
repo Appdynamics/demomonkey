@@ -1,4 +1,5 @@
 import Command from './Command'
+import UndoElement from './UndoElement'
 
 class SearchAndReplace extends Command {
   constructor(search, replace) {
@@ -8,7 +9,13 @@ class SearchAndReplace extends Command {
   }
 
   apply(target, key = 'value') {
-    target[key] = target[key].replace(this.search, this.replace)
+    var original = target[key]
+    var replacement = target[key].replace(this.search, this.replace)
+    target[key] = replacement
+    if (replacement !== original) {
+      return new UndoElement(target, key, original, replacement)
+    }
+    return false
   }
 
   toString() {

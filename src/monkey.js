@@ -1,8 +1,15 @@
 import Monkey from './models/Monkey'
+import Settings from './models/Settings'
+import {Store} from 'react-chrome-redux';
 
 (function (scope) {
   'use strict'
-  scope.chrome.storage.local.get('configurations', function (storage) {
+
+  const store = new Store({
+    portName: 'DEMO_MONKEY_STORE' // communication port name
+  })
+
+  store.ready().then(() => {
     function isTopFrame() {
       try {
         return window.self === window.top
@@ -21,14 +28,19 @@ import Monkey from './models/Monkey'
     }
 
     console.log('DemoMonkey enabled. Tampering the content.')
-    var monkey = new Monkey(storage.configurations, scope)
+    var settings = new Settings(store.getState().settings)
+    console.log('Undo: ', settings.isFeatureEnabled('undo'))
+    var monkey = new Monkey(store.getState().configurations, scope, settings.isFeatureEnabled('undo'))
     updateBadge(monkey.start())
 
-    scope.chrome.storage.onChanged.addListener(function (changes, namespace) {
-      if (namespace === 'local') {
+    store.subscribe(function () {
+      var settings = new Settings(store.getState().settings)
+      console.log('Undo: ', settings.isFeatureEnabled('undo'))
+      console.log('AutoReplace: ', settings.isFeatureEnabled('autoReplace'))
+      if (settings.isFeatureEnabled('autoReplace')) {
         console.log('Restart DemoMonkey')
         monkey.stop()
-        monkey = new Monkey(changes.configurations.newValue, scope)
+        monkey = new Monkey(store.getState().configurations, scope, settings.isFeatureEnabled('undo'))
         updateBadge(monkey.start())
       }
     })

@@ -27,13 +27,14 @@ class Configuration {
   }
 
   apply(node, key = 'value') {
-    this._getConfiguration().forEach(function (command) {
-      /* if (command.isAppliedToNodeValue()) {
-        node[key] = command.apply(node[key])
-      } else { */
-      command.apply(node, key)
-      // }
-    })
+    var undos = this._getConfiguration().reduce(function (carry, command) {
+      var undo = command.apply(node, key)
+      if (undo !== false) {
+        carry.push(undo)
+      }
+      return carry
+    }, [])
+    return undos
   }
 
   getOptions() {
