@@ -13,6 +13,35 @@ describe('Selenium Tests', function () {
   const url = 'https://github.com/svrnm/demomonkey'
   const dashboardUrl = 'chrome-extension://hejmbilhiaajmlpneekhcmfijejiikdg/options.html'
   const popupUrl = 'chrome-extension://hejmbilhiaajmlpneekhcmfijejiikdg/popup.html'
+  const testUrl = 'chrome-extension://hejmbilhiaajmlpneekhcmfijejiikdg/test.html'
+
+  function createConfig(driver, title = 'Selenium Test', content = 'demomonkey = testape') {
+    driver.get(dashboardUrl)
+    // turn of CodeMirror since it is not compatible with selenium right now
+    driver.executeScript('window.isTesting = true')
+    driver.findElement(By.css("a[href='#configuration/create']")).click()
+    driver.findElement(By.id('configuration-title')).sendKeys(title)
+    driver.findElement(By.css('li#current-configuration-editor a')).click()
+    driver.findElement(By.id('contentarea')).clear()
+    driver.findElement(By.id('contentarea')).sendKeys(content)
+    driver.findElement(By.className('save-button')).click()
+    return Promise.all([
+      expect(driver.findElement(By.css('.navigation .items')).getText()).to.eventually.include(title),
+      expect(driver.findElement(By.id('contentarea')).getText()).to.eventually.include(content)
+    ])
+  }
+
+  function enableConfig(driver, title = 'Selenium Test') {
+    var button = By.xpath('//*[contains(text(), "' + title + '")]/../preceding-sibling::div')
+    driver.get(popupUrl)
+    driver.wait(until.elementsLocated(By.className('toggle-group')))
+    driver.findElement(button).getText().then(function (text) {
+      if (text.includes('OFF')) {
+        driver.findElement(button).click()
+      }
+    })
+    return expect(driver.findElement(button).getText()).to.eventually.include('ON')
+  }
 
   // Note, that currently the tests depend on each other!
   before('Start Webdriver', function (done) {
@@ -28,9 +57,9 @@ describe('Selenium Tests', function () {
     })
   })
 
-  /*after('Quit Webdriver', function () {
+  /* after('Quit Webdriver', function () {
     return driver.quit()
-  })*/
+  }) */
 
   describe('Un-tampered webpage', function () {
     this.timeout(5000)
@@ -48,21 +77,7 @@ describe('Selenium Tests', function () {
     })
 
     it('allows to create new configurations', function () {
-      driver.get(dashboardUrl)
-      // turn of CodeMirror since it is not compatible with selenium right now
-      driver.executeScript('window.isTesting = true')
-      driver.findElement(By.css("a[href='#configuration/create']")).click()
-      driver.findElement(By.id('configuration-title')).sendKeys('Selenium Test')
-      driver.findElement(By.css('li#current-configuration-editor a')).click()
-      driver.findElement(By.id('contentarea')).clear()
-      driver.findElement(By.id('contentarea')).sendKeys('demomonkey = testape')
-      driver.findElement(By.className('save-button')).click()
-      return Promise.all([
-        expect(driver.findElement(By.css('.navigation .items')).getText()).to.eventually.include(
-          'Selenium Test'),
-        expect(driver.findElement(By.id('contentarea')).getText()).to.eventually.include(
-          'demomonkey = testape')
-      ])
+      return createConfig(driver, 'Selenium Test', 'demomonkey = testape')
     })
 
     it('has a popup menu', function () {
@@ -73,14 +88,7 @@ describe('Selenium Tests', function () {
 
     it('has toggle buttons on the popup menu', function () {
       this.retries(4)
-      var button = By.xpath('//*[contains(text(), "Selenium Test")]/../preceding-sibling::div')
-      driver.get(popupUrl)
-      driver.wait(until.elementsLocated(By.className('toggle-configuration')))
-      driver.findElement(button).getText().then(function (text) {
-        expect(text).to.include('OFF')
-        driver.findElement(button).click()
-      })
-      return expect(driver.findElement(button).getText()).to.eventually.include('ON')
+      return enableConfig(driver, 'Selenium Test')
     })
   })
 
@@ -91,6 +99,32 @@ describe('Selenium Tests', function () {
       driver.get(url)
       driver.sleep(1000)
       return expect(driver.getTitle()).to.eventually.include('testape')
+    })
+  })
+
+  describe('test page', function () {
+    it('will create a test configuration', function () {
+      return Promise.all([
+        createConfig(driver, 'GermanCities', 'San Francisco = Berlin\nSeattle = Köln'),
+        createConfig(driver, 'Test Config', '+GermanCities')
+      ])
+    })
+
+    it('will enable the test configuration', function () {
+      this.retries(4)
+      return enableConfig(driver, 'Test Config')
+    })
+
+    it('will modify the test page', function () {
+      this.retries(4)
+      this.timeout(5000)
+      driver.get(testUrl)
+      driver.wait(until.elementsLocated(By.id('later')))
+      driver.sleep(500)
+      return Promise.all([
+        expect(driver.findElement(By.id('static')).getText()).to.eventually.include('Berlin'),
+        expect(driver.findElement(By.id('later')).getText()).to.eventually.include('Köln')
+      ])
     })
   })
 })
