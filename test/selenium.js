@@ -57,9 +57,9 @@ describe('Selenium Tests', function () {
     })
   })
 
-  /* after('Quit Webdriver', function () {
+  after('Quit Webdriver', function () {
     return driver.quit()
-  }) */
+  })
 
   describe('Un-tampered webpage', function () {
     this.timeout(5000)

@@ -105,6 +105,8 @@ describe('Monkey', function () {
   describe('#stop', function () {
     it('should clear all running intervals', function () {
       intervalId = 0
+      scope.document.title = 'demomonkeydemo'
+      node.data = 'monkey-demo'
       var monkey = new Monkey([{
         content: '',
         name: 'a'
@@ -116,6 +118,34 @@ describe('Monkey', function () {
       assert.equal(2, intervalId)
       monkey.stop()
       assert.equal(0, intervalId)
+    })
+    it('should undo all replacements', function () {
+      var monkey = new Monkey([{
+        content: 'monkey = ape',
+        name: 'a'
+      }], scope)
+
+      monkey.start()
+      assert.equal(node.data, 'ape-demo')
+      assert.equal(scope.document.title, 'demoapedemo')
+
+      monkey.stop()
+      assert.equal(node.data, 'monkey-demo')
+      assert.equal(scope.document.title, 'demomonkeydemo')
+    })
+    it('should not undo all replacements with undo disabled', function () {
+      var monkey = new Monkey([{
+        content: 'monkey = ape',
+        name: 'a'
+      }], scope, false)
+
+      monkey.start()
+      assert.equal(node.data, 'ape-demo')
+      assert.equal(scope.document.title, 'demoapedemo')
+
+      monkey.stop()
+      assert.equal(node.data, 'ape-demo')
+      assert.equal(scope.document.title, 'demoapedemo')
     })
   })
 })
