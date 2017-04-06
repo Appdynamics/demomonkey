@@ -14,6 +14,10 @@ class Monkey {
     })
   }
 
+  getUndoLength() {
+    return this.undo.length
+  }
+
   addUndo(arr) {
     if (this.withUndo) {
       this.undo = this.undo.concat(arr)

@@ -45,18 +45,31 @@
           state.position = 'comment'
           stream.skipToEnd()
           return 'comment'
-        } else if (ch === '!') {
-          state.position = 'keyword'
+        } else if (ch === '@' && sol) {
+          state.position = 'string-2'
           stream.skipToEnd()
+          return 'string-2'
+        } else if (ch === '!' && sol) {
+          state.position = 'keyword'
+          state.inCommand = true
           return 'keyword'
-        } else if (ch === '+') {
+        } else if (ch === '(' && state.inCommand) {
+          state.position = 'def'
+          return 'keyword'
+        } else if (ch === ')' && state.inCommand) {
+          state.position = 'error'
+          return 'keyword'
+        } else if (ch === '+' && sol) {
           state.position = 'string'
           stream.skipToEnd()
           return 'string'
         } else if (ch === '$') {
           state.position = 'variable'
-          stream.skipToEnd()
-          return 'string'
+          state.inVariable = sol ? 'error' : 'quote'
+          return 'variable'
+        } else if (ch === ' ' && state.inVariable !== false) {
+          state.position = state.inVariable
+          return 'variable'
         } else if (sol && ch === '[') {
           state.afterSection = true
           stream.skipTo(']')
@@ -64,6 +77,8 @@
           return 'header'
         } else if (ch === '=') {
           state.position = 'quote'
+          state.inCommand = false
+          state.inVariable = false
           return null
         } else if (ch === '\\' && state.position === 'quote') {
           if (stream.eol()) { // end of line?
@@ -78,6 +93,8 @@
       startState: function () {
         return {
           position: 'def', // Current position, "def", "quote" or "comment"
+          inCommand: false, // Are we currently in a command definition
+          inVariable: false,
           nextMultiline: false, // Is the next line multiline value
           inMultiline: false, // Is the current line a multiline value
           afterSection: false // Did we just open a section

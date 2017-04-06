@@ -30,8 +30,8 @@ import {Store} from 'react-chrome-redux';
     console.log('DemoMonkey enabled. Tampering the content.')
     var settings = new Settings(store.getState().settings)
     console.log('Undo: ', settings.isFeatureEnabled('undo'))
-    var monkey = new Monkey(store.getState().configurations, scope, settings.isFeatureEnabled('undo'))
-    updateBadge(monkey.start())
+    scope.$DEMO_MONKEY = new Monkey(store.getState().configurations, scope, settings.isFeatureEnabled('undo'))
+    updateBadge(scope.$DEMO_MONKEY.start())
 
     store.subscribe(function () {
       var settings = new Settings(store.getState().settings)
@@ -39,9 +39,9 @@ import {Store} from 'react-chrome-redux';
       console.log('AutoReplace: ', settings.isFeatureEnabled('autoReplace'))
       if (settings.isFeatureEnabled('autoReplace')) {
         console.log('Restart DemoMonkey')
-        monkey.stop()
-        monkey = new Monkey(store.getState().configurations, scope, settings.isFeatureEnabled('undo'))
-        updateBadge(monkey.start())
+        scope.$DEMO_MONKEY.stop()
+        scope.$DEMO_MONKEY = new Monkey(store.getState().configurations, scope, settings.isFeatureEnabled('undo'))
+        updateBadge(scope.$DEMO_MONKEY.start())
       }
     })
   })

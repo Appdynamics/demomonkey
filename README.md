@@ -1,8 +1,6 @@
 # DemoMonkey
 Tamper your application's UI to demo anything
 
-***Note:*** *This is still a alpha version. Many core features might not work properly. Please help to improve DemoMonkey by giving back your feedback.*
-
 ## Introduction
 Giving custom demos in the verticals of your prospects, shows them that you understand their specific requirements and that you did our homework. Although building meaningful demos is a time-consuming task, so not every demo is setup in the environment of our customers. DemoMonkey gives you a simple way of building custom demos for HTML5 based application. By providing text replacements you can go within minutes from an e-commerce demo application to a customer care center or flight booking service.
 
@@ -49,6 +47,10 @@ api.payment.com = payment.$customer
 To add the latest version as extension to chrome, use the following link:
 
 https://chrome.google.com/webstore/detail/demomonkey/jgbhioialphpgjgofopnplfibkeehgjd
+
+To use a pre-release version, you can also switch to the developer channel:
+
+
 
 ## Contribute
 If you want to contribute to the development of DemoMonkey, you can help by reporting issues, fixing bug or developing new features. To get a running development environment, you need to get the latest version via git:

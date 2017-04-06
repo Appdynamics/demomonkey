@@ -104,7 +104,7 @@ gulp.task('dev:manifest', ['dev:copy'], function () {
   return gulp.src('build-dev/manifest.json')
     .pipe(clean())
     .pipe(replace(/"name": "([^"]*)"/g, '"name": "$1 (dev-channel)"'))
-    .pipe(replace(/"default_icon": "([^.]*)([^"]*)"/g, '"default_icon": "$1-dev$2"'))
+    .pipe(replace(/"(default_icon|16|48|128)": "([^_]*)([^"]*)"/g, '"$1": "$2-dev$3"'))
     .pipe(gulp.dest('build-dev/'))
 })
 
