@@ -45,7 +45,11 @@ const store = new Store({
   portName: 'DEMO_MONKEY_STORE' // communication port name
 })
 
+console.log('Waiting for store...')
+
 store.ready().then(() => {
+  console.log('Store ready...')
+  document.getElementById('backup-message').remove()
   const root = document.getElementById('app')
   // Synchronize current view on subscription update
   store.subscribe(updateCurrentPage)
