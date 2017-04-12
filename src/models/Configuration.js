@@ -8,6 +8,7 @@ class Configuration {
     this.repository = repository
     this.content = iniFile ? (new Ini(iniFile)).parse() : []
     this.patterns = false
+    this.options = false
     this.enabled = enabled
     this.values = values
   }
@@ -26,7 +27,16 @@ class Configuration {
     return new MatchRule(options.include, options.exclude).test(url)
   }
 
+  isTagBlacklisted(node) {
+    var blacklist = this.getOptions().blacklist
+    return Array.isArray(blacklist) && node.parentNode !== null && blacklist.map(tag => tag.toLowerCase()).includes(node.parentNode.nodeName.toLowerCase())
+  }
+
   apply(node, key = 'value') {
+    if (this.isTagBlacklisted(node)) {
+      return []
+    }
+
     var undos = this._getConfiguration().reduce(function (carry, command) {
       var undo = command.apply(node, key)
       if (undo !== false) {
@@ -38,28 +48,30 @@ class Configuration {
   }
 
   getOptions() {
-    var filterOption = function (content) {
-      return function (result, key) {
-        // By default ini.parse sets "true" as the value
-        if (key.charAt(0) === '@' && content[key] !== true) {
-          var value = content[key]
+    if (this.options === false) {
+      var filterOption = function (content) {
+        return function (result, key) {
+          // By default ini.parse sets "true" as the value
+          if (key.charAt(0) === '@' && content[key] !== true) {
+            var value = content[key]
 
-          if (typeof value === 'string') {
-            value = [value]
+            if (typeof value === 'string') {
+              value = [value]
+            }
+
+            result[key.substring(1)] = value
+            return result
           }
 
-          result[key.substring(1)] = value
+          if (typeof content[key] === 'object' && content[key] !== null) {
+            return Object.keys(content[key]).reduce(filterOption(content[key]), result)
+          }
           return result
         }
-
-        if (typeof content[key] === 'object' && content[key] !== null) {
-          return Object.keys(content[key]).reduce(filterOption(content[key]), result)
-        }
-        return result
       }
+      this.options = Object.keys(this.content).reduce(filterOption(this.content), {})
     }
-
-    return Object.keys(this.content).reduce(filterOption(this.content), {})
+    return this.options
   }
 
   getImports() {

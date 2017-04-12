@@ -19,6 +19,7 @@ var emptyConfiguration = new Configuration('')
 var simpleConfiguration = new Configuration('a = b')
 var configurationWithOption = new Configuration('@a = b')
 var configurationWithInclude = new Configuration('@include = /www/')
+var configurationWithBlacklist = new Configuration('@blacklist = div')
 var configurationWithVariable = new Configuration('$a = default\rx = $a', null, true, { a: 'v' })
 var configurationWithUnsetVariable = new Configuration('$a = default\rv = $a', null, true, {})
 var configurationWithImport = new Configuration('+Cities')
@@ -162,6 +163,25 @@ describe('Configuration', function () {
       assert.deepEqual(complexConfiguration.getOptions(), {
         include: ['a', 'b']
       })
+    })
+  })
+
+  describe('#isTagBlacklisted', function () {
+    it('should return true if tagname is blacklisted', function () {
+      var node = {
+        parentNode: {
+          nodeName: 'DIV'
+        }
+      }
+      assert.equal(configurationWithBlacklist.isTagBlacklisted(node), true)
+    })
+    it('should return false if tagname is not blacklisted', function () {
+      var node = {
+        parentNode: {
+          nodeName: 'INPUT'
+        }
+      }
+      assert.equal(configurationWithBlacklist.isTagBlacklisted(node), false)
     })
   })
 })
