@@ -17,7 +17,8 @@ class Editor extends React.Component {
     onSave: React.PropTypes.func.isRequired,
     onCopy: React.PropTypes.func.isRequired,
     onDownload: React.PropTypes.func.isRequired,
-    onDelete: React.PropTypes.func.isRequired
+    onDelete: React.PropTypes.func.isRequired,
+    autoSave: React.PropTypes.bool.isRequired
   }
 
   constructor(props) {
@@ -35,12 +36,22 @@ class Editor extends React.Component {
     }
   }
 
+  handleAutoSave(key, value) {
+    if (this.props.autoSave === true && key === 'content' && value.charAt(value.length - 1) === '\n') {
+      console.log('AUTOSAVE')
+      this.props.onSave(this.props.currentConfiguration, this.state.currentConfiguration)
+    }
+  }
+
   handleUpdate(key, value, event = false) {
     if (event) {
       event.preventDefault()
     }
     var config = this.state.currentConfiguration
     config[key] = value
+
+    this.handleAutoSave(key, value)
+
     this.setState({ currentConfiguration: config })
   }
 

@@ -66,7 +66,7 @@ import uuidV4 from 'uuid/v4'
     }],
     settings: {
       baseTemplate: require('../examples/baseTemplate.mnky'),
-      optionalFeatures: {undo: false, autoReplace: true}
+      optionalFeatures: {undo: false, autoReplace: true, autoSave: false}
     }
   }
 

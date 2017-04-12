@@ -34,6 +34,9 @@ class Settings extends React.Component {
         <div className="toggle-group">
           <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('autoReplace')} value={this.props.settings.optionalFeatures.autoReplace}/><label><b>Automatically apply replacements</b> when configuration is saved. <i>(This will also disable undo)</i></label>
         </div>
+        <div className="toggle-group">
+          <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('autoSave')} value={this.props.settings.optionalFeatures.autoSave}/><label><b>Save configuration on line break</b></label>
+        </div>
       </div>
     )
   }
