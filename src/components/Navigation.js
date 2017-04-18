@@ -1,4 +1,5 @@
 import React from 'react'
+import TimeAgo from 'react-timeago'
 import ConfigurationUpload from './ConfigurationUpload'
 
 class Navigation extends React.Component {
@@ -31,7 +32,14 @@ class Navigation extends React.Component {
               </li>
             </ul>
             <ul className='items'>
-              {Object.keys(this.props.items).map((key, index) => <li key={index}><a href={'#configuration/' + key} onClick={(event) => this.handleClick(event, 'configuration/' + key)} >{this.props.items[key].name}</a></li>)}
+              {Object.keys(this.props.items).map((key, index) => {
+                return <li key={index}>
+                <a href={'#configuration/' + key} onClick={(event) => this.handleClick(event, 'configuration/' + key)} >
+                  <span className="configuration-name">{this.props.items[key].name}</span>
+                  <TimeAgo className="configuration-updated-at" date={this.props.items[key].updated_at} minPeriod="60" />
+                </a>
+              </li>
+              })}
             </ul>
           </div>
     )

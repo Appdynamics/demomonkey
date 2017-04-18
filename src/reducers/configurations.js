@@ -11,11 +11,11 @@ const configuration = (state, action) => {
         enabled: !state.enabled
       }
     case 'ADD_CONFIGURATION':
-      return Object.assign({}, action.configuration, { id: uuidV4() })
+      return Object.assign({}, action.configuration, { id: uuidV4(), created_at: Date.now(), updated_at: Date.now() })
     case 'SAVE_CONFIGURATION':
       // the last array is a hot fix for issue #16
       // saving the configuration should currently not include overwriting the enabled state
-      return Object.assign({}, state, action.configuration, { enabled: state.enabled })
+      return Object.assign({}, state, action.configuration, { enabled: state.enabled, updated_at: Date.now() })
     default:
       return state
   }
