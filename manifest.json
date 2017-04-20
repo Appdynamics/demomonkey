@@ -30,6 +30,6 @@
     "default_popup": "popup.html"
   },
   "permissions": [
-    "storage", "tabs", "activeTab", "http://*/*", "https://*/*", "downloads", "contextMenus"
+    "storage", "unlimitedStorage", "tabs", "activeTab", "http://*/*", "https://*/*", "downloads", "contextMenus"
   ]
 }
