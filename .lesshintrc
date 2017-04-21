@@ -1,3 +1,4 @@
 {
-  "importantRule": false
+  "importantRule": false,
+  "maxCharPerLine": false
 }

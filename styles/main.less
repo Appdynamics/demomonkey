@@ -14,6 +14,7 @@ html,
   margin: 0px;
   min-height: 100vh !important;
   padding: 0px;
+  overflow-y: hidden;
 }
 
 a {
@@ -83,9 +84,7 @@ label {
   height: 100%;
 }
 
-.ReactCodeMirror {
-  height: 100%;
-}
+
 
 .no-variables {
   background: lighten(#ffd24d, 25%);
@@ -100,10 +99,8 @@ label {
 }
 
 .cm-trailingspace {
-  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAACCAYAAAB/qH1jAAAABm\
-                                               JLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAA\
-                                               B3RJTUUH3QUXCToH00Y1UgAAACFJREFUCNdjPMDBUc/AwNDAAA\
-                                               FMTAwMDA0OP34wQgX/AQBYgwYEx4f9lQAAAABJRU5ErkJggg==');
+  /* @ignore maxCharPerLine */
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAACCAYAAAB/qH1jAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3QUXCToH00Y1UgAAACFJREFUCNdjPMDBUc/AwNDAAAFMTAwMDA0OP34wQgX/AQBYgwYEx4f9lQAAAABJRU5ErkJggg==');
   background-position: bottom left;
   background-repeat: repeat-x;
 }
@@ -140,5 +137,5 @@ label {
 }
 
 .popup-app .alert-box {
-  height: 56px
+  height: 56px;
 }
