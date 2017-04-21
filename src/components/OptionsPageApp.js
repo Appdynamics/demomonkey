@@ -6,15 +6,16 @@ import Welcome from './Welcome'
 import Settings from './Settings'
 import Editor from './Editor'
 import Configuration from '../models/Configuration'
+import PropTypes from 'prop-types'
 import Repository from '../models/Repository'
 
 /* The OptionsPageApp will be defined below */
 class App extends React.Component {
   static propTypes = {
-    actions: React.PropTypes.objectOf(React.PropTypes.func).isRequired,
-    configurations: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
-    currentView: React.PropTypes.string.isRequired,
-    settings: React.PropTypes.object.isRequired
+    actions: PropTypes.objectOf(PropTypes.func).isRequired,
+    configurations: PropTypes.arrayOf(PropTypes.object).isRequired,
+    currentView: PropTypes.string.isRequired,
+    settings: PropTypes.object.isRequired
   }
 
   navigateTo(target) {

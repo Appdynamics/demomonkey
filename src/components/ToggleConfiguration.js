@@ -1,12 +1,13 @@
 /* global chrome */
 import React from 'react'
 import ToggleButton from 'react-toggle-button'
+import PropTypes from 'prop-types'
 
 class ToggleConfiguration extends React.Component {
   static propTypes = {
-    actions: React.PropTypes.objectOf(React.PropTypes.func).isRequired,
-    configuration: React.PropTypes.object,
-    index: React.PropTypes.number
+    actions: PropTypes.objectOf(PropTypes.func).isRequired,
+    configuration: PropTypes.object,
+    index: PropTypes.number
   }
 
   toggle(id) {

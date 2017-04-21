@@ -1,8 +1,9 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 
 class Pane extends React.Component {
   static propTypes = {
-    children: React.PropTypes.any
+    children: PropTypes.any
   }
 
   render() {

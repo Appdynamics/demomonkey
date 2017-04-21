@@ -1,12 +1,13 @@
 import React from 'react'
 import TimeAgo from 'react-timeago'
+import PropTypes from 'prop-types'
 import ConfigurationUpload from './ConfigurationUpload'
 
 class Navigation extends React.Component {
   static propTypes = {
-    items: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
-    onNavigate: React.PropTypes.func.isRequired,
-    onUpload: React.PropTypes.func.isRequired
+    items: PropTypes.arrayOf(PropTypes.object).isRequired,
+    onNavigate: PropTypes.func.isRequired,
+    onUpload: PropTypes.func.isRequired
   }
 
   handleClick(event, target) {

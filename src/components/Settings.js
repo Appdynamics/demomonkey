@@ -3,12 +3,13 @@ import CodeMirror from 'react-codemirror'
 import ToggleButton from 'react-toggle-button'
 import '../codemirror/mode-mnky'
 import 'codemirror/addon/edit/trailingspace'
+import PropTypes from 'prop-types'
 
 class Settings extends React.Component {
   static propTypes = {
-    settings: React.PropTypes.object.isRequired,
-    onSetBaseTemplate: React.PropTypes.func.isRequired,
-    onToggleOptionalFeature: React.PropTypes.func.isRequired
+    settings: PropTypes.object.isRequired,
+    onSetBaseTemplate: PropTypes.func.isRequired,
+    onToggleOptionalFeature: PropTypes.func.isRequired
   }
 
   render() {

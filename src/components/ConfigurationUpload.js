@@ -1,10 +1,11 @@
 import React from 'react'
 import Json2Ini from '../models/Json2Ini'
+import PropTypes from 'prop-types'
 
 class ConfigurationUpload extends React.Component {
   static propTypes = {
-    id: React.PropTypes.string.isRequired,
-    onUpload: React.PropTypes.func.isRequired
+    id: PropTypes.string.isRequired,
+    onUpload: PropTypes.func.isRequired
   }
 
   getIni(result, extension) {

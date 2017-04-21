@@ -1,8 +1,9 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 
 class Tabs extends React.Component {
   static propTypes = {
-    children: React.PropTypes.arrayOf(React.PropTypes.object).isRequired
+    children: PropTypes.arrayOf(PropTypes.object).isRequired
   }
 
   constructor(props) {

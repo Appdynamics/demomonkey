@@ -1,10 +1,11 @@
 import React from 'react'
 import VariableModle from '../models/Variable'
+import PropTypes from 'prop-types'
 
 class Variable extends React.Component {
   static propTypes = {
-    onValueUpdate: React.PropTypes.func.isRequired,
-    variable: React.PropTypes.instanceOf(VariableModle)
+    onValueUpdate: PropTypes.func.isRequired,
+    variable: PropTypes.instanceOf(VariableModle)
   }
 
   updateVariable(event) {

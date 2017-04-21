@@ -5,14 +5,15 @@ import Pane from './Pane'
 import Manifest from '../models/Manifest'
 import { connect } from 'react-redux'
 import ToggleConfiguration from './ToggleConfiguration'
+import PropTypes from 'prop-types'
 
 const manifest = new Manifest()
 
 /* The PopupPageApp will be defined below */
 class App extends React.Component {
   static propTypes = {
-    actions: React.PropTypes.objectOf(React.PropTypes.func).isRequired,
-    configurations: React.PropTypes.arrayOf(React.PropTypes.object).isRequired
+    actions: PropTypes.objectOf(PropTypes.func).isRequired,
+    configurations: PropTypes.arrayOf(PropTypes.object).isRequired
   }
 
   render() {

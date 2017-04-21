@@ -5,20 +5,21 @@ import CodeMirror from 'react-codemirror'
 import Variable from './Variable'
 import Configuration from '../models/Configuration'
 import Repository from '../models/Repository'
+import PropTypes from 'prop-types'
 import Mousetrap from 'mousetrap'
 import 'codemirror/addon/edit/trailingspace'
 import '../codemirror/mode-mnky'
 
 class Editor extends React.Component {
   static propTypes = {
-    currentConfiguration: React.PropTypes.object.isRequired,
-    options: React.PropTypes.object.isRequired,
-    repository: React.PropTypes.instanceOf(Repository).isRequired,
-    onSave: React.PropTypes.func.isRequired,
-    onCopy: React.PropTypes.func.isRequired,
-    onDownload: React.PropTypes.func.isRequired,
-    onDelete: React.PropTypes.func.isRequired,
-    autoSave: React.PropTypes.bool.isRequired
+    currentConfiguration: PropTypes.object.isRequired,
+    options: PropTypes.object.isRequired,
+    repository: PropTypes.instanceOf(Repository).isRequired,
+    onSave: PropTypes.func.isRequired,
+    onCopy: PropTypes.func.isRequired,
+    onDownload: PropTypes.func.isRequired,
+    onDelete: PropTypes.func.isRequired,
+    autoSave: PropTypes.bool.isRequired
   }
 
   constructor(props) {
