@@ -110,6 +110,7 @@ class App extends React.Component {
 
     var options = {
       lineNumbers: true,
+      lineWrapping: true,
       mode: 'properties',
       height: '100%',
       showTrailingSpace: true

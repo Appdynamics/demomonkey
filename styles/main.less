@@ -10,11 +10,22 @@
 body,
 html,
 .app-container {
-  height: 100vh !important;
+  /* height: 100vh !important; */
   margin: 0px;
-  min-height: 100vh !important;
+  /* min-height: 100vh !important; */
   padding: 0px;
   overflow-y: hidden;
+}
+
+
+.popup-app {
+  width: 400px;
+
+  body,
+  html,
+  .app-container {
+    overflow-y: visible;
+  }
 }
 
 a {
@@ -42,9 +53,6 @@ textarea:focus {
   box-shadow: 0px 0px 10px lighten(@base, 20%);
 }
 
-.popup-app {
-  width: 400px;
-}
 
 .main-grid {
   display: flex;
