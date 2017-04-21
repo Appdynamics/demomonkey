@@ -14,17 +14,9 @@ class Navigation extends React.Component {
     this.props.onNavigate(target)
   }
 
-  formatTime(value, unit, suffix, date) {
-    unit = {
-      'minute': 'min',
-      'second': 'sec',
-      'year': 'yr',
-      'month': 'mon',
-      'hour': 'h',
-      'day': 'day',
-      'week': 'w'
-    }[unit]
-    return value + ' ' + unit + ' ' + suffix
+  formatTime(value, unit, suffix, date, defaultFormatter) {
+    var r = defaultFormatter()
+    return r.substr(0, r.length - 4)
   }
 
   render() {
@@ -49,7 +41,7 @@ class Navigation extends React.Component {
                 return <li key={index}>
                 <a href={'#configuration/' + key} onClick={(event) => this.handleClick(event, 'configuration/' + key)} >
                   <span className="configuration-name">{this.props.items[key].name}</span>
-                  <TimeAgo formatter={(value, unit, suffix, date) => this.formatTime(value, unit, suffix, date)} className="configuration-updated-at" date={this.props.items[key].updated_at} minPeriod="60" />
+                  <TimeAgo formatter={(value, unit, suffix, date, defaultFormatter) => this.formatTime(value, unit, suffix, date, defaultFormatter)} className="configuration-updated-at" date={this.props.items[key].updated_at} minPeriod="60" />
                 </a>
               </li>
               })}
