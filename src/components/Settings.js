@@ -4,12 +4,15 @@ import ToggleButton from 'react-toggle-button'
 import '../codemirror/mode-mnky'
 import 'codemirror/addon/edit/trailingspace'
 import PropTypes from 'prop-types'
+import GitHubConnector from './connectors/GitHubConnector'
 
 class Settings extends React.Component {
   static propTypes = {
     settings: PropTypes.object.isRequired,
     onSetBaseTemplate: PropTypes.func.isRequired,
-    onToggleOptionalFeature: PropTypes.func.isRequired
+    onToggleOptionalFeature: PropTypes.func.isRequired,
+    onConnected: PropTypes.func.isRequired,
+    onDisconnected: PropTypes.func.isRequired
   }
 
   render() {
@@ -21,7 +24,8 @@ class Settings extends React.Component {
     }
 
     return (
-      <div className="inner-content settings">
+      <div className="content">
+        <div className="settings">
         <h1>Settings</h1>
         <h2>Base Template</h2>
         <div className="template-box">
@@ -38,7 +42,13 @@ class Settings extends React.Component {
         <div className="toggle-group">
           <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('autoSave')} value={this.props.settings.optionalFeatures.autoSave}/><label><b>Save configuration on line break</b></label>
         </div>
+        <h2>Remote Storage</h2>
+        <p>You can use remote storages to easily backup, share, versionize your demo configurations.</p>
+        <GitHubConnector credentials={this.props.settings.connectors.github}
+                         onConnected={(credentials) => this.props.onConnected('github', credentials)}
+                         onDisconnected={() => this.props.onDisconnected('github')}/>
       </div>
+    </div>
     )
   }
 }

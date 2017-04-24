@@ -6,8 +6,6 @@ import uuidV4 from 'uuid/v4'
 (function (scope) {
   'use strict'
 
-  console.log('Setup...')
-
   var selectedTabId = -1
   var counts = []
 
@@ -66,13 +64,18 @@ import uuidV4 from 'uuid/v4'
     }],
     settings: {
       baseTemplate: require('../examples/baseTemplate.mnky'),
-      optionalFeatures: {undo: false, autoReplace: true, autoSave: false}
+      optionalFeatures: { undo: false, autoReplace: true, autoSave: false },
+      connectors: {}
     }
   }
 
   scope.chrome.storage.local.get(persistentStates, function (state) {
     if (typeof persistentStates.settings.optionalFeatures === 'undefined') {
       persistentStates.settings.optionalFeatures = {}
+    }
+
+    if (typeof persistentStates.settings.connectors === 'undefined') {
+      persistentStates.settings.connectors = {}
     }
 
     var store = createStore(reducers, state)

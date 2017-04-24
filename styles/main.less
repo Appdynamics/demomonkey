@@ -123,7 +123,8 @@ label {
   max-width: 800px;
 
   h1,
-  h2 {
+  h2,
+  h3 {
     border-bottom: 1px solid #eeeeee;
     padding-bottom: 8px;
   }
@@ -146,4 +147,35 @@ label {
 
 .popup-app .alert-box {
   height: 56px;
+}
+
+.input-row,
+.variable-box {
+  margin-bottom: 1em;
+
+  & label {
+    color: @success;
+    display: block;
+    font-size: 110%;
+    font-weight: bold;
+    margin-right: 1em;
+
+
+  }
+
+  & input {
+    border: 1px solid desaturate(lighten(@base, 40%), 30%);
+    border-radius: 4px;
+    display: block;
+    font-size: 110%;
+    margin: 0.5em 0em;
+    max-width: 600px;
+    min-width: 300px;
+    padding: 4px;
+    width: 50%;
+  }
+
+  & .help {
+    color: #666666;
+  }
 }

@@ -105,6 +105,16 @@ class App extends React.Component {
     this.props.actions.setBaseTemplate(baseTemplate)
   }
 
+  saveConnection(name, credentials) {
+    var connector = {}
+    connector[name] = credentials
+    this.props.actions.addConnector(connector)
+  }
+
+  removeConnection(name) {
+    this.props.actions.removeConnector(name)
+  }
+
   getCurrentView() {
     var segments = this.props.currentView.split('/')
 
@@ -118,7 +128,11 @@ class App extends React.Component {
 
     switch (segments[0]) {
       case 'settings':
-        return <Settings settings={this.props.settings} onToggleOptionalFeature={(feature) => this.toggleOptionalFeature(feature)} onSetBaseTemplate={(baseTemplate) => this.setBaseTemplate(baseTemplate)}/>
+        return <Settings settings={this.props.settings}
+                         onToggleOptionalFeature={(feature) => this.toggleOptionalFeature(feature)}
+                         onSetBaseTemplate={(baseTemplate) => this.setBaseTemplate(baseTemplate)}
+                         onConnected={(name, credentials) => this.saveConnection(name, credentials)}
+                         onDisconnected={(name) => this.removeConnection(name)}/>
       case 'configuration':
         var configuration = this.getConfiguration(segments[1])
         return <Editor repository={this.getRepository()} currentConfiguration={configuration} options={options}
@@ -176,6 +190,12 @@ const OptionsPageApp = connect(
       },
       toggleOptionalFeature: (optionalFeature) => {
         dispatch({ 'type': 'TOGGLE_OPTIONAL_FEATURE', optionalFeature })
+      },
+      addConnector: (connector) => {
+        dispatch({ 'type': 'ADD_CONNECTOR', connector })
+      },
+      removeConnector: (connector) => {
+        dispatch({ 'type': 'REMOVE_CONNECTOR', connector })
       }
     }
   }))(App)
