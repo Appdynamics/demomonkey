@@ -1,8 +1,8 @@
 import React from 'react'
 import Tabs from './Tabs'
 import Pane from './Pane'
-import CodeMirror from 'react-codemirror'
 import Variable from './Variable'
+import CodeEditor from './CodeEditor'
 import Configuration from '../models/Configuration'
 import Repository from '../models/Repository'
 import PropTypes from 'prop-types'
@@ -37,22 +37,12 @@ class Editor extends React.Component {
     }
   }
 
-  handleAutoSave(key, value) {
-    if (this.props.autoSave === true && key === 'content' && value.charAt(value.length - 1) === '\n') {
-      console.log('AUTOSAVE')
-      this.props.onSave(this.props.currentConfiguration, this.state.currentConfiguration)
-    }
-  }
-
   handleUpdate(key, value, event = false) {
     if (event) {
       event.preventDefault()
     }
     var config = this.state.currentConfiguration
     config[key] = value
-
-    this.handleAutoSave(key, value)
-
     this.setState({ currentConfiguration: config })
   }
 
@@ -123,10 +113,10 @@ class Editor extends React.Component {
                   })}
               </Pane>
               <Pane label="Configuration" id="current-configuration-editor">
-                {window.isTesting === true
-                  ? <textarea id="contentarea" value={current.content} onChange={(event) => this.handleUpdate('content', event.target.value, event)} />
-                  : <CodeMirror value={current.content} onChange={(content) => this.handleUpdate('content', content)} options={this.props.options}/>
-                }
+                <CodeEditor value={current.content}
+                            onChange={(content) => this.handleUpdate('content', content)}
+                            onAutoSave={(event) => this.props.autoSave ? this.handleClick(event, 'save') : event.preventDefault() }
+                            options={this.props.options}/>
               </Pane>
               <Pane label="Testing">
                   <textarea value={current.test} style={{

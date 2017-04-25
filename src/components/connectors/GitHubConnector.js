@@ -38,7 +38,7 @@ class GitHubConnector extends React.Component {
         'X-GitHub-OTP': this.state.otp
       },
       data: {
-        'scopes': 'repo',
+        'scopes': ['repo', 'gist'],
         'note': this.state.tokenDescription
       },
       auth: { username: this.state.username, password: this.state.password }
