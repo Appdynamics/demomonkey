@@ -129,6 +129,7 @@ class App extends React.Component {
     switch (segments[0]) {
       case 'settings':
         return <Settings settings={this.props.settings}
+                         configurations={this.props.configurations}
                          onToggleOptionalFeature={(feature) => this.toggleOptionalFeature(feature)}
                          onSetBaseTemplate={(baseTemplate) => this.setBaseTemplate(baseTemplate)}
                          onConnected={(name, credentials) => this.saveConnection(name, credentials)}

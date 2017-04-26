@@ -2,11 +2,13 @@ import React from 'react'
 import axios from 'axios'
 import Popup from 'react-popup'
 import PropTypes from 'prop-types'
+import GitHubConnector from './Connector'
 
-class GitHubConnector extends React.Component {
+class ConnectorForm extends React.Component {
   static propTypes = {
     onConnected: PropTypes.func.isRequired,
     onDisconnected: PropTypes.func.isRequired,
+    configurations: PropTypes.arrayOf(PropTypes.object).isRequired,
     credentials: PropTypes.object
   }
 
@@ -25,6 +27,12 @@ class GitHubConnector extends React.Component {
     var newState = this.state
     newState[key] = event.target.value
     this.setState(newState)
+  }
+
+  sync(event) {
+    event.preventDefault()
+    var ghc = new GitHubConnector(this.props.credentials)
+    ghc.sync(this.props.configurations)
   }
 
   connect(event) {
@@ -116,9 +124,10 @@ class GitHubConnector extends React.Component {
           href={'https://github.com/settings/tokens/' + this.props.credentials.id}
           target="_blank">
           {this.props.credentials.description}
-        </a>. Click on the following button to disconnect:
+        </a>.
       </p>
       <button onClick={(event) => this.disconnect(event)} className="delete-button">Disconnect</button>
+      <button onClick={(event) => this.sync(event)} className="save-button">Sync now</button>
     </div>
   }
 
@@ -134,4 +143,4 @@ class GitHubConnector extends React.Component {
   }
 }
 
-export default GitHubConnector
+export default ConnectorForm

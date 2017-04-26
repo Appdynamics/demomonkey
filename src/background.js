@@ -2,6 +2,8 @@ import { createStore } from 'redux'
 import { wrapStore } from 'react-chrome-redux'
 import reducers from './reducers'
 import uuidV4 from 'uuid/v4'
+import Settings from './models/Settings'
+import GitHubConnector from './connectors/GitHub/Connector'
 
 (function (scope) {
   'use strict'
@@ -23,7 +25,6 @@ import uuidV4 from 'uuid/v4'
   }
 
   scope.chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-    console.log(request, request.receiver, request.count)
     if (request.receiver && request.receiver === 'background' && typeof request.count === 'number') {
       counts[sender.tab.id] = request.count
       updateBadge()
@@ -64,7 +65,7 @@ import uuidV4 from 'uuid/v4'
     }],
     settings: {
       baseTemplate: require('../examples/baseTemplate.mnky'),
-      optionalFeatures: { undo: false, autoReplace: true, autoSave: false },
+      optionalFeatures: { undo: false, autoReplace: true, autoSave: false, syncGist: false },
       connectors: {}
     }
   }
@@ -88,6 +89,11 @@ import uuidV4 from 'uuid/v4'
         configurations: store.getState().configurations,
         settings: store.getState().settings
       })
+      var newSettings = new Settings(store.getState().settings)
+      if (newSettings.isConnectedWith('github') && newSettings.isFeatureEnabled('syncGist')) {
+        var ghc = new GitHubConnector(newSettings.getConnectorCredentials('github'), store.getState().configurations)
+        ghc.sync(store.getState().configurations)
+      }
     })
     scope.chrome.contextMenus.create({
       'title': 'Create Replacement',

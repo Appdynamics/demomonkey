@@ -4,11 +4,12 @@ import ToggleButton from 'react-toggle-button'
 import '../codemirror/mode-mnky'
 import 'codemirror/addon/edit/trailingspace'
 import PropTypes from 'prop-types'
-import GitHubConnector from './connectors/GitHubConnector'
+import GitHubConnectorForm from '../connectors/GitHub/ConnectorForm'
 
 class Settings extends React.Component {
   static propTypes = {
     settings: PropTypes.object.isRequired,
+    configurations: PropTypes.arrayOf(PropTypes.object).isRequired,
     onSetBaseTemplate: PropTypes.func.isRequired,
     onToggleOptionalFeature: PropTypes.func.isRequired,
     onConnected: PropTypes.func.isRequired,
@@ -42,9 +43,13 @@ class Settings extends React.Component {
         <div className="toggle-group">
           <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('autoSave')} value={this.props.settings.optionalFeatures.autoSave}/><label><b>Save configuration on line break</b></label>
         </div>
+        <div className="toggle-group">
+          <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('syncGist')} value={this.props.settings.optionalFeatures.syncGist}/><label><b>Save all configurations as gist</b> on github. Please connect to GitHub below to use this feature.</label>
+        </div>
         <h2>Remote Storage</h2>
         <p>You can use remote storages to easily backup, share, versionize your demo configurations.</p>
-        <GitHubConnector credentials={this.props.settings.connectors.github}
+        <GitHubConnectorForm credentials={this.props.settings.connectors.github}
+                         configurations={this.props.configurations}
                          onConnected={(credentials) => this.props.onConnected('github', credentials)}
                          onDisconnected={() => this.props.onDisconnected('github')}/>
       </div>

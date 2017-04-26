@@ -9,7 +9,6 @@ const optionalFeatures = function (state, action) {
 }
 
 const connectors = function (state, action) {
-  console.log(state, action)
   switch (action.type) {
     case 'ADD_CONNECTOR':
       return Object.assign({}, state, action.connector)
@@ -23,7 +22,6 @@ const connectors = function (state, action) {
 }
 
 const settings = function (state = '', action) {
-  console.log(state, action)
   switch (action.type) {
     case 'SET_BASE_TEMPLATE':
       return {
