@@ -91,8 +91,8 @@ import GitHubConnector from './connectors/GitHub/Connector'
       })
       var newSettings = new Settings(store.getState().settings)
       if (newSettings.isConnectedWith('github') && newSettings.isFeatureEnabled('syncGist')) {
-        var ghc = new GitHubConnector(newSettings.getConnectorCredentials('github'), store.getState().configurations)
-        ghc.sync(store.getState().configurations)
+        // var ghc = new GitHubConnector(newSettings.getConnectorCredentials('github'), store.getState().configurations)
+        // ghc.sync(store.getState().configurations)
       }
     })
     scope.chrome.contextMenus.create({

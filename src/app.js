@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import {Provider} from 'react-redux'
-import {Store} from 'react-chrome-redux'
+import { Provider } from 'react-redux'
+import { Store } from 'react-chrome-redux'
 import OptionsPageApp from './components/OptionsPageApp'
 import PopupPageApp from './components/PopupPageApp'
 

@@ -21,6 +21,17 @@ button {
   }
 }
 
+.disabled {
+  background-color: #333333;
+  color: #999999;
+
+  &:focus,
+  &:hover {
+    background-color: lighten(#333333, 5%);
+    box-shadow: none;
+  }
+}
+
 .copy-button {
   background-color: lighten(@success, 5%);
   color: #ffffff;

@@ -41,7 +41,8 @@ gulp.task('watch', function () {
   gulp.watch(['styles/**/*.less'], ['styles'])
   gulp.watch(['src/**/*.js'], ['app', 'monkey', 'background'])
   gulp.watch([
-    'icons/**/*.png', 'manifest.json', 'pages/**/*.html', 'README.md', 'LICENSE', 'src/test.js', 'src/backup.js'
+    'icons/**/*.png', 'manifest.json', 'pages/**/*.html', 'README.md', 'LICENSE', 'src/test.js', 'src/backup.js',
+    'scripts/**/*.js'
   ], ['copy'])
 })
 
@@ -55,7 +56,8 @@ gulp.task('mrproper', ['clean'], function () {
 
 gulp.task('copy', function () {
   return gulp.src(['README.md', 'LICENSE', 'manifest.json', 'pages/options.html', 'pages/popup.html',
-    'pages/background.html', 'pages/test.html', 'src/test.js', 'pages/backup.html', 'src/backup.js'
+    'pages/background.html', 'pages/test.html', 'src/test.js', 'pages/backup.html', 'src/backup.js',
+    'scripts/**/*.js'
   ])
     .pipe(gulp.dest('build/'))
 })

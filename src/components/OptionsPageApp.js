@@ -9,6 +9,27 @@ import Configuration from '../models/Configuration'
 import PropTypes from 'prop-types'
 import Repository from '../models/Repository'
 
+/*function sendAppdPageView(url) {
+  if (!url) {
+    console.log('[AppDynamics] Url is empty')
+    return
+  }
+
+  var vPageView = new window.ADRUM.events.VPageView({
+    url: url
+  })
+
+  vPageView.start()
+  vPageView.markViewChangeStart()
+  vPageView.markViewChangeEnd()
+  vPageView.markViewDOMLoaded()
+  vPageView.markXhrRequestsCompleted()
+  vPageView.end()
+
+  console.log('Reporting... ')
+  window.ADRUM.report(vPageView)
+}*/
+
 /* The OptionsPageApp will be defined below */
 class App extends React.Component {
   static propTypes = {
@@ -16,6 +37,51 @@ class App extends React.Component {
     configurations: PropTypes.arrayOf(PropTypes.object).isRequired,
     currentView: PropTypes.string.isRequired,
     settings: PropTypes.object.isRequired
+  }
+
+  constructor(props) {
+    super(props)
+    this.vPageView = null
+  }
+
+  startTracking(view) {
+    if (window.ADRUM) {
+      console.log('URL', view)
+      this.vPageView = new window.ADRUM.events.VPageView({
+        url: view
+      })
+      this.vPageView.start()
+      this.vPageView.markViewChangeStart()
+      this.vPageView.markViewChangeEnd()
+    }
+  }
+
+  stopTracking() {
+    if (window.ADRUM) {
+      this.vPageView.markViewDOMLoaded()
+      this.vPageView.markXhrRequestsCompleted()
+      this.vPageView.end()
+      window.ADRUM.report(this.vPageView)
+      this.vPageView = null
+    }
+  }
+
+  componentWillMount() {
+    console.log('MOUNT')
+    this.startTracking(this.props.currentView)
+  }
+
+  componentWillUpdate(nextProps) {
+    console.log('UPDATE')
+    this.startTracking(nextProps.currentView)
+  }
+
+  componentDidUpdate() {
+    this.stopTracking()
+  }
+
+  componentDidMount() {
+    this.stopTracking()
   }
 
   navigateTo(target) {
