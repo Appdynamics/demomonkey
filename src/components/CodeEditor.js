@@ -4,7 +4,6 @@ import PropTypes from 'prop-types'
 import Mousetrap from 'mousetrap'
 
 class CodeEditor extends React.Component {
-
   constructor(props) {
     super(props)
     this.bound = false
@@ -28,7 +27,7 @@ class CodeEditor extends React.Component {
   }
 
   bind() {
-    if (!this.bound) {
+    if (!window.isTesting && !this.bound) {
       this.bound = true
       var area = document.querySelector('.moustrap-auto-save-area')
 

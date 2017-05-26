@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "DemoMonkey",
   "description": "Tamper your application's UI to demo almost anything",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "author": "Severin Neumann <severin.neumann@appdynamics.com>",
   "homepage_url": "https://github.com/svrnm/demomonkey/",
   "content_security_policy": "script-src 'self' https://apis.google.com; object-src 'self'",
