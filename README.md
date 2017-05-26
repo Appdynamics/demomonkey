@@ -50,7 +50,7 @@ https://chrome.google.com/webstore/detail/demomonkey/jgbhioialphpgjgofopnplfibke
 
 To use a pre-release version, you can also switch to the developer channel:
 
-
+https://chrome.google.com/webstore/detail/demomonkey-dev-channel/dgmdcddamkccpmefapgabnafjhhcdhdh
 
 ## Contribute
 If you want to contribute to the development of DemoMonkey, you can help by reporting issues, fixing bug or developing new features. To get a running development environment, you need to get the latest version via git:
