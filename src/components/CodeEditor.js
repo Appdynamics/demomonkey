@@ -20,7 +20,6 @@ class CodeEditor extends React.Component {
 
   componentDidMount() {
     var rcm = document.querySelector('.ReactCodeMirror')
-    console.log(rcm)
 
     Mousetrap.prototype.stopCallback = () => { return false }
 

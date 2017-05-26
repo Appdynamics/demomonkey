@@ -26,14 +26,16 @@ class Editor extends React.Component {
     super(props)
     this.state = {
       currentConfiguration: props.currentConfiguration,
-      unsavedChangesCssClass: 'disabled'
+      unsavedChangesCssClass: 'disabled',
+      unsyncedChangesCssClass: 'disabled'
     }
   }
 
   componentWillReceiveProps(nextProps) {
     if (this.props !== nextProps) {
       this.setState({
-        currentConfiguration: nextProps.currentConfiguration
+        currentConfiguration: nextProps.currentConfiguration,
+        unsavedChangesCssClass: 'disabled'
       })
     }
   }

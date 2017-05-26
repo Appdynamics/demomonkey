@@ -21,23 +21,23 @@ button {
   }
 }
 
-.disabled {
-  background-color: #333333;
-  color: #999999;
 
-  &:focus,
-  &:hover {
-    background-color: lighten(#333333, 5%);
-    box-shadow: none;
-  }
-}
-
-.copy-button {
+.sync-button {
   background-color: lighten(@success, 5%);
   color: #ffffff;
 
   &:hover {
     background-color: lighten(@success, 10%);
+  }
+}
+
+
+.copy-button {
+  background-color: lighten(@success, 10%);
+  color: #ffffff;
+
+  &:hover {
+    background-color: lighten(@success, 15%);
   }
 }
 
@@ -54,10 +54,22 @@ button {
 }
 
 .download-button {
-  background-color: lighten(@success, 10%);
+  background-color: lighten(@success, 15%);
   color: #ffffff;
 
   &:hover {
-    background-color: lighten(@success, 15%);
+    background-color: lighten(@success, 20%);
+  }
+}
+
+
+.disabled {
+  background-color: #333333;
+  color: #999999;
+
+  &:focus,
+  &:hover {
+    background-color: lighten(#333333, 5%);
+    box-shadow: none;
   }
 }

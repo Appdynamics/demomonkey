@@ -43,10 +43,7 @@ class Settings extends React.Component {
         <div className="toggle-group">
           <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('autoSave')} value={this.props.settings.optionalFeatures.autoSave}/><label><b>Save configuration on line break</b></label>
         </div>
-        <div className="toggle-group" style={{display: 'none'}}>
-          <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('syncGist')} value={this.props.settings.optionalFeatures.syncGist}/><label><b>Save all configurations as gist</b> on github. Please connect to GitHub below to use this feature.</label>
-        </div>
-        <div style={{display: 'none'}}>
+        <div>
         <h2>Remote Storage</h2>
         <p>You can use remote storages to easily backup, share, versionize your demo configurations.</p>
         <GitHubConnectorForm credentials={this.props.settings.connectors.github}
