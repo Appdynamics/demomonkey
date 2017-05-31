@@ -99,7 +99,10 @@ class Editor extends React.Component {
   render() {
     var current = this.state.currentConfiguration
     var hiddenIfNew = current.id === 'new' ? { display: 'none' } : {}
-    var variables = (new Configuration(current.content, this.props.repository, false, current.values)).getVariables()
+    var tmpConfig = (new Configuration(current.content, this.props.repository, false, current.values))
+    var variables = tmpConfig.getVariables()
+
+    var showTemplateWarning = tmpConfig.isTemplate() || tmpConfig.isRestricted() ? 'no-warning-box' : 'warning-box'
 
     return (
       <div className="editor">
@@ -110,6 +113,10 @@ class Editor extends React.Component {
           <button className="copy-button" style={hiddenIfNew} onClick={(event) => this.handleClick(event, 'copy')}>Duplicate</button>
           <button className="download-button" style={hiddenIfNew} onClick={(event) => this.handleClick(event, 'download')}>Download</button>
           <button className="delete-button" style={hiddenIfNew} onClick={(event) => this.handleClick(event, 'delete')}>Delete</button>
+      </div>
+      <div className={showTemplateWarning}>
+        <b>Warning:</b> Without <b>@include</b> or <b>@exclude</b> defined, your configuration can not be enabled.
+         You can only use it as template. If this is intended, add <b>@template</b> to remove this warning.
       </div>
           <Tabs selected={0}>
               <Pane label="Configuration" id="current-configuration-editor">

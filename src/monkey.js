@@ -9,24 +9,24 @@ import {Store} from 'react-chrome-redux';
     portName: 'DEMO_MONKEY_STORE' // communication port name
   })
 
+  function isTopFrame() {
+    try {
+      return window.self === window.top
+    } catch (e) {
+      return false
+    }
+  }
+
+  function updateBadge(count) {
+    if (isTopFrame()) {
+      scope.chrome.runtime.sendMessage({
+        receiver: 'background',
+        count: count
+      })
+    }
+  }
+
   store.ready().then(() => {
-    function isTopFrame() {
-      try {
-        return window.self === window.top
-      } catch (e) {
-        return false
-      }
-    }
-
-    function updateBadge(count) {
-      if (isTopFrame()) {
-        scope.chrome.runtime.sendMessage({
-          receiver: 'background',
-          count: count
-        })
-      }
-    }
-
     console.log('DemoMonkey enabled. Tampering the content.')
     var settings = new Settings(store.getState().settings)
     console.log('Undo: ', settings.isFeatureEnabled('undo'))

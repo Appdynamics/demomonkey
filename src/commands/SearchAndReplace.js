@@ -11,8 +11,8 @@ class SearchAndReplace extends Command {
   apply(target, key = 'value') {
     var original = target[key]
     var replacement = target[key].replace(this.search, this.replace)
-    target[key] = replacement
     if (replacement !== original) {
+      target[key] = replacement
       return new UndoElement(target, key, original, replacement)
     }
     return false

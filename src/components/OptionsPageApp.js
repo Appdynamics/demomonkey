@@ -9,27 +9,6 @@ import Configuration from '../models/Configuration'
 import PropTypes from 'prop-types'
 import Repository from '../models/Repository'
 
-/*function sendAppdPageView(url) {
-  if (!url) {
-    console.log('[AppDynamics] Url is empty')
-    return
-  }
-
-  var vPageView = new window.ADRUM.events.VPageView({
-    url: url
-  })
-
-  vPageView.start()
-  vPageView.markViewChangeStart()
-  vPageView.markViewChangeEnd()
-  vPageView.markViewDOMLoaded()
-  vPageView.markXhrRequestsCompleted()
-  vPageView.end()
-
-  console.log('Reporting... ')
-  window.ADRUM.report(vPageView)
-}*/
-
 /* The OptionsPageApp will be defined below */
 class App extends React.Component {
   static propTypes = {

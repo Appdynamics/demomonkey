@@ -20,8 +20,7 @@ class CodeEditor extends React.Component {
     if (event) {
       event.preventDefault()
     }
-    // for a non obvious reason the binding does not work on componentDidMount.
-    // Until there is a solution, this works ...
+    // For some unknown reason this does not work on componentDidMount ...
     this.bind()
     this.props.onChange(content)
   }

@@ -1,6 +1,7 @@
 /* global chrome */
 import React from 'react'
 import ToggleButton from 'react-toggle-button'
+import Configuration from '../models/Configuration'
 import PropTypes from 'prop-types'
 
 class ToggleConfiguration extends React.Component {
@@ -22,6 +23,12 @@ class ToggleConfiguration extends React.Component {
   }
 
   render() {
+    var tmpConfig = (new Configuration(this.props.configuration.content, null, false, this.props.configuration.values))
+
+    if (tmpConfig.isTemplate() || !tmpConfig.isRestricted()) {
+      return <div></div>
+    }
+
     return <div className="toggle-group">
             <ToggleButton colors={{active: {base: '#5c832f', hover: '#90c256'}}} value={this.props.configuration.enabled} onToggle={() => { this.toggle(this.props.configuration.id) }}/>
             <label>

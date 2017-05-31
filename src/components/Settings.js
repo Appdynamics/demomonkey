@@ -43,14 +43,14 @@ class Settings extends React.Component {
         <div className="toggle-group">
           <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('autoSave')} value={this.props.settings.optionalFeatures.autoSave}/><label><b>Save configuration on line break</b></label>
         </div>
-        <div>
+        {/* <div>
         <h2>Remote Storage</h2>
         <p>You can use remote storages to easily backup, share, versionize your demo configurations.</p>
         <GitHubConnectorForm credentials={this.props.settings.connectors.github}
                          configurations={this.props.configurations}
                          onConnected={(credentials) => this.props.onConnected('github', credentials)}
                          onDisconnected={() => this.props.onDisconnected('github')}/>
-        </div>
+        </div> */}
       </div>
     </div>
     )

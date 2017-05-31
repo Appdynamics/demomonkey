@@ -13,6 +13,14 @@ class Configuration {
     this.values = values
   }
 
+  isTemplate() {
+    return this.getOptions().template
+  }
+
+  isRestricted() {
+    return typeof this.getOptions().include !== 'undefined' || typeof this.getOptions.exclude !== 'undefined'
+  }
+
   updateValues(values) {
     this.values = Object.assign(this.values, values)
     this.patterns = false
@@ -52,15 +60,17 @@ class Configuration {
       var filterOption = function (content) {
         return function (result, key) {
           // By default ini.parse sets "true" as the value
-          if (key.charAt(0) === '@' && content[key] !== true) {
+          if (key.charAt(0) === '@') {
             var value = content[key]
 
             if (typeof value === 'string') {
               value = [value]
             }
 
-            result[key.substring(1)] = value
-            return result
+            if (content[key] !== true || key.substring(1) === 'template') {
+              result[key.substring(1)] = value
+              return result
+            }
           }
 
           if (typeof content[key] === 'object' && content[key] !== null) {
