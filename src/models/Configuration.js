@@ -28,7 +28,7 @@ class Configuration {
   }
 
   isEnabledForUrl(url) {
-    if (!this.enabled) {
+    if (!this.enabled || this.isTemplate() || !this.isRestricted()) {
       return false
     }
     var options = this.getOptions()

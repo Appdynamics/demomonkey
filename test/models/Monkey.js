@@ -80,10 +80,10 @@ describe('Monkey', function () {
     it('should return an array of interval ids', function () {
       intervalId = 0
       var monkey = new Monkey([{
-        content: '',
+        content: '@include = ',
         name: 'a'
       }, {
-        content: '',
+        content: '@include = ',
         name: 'b'
       }], scope)
       assert.deepEqual([
@@ -108,10 +108,10 @@ describe('Monkey', function () {
       scope.document.title = 'demomonkeydemo'
       node.data = 'monkey-demo'
       var monkey = new Monkey([{
-        content: '',
+        content: '@include = ',
         name: 'a'
       }, {
-        content: '',
+        content: '@include = ',
         name: 'b'
       }], scope)
       monkey.start()
@@ -121,7 +121,7 @@ describe('Monkey', function () {
     })
     it('should undo all replacements', function () {
       var monkey = new Monkey([{
-        content: 'monkey = ape',
+        content: 'monkey = ape\n@include = ',
         name: 'a'
       }], scope)
 
@@ -135,7 +135,7 @@ describe('Monkey', function () {
     })
     it('should not undo all replacements with undo disabled', function () {
       var monkey = new Monkey([{
-        content: 'monkey = ape',
+        content: 'monkey = ape\n@include = ',
         name: 'a'
       }], scope, false)
 

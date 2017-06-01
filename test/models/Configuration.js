@@ -121,8 +121,8 @@ describe('Configuration', function () {
   })
 
   describe('#isEnabledForUrl', function () {
-    it('should return true for empty rules', function () {
-      assert.equal(simpleConfiguration.isEnabledForUrl('http://www.example.com'), true)
+    it('should return false for empty rules', function () {
+      assert.equal(simpleConfiguration.isEnabledForUrl('http://www.example.com'), false)
     })
   })
 
