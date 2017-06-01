@@ -77,7 +77,7 @@ describe('Selenium Tests', function () {
     })
 
     it('allows to create new configurations', function () {
-      return createConfig(driver, 'Selenium Test', 'demomonkey = testape')
+      return createConfig(driver, 'Selenium Test', 'demomonkey = testape\n@include = /.*/')
     })
 
     it('has a popup menu', function () {
@@ -106,7 +106,7 @@ describe('Selenium Tests', function () {
     it('will create a test configuration', function () {
       return Promise.all([
         createConfig(driver, 'GermanCities', 'San Francisco = Berlin\nSeattle = Köln'),
-        createConfig(driver, 'Test Config', '+GermanCities')
+        createConfig(driver, 'Test Config', '+GermanCities\n@include = /.*/')
       ])
     })
 
@@ -119,9 +119,10 @@ describe('Selenium Tests', function () {
       this.retries(4)
       this.timeout(5000)
       driver.get(testUrl)
+      driver.findElement(By.id('input')).sendKeys('San Francisco')
       driver.wait(until.elementsLocated(By.id('later')))
-      driver.sleep(500)
       return Promise.all([
+        expect(driver.findElement(By.id('input')).getText()).to.eventually.include('Berlin'),
         expect(driver.findElement(By.id('static')).getText()).to.eventually.include('Berlin'),
         expect(driver.findElement(By.id('later')).getText()).to.eventually.include('Köln')
       ])

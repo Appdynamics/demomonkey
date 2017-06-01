@@ -26,8 +26,7 @@ class Editor extends React.Component {
     super(props)
     this.state = {
       currentConfiguration: props.currentConfiguration,
-      unsavedChangesCssClass: 'disabled',
-      unsyncedChangesCssClass: 'disabled'
+      unsavedChanges: false
     }
   }
 
@@ -46,7 +45,7 @@ class Editor extends React.Component {
     }
     var config = this.state.currentConfiguration
     config[key] = value
-    this.setState({ currentConfiguration: config, unsavedChangesCssClass: '' })
+    this.setState({ currentConfiguration: config, unsavedChanges: true })
   }
 
   updateVariable(name, value) {
@@ -90,7 +89,7 @@ class Editor extends React.Component {
   handleClick(event, action) {
     event.preventDefault()
     if (action === 'save') {
-      this.setState({ currentConfiguration: this.state.currentConfiguration, unsavedChangesCssClass: 'disabled' })
+      this.setState({ unsavedChanges: false })
     }
     action = 'on' + action.charAt(0).toUpperCase() + action.substr(1)
     this.props[action](this.props.currentConfiguration, this.state.currentConfiguration)
@@ -109,7 +108,7 @@ class Editor extends React.Component {
       <div className="title">
           <b>Title</b>
           <input type="text" id="configuration-title" placeholder="Please provide a title for your configuration" value={current.name} onChange={(event) => this.handleUpdate('name', event.target.value, event)}/>
-          <button className={'save-button ' + this.state.unsavedChangesCssClass} onClick={(event) => this.handleClick(event, 'save')}>Save</button>
+          <button className={'save-button ' + (this.state.unsavedChanges ? '' : 'disabled')} onClick={(event) => this.handleClick(event, 'save')}>Save</button>
           <button className="copy-button" style={hiddenIfNew} onClick={(event) => this.handleClick(event, 'copy')}>Duplicate</button>
           <button className="download-button" style={hiddenIfNew} onClick={(event) => this.handleClick(event, 'download')}>Download</button>
           <button className="delete-button" style={hiddenIfNew} onClick={(event) => this.handleClick(event, 'delete')}>Delete</button>
