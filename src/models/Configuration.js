@@ -18,7 +18,7 @@ class Configuration {
   }
 
   isRestricted() {
-    return typeof this.getOptions().include !== 'undefined' || typeof this.getOptions.exclude !== 'undefined'
+    return typeof this.getOptions().include !== 'undefined' || typeof this.getOptions().exclude !== 'undefined'
   }
 
   updateValues(values) {

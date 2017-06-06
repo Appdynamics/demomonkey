@@ -46,12 +46,10 @@ class App extends React.Component {
   }
 
   componentWillMount() {
-    console.log('MOUNT')
     this.startTracking(this.props.currentView)
   }
 
   componentWillUpdate(nextProps) {
-    console.log('UPDATE')
     this.startTracking(nextProps.currentView)
   }
 

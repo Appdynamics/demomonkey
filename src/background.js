@@ -3,7 +3,6 @@ import { wrapStore } from 'react-chrome-redux'
 import reducers from './reducers'
 import uuidV4 from 'uuid/v4'
 import Settings from './models/Settings'
-import GitHubConnector from './connectors/GitHub/Connector'
 
 (function (scope) {
   'use strict'
