@@ -3,7 +3,7 @@ import React from 'react'
 
 class Manifest {
   authorMail() {
-    return chrome.runtime.getManifest().author.split('<')[1]
+    return chrome.runtime.getManifest().author.split('<')[1].replace('>', '')
   }
 
   authorName() {

@@ -115,7 +115,7 @@ class Editor extends React.Component {
       </div>
       <div className={showTemplateWarning}>
         <b>Warning:</b> Without <b>@include</b> or <b>@exclude</b> defined, your configuration can not be enabled.
-         You can only use it as template. If this is intended, add <b>@template</b> to remove this warning.
+         You can only import it as template into another configuration. If this is intended, add <b>@template</b> to remove this warning.
       </div>
           <Tabs selected={0}>
               <Pane label="Configuration" id="current-configuration-editor">

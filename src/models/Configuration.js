@@ -28,7 +28,7 @@ class Configuration {
   }
 
   isEnabledForUrl(url) {
-    if (!this.enabled || this.isTemplate() || !this.isRestricted()) {
+    if (this.enabled === false || this.isTemplate() || !this.isRestricted()) {
       return false
     }
     var options = this.getOptions()
@@ -37,7 +37,7 @@ class Configuration {
 
   isTagBlacklisted(node) {
     var blacklist = this.getOptions().blacklist
-    return Array.isArray(blacklist) && node.parentNode !== null && blacklist.map(tag => tag.toLowerCase()).includes(node.parentNode.nodeName.toLowerCase())
+    return Array.isArray(blacklist) && typeof node.parentNode !== 'undefined' && blacklist.map(tag => tag.toLowerCase()).includes(node.parentNode.nodeName.toLowerCase())
   }
 
   apply(node, key = 'value') {

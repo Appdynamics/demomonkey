@@ -7,8 +7,9 @@ class Monkey {
     this.undo = []
     this.repository = new Repository({})
     this.withUndo = withUndo
+    this.intervals = []
     this.configurations = rawConfigurations.map((rawConfig) => {
-      var config = new Configuration(rawConfig.content, this.repository, rawConfig.enabled, rawConfig.values)
+      var config = new Configuration(rawConfig.content, this.repository, rawConfig.enabled === true, rawConfig.values)
       this.repository.addConfiguration(rawConfig.name, config)
       return [rawConfig.name, config]
     })
@@ -16,6 +17,10 @@ class Monkey {
 
   getUndoLength() {
     return this.undo.length
+  }
+
+  countRunningConfigurations() {
+    return this.intervals.length
   }
 
   addUndo(arr) {

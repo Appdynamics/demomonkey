@@ -81,10 +81,12 @@ describe('Monkey', function () {
       intervalId = 0
       var monkey = new Monkey([{
         content: '@include = ',
-        name: 'a'
+        name: 'a',
+        enabled: true
       }, {
         content: '@include = ',
-        name: 'b'
+        name: 'b',
+        enabled: true
       }], scope)
       assert.deepEqual([
         0, 1
@@ -94,10 +96,12 @@ describe('Monkey', function () {
       intervalId = 0
       monkey = new Monkey([{
         content: '@exclude = monkey-demo',
-        name: 'a'
+        name: 'a',
+        enabled: true
       }, {
         content: '@include = monkey-demo',
-        name: 'b'
+        name: 'b',
+        enabled: true
       }], scope)
       assert.deepEqual([0], monkey.runAll(''))
     })
@@ -109,10 +113,12 @@ describe('Monkey', function () {
       node.data = 'monkey-demo'
       var monkey = new Monkey([{
         content: '@include = ',
-        name: 'a'
+        name: 'a',
+        enabled: true
       }, {
         content: '@include = ',
-        name: 'b'
+        name: 'b',
+        enabled: true
       }], scope)
       monkey.start()
       assert.equal(2, intervalId)
@@ -122,7 +128,8 @@ describe('Monkey', function () {
     it('should undo all replacements', function () {
       var monkey = new Monkey([{
         content: 'monkey = ape\n@include = ',
-        name: 'a'
+        name: 'a',
+        enabled: true
       }], scope)
 
       monkey.start()
@@ -136,7 +143,8 @@ describe('Monkey', function () {
     it('should not undo all replacements with undo disabled', function () {
       var monkey = new Monkey([{
         content: 'monkey = ape\n@include = ',
-        name: 'a'
+        name: 'a',
+        enabled: true
       }], scope, false)
 
       monkey.start()
