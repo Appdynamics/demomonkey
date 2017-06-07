@@ -37,7 +37,7 @@ class Configuration {
 
   isTagBlacklisted(node) {
     var blacklist = this.getOptions().blacklist
-    return Array.isArray(blacklist) && typeof node.parentNode !== 'undefined' && blacklist.map(tag => tag.toLowerCase()).includes(node.parentNode.nodeName.toLowerCase())
+    return Array.isArray(blacklist) && typeof node.parentNode !== 'undefined' && node.parentNode !== null && blacklist.map(tag => tag.toLowerCase()).includes(node.parentNode.nodeName.toLowerCase())
   }
 
   apply(node, key = 'value') {

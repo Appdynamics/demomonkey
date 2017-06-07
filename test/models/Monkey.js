@@ -87,6 +87,10 @@ describe('Monkey', function () {
         content: '@include = ',
         name: 'b',
         enabled: true
+      }, {
+        content: '@include = ',
+        name: 'c',
+        enabled: false
       }], scope)
       assert.deepEqual([
         0, 1

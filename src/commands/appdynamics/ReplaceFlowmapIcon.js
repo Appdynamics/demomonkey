@@ -45,6 +45,9 @@ class ReplaceFlowmapIcon extends Command {
     'amazon aws': 'images/exitPointTypes/amazonAWS.svg',
     'amazon s3': 'images/exitPointTypes/amazonS3.svg',
     'amazon sns': 'images/exitPointTypes/amazonSNS.svg',
+    'amazonaws': 'images/exitPointTypes/amazonAWS.svg',
+    'amazons3': 'images/exitPointTypes/amazonS3.svg',
+    'amazonsns': 'images/exitPointTypes/amazonSNS.svg',
     'cassandra cql': 'images/exitPointTypes/cassandra_CQL.svg',
     'mongodb': 'images/exitPointTypes/mongoDB.svg',
     'websphere mq': 'images/exitPointTypes/webSphere_mq.svg'
