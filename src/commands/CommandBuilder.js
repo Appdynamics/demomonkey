@@ -36,8 +36,8 @@ class CommandBuilder {
       if (command === 'hideApplication') {
         return new HideApplication(parameters[0], value)
       }
-      if (command === 'replaceFowmapConnection') {
-        return new ReplaceFlowmapConnection(parameters[0], value)
+      if (command === 'replaceFlowmapConnection') {
+        return new ReplaceFlowmapConnection(parameters[0], parameters[1], value)
       }
     }
 

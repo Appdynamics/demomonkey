@@ -8,7 +8,8 @@ class ToggleConfiguration extends React.Component {
   static propTypes = {
     actions: PropTypes.objectOf(PropTypes.func).isRequired,
     configuration: PropTypes.object,
-    index: PropTypes.number
+    index: PropTypes.number,
+    className: PropTypes.object
   }
 
   toggle(id) {
@@ -29,7 +30,7 @@ class ToggleConfiguration extends React.Component {
       return <div></div>
     }
 
-    return <div className="toggle-group">
+    return <div className={'toggle-group ' + this.props.className}>
             <ToggleButton colors={{active: {base: '#5c832f', hover: '#90c256'}}} value={this.props.configuration.enabled} onToggle={() => { this.toggle(this.props.configuration.id) }}/>
             <label>
                 <a href="#" onClick={(event) => this.openEditor(event, this.props.index)}>{this.props.configuration.name}</a>

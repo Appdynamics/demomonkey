@@ -10,7 +10,7 @@ class HideApplication extends Command {
   apply(node, key) {
     if (typeof node[key] !== 'undefined' && node[key].trim() === this.appName) {
       var parent = this._walk(node, 4)
-      if (parent !== false && parent.style.display !== 'none' && parent.className.includes('ads-application-card')) {
+      if (parent !== false && parent.style.display !== 'none' && typeof parent.className.includes === 'function' && parent.className.includes('ads-application-card')) {
         var original = parent.style.display
         parent.style.display = 'none'
         if (original !== parent.style.display) {
