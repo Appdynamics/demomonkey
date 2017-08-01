@@ -13,18 +13,31 @@ html,
   /* height: 100vh !important; */
   margin: 0px;
   /* min-height: 100vh !important; */
-  padding: 0px;
   overflow-y: hidden;
+  padding: 0px;
 }
 
 
 .popup-app {
-  width: 400px;
+  min-width: 400px;
+  max-width: 800px;
+  overflow-y: auto;
 
   body,
   html,
   .app-container {
-    overflow-y: visible;
+    overflow-y: auto;
+  }
+
+  .configurations-list {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    max-height: 560px;
+  }
+
+  label {
+   margin: 8px 0px;
   }
 }
 

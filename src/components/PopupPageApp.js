@@ -16,10 +16,37 @@ class App extends React.Component {
     configurations: PropTypes.arrayOf(PropTypes.object).isRequired
   }
 
+  constructor(props) {
+    super(props)
+    this.vPageView = null
+  }
+
+  componentWillMount() {
+    if (window.ADRUM) {
+      this.vPageView = new window.ADRUM.events.VPageView({
+        url: 'popup'
+      })
+      this.vPageView.start()
+      this.vPageView.markViewChangeStart()
+      this.vPageView.markViewChangeEnd()
+    }
+  }
+
+  componentDidMount() {
+    if (window.ADRUM) {
+      this.vPageView.markViewDOMLoaded()
+      this.vPageView.markXhrRequestsCompleted()
+      this.vPageView.end()
+      window.ADRUM.report(this.vPageView)
+      this.vPageView = null
+    }
+  }
+
   render() {
     return <div>
             <Tabs>
                 <Pane label="Apply">
+                <div className="configurations-list">
                 {this.props.configurations.map((configuration, index) => (<ToggleConfiguration key={configuration.id} index={index} actions={this.props.actions} configuration={configuration}/>))}
                 {this.props.configurations.length < 1
                       ? <i>
@@ -30,6 +57,7 @@ class App extends React.Component {
                       </i>
                         : ''
                     }
+                  </div>
                 </Pane>
                 <Pane label="Help">
                     <div>

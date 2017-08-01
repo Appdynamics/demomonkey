@@ -1,10 +1,11 @@
 window['adrum-config'] = {
+  adrumExtUrlHttp: 'https://cdn.appdynamics.com',
   userEventInfo: {
     PageView: function (context) {
       console.log('PageView')
       return {
         userData: {
-          version: window.chrome.runtime.getManifest().version,
+          'version': window.chrome.runtime.getManifest().version,
           'extension-id': window.chrome.runtime.id
         }
       }
@@ -13,7 +14,7 @@ window['adrum-config'] = {
       console.log('VPageView')
       return {
         userData: {
-          version: window.chrome.runtime.getManifest().version,
+          'version': window.chrome.runtime.getManifest().version,
           'extension-id': window.chrome.runtime.id
         }
       }

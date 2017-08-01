@@ -1,6 +1,7 @@
 import SearchAndReplace from './SearchAndReplace'
 import ReplaceFlowmapIcon from './appdynamics/ReplaceFlowmapIcon'
 import HideApplication from './appdynamics/HideApplication'
+import ReplaceFlowmapConnection from './appdynamics/ReplaceFlowmapConnection'
 
 import Command from './Command'
 
@@ -34,6 +35,9 @@ class CommandBuilder {
       }
       if (command === 'hideApplication') {
         return new HideApplication(parameters[0], value)
+      }
+      if (command === 'replaceFowmapConnection') {
+        return new ReplaceFlowmapConnection(parameters[0], value)
       }
     }
 
