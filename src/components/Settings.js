@@ -4,7 +4,8 @@ import ToggleButton from 'react-toggle-button'
 import '../codemirror/mode-mnky'
 import 'codemirror/addon/edit/trailingspace'
 import PropTypes from 'prop-types'
-import GitHubConnectorForm from '../connectors/GitHub/ConnectorForm'
+import JSZip from 'jszip'
+// import GitHubConnectorForm from '../connectors/GitHub/ConnectorForm'
 
 class Settings extends React.Component {
   static propTypes = {
@@ -14,6 +15,23 @@ class Settings extends React.Component {
     onToggleOptionalFeature: PropTypes.func.isRequired,
     onConnected: PropTypes.func.isRequired,
     onDisconnected: PropTypes.func.isRequired
+  }
+
+  downloadAll() {
+    event.preventDefault()
+    var zip = new JSZip()
+
+    this.props.configurations.forEach((configuration) => {
+      zip.file(configuration.name + '.mnky', configuration.content)
+    })
+
+    zip.generateAsync({ type: 'base64' })
+      .then(function (content) {
+        window.chrome.downloads.download({
+          url: 'data:application/zip;base64,' + content,
+          filename: 'demomonkey-' + (new Date()).toISOString().split('T')[0] + '.zip' // Optional
+        })
+      })
   }
 
   render() {
@@ -43,6 +61,9 @@ class Settings extends React.Component {
         <div className="toggle-group">
           <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('autoSave')} value={this.props.settings.optionalFeatures.autoSave}/><label><b>Save configuration on line break</b></label>
         </div>
+        <h2>Backup</h2>
+        You can always open the <a href="backup.html">backup page</a> to download your files or manipulate your settings. Please use with caution!
+        <button className="save-button" onClick={(event) => this.downloadAll(event)}>Download all configurations</button>
         {/* <div>
         <h2>Remote Storage</h2>
         <p>You can use remote storages to easily backup, share, versionize your demo configurations.</p>

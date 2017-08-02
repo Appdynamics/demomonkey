@@ -1,5 +1,7 @@
+window['adrum-app-key'] = 'EUM-AAB-AVB';
 window['adrum-config'] = {
   adrumExtUrlHttp: 'https://cdn.appdynamics.com',
+  beaconUrlHttp: 'https://eum.appd.duckdns.org',
   userEventInfo: {
     PageView: function (context) {
       console.log('PageView')
