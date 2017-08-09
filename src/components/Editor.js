@@ -19,7 +19,8 @@ class Editor extends React.Component {
     onCopy: PropTypes.func.isRequired,
     onDownload: PropTypes.func.isRequired,
     onDelete: PropTypes.func.isRequired,
-    autoSave: PropTypes.bool.isRequired
+    autoSave: PropTypes.bool.isRequired,
+    saveOnClose: PropTypes.bool.isRequired
   }
 
   constructor(props) {
@@ -32,9 +33,13 @@ class Editor extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if (this.props !== nextProps) {
+      if (this.props.saveOnClose && this.state.unsavedChanges) {
+        this.props.onSave(this.props.currentConfiguration, this.state.currentConfiguration)
+      }
+
       this.setState({
         currentConfiguration: nextProps.currentConfiguration,
-        unsavedChangesCssClass: 'disabled'
+        unsavedChanges: false
       })
     }
   }
@@ -78,6 +83,7 @@ class Editor extends React.Component {
     Mousetrap.bind('mod+s', (event) => {
       event.preventDefault()
       this.props.onSave(this.props.currentConfiguration, this.state.currentConfiguration)
+      this.setState({ unsavedChanges: false })
       return false
     })
   }

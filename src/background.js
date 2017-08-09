@@ -46,6 +46,14 @@ import Settings from './models/Settings'
     updateBadge()
   })
 
+  const defaultsForOptionalFeatures = {
+    undo: true,
+    autoReplace: true,
+    autoSave: true,
+    syncGist: false,
+    saveOnClose: true
+  }
+
   const persistentStates = {
     configurations: [{
       name: 'Example',
@@ -64,20 +72,12 @@ import Settings from './models/Settings'
     }],
     settings: {
       baseTemplate: require('../examples/baseTemplate.mnky'),
-      optionalFeatures: { undo: false, autoReplace: true, autoSave: false, syncGist: false },
+      optionalFeatures: defaultsForOptionalFeatures,
       connectors: {}
     }
   }
 
   scope.chrome.storage.local.get(persistentStates, function (state) {
-    if (typeof persistentStates.settings.optionalFeatures === 'undefined') {
-      persistentStates.settings.optionalFeatures = {}
-    }
-
-    if (typeof persistentStates.settings.connectors === 'undefined') {
-      persistentStates.settings.connectors = {}
-    }
-
     var store = createStore(reducers, state)
     wrapStore(store, { portName: 'DEMO_MONKEY_STORE' })
 

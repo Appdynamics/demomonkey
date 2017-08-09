@@ -54,7 +54,7 @@ class App extends React.Component {
     return <div>
             <Tabs>
                 <Pane label="Apply">
-                  <div><input type="text" onChange={(event) => this.handleSearchUpdate(event)} value={this.state.search} placeholder="search" className="searchBox" /></div>
+                  <div><input type="text" onChange={(event) => this.handleSearchUpdate(event)} value={this.state.search} placeholder="Search..." className="searchBox" /></div>
                 <div className="configurations-list">
                 {this.props.configurations.map((configuration, index) => (<ToggleConfiguration className={configuration.name.toLowerCase().indexOf(this.state.search) === -1 ? 'hidden' : 'visible'} key={configuration.id} index={index} actions={this.props.actions} configuration={configuration}/>))}
                 {this.props.configurations.length < 1

@@ -61,6 +61,9 @@ class Settings extends React.Component {
         <div className="toggle-group">
           <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('autoSave')} value={this.props.settings.optionalFeatures.autoSave}/><label><b>Save configuration on line break</b></label>
         </div>
+        <div className="toggle-group">
+          <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('saveOnClose')} value={this.props.settings.optionalFeatures.saveOnClose}/><label><b>Save configuration when it is closed</b></label>
+        </div>
         <h2>Backup</h2>
         You can always open the <a href="backup.html">backup page</a> to download your files or manipulate your settings. Please use with caution!
         <button className="save-button" onClick={(event) => this.downloadAll(event)}>Download all configurations</button>

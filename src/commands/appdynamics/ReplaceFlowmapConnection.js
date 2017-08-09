@@ -1,5 +1,5 @@
 import Command from '../Command'
-// import UndoElement from '../UndoElement'
+import UndoElement from '../UndoElement'
 
 class ReplaceFlowmapConnection extends Command {
   constructor(tier1, tier2, value) {
@@ -41,12 +41,19 @@ class ReplaceFlowmapConnection extends Command {
 
         var g = document.getElementById(tier1id + '_' + tier2id + flowmapid)
         if (g && g.parentElement) {
+          var r = []
           g.parentElement.childNodes.forEach(
             (node, index) => {
-              node.className.baseVal = node.className.baseVal.replace(
+              var newValue = node.className.baseVal.replace(
                 /ads(Normal|Critical|Warning)NodeColor/, 'ads' + this.value + 'NodeColor')
+              if (newValue !== node.className.baseVal) {
+                var original = node.className.baseVal
+                node.className.baseVal = newValue
+                r.push(new UndoElement(node.className, 'baseVal', original, newValue, true))
+              }
             }
           )
+          return r
         }
       }
     }

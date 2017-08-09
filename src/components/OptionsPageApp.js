@@ -181,6 +181,7 @@ class App extends React.Component {
         var configuration = this.getConfiguration(segments[1])
         return <Editor repository={this.getRepository()} currentConfiguration={configuration} options={options}
                        autoSave={this.props.settings.optionalFeatures.autoSave}
+                       saveOnClose={this.props.settings.optionalFeatures.saveOnClose}
                        onDownload={(configuration, _) => this.downloadConfiguration(configuration)}
                        onSave={(_, configuration) => this.saveConfiguration(configuration)}
                        onCopy={(configuration, _) => this.copyConfiguration(configuration)}

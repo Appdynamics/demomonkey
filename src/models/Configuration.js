@@ -47,9 +47,16 @@ class Configuration {
 
     var undos = this._getConfiguration().reduce(function (carry, command) {
       var undo = command.apply(node, key)
-      if (undo !== false) {
-        carry.push(undo)
+
+      if (undo === false) {
+        return carry
       }
+
+      if (Array.isArray(undo)) {
+        return carry.concat(undo)
+      }
+
+      carry.push(undo)
       return carry
     }, [])
     return undos

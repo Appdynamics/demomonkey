@@ -50,7 +50,7 @@ class Navigation extends React.Component {
               </li>
             </ul>
             <ul className='items'>
-              <li><input type="text" onChange={(event) => this.handleSearchUpdate(event)} value={this.state.search} placeholder="search" className="searchBox" /></li>
+              <li><input type="text" onChange={(event) => this.handleSearchUpdate(event)} value={this.state.search} placeholder="Search..." className="searchBox" /></li>
               {Object.keys(this.props.items).map((key, index) => {
                 return <li key={index} className={this.props.items[key].name.toLowerCase().indexOf(this.state.search) === -1 ? 'hidden' : ''}>
                 <a href={'#configuration/' + key} onClick={(event) => this.handleClick(event, 'configuration/' + key)} >
