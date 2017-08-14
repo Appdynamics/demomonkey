@@ -51,7 +51,8 @@ import Settings from './models/Settings'
     autoReplace: true,
     autoSave: true,
     syncGist: false,
-    saveOnClose: true
+    saveOnClose: true,
+    adrumTracking: true
   }
 
   const persistentStates = {
@@ -74,19 +75,24 @@ import Settings from './models/Settings'
       baseTemplate: require('../examples/baseTemplate.mnky'),
       optionalFeatures: defaultsForOptionalFeatures,
       connectors: {}
-    }
+    },
+    monkeyID: uuidV4()
   }
 
   scope.chrome.storage.local.get(persistentStates, function (state) {
     var store = createStore(reducers, state)
     wrapStore(store, { portName: 'DEMO_MONKEY_STORE' })
 
+    // Persist monkey ID. Shouldn't change after first start.
+    scope.chrome.storage.local.set({monkeyID: store.getState().monkeyID})
+
     console.log('Background Script started')
     store.subscribe(function () {
       console.log('Synchronize changes')
       scope.chrome.storage.local.set({
         configurations: store.getState().configurations,
-        settings: store.getState().settings
+        settings: store.getState().settings,
+        monkeyID: store.getState().monkeyID
       })
       var newSettings = new Settings(store.getState().settings)
       if (newSettings.isConnectedWith('github') && newSettings.isFeatureEnabled('syncGist')) {

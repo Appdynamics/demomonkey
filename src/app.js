@@ -51,6 +51,12 @@ store.ready().then(() => {
   // Synchronize current view on subscription update
   store.subscribe(updateCurrentPage)
 
+  window.store = store
+
+  if (window.store.state.settings.optionalFeatures.adrumTracking === false) {
+    window['adrum-disable'] = true
+  }
+
   updateCurrentPage()
 
   if (root.getAttribute('data-app') === 'OptionsPageApp') {
