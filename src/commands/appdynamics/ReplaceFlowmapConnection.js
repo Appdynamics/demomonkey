@@ -7,7 +7,6 @@ class ReplaceFlowmapConnection extends Command {
     this.tier1 = tier1
     this.tier2 = tier2
     this.value = value
-    console.log(this.tier1, this.tier2, value)
   }
 
   apply(node, key) {
