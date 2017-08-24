@@ -10,6 +10,7 @@
     "mousetrap": "^1.6.0",
     "prop-types": "^15.5.8",
     "react": "^15.4.1",
+    "react-ace": "^5.1.2",
     "react-chrome-redux": "^1.3.0",
     "react-codemirror": "^0.2.6",
     "react-dom": "^15.4.1",
@@ -28,6 +29,7 @@
     "babel-preset-es2015": "^6.16.0",
     "babel-preset-react": "^6.16.0",
     "babelify": "^7.3.0",
+    "browserify": "^14.4.0",
     "chai": "^3.5.0",
     "chai-as-promised": "^6.0.0",
     "chai-webdriver": "^1.2.0",
@@ -54,6 +56,7 @@
     "stringify": "^5.1.0",
     "uglifyify": "^3.0.4",
     "vinyl-buffer": "^1.0.0",
-    "vinyl-source-stream": "^1.1.0"
+    "vinyl-source-stream": "^1.1.0",
+    "watchify": "^3.9.0"
   }
 }

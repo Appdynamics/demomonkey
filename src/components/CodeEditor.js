@@ -1,7 +1,11 @@
-import CodeMirror from 'react-codemirror'
 import React from 'react'
 import PropTypes from 'prop-types'
 import Mousetrap from 'mousetrap'
+import AceEditor from 'react-ace';
+
+import 'brace/theme/textmate';
+import 'brace/mode/ini';
+import 'brace/ext/searchbox';
 
 class CodeEditor extends React.Component {
   constructor(props) {
@@ -20,32 +24,34 @@ class CodeEditor extends React.Component {
     if (event) {
       event.preventDefault()
     }
-    // For some unknown reason this does not work on componentDidMount ...
-    this.bind()
     this.props.onChange(content)
   }
 
-  bind() {
-    if (!window.isTesting && !this.bound) {
-      this.bound = true
-      var area = document.querySelector('.moustrap-auto-save-area')
-
-      Mousetrap.prototype.stopCallback = () => { return false }
-
-      console.log('BINDING')
-
-      Mousetrap(area).bind('enter', () => {
-        console.log('AUTOSAVE')
-        this.props.onAutoSave(event)
-        return false
-      })
-    }
-  }
 
   render() {
     return <div className="moustrap-auto-save-area">{window.isTesting === true
       ? <textarea id="contentarea" value={this.props.value} onChange={(event) => this.handleChange(event.target.value, event)} />
-      : <CodeMirror value={this.props.value} onChange={(content) => this.handleChange(content)} options={this.props.options}/>
+      : <AceEditor
+          value={this.props.value}
+          onChange={(content) => this.handleChange(content)}
+          width="100%"
+          height="90%"
+          theme="textmate"
+          mode="ini"
+          editorProps={{$blockScrolling: true}}
+          name="contentarea"
+          commands={[
+            {
+              name: "Save On Enter",
+              bindKey: {win: "Enter", mac: "Enter"},
+              exec: (editor) => {
+                editor.insert('\n')
+                console.log('AUTOSAVE')
+                this.props.onAutoSave(event)
+              }
+            }
+          ]}
+        />
     }</div>
   }
 }
