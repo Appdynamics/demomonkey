@@ -11,20 +11,19 @@ var driver
 
 describe('Selenium Tests', function () {
   const url = 'https://github.com/svrnm/demomonkey'
-  const extensionID = 'hgegamnnggfbjfpjjalciinpfoghjcnj'
+  // const extensionID = 'hgegamnnggfbjfpjjalciinpfoghjcnj'
+  const extensionID = 'hejmbilhiaajmlpneekhcmfijejiikdg'
   const dashboardUrl = 'chrome-extension://' + extensionID + '/options.html'
   const popupUrl = 'chrome-extension://' + extensionID + '/popup.html'
   const testUrl = 'chrome-extension://' + extensionID + '/test.html'
 
   function createConfig(driver, title = 'Selenium Test', content = 'demomonkey = testape') {
     driver.get(dashboardUrl)
-    // turn of CodeMirror since it is not compatible with selenium right now
-    driver.executeScript('window.isTesting = false')
     driver.findElement(By.css("a[href='#configuration/create']")).click()
     driver.findElement(By.id('configuration-title')).sendKeys(title)
     driver.findElement(By.css('li#current-configuration-editor a')).click()
-    driver.findElement(By.id('contentarea')).clear()
-    driver.findElement(By.id('contentarea')).sendKeys(content)
+    driver.findElement(By.css('#contentarea > textarea')).clear()
+    driver.findElement(By.css('#contentarea > textarea')).sendKeys(content)
     driver.findElement(By.className('save-button')).click()
     return Promise.all([
       expect(driver.findElement(By.css('.navigation .items')).getText()).to.eventually.include(title),
