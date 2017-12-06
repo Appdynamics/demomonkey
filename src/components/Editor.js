@@ -11,14 +11,14 @@ import Mousetrap from 'mousetrap'
 class Editor extends React.Component {
   static propTypes = {
     currentConfiguration: PropTypes.object.isRequired,
-    options: PropTypes.object.isRequired,
     repository: PropTypes.instanceOf(Repository).isRequired,
     onSave: PropTypes.func.isRequired,
     onCopy: PropTypes.func.isRequired,
     onDownload: PropTypes.func.isRequired,
     onDelete: PropTypes.func.isRequired,
     autoSave: PropTypes.bool.isRequired,
-    saveOnClose: PropTypes.bool.isRequired
+    saveOnClose: PropTypes.bool.isRequired,
+    editorAutocomplete: PropTypes.bool.isRequired
   }
 
   constructor(props) {
@@ -109,43 +109,43 @@ class Editor extends React.Component {
 
     return (
       <div className="editor">
-      <div className="title">
+        <div className="title">
           <b>Title</b>
           <input type="text" id="configuration-title" placeholder="Please provide a title for your configuration" value={current.name} onChange={(event) => this.handleUpdate('name', event.target.value, event)}/>
           <button className={'save-button ' + (this.state.unsavedChanges ? '' : 'disabled')} onClick={(event) => this.handleClick(event, 'save')}>Save</button>
           <button className="copy-button" style={hiddenIfNew} onClick={(event) => this.handleClick(event, 'copy')}>Duplicate</button>
           <button className="download-button" style={hiddenIfNew} onClick={(event) => this.handleClick(event, 'download')}>Download</button>
           <button className="delete-button" style={hiddenIfNew} onClick={(event) => this.handleClick(event, 'delete')}>Delete</button>
-      </div>
-      <div className={showTemplateWarning}>
-        <b>Warning:</b> Without <b>@include</b> or <b>@exclude</b> defined, your configuration can not be enabled.
+        </div>
+        <div className={showTemplateWarning}>
+          <b>Warning:</b> Without <b>@include</b> or <b>@exclude</b> defined, your configuration can not be enabled.
          You can only import it as template into another configuration. If this is intended, add <b>@template</b> to remove this warning.
+        </div>
+        <Tabs selected={0}>
+          <Pane label="Configuration" id="current-configuration-editor">
+            <CodeEditor value={current.content}
+              onChange={(content) => this.handleUpdate('content', content)}
+              onAutoSave={(event) => this.props.autoSave ? this.handleClick(event, 'save') : event.preventDefault() }
+              editorAutocomplete={this.props.editorAutocomplete}/>
+          </Pane>
+          <Pane label="Variables">
+            {variables.length > 0 ? '' : <div className="no-variables">No variables defined</div>}
+            {variables.map((variable, index) => {
+              return <Variable key={variable.name} onValueUpdate={(name, value) => this.updateVariable(name, value)} variable={variable}/>
+            })}
+          </Pane>
+          <Pane label="Testing">
+            <textarea value={current.test} style={{
+              width: '100%',
+              height: '50%'
+            }} onChange={(event) => this.handleUpdate('test', event.target.value)}/>
+            <textarea value={current.test} id="testarea" className="read-only" readOnly="readOnly" style={{
+              width: '100%',
+              height: '50%'
+            }}/>
+          </Pane>
+        </Tabs>
       </div>
-          <Tabs selected={0}>
-              <Pane label="Configuration" id="current-configuration-editor">
-                <CodeEditor value={current.content}
-                            onChange={(content) => this.handleUpdate('content', content)}
-                            onAutoSave={(event) => this.props.autoSave ? this.handleClick(event, 'save') : event.preventDefault() }
-                            options={this.props.options}/>
-              </Pane>
-              <Pane label="Variables">
-                  {variables.length > 0 ? '' : <div className="no-variables">No variables defined</div>}
-                  {variables.map((variable, index) => {
-                    return <Variable key={variable.name} onValueUpdate={(name, value) => this.updateVariable(name, value)} variable={variable}/>
-                  })}
-              </Pane>
-              <Pane label="Testing">
-                  <textarea value={current.test} style={{
-                    width: '100%',
-                    height: '50%'
-                  }} onChange={(event) => this.handleUpdate('test', event.target.value)}/>
-                  <textarea value={current.test} id="testarea" className="read-only" readOnly="readOnly" style={{
-                    width: '100%',
-                    height: '50%'
-                  }}/>
-              </Pane>
-          </Tabs>
-    </div>
     )
   }
 }

@@ -161,31 +161,24 @@ class App extends React.Component {
   getCurrentView() {
     var segments = this.props.currentView.split('/')
 
-    var options = {
-      lineNumbers: true,
-      lineWrapping: true,
-      mode: 'properties',
-      height: '100%',
-      showTrailingSpace: true
-    }
-
     switch (segments[0]) {
       case 'settings':
         return <Settings settings={this.props.settings}
-                         configurations={this.props.configurations}
-                         onToggleOptionalFeature={(feature) => this.toggleOptionalFeature(feature)}
-                         onSetBaseTemplate={(baseTemplate) => this.setBaseTemplate(baseTemplate)}
-                         onConnected={(name, credentials) => this.saveConnection(name, credentials)}
-                         onDisconnected={(name) => this.removeConnection(name)}/>
+          configurations={this.props.configurations}
+          onToggleOptionalFeature={(feature) => this.toggleOptionalFeature(feature)}
+          onSetBaseTemplate={(baseTemplate) => this.setBaseTemplate(baseTemplate)}
+          onConnected={(name, credentials) => this.saveConnection(name, credentials)}
+          onDisconnected={(name) => this.removeConnection(name)}/>
       case 'configuration':
         var configuration = this.getConfiguration(segments[1])
-        return <Editor repository={this.getRepository()} currentConfiguration={configuration} options={options}
-                       autoSave={this.props.settings.optionalFeatures.autoSave}
-                       saveOnClose={this.props.settings.optionalFeatures.saveOnClose}
-                       onDownload={(configuration, _) => this.downloadConfiguration(configuration)}
-                       onSave={(_, configuration) => this.saveConfiguration(configuration)}
-                       onCopy={(configuration, _) => this.copyConfiguration(configuration)}
-                       onDelete={(configuration, _) => this.deleteConfiguration(configuration)}/>
+        return <Editor repository={this.getRepository()} currentConfiguration={configuration}
+          autoSave={this.props.settings.optionalFeatures.autoSave}
+          saveOnClose={this.props.settings.optionalFeatures.saveOnClose}
+          editorAutocomplete={this.props.settings.optionalFeatures.editorAutocomplete}
+          onDownload={(configuration, _) => this.downloadConfiguration(configuration)}
+          onSave={(_, configuration) => this.saveConfiguration(configuration)}
+          onCopy={(configuration, _) => this.copyConfiguration(configuration)}
+          onDelete={(configuration, _) => this.deleteConfiguration(configuration)}/>
       default:
         return <Welcome />
     }

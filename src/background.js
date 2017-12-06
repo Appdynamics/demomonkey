@@ -52,7 +52,8 @@ import Settings from './models/Settings'
     autoSave: true,
     syncGist: false,
     saveOnClose: true,
-    adrumTracking: true
+    adrumTracking: true,
+    editorAutocomplete: true
   }
 
   const persistentStates = {

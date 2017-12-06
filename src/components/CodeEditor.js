@@ -4,6 +4,7 @@ import AceEditor from 'react-ace'
 
 import 'brace/theme/xcode'
 import '../ace/mnky'
+import 'brace/ext/language_tools'
 import 'brace/ext/searchbox'
 
 class CodeEditor extends React.Component {
@@ -14,9 +15,9 @@ class CodeEditor extends React.Component {
 
   static propTypes = {
     value: PropTypes.string.isRequired,
-    options: PropTypes.object.isRequired,
     onChange: PropTypes.func.isRequired,
-    onAutoSave: PropTypes.func.isRequired
+    onAutoSave: PropTypes.func.isRequired,
+    editorAutocomplete: PropTypes.bool.isRequired
   }
 
   handleChange(content, event) {
@@ -34,6 +35,10 @@ class CodeEditor extends React.Component {
       height="100%"
       theme="xcode"
       mode="mnky"
+      setOptions={{
+        enableBasicAutocompletion: this.props.editorAutocomplete,
+        enableLiveAutocompletion: this.props.editorAutocomplete
+      }}
       editorProps={{$blockScrolling: true}}
       name="contentarea"
       commands={[

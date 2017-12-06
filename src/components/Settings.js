@@ -40,38 +40,42 @@ class Settings extends React.Component {
     return (
       <div className="content">
         <div className="settings">
-        <h1>Settings</h1>
-        <h2>Base Template</h2>
-        <div className="template-box">
-          <label htmlFor="template">New configuration template (will auto-save):</label>
-          <AceEditor height="200px" width="100%"
-          minLines="20"
-          theme="textmate"
-          mode="mnky"
-          value={this.props.settings.baseTemplate}
-          name="template"
-          onChange={this.props.onSetBaseTemplate} />
-        </div>
-        <h2>Optional Features</h2>
-        <div className="toggle-group">
-          <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('undo')} value={this.props.settings.optionalFeatures.undo}/><label><b>Undo replacements</b> when configuration is disabled</label>
-        </div>
-        <div className="toggle-group">
-          <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('autoReplace')} value={this.props.settings.optionalFeatures.autoReplace}/><label><b>Automatically apply replacements</b> when configuration is saved. <i>(This will also disable undo)</i></label>
-        </div>
-        <div className="toggle-group">
-          <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('autoSave')} value={this.props.settings.optionalFeatures.autoSave}/><label><b>Save configuration on line break</b></label>
-        </div>
-        <div className="toggle-group">
-          <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('saveOnClose')} value={this.props.settings.optionalFeatures.saveOnClose}/><label><b>Save configuration when it is closed</b></label>
-        </div>
-        <div className="toggle-group">
-          <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('adrumTracking')} value={this.props.settings.optionalFeatures.adrumTracking}/><label><b>Allow browser monitoring.</b> DemoMonkey uses AppDynamics End-User Monitoring to analyze user behavior. You need to reload your browser window after changing this value!</label>
-        </div>
-        <h2>Backup</h2>
-        You can always open the <a href="backup.html">backup page</a> to download your files or manipulate your settings. Please use with caution!
-        <button className="save-button" onClick={(event) => this.downloadAll(event)}>Download all configurations</button>
-        {/* <div>
+          <h1>Settings</h1>
+          <h2>Base Template</h2>
+          <div className="template-box">
+            <label htmlFor="template">New configuration template (will auto-save):</label>
+            <AceEditor height="200px" width="100%"
+              minLines={20}
+              theme="textmate"
+              mode="mnky"
+              value={this.props.settings.baseTemplate}
+              name="template"
+              editorProps={{$blockScrolling: true}}
+              onChange={this.props.onSetBaseTemplate} />
+          </div>
+          <h2>Optional Features</h2>
+          <div className="toggle-group">
+            <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('undo')} value={this.props.settings.optionalFeatures.undo}/><label><b>Undo replacements</b> when configuration is disabled</label>
+          </div>
+          <div className="toggle-group">
+            <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('autoReplace')} value={this.props.settings.optionalFeatures.autoReplace}/><label><b>Automatically apply replacements</b> when configuration is saved. <i>(This will also disable undo)</i></label>
+          </div>
+          <div className="toggle-group">
+            <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('autoSave')} value={this.props.settings.optionalFeatures.autoSave}/><label><b>Save configuration on line break</b></label>
+          </div>
+          <div className="toggle-group">
+            <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('saveOnClose')} value={this.props.settings.optionalFeatures.saveOnClose}/><label><b>Save configuration when it is closed</b></label>
+          </div>
+          <div className="toggle-group">
+            <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('adrumTracking')} value={this.props.settings.optionalFeatures.adrumTracking}/><label><b>Allow browser monitoring.</b> DemoMonkey uses AppDynamics End-User Monitoring to analyze user behavior. You need to reload your browser window after changing this value!</label>
+          </div>
+          <div className="toggle-group">
+            <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('editorAutocomplete')} value={this.props.settings.optionalFeatures.editorAutocomplete}/><label><b>Autocomplete on existing words.</b> The editor for configurations will display an auto completion providing words that are already existing within your configuration.</label>
+          </div>
+          <h2>Backup</h2>
+          You can always open the <a href="backup.html">backup page</a> to download your files or manipulate your settings. Please use with caution!
+          <button className="save-button" onClick={(event) => this.downloadAll(event)}>Download all configurations</button>
+          {/* <div>
         <h2>Remote Storage</h2>
         <p>You can use remote storages to easily backup, share, versionize your demo configurations.</p>
         <GitHubConnectorForm credentials={this.props.settings.connectors.github}
@@ -79,8 +83,8 @@ class Settings extends React.Component {
                          onConnected={(credentials) => this.props.onConnected('github', credentials)}
                          onDisconnected={() => this.props.onDisconnected('github')}/>
         </div> */}
+        </div>
       </div>
-    </div>
     )
   }
 }
