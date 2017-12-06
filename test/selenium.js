@@ -11,14 +11,15 @@ var driver
 
 describe('Selenium Tests', function () {
   const url = 'https://github.com/svrnm/demomonkey'
-  const dashboardUrl = 'chrome-extension://hejmbilhiaajmlpneekhcmfijejiikdg/options.html'
-  const popupUrl = 'chrome-extension://hejmbilhiaajmlpneekhcmfijejiikdg/popup.html'
-  const testUrl = 'chrome-extension://hejmbilhiaajmlpneekhcmfijejiikdg/test.html'
+  const extensionID = 'hgegamnnggfbjfpjjalciinpfoghjcnj'
+  const dashboardUrl = 'chrome-extension://' + extensionID + '/options.html'
+  const popupUrl = 'chrome-extension://' + extensionID + '/popup.html'
+  const testUrl = 'chrome-extension://' + extensionID + '/test.html'
 
   function createConfig(driver, title = 'Selenium Test', content = 'demomonkey = testape') {
     driver.get(dashboardUrl)
     // turn of CodeMirror since it is not compatible with selenium right now
-    driver.executeScript('window.isTesting = true')
+    driver.executeScript('window.isTesting = false')
     driver.findElement(By.css("a[href='#configuration/create']")).click()
     driver.findElement(By.id('configuration-title')).sendKeys(title)
     driver.findElement(By.css('li#current-configuration-editor a')).click()

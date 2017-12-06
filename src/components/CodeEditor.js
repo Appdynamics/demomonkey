@@ -3,8 +3,8 @@ import PropTypes from 'prop-types'
 import Mousetrap from 'mousetrap'
 import AceEditor from 'react-ace';
 
-import 'brace/theme/textmate';
-import 'brace/mode/ini';
+import 'brace/theme/xcode';
+import '../ace/mnky';
 import 'brace/ext/searchbox';
 
 class CodeEditor extends React.Component {
@@ -29,15 +29,15 @@ class CodeEditor extends React.Component {
 
 
   render() {
-    return <div className="moustrap-auto-save-area">{window.isTesting === true
+    return <div className="editor-box">{window.isTesting === true
       ? <textarea id="contentarea" value={this.props.value} onChange={(event) => this.handleChange(event.target.value, event)} />
       : <AceEditor
           value={this.props.value}
           onChange={(content) => this.handleChange(content)}
           width="100%"
-          height="90%"
-          theme="textmate"
-          mode="ini"
+          height="100%"
+          theme="xcode"
+          mode="mnky"
           editorProps={{$blockScrolling: true}}
           name="contentarea"
           commands={[

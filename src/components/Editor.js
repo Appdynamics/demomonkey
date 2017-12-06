@@ -7,8 +7,6 @@ import Configuration from '../models/Configuration'
 import Repository from '../models/Repository'
 import PropTypes from 'prop-types'
 import Mousetrap from 'mousetrap'
-import 'codemirror/addon/edit/trailingspace'
-import '../codemirror/mode-mnky'
 
 class Editor extends React.Component {
   static propTypes = {

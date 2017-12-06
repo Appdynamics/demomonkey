@@ -1,10 +1,12 @@
 import React from 'react'
-import CodeMirror from 'react-codemirror'
 import ToggleButton from 'react-toggle-button'
-import '../codemirror/mode-mnky'
-import 'codemirror/addon/edit/trailingspace'
 import PropTypes from 'prop-types'
 import JSZip from 'jszip'
+import AceEditor from 'react-ace';
+
+import 'brace/theme/textmate';
+import 'brace/mode/ini';
+import 'brace/ext/searchbox';
 // import GitHubConnectorForm from '../connectors/GitHub/ConnectorForm'
 
 class Settings extends React.Component {
@@ -35,13 +37,6 @@ class Settings extends React.Component {
   }
 
   render() {
-    var options = {
-      lineNumbers: true,
-      mode: 'properties',
-      height: '100%',
-      showTrailingSpace: true
-    }
-
     return (
       <div className="content">
         <div className="settings">
@@ -49,7 +44,13 @@ class Settings extends React.Component {
         <h2>Base Template</h2>
         <div className="template-box">
           <label htmlFor="template">New configuration template (will auto-save):</label>
-          <CodeMirror value={this.props.settings.baseTemplate} name="template" onChange={this.props.onSetBaseTemplate} options={options}/>
+          <AceEditor height="200px" width="100%"
+          minLines="20"
+          theme="textmate"
+          mode="mnky"
+          value={this.props.settings.baseTemplate}
+          name="template"
+          onChange={this.props.onSetBaseTemplate} />
         </div>
         <h2>Optional Features</h2>
         <div className="toggle-group">
