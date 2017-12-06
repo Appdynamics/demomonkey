@@ -37,7 +37,8 @@ function renderPopupPageApp(root, store) {
 function updateCurrentPage() {
   if (window.location.hash !== '#' + store.getState().currentView) {
     console.log('Setting hash by subscribe: #' + store.getState().currentView)
-    window.history.pushState(null, null, '#' + store.getState().currentView)
+    var cv = typeof store.getState().currentView === 'undefined' ? '' : store.getState().currentView
+    window.history.pushState(null, null, '#' + cv)
   }
 }
 

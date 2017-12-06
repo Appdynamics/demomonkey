@@ -7,6 +7,7 @@ import Configuration from '../models/Configuration'
 import Repository from '../models/Repository'
 import PropTypes from 'prop-types'
 import Mousetrap from 'mousetrap'
+import showdown from 'showdown'
 
 class Editor extends React.Component {
   static propTypes = {
@@ -107,6 +108,13 @@ class Editor extends React.Component {
 
     var showTemplateWarning = tmpConfig.isTemplate() || tmpConfig.isRestricted() ? 'no-warning-box' : 'warning-box'
 
+    var shortcuts = require('../../SHORTCUTS.md')
+    var converter = new showdown.Converter({
+      'tables': true
+    })
+
+    var shortcutsHtml = converter.makeHtml(shortcuts)
+
     return (
       <div className="editor">
         <div className="title">
@@ -143,6 +151,11 @@ class Editor extends React.Component {
               width: '100%',
               height: '50%'
             }}/>
+          </Pane>
+          <Pane label="Shortcuts">
+            <div>
+              <div dangerouslySetInnerHTML={{__html: shortcutsHtml}}></div>
+            </div>
           </Pane>
         </Tabs>
       </div>
