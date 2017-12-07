@@ -137,10 +137,12 @@ class Editor extends React.Component {
               editorAutocomplete={this.props.editorAutocomplete}/>
           </Pane>
           <Pane label="Variables">
-            {variables.length > 0 ? '' : <div className="no-variables">No variables defined</div>}
-            {variables.map((variable, index) => {
-              return <Variable key={variable.name} onValueUpdate={(name, value) => this.updateVariable(name, value)} variable={variable}/>
-            })}
+            <div className="scrolling-pane">
+              {variables.length > 0 ? '' : <div className="no-variables">No variables defined</div>}
+              {variables.map((variable, index) => {
+                return <Variable key={variable.name} onValueUpdate={(name, value) => this.updateVariable(name, value)} variable={variable}/>
+              })}
+            </div>
           </Pane>
           <Pane label="Testing">
             <textarea value={current.test} style={{
@@ -153,7 +155,7 @@ class Editor extends React.Component {
             }}/>
           </Pane>
           <Pane label="Shortcuts">
-            <div>
+            <div className="scrolling-pane">
               <div dangerouslySetInnerHTML={{__html: shortcutsHtml}}></div>
             </div>
           </Pane>

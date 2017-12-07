@@ -1,25 +1,24 @@
 var gulp = require('gulp')
+var gutil = require('gulp-util')
 var clean = require('gulp-clean')
-var browserify = require('browserify')
+var imageResize = require('gulp-image-resize')
+var less = require('gulp-less')
+var rename = require('gulp-rename')
+var replace = require('gulp-replace')
+var sourcemaps = require('gulp-sourcemaps')
+var zip = require('gulp-zip')
+
 var babel = require('babelify')
+var browserify = require('browserify')
 var stringify = require('stringify')
 var watchify = require('watchify')
-var sourcemaps = require('gulp-sourcemaps')
+
 var source = require('vinyl-source-stream')
 var buffer = require('vinyl-buffer')
-var imageResize = require('gulp-image-resize')
-var rename = require('gulp-rename')
-var less = require('gulp-less')
-var zip = require('gulp-zip')
-var replace = require('gulp-replace')
 var path = require('path')
 var fs = require('fs')
-var gutil = require('gulp-util');
 
 function compile(file, withWatchify = false) {
-
-
-
   var bundler = browserify('./src/' + file + '.js', watchify.args
   ).transform(stringify, {
     appliesTo: {
@@ -27,14 +26,13 @@ function compile(file, withWatchify = false) {
     }
   })
 
-  if(withWatchify) {
+  if (withWatchify) {
     bundler = watchify(bundler)
   }
 
   bundler = bundler.transform(babel)
 
   var b = function () {
-
     return bundler.bundle().on('error', function (err) {
       console.error(err)
       this.emit('end')
@@ -43,8 +41,8 @@ function compile(file, withWatchify = false) {
     })).pipe(sourcemaps.write('./')).pipe(gulp.dest('./build/js'))
   }
 
-  bundler.on('update', b); // on any dep update, runs the bundler
-  bundler.on('log', gutil.log); // output build logs to terminal
+  bundler.on('update', b) // on any dep update, runs the bundler
+  bundler.on('log', gutil.log) // output build logs to terminal
 
   return b
 }
@@ -56,7 +54,6 @@ gulp.task('background', compile('background'))
 gulp.task('watch-app', compile('app', true))
 gulp.task('watch-monkey', compile('monkey', true))
 gulp.task('watch-background', compile('background', true))
-
 
 gulp.task('watch', function () {
   gulp.watch(['styles/**/*.less'], ['styles'])
@@ -80,9 +77,9 @@ gulp.task('mrproper', ['clean'], function () {
 
 gulp.task('copy', function () {
   return gulp.src(['README.md', 'LICENSE', 'manifest.json', 'pages/options.html', 'pages/popup.html',
-      'pages/background.html', 'pages/test.html', 'src/test.js', 'pages/backup.html', 'src/backup.js',
-      'scripts/**/*.js'
-    ])
+    'pages/background.html', 'pages/test.html', 'src/test.js', 'pages/backup.html', 'src/backup.js',
+    'scripts/**/*.js'
+  ])
     .pipe(gulp.dest('build/'))
 })
 

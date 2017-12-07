@@ -1,4 +1,4 @@
-You can use the following shortcuts in the *Configuration* view:
+DemoMonkey uses the [Ace](https://ace.c9.io/) as editor component for the *Configuration* view. Ace comes with a predefined [set of shortcuts](https://github.com/ajaxorg/ace/wiki/Default-Keyboard-Shortcuts) you can use, while editing your configurations. Below you will find a complete list. Please be aware, that not all commands might work with DemoMonkey as expected. Additionally you can use *Ctrl+s / Command+s* to save your current configuration on every screen.
 
 ## Line Operations
 
@@ -117,5 +117,3 @@ You can use the following shortcuts in the *Configuration* view:
 | Ctrl-Alt-E | --- | Macros recording |
 | Delete | --- | Delete |
 | --- | Ctrl-L | Center selection |
-
-(Source: https://github.com/ajaxorg/ace/wiki/Default-Keyboard-Shortcuts)
