@@ -1,6 +1,7 @@
 import SearchAndReplace from './SearchAndReplace'
 import ReplaceFlowmapIcon from './appdynamics/ReplaceFlowmapIcon'
 import HideApplication from './appdynamics/HideApplication'
+import HideBusinessTransaction from './appdynamics/HideBusinessTransaction'
 import ReplaceFlowmapConnection from './appdynamics/ReplaceFlowmapConnection'
 
 import Command from './Command'
@@ -34,7 +35,12 @@ class CommandBuilder {
         return new ReplaceFlowmapIcon(parameters[0], value)
       }
       if (command === 'hideApplication') {
-        return new HideApplication(parameters[0], value)
+        // location.hash will be used to verify that only elements on the applications overview are hidden
+        return new HideApplication(parameters[0], value, window.location.hash)
+      }
+      if (command === 'hideBT' || command === 'hideBusinessTransaction') {
+        // location.hash will be used to verify that only elements on the applications overview are hidden
+        return new HideBusinessTransaction(parameters[0], value, window.location.hash)
       }
       if (command === 'replaceFlowmapConnection') {
         return new ReplaceFlowmapConnection(parameters[0], parameters[1], value)

@@ -1,21 +1,27 @@
 import Command from '../Command'
-import UndoElement from '../UndoElement'
 
 class HideApplication extends Command {
-  constructor(appName, _) {
+  constructor(appName, _, context) {
     super()
     this.appName = appName
+    this.context = context
+  }
+
+  _checkNode(node, className) {
+    return node !== false && node.style.display !== 'none' && typeof node.className.includes === 'function' && node.className.includes(className)
   }
 
   apply(node, key) {
-    if (typeof node[key] !== 'undefined' && node[key].trim() === this.appName) {
-      var parent = this._walk(node, 4)
-      if (parent !== false && parent.style.display !== 'none' && typeof parent.className.includes === 'function' && parent.className.includes('ads-application-card')) {
-        var original = parent.style.display
-        parent.style.display = 'none'
-        if (original !== parent.style.display) {
-          return new UndoElement(parent.style, 'display', original, 'none')
-        }
+    if (typeof node[key] !== 'undefined' && node[key].trim() === this.appName && typeof this.context === 'string' && this.context.includes('APPS_ALL_DASHBOARD')) {
+      // Delete in box view
+      var parentNode = this._walk(node, 4)
+      if (this._checkNode(parentNode, 'ads-application-card')) {
+        this._hideNode(parentNode)
+      }
+      // Delete in list view
+      parentNode = this._walk(node, 3)
+      if (this._checkNode(parentNode, 'x-grid-row')) {
+        this._hideNode(parentNode)
       }
     }
     return false

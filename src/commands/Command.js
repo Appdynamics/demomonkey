@@ -1,3 +1,5 @@
+import UndoElement from './UndoElement'
+
 class Command {
   apply(target) {
     return target
@@ -8,11 +10,19 @@ class Command {
       return node
     }
 
-    if (node.parentElement !== null) {
+    if (node.parentElement !== null && typeof node.parentElement !== 'undefined') {
       return this._walk(node.parentElement, count - 1)
     }
 
     return false
+  }
+
+  _hideNode(node) {
+    var original = node.style.display
+    node.style.display = 'none'
+    if (original !== node.style.display) {
+      return new UndoElement(node.style, 'display', original, 'none')
+    }
   }
 }
 
