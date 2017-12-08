@@ -30,7 +30,7 @@ import {Store} from 'react-chrome-redux';
     console.log('DemoMonkey enabled. Tampering the content.')
     var settings = new Settings(store.getState().settings)
     console.log('Undo: ', settings.isFeatureEnabled('undo'))
-    scope.$DEMO_MONKEY = new Monkey(store.getState().configurations, scope, settings.isFeatureEnabled('undo'))
+    scope.$DEMO_MONKEY = new Monkey(store.getState().configurations, scope, settings.isFeatureEnabled('undo'), settings.monkeyInterval)
     updateBadge(scope.$DEMO_MONKEY.start())
 
     store.subscribe(function () {

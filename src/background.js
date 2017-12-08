@@ -75,6 +75,7 @@ import Settings from './models/Settings'
     settings: {
       baseTemplate: require('../examples/baseTemplate.mnky'),
       optionalFeatures: defaultsForOptionalFeatures,
+      monkeyInterval: 100,
       connectors: {}
     },
     monkeyID: uuidV4()

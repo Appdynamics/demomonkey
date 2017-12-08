@@ -2,11 +2,16 @@ import Configuration from './Configuration'
 import Repository from './Repository'
 
 class Monkey {
-  constructor(rawConfigurations, scope, withUndo = true) {
+  constructor(rawConfigurations, scope, withUndo = true, intervalTime = 100) {
     this.scope = scope
     this.undo = []
     this.repository = new Repository({})
     this.withUndo = withUndo
+    this.intervalTime = intervalTime
+    if (typeof this.intervalTime !== 'number' || this.intervalTime < 100) {
+      console.log('Interval time is not well-defined: ' + this.intervalTime)
+      this.intervalTime = 100
+    }
     this.intervals = []
     this.configurations = rawConfigurations.map((rawConfig) => {
       var config = new Configuration(rawConfig.content, this.repository, rawConfig.enabled === true, rawConfig.values)
@@ -62,7 +67,7 @@ class Monkey {
         var wordCounter = 0
         pp.querySelectorAll('tspan').forEach(function (tspan) {
           tspan.textContent = words.slice(wordCounter,
-          wordCounter + tspan.textContent.split(' ').length).join(' ')
+            wordCounter + tspan.textContent.split(' ').length).join(' ')
           wordCounter += tspan.textContent.split(' ').length
         })
       }
@@ -71,7 +76,7 @@ class Monkey {
   }
 
   run(configuration) {
-    return this.scope.setInterval(() => this.apply(configuration), 100)
+    return this.scope.setInterval(() => this.apply(configuration), this.intervalTime)
   }
 
   start() {

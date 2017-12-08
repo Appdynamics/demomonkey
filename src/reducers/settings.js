@@ -23,6 +23,11 @@ const connectors = function (state, action) {
 
 const settings = function (state = '', action) {
   switch (action.type) {
+    case 'SET_MONKEY_INTERVAL':
+      return {
+        ...state,
+        monkeyInterval: action.monkeyInterval
+      }
     case 'SET_BASE_TEMPLATE':
       return {
         ...state,

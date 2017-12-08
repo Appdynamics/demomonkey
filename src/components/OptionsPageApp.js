@@ -148,6 +148,11 @@ class App extends React.Component {
     this.props.actions.setBaseTemplate(baseTemplate)
   }
 
+  setMonkeyInterval(interval) {
+    console.log(interval)
+    this.props.actions.setMonkeyInterval(interval)
+  }
+
   saveConnection(name, credentials) {
     var connector = {}
     connector[name] = credentials
@@ -167,6 +172,7 @@ class App extends React.Component {
           configurations={this.props.configurations}
           onToggleOptionalFeature={(feature) => this.toggleOptionalFeature(feature)}
           onSetBaseTemplate={(baseTemplate) => this.setBaseTemplate(baseTemplate)}
+          onSetMonkeyInterval={(event) => this.setMonkeyInterval(event.target.value)}
           onConnected={(name, credentials) => this.saveConnection(name, credentials)}
           onDisconnected={(name) => this.removeConnection(name)}/>
       case 'configuration':
@@ -210,6 +216,9 @@ const OptionsPageApp = connect(
     actions: {
       setCurrentView: (key) => {
         dispatch({ 'type': 'SET_CURRENT_VIEW', view: key })
+      },
+      setMonkeyInterval: (monkeyInterval) => {
+        dispatch({ 'type': 'SET_MONKEY_INTERVAL', monkeyInterval })
       },
       toggleConfiguration: (id) => {
         dispatch({ 'type': 'TOGGLE_CONFIGURATION', id: id })

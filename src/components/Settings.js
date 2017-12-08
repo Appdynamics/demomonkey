@@ -2,11 +2,11 @@ import React from 'react'
 import ToggleButton from 'react-toggle-button'
 import PropTypes from 'prop-types'
 import JSZip from 'jszip'
-import AceEditor from 'react-ace';
+import AceEditor from 'react-ace'
 
-import 'brace/theme/textmate';
-import 'brace/mode/ini';
-import 'brace/ext/searchbox';
+import 'brace/theme/textmate'
+import 'brace/mode/ini'
+import 'brace/ext/searchbox'
 // import GitHubConnectorForm from '../connectors/GitHub/ConnectorForm'
 
 class Settings extends React.Component {
@@ -14,6 +14,7 @@ class Settings extends React.Component {
     settings: PropTypes.object.isRequired,
     configurations: PropTypes.arrayOf(PropTypes.object).isRequired,
     onSetBaseTemplate: PropTypes.func.isRequired,
+    onSetMonkeyInterval: PropTypes.func.isRequired,
     onToggleOptionalFeature: PropTypes.func.isRequired,
     onConnected: PropTypes.func.isRequired,
     onDisconnected: PropTypes.func.isRequired
@@ -53,6 +54,8 @@ class Settings extends React.Component {
               editorProps={{$blockScrolling: true}}
               onChange={this.props.onSetBaseTemplate} />
           </div>
+          <h2>{'Monkey\'s Behavior'}</h2>
+          <b>Update interval:</b> <input type="text" value={this.props.settings.monkeyInterval} onChange={this.props.onSetMonkeyInterval} />
           <h2>Optional Features</h2>
           <div className="toggle-group">
             <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('undo')} value={this.props.settings.optionalFeatures.undo}/><label><b>Undo replacements</b> when configuration is disabled</label>
