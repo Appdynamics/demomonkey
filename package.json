@@ -1,6 +1,8 @@
 {
   "name": "demomonkey",
   "license": "Apache-2.0",
+  "author": "Severin Neumann <severin.neumann@appdynamics.com>",
+  "homepage": "https://github.com/svrnm/demomonkey/",
   "description": "Tamper your Web UI to demo almost anything",
   "dependencies": {
     "axios": "^0.17.1",
