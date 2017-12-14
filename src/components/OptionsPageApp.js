@@ -108,7 +108,7 @@ class App extends React.Component {
           className: 'danger',
           action: () => {
             Popup.close()
-            this.props.actions.setCurrentView('')
+            this.props.actions.setCurrentView('welcome')
             this.props.actions.deleteConfiguration(configuration.id)
           }
         }]

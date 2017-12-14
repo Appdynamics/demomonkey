@@ -58,7 +58,7 @@ describe('Selenium Tests', function () {
   })
 
   after('Quit Webdriver', function () {
-    // return driver.quit()
+    return driver.quit()
   })
 
   describe('Un-tampered webpage', function () {
@@ -104,6 +104,7 @@ describe('Selenium Tests', function () {
 
   describe('test page', function () {
     it('will create a test configuration', function () {
+      this.timeout(10000)
       return Promise.all([
         createConfig(driver, 'GermanCities', 'San Francisco = Berlin\nSeattle = Köln'),
         createConfig(driver, 'Test Config', '+GermanCities\n@include = /.*/')

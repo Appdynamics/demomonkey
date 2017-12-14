@@ -3,7 +3,7 @@
   "name": "DemoMonkey",
   "description": "Tamper your application's UI to demo almost anything",
   "version": "1.3.0",
-  "author": "Severin Neumann <severin.neumann@appdynamics.com>",
+  "author": "Severin Neumann <severin.neumann@altmuehlnet.de>",
   "homepage_url": "https://github.com/Appdynamics/demomonkey/",
   "content_security_policy": "script-src 'self' https://apis.google.com https://cdn.appdynamics.com/; object-src 'self'",
   "icons": {
