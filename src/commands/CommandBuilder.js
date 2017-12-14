@@ -36,11 +36,11 @@ class CommandBuilder {
       }
       if (command === 'hideApplication') {
         // location.hash will be used to verify that only elements on the applications overview are hidden
-        return new HideApplication(parameters[0], value, window.location.hash)
+        return new HideApplication(parameters[0], value, typeof window === 'undefined' ? '' : window.location.hash)
       }
       if (command === 'hideBT' || command === 'hideBusinessTransaction') {
         // location.hash will be used to verify that only elements on the applications overview are hidden
-        return new HideBusinessTransaction(parameters[0], value, window.location.hash)
+        return new HideBusinessTransaction(parameters[0], value, typeof window === 'undefined' ? '' : window.location.hash)
       }
       if (command === 'replaceFlowmapConnection') {
         return new ReplaceFlowmapConnection(parameters[0], parameters[1], value)

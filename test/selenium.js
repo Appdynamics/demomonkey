@@ -10,7 +10,7 @@ const until = selenium.until
 var driver
 
 describe('Selenium Tests', function () {
-  const url = 'https://github.com/svrnm/demomonkey'
+  const url = 'https://github.com/Appdynamics/demomonkey'
   // const extensionID = 'hgegamnnggfbjfpjjalciinpfoghjcnj'
   const extensionID = 'hejmbilhiaajmlpneekhcmfijejiikdg'
   const dashboardUrl = 'chrome-extension://' + extensionID + '/options.html'
@@ -58,7 +58,7 @@ describe('Selenium Tests', function () {
   })
 
   after('Quit Webdriver', function () {
-    return driver.quit()
+    // return driver.quit()
   })
 
   describe('Un-tampered webpage', function () {
