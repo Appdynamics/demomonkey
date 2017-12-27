@@ -1,13 +1,13 @@
 import React from 'react'
-import Navigation from './Navigation'
+import Navigation from './navigation/Navigation'
 import { connect } from 'react-redux'
 import Popup from 'react-popup'
 import Welcome from './Welcome'
 import Settings from './Settings'
-import Editor from './Editor'
-import Configuration from '../models/Configuration'
+import Editor from './editor/Editor'
+import Configuration from '../../models/Configuration'
 import PropTypes from 'prop-types'
-import Repository from '../models/Repository'
+import Repository from '../../models/Repository'
 
 /* The OptionsPageApp will be defined below */
 class App extends React.Component {
@@ -134,9 +134,12 @@ class App extends React.Component {
       }
     }
     if (id === 'latest') {
-      id = this.props.configurations.length - 1
+      return this.props.configurations[this.props.configurations.length - 1]
     }
-    return this.props.configurations[id]
+
+    console.log(id)
+
+    return this.props.configurations.find((item) => item.id === id)
   }
 
   toggleOptionalFeature(feature) {
@@ -195,7 +198,7 @@ class App extends React.Component {
       <Popup className="popup" btnClass="popup__btn" />
       <ul className="navigation">
         <li>
-          <h2>Configurations</h2>
+          <h2>DemoMonkey</h2>
           <Navigation onNavigate={(target) => this.navigateTo(target)} onUpload={(configuration) => this.addConfiguration(configuration)} items={this.props.configurations} />
         </li>
       </ul>

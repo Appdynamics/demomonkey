@@ -2,8 +2,8 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
 import { Store } from 'react-chrome-redux'
-import OptionsPageApp from './components/OptionsPageApp'
-import PopupPageApp from './components/PopupPageApp'
+import OptionsPageApp from './components/options/OptionsPageApp'
+import PopupPageApp from './components/popup/PopupPageApp'
 
 function renderOptionsPageApp(root, store) {
   if (window.location.hash.substring(1) !== '') {

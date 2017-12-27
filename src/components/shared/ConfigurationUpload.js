@@ -1,5 +1,5 @@
 import React from 'react'
-import Json2Ini from '../models/Json2Ini'
+import Json2Ini from '../../models/Json2Ini'
 import PropTypes from 'prop-types'
 import JSZip from 'jszip'
 
@@ -74,13 +74,13 @@ class ConfigurationUpload extends React.Component {
 
   render() {
     return <div>
-            <form id={this.props.id + 'Form'} className="upload-form">
-                <input multiple id={this.props.id} type="file"/>
-            </form>
-            <a href={'#configuration/upload'} onClick={(event) => this.showUploadDialog(event)}>
-                Upload
-            </a>
-        </div>
+      <form id={this.props.id + 'Form'} className="upload-form">
+        <input multiple id={this.props.id} type="file"/>
+      </form>
+      <a href={'#configuration/upload'} onClick={(event) => this.showUploadDialog(event)}>
+        Upload
+      </a>
+    </div>
   }
 }
 

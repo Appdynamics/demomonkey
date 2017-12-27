@@ -16,8 +16,8 @@ class Tabs extends React.Component {
   _renderContent() {
     return (
       <div className="tabs__content">
-                {this.props.children[this.state.selected]}
-            </div>
+        {this.props.children[this.state.selected]}
+      </div>
     )
   }
 
@@ -34,27 +34,27 @@ class Tabs extends React.Component {
         let activeClass = (this.state.selected === index ? 'active' : '')
         return (
           <li key={index} id={child.props.id}>
-                        <a href="#" className={activeClass} onClick={this.handleClick.bind(this, index)}>
-                            {child.props.label}
-                        </a>
-                    </li>
+            <a href="#" className={activeClass} onClick={this.handleClick.bind(this, index)}>
+              {child.props.label}
+            </a>
+          </li>
         )
       }
     }
 
     return (
       <ul className="tabs__labels">
-                {this.props.children.map(labels.bind(this))}
-            </ul>
+        {this.props.children.map(labels.bind(this))}
+      </ul>
     )
   }
 
   render() {
     return (
       <div className="tabs">
-                {this._renderTitles()}
-                {this._renderContent()}
-            </div>
+        {this._renderTitles()}
+        {this._renderContent()}
+      </div>
     )
   }
 }

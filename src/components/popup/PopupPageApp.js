@@ -1,10 +1,10 @@
 /* global chrome */
 import React from 'react'
-import Tabs from './Tabs'
-import Pane from './Pane'
-import Manifest from '../models/Manifest'
+import Tabs from '../shared/Tabs'
+import Pane from '../shared/Pane'
+import Manifest from '../../models/Manifest'
 import { connect } from 'react-redux'
-import ToggleConfiguration from './ToggleConfiguration'
+import ToggleConfiguration from '../shared/ToggleConfiguration'
 import PropTypes from 'prop-types'
 
 const manifest = new Manifest()

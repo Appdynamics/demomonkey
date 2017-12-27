@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import AceEditor from 'react-ace'
 
 import 'brace/theme/xcode'
-import '../ace/mnky'
+import './ace/mnky'
 import 'brace/ext/language_tools'
 import 'brace/ext/searchbox'
 

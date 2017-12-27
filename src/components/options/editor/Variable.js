@@ -1,5 +1,5 @@
 import React from 'react'
-import VariableModle from '../models/Variable'
+import VariableModle from '../../../models/Variable'
 import PropTypes from 'prop-types'
 
 class Variable extends React.Component {
@@ -15,10 +15,10 @@ class Variable extends React.Component {
 
   render() {
     return <div className="variable-box">
-            <label htmlFor="variable-1">{this.props.variable.name}</label>
-            <input name={this.props.variable.name} type="text" onChange={(event) => this.updateVariable(event)} placeholder={this.props.variable.placeholder} defaultValue={this.props.variable.value}/>
-            <div className="help">{this.props.variable.description}</div>
-        </div>
+      <label htmlFor="variable-1">{this.props.variable.name}</label>
+      <input name={this.props.variable.name} type="text" onChange={(event) => this.updateVariable(event)} placeholder={this.props.variable.placeholder} defaultValue={this.props.variable.value}/>
+      <div className="help">{this.props.variable.description}</div>
+    </div>
   }
 }
 

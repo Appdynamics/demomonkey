@@ -1,10 +1,10 @@
 import React from 'react'
-import Tabs from './Tabs'
-import Pane from './Pane'
+import Tabs from '../../shared/Tabs'
+import Pane from '../../shared/Pane'
 import Variable from './Variable'
 import CodeEditor from './CodeEditor'
-import Configuration from '../models/Configuration'
-import Repository from '../models/Repository'
+import Configuration from '../../../models/Configuration'
+import Repository from '../../../models/Repository'
 import PropTypes from 'prop-types'
 import Mousetrap from 'mousetrap'
 import showdown from 'showdown'
@@ -108,7 +108,7 @@ class Editor extends React.Component {
 
     var showTemplateWarning = tmpConfig.isTemplate() || tmpConfig.isRestricted() ? 'no-warning-box' : 'warning-box'
 
-    var shortcuts = require('../../SHORTCUTS.md')
+    var shortcuts = require('../../../../SHORTCUTS.md')
     var converter = new showdown.Converter({
       'tables': true
     })

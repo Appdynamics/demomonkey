@@ -7,7 +7,6 @@ import AceEditor from 'react-ace'
 import 'brace/theme/textmate'
 import 'brace/mode/ini'
 import 'brace/ext/searchbox'
-// import GitHubConnectorForm from '../connectors/GitHub/ConnectorForm'
 
 class Settings extends React.Component {
   static propTypes = {
