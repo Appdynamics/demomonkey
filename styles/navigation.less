@@ -31,13 +31,13 @@
     }
   }
 
-  a {
-    display: block;
-    padding: 8px;
-    text-decoration: none;
+  .navigation-item {
+
+    a {
+      text-decoration: none;
+    }
 
     &:hover {
-      background: #ffffff;
       text-decoration: underline;
     }
 
@@ -46,13 +46,7 @@
       max-width: 140px;
     }
 
-    .configuration-updated-at {
-      color: #888888;
-      display: inline-block;
-      float: right;
-      font-size: 90%;
-      text-align: right;
-      width: 68px;
+    .configuration-updated-at time {
 
       &:before {
         content: '(';
@@ -65,6 +59,18 @@
   }
 
   .actions {
+
+    a {
+      display: block;
+      padding: 8px;
+      text-decoration: none;
+
+      &:hover {
+        background: #ffffff;
+        text-decoration: underline;
+      }
+    }
+
     border-bottom: 1px solid @base;
     display: flex;
 
@@ -101,6 +107,4 @@
     border-right: 1px solid @base;
     height: 20px;
   }
-
-
 }

@@ -136,9 +136,6 @@ class App extends React.Component {
     if (id === 'latest') {
       return this.props.configurations[this.props.configurations.length - 1]
     }
-
-    console.log(id)
-
     return this.props.configurations.find((item) => item.id === id)
   }
 
@@ -180,6 +177,7 @@ class App extends React.Component {
           onDisconnected={(name) => this.removeConnection(name)}/>
       case 'configuration':
         var configuration = this.getConfiguration(segments[1])
+        console.log(configuration)
         return <Editor repository={this.getRepository()} currentConfiguration={configuration}
           autoSave={this.props.settings.optionalFeatures.autoSave}
           saveOnClose={this.props.settings.optionalFeatures.saveOnClose}
