@@ -52,45 +52,45 @@ class App extends React.Component {
 
   render() {
     return <div>
-            <Tabs>
-                <Pane label="Apply">
-                  <div><input type="text" onChange={(event) => this.handleSearchUpdate(event)} value={this.state.search} placeholder="Search..." className="searchBox" /></div>
-                <div className="configurations-list">
-                {this.props.configurations.map((configuration, index) => (<ToggleConfiguration className={configuration.name.toLowerCase().indexOf(this.state.search) === -1 ? 'hidden' : 'visible'} key={configuration.id} index={index} actions={this.props.actions} configuration={configuration}/>))}
-                {this.props.configurations.length < 1
-                      ? <i>
-                        No configuration found. Open the <a href="#" onClick={(e) => {
-                          e.preventDefault()
-                          chrome.runtime.openOptionsPage()
-                        }}>Dashboard</a> to create configurations
-                      </i>
-                        : ''
-                    }
-                  </div>
-                </Pane>
-                <Pane label="Help">
-                    <div>
-                        <b>Author:&nbsp;
-                        </b>
-                        {manifest.author()}
-                    </div>
-                    <div>
-                        <b>Homepage:&nbsp;
-                        </b>
-                        {manifest.homepage()}
-                    </div>
-                    <div>
-                        <b>Version:&nbsp;
-                        </b>
-                        {manifest.version()}
-                    </div>
-                </Pane>
-                <Pane link={(e) => {
+      <Tabs>
+        <Pane label="Apply">
+          <div><input type="text" onChange={(event) => this.handleSearchUpdate(event)} value={this.state.search} placeholder="Search..." className="searchBox" /></div>
+          <div className="configurations-list">
+            {this.props.configurations.map((configuration, index) => (<ToggleConfiguration className={configuration.name.toLowerCase().indexOf(this.state.search) === -1 ? 'hidden' : 'visible'} key={configuration.id} index={index} actions={this.props.actions} configuration={configuration}/>))}
+            {this.props.configurations.length < 1
+              ? <i>
+                  No configuration found. Open the <a href="#" onClick={(e) => {
                   e.preventDefault()
                   chrome.runtime.openOptionsPage()
-                }} label="Dashboard"/>
-            </Tabs>
-        </div>
+                }}>Dashboard</a> to create configurations
+              </i>
+              : ''
+            }
+          </div>
+        </Pane>
+        <Pane label="Help">
+          <div>
+            <b>Author:&nbsp;
+            </b>
+            {manifest.author()}
+          </div>
+          <div>
+            <b>Homepage:&nbsp;
+            </b>
+            {manifest.homepage()}
+          </div>
+          <div>
+            <b>Version:&nbsp;
+            </b>
+            {manifest.version()}
+          </div>
+        </Pane>
+        <Pane link={(e) => {
+          e.preventDefault()
+          chrome.runtime.openOptionsPage()
+        }} label="Dashboard"/>
+      </Tabs>
+    </div>
   }
 }
 
