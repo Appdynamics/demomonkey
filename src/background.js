@@ -53,7 +53,9 @@ import Settings from './models/Settings'
     syncGist: false,
     saveOnClose: true,
     adrumTracking: true,
-    editorAutocomplete: true
+    editorAutocomplete: true,
+    // This is only a soft toggle, since the user can turn it on and off directly in the popup
+    onlyShowAvailableConfigurations: true
   }
 
   const persistentStates = {

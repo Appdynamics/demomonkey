@@ -4,7 +4,7 @@ import Tabs from '../shared/Tabs'
 import Pane from '../shared/Pane'
 import Manifest from '../../models/Manifest'
 import { connect } from 'react-redux'
-import ToggleConfiguration from '../shared/ToggleConfiguration'
+import ConfigurationList from './ConfigurationList'
 import PropTypes from 'prop-types'
 
 const manifest = new Manifest()
@@ -12,21 +12,15 @@ const manifest = new Manifest()
 /* The PopupPageApp will be defined below */
 class App extends React.Component {
   static propTypes = {
+    currentUrl: PropTypes.string.isRequired,
     actions: PropTypes.objectOf(PropTypes.func).isRequired,
-    configurations: PropTypes.arrayOf(PropTypes.object).isRequired
+    configurations: PropTypes.arrayOf(PropTypes.object).isRequired,
+    settings: PropTypes.object.isRequired
   }
 
   constructor(props) {
     super(props)
     this.vPageView = null
-    this.state = {
-      search: ''
-    }
-  }
-
-  handleSearchUpdate(event) {
-    console.log(event.target.value.toLowerCase())
-    this.setState({ search: event.target.value.toLowerCase() })
   }
 
   componentWillMount() {
@@ -54,19 +48,7 @@ class App extends React.Component {
     return <div>
       <Tabs>
         <Pane label="Apply">
-          <div><input type="text" onChange={(event) => this.handleSearchUpdate(event)} value={this.state.search} placeholder="Search..." className="searchBox" /></div>
-          <div className="configurations-list">
-            {this.props.configurations.map((configuration, index) => (<ToggleConfiguration className={configuration.name.toLowerCase().indexOf(this.state.search) === -1 ? 'hidden' : 'visible'} key={configuration.id} index={index} actions={this.props.actions} configuration={configuration}/>))}
-            {this.props.configurations.length < 1
-              ? <i>
-                  No configuration found. Open the <a href="#" onClick={(e) => {
-                  e.preventDefault()
-                  chrome.runtime.openOptionsPage()
-                }}>Dashboard</a> to create configurations
-              </i>
-              : ''
-            }
-          </div>
+          <ConfigurationList currentUrl={this.props.currentUrl} configurations={this.props.configurations} settings={this.props.settings} actions={this.props.actions}/>
         </Pane>
         <Pane label="Help">
           <div>
@@ -97,7 +79,7 @@ class App extends React.Component {
 const PopupPageApp = connect(
   // map state to props
   state => {
-    return { configurations: state.configurations }
+    return { configurations: state.configurations, settings: state.settings }
   },
   // map dispatch to props
   dispatch => ({

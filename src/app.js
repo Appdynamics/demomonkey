@@ -1,3 +1,4 @@
+/* global chrome */
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'
@@ -26,12 +27,14 @@ function renderOptionsPageApp(root, store) {
 }
 
 function renderPopupPageApp(root, store) {
-  window.setTimeout(
-    // The timeout is important to remediate a chrome bug: https://bugs.chromium.org/p/chromium/issues/detail?id=307912
-    function () {
-      ReactDOM.render(
-        <Provider store={store}><PopupPageApp/></Provider>, root)
-    }, 150)
+  chrome.tabs.query({ 'active': true, 'lastFocusedWindow': true }, function (tabs) {
+    window.setTimeout(
+      // The timeout is important to remediate a chrome bug: https://bugs.chromium.org/p/chromium/issues/detail?id=307912
+      function () {
+        ReactDOM.render(
+          <Provider store={store}><PopupPageApp currentUrl={tabs[0].url}/></Provider>, root)
+      }, 150)
+  })
 }
 
 function updateCurrentPage() {

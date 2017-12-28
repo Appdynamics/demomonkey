@@ -17,6 +17,10 @@ class Configuration {
     return this.getOptions().template
   }
 
+  isDisabled() {
+    return this.isTemplate() || this.getOptions().deprecated
+  }
+
   isRestricted() {
     return typeof this.getOptions().include !== 'undefined' || typeof this.getOptions().exclude !== 'undefined'
   }
@@ -27,8 +31,16 @@ class Configuration {
     return this
   }
 
+  isAvailableForUrl(url) {
+    if (this.isDisabled() || !this.isRestricted()) {
+      return false
+    }
+    var options = this.getOptions()
+    return new MatchRule(options.include, options.exclude).test(url)
+  }
+
   isEnabledForUrl(url) {
-    if (this.enabled === false || this.isTemplate() || !this.isRestricted()) {
+    if (this.enabled === false || this.isDisabled() || !this.isRestricted()) {
       return false
     }
     var options = this.getOptions()
@@ -74,7 +86,7 @@ class Configuration {
               value = [value]
             }
 
-            if (content[key] !== true || key.substring(1) === 'template') {
+            if (content[key] !== true || key.substring(1) === 'template' || key.substring(1) === 'deprecated') {
               result[key.substring(1)] = value
               return result
             }

@@ -6,10 +6,12 @@ import PropTypes from 'prop-types'
 
 class ToggleConfiguration extends React.Component {
   static propTypes = {
+    currentUrl: PropTypes.string.isRequired,
+    onlyShowAvailable: PropTypes.bool.isRequired,
     actions: PropTypes.objectOf(PropTypes.func).isRequired,
     configuration: PropTypes.object,
     index: PropTypes.number,
-    className: PropTypes.object
+    className: PropTypes.string
   }
 
   toggle(id) {
@@ -25,15 +27,16 @@ class ToggleConfiguration extends React.Component {
 
   render() {
     var tmpConfig = (new Configuration(this.props.configuration.content, null, false, this.props.configuration.values))
+    var name = this.props.configuration.name // .split('/').pop()
 
-    if (tmpConfig.isTemplate() || !tmpConfig.isRestricted()) {
+    if ((this.props.onlyShowAvailable && !tmpConfig.isAvailableForUrl(this.props.currentUrl)) || tmpConfig.isTemplate() || !tmpConfig.isRestricted()) {
       return <div></div>
     }
 
     return <div className={'toggle-group ' + this.props.className}>
       <ToggleButton colors={{active: {base: '#5c832f', hover: '#90c256'}}} value={this.props.configuration.enabled} onToggle={() => { this.toggle(this.props.configuration.id) }}/>
       <label>
-        <a href="#" onClick={(event) => this.openEditor(event, this.props.index)}>{this.props.configuration.name}</a>
+        <a href="#" onClick={(event) => this.openEditor(event, this.props.index)}>{name}</a>
       </label>
     </div>
   }
