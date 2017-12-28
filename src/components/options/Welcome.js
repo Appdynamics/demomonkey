@@ -3,7 +3,7 @@ import showdown from 'showdown'
 
 class Welcome extends React.Component {
   render() {
-    var readme = require('../../../README.md')
+    var readme = require('../../../USAGE.md')
     var converter = new showdown.Converter({
       'prefixHeaderId': 'welcome ',
       'ghCompatibleHeaderId': true,

@@ -18,7 +18,7 @@ This is the most simple format. The configurations are parsed as ini files, so y
 [Frontend]
 ; Change the main domain
 shop.example.com = fly.example.org
-; Localize cities
+; cities
 San Francisco = Berlin
 New York = London
 ```
@@ -42,6 +42,8 @@ api.payment.com = payment.$customer
 @include =
 @exclude =
 ```
+
+See USAGE.md for a more comprehensive guide
 
 ## Installation
 To add the latest version as extension to chrome, use the following link:
