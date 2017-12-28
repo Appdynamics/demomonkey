@@ -8,6 +8,7 @@ import Editor from './editor/Editor'
 import Configuration from '../../models/Configuration'
 import PropTypes from 'prop-types'
 import Repository from '../../models/Repository'
+import { Base64 } from 'js-base64'
 
 /* The OptionsPageApp will be defined below */
 class App extends React.Component {
@@ -89,8 +90,8 @@ class App extends React.Component {
 
   downloadConfiguration(configuration) {
     window.chrome.downloads.download({
-      url: 'data:text/octet-stream;base64,' + window.btoa(configuration.content),
-      filename: configuration.name + '.mnky' // Optional
+      url: 'data:text/octet-stream;base64,' + Base64.encode(configuration.content),
+      filename: configuration.name.split('/').pop() + '.mnky'
     })
   }
 

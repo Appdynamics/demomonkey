@@ -11,7 +11,7 @@ import { Treebeard, decorators } from 'react-treebeard'
 decorators.Header = ItemHeader
 
 function arrayMerge(dst, src, opt) {
-  var i = dst.findIndex((e) => e.name === src[0].name && e.nodeType === src[0].nodeType)
+  var i = dst.findIndex((e) => e.name === src[0].name && e.nodeType === src[0].nodeType && e.nodeType === 'directory')
   if (i !== -1) {
     dst[i] = merge(dst[i], src[0], { arrayMerge: arrayMerge })
   } else {
@@ -109,7 +109,7 @@ class Navigation extends React.Component {
       <div>
         <NavigationHeader onUpload={this.props.onUpload} onNavigate={this.props.onNavigate} />
         <input type="text" onChange={(event) => this.handleSearchUpdate(event)} value={this.state.search} placeholder="Search..." className="searchBox" />
-        <div className="tree">
+        <div className="tree items">
           <Treebeard style={navigationTheme} decorators={decorators} data={this.state.data} onToggle={this.onToggle} />
         </div>
       </div>
