@@ -75,14 +75,18 @@ class App extends React.Component {
   }
 
   addConfiguration(configuration) {
-    this.props.actions.addConfiguration(configuration)
-    this.props.actions.setCurrentView('configuration/latest')
+    this.props.actions.addConfiguration(configuration).then(() => {
+      var latest = this.props.configurations[this.props.configurations.length - 1]
+      this.props.actions.setCurrentView('configuration/' + latest.id)
+    })
   }
 
   copyConfiguration(configuration) {
+    var path = configuration.name.split('/')
+    var name = 'Copy of ' + path.pop()
     this.addConfiguration({
       ...configuration,
-      name: 'Copy of ' + configuration.name,
+      name: path.join('/') + '/' + name,
       id: 'new',
       enabled: false
     })
@@ -193,12 +197,14 @@ class App extends React.Component {
   }
 
   render() {
+    var activeItem = this.props.currentView.indexOf('configuration/') === -1 ? false : this.props.currentView.split('/').pop()
+
     return <div className="main-grid">
       <Popup className="popup" btnClass="popup__btn" />
       <ul className="navigation">
         <li>
           <h2>DemoMonkey</h2>
-          <Navigation onNavigate={(target) => this.navigateTo(target)} onUpload={(configuration) => this.addConfiguration(configuration)} items={this.props.configurations} />
+          <Navigation onNavigate={(target) => this.navigateTo(target)} onUpload={(configuration) => this.addConfiguration(configuration)} items={this.props.configurations} active={activeItem} />
         </li>
       </ul>
       <div className="current-view">
@@ -232,7 +238,7 @@ const OptionsPageApp = connect(
         dispatch({ 'type': 'DELETE_CONFIGURATION', id })
       },
       addConfiguration: (configuration) => {
-        dispatch({ 'type': 'ADD_CONFIGURATION', configuration })
+        return dispatch({ 'type': 'ADD_CONFIGURATION', configuration })
       },
       setBaseTemplate: (baseTemplate) => {
         dispatch({ 'type': 'SET_BASE_TEMPLATE', baseTemplate })

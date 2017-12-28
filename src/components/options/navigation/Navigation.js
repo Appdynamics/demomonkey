@@ -26,6 +26,7 @@ class Navigation extends React.Component {
   static propTypes = {
     items: PropTypes.arrayOf(PropTypes.object).isRequired,
     onNavigate: PropTypes.func.isRequired,
+    active: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]).isRequired,
     onUpload: PropTypes.func.isRequired
   }
 
@@ -33,32 +34,43 @@ class Navigation extends React.Component {
   // Probably in the long run, the underyling datamodel needs to be changed
   buildTree(items, state) {
     var tree = []
-
-    console.log(state)
-
+    var cursor = {}
     items.forEach((orig, index) => {
       var item = Object.assign({}, orig)
       if (item.name.toLowerCase().indexOf(state.search) === -1) {
         return
       }
-      item.active = state.active === item.id
+      var currentIsActive = state.active === item.id
+      if (currentIsActive) {
+        item.active = true
+        cursor = item
+      }
       item.nodeType = 'item'
       var path = ('./' + item.name).split('/')
       item.name = path.pop()
       var sub = path.reverse().reduce((acc, dir, index) => {
         var id = '/' + path.slice(index, -1).join('/')
-        return {name: dir, nodeType: 'directory', id: id, toggled: state.toggled[id], children: [acc]}
+        return {
+          name: dir,
+          nodeType: 'directory',
+          id: id,
+          // This doesn't work since the merge will contain multiple false
+          toggled: currentIsActive || state.toggled[id],
+          children: [acc]
+        }
       }, item)
       tree = merge(tree, sub.children, { arrayMerge: arrayMerge })
     })
-    return tree
+    return {tree, cursor}
   }
 
   constructor(props) {
     super(props)
+    var {tree, cursor} = this.buildTree(this.props.items, {active: props.active, search: '', toggled: {}})
     this.state = {
-      data: this.buildTree(this.props.items, {active: false, search: '', toggled: {}}),
-      active: false,
+      data: tree,
+      cursor: cursor,
+      active: props.active,
       toggled: {},
       search: ''
     }
@@ -66,7 +78,8 @@ class Navigation extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({ data: this.buildTree(nextProps.items, this.state) })
+    var {tree, cursor} = this.buildTree(nextProps.items, {...this.state, active: nextProps.active})
+    this.setState({ data: tree, cursor: cursor })
   }
 
   handleClick(id) {
@@ -75,7 +88,8 @@ class Navigation extends React.Component {
 
   handleSearchUpdate(event) {
     this.setState({ search: event.target.value.toLowerCase() }, function () {
-      this.setState({ data: this.buildTree(this.props.items, this.state) })
+      var {tree, cursor} = this.buildTree(this.props.items, this.state)
+      this.setState({ data: tree, cursor: cursor })
     })
   }
 
