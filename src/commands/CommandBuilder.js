@@ -1,4 +1,5 @@
 import SearchAndReplace from './SearchAndReplace'
+import Style from './Style'
 import ReplaceFlowmapIcon from './appdynamics/ReplaceFlowmapIcon'
 import HideApplication from './appdynamics/HideApplication'
 import HideBusinessTransaction from './appdynamics/HideBusinessTransaction'
@@ -45,6 +46,10 @@ class CommandBuilder {
       if (command === 'replaceFlowmapConnection') {
         return new ReplaceFlowmapConnection(parameters[0], parameters[1], value)
       }
+    }
+
+    if (command === 'style') {
+      return new Style(parameters[0], parameters[1], value)
     }
 
     return new Command()

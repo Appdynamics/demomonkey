@@ -36,7 +36,7 @@ class ToggleConfiguration extends React.Component {
     return <div className={'toggle-group ' + this.props.className}>
       <ToggleButton colors={{active: {base: '#5c832f', hover: '#90c256'}}} value={this.props.configuration.enabled} onToggle={() => { this.toggle(this.props.configuration.id) }}/>
       <label>
-        <a href="#" onClick={(event) => this.openEditor(event, this.props.index)}>{name}</a>
+        <a href="#" onClick={(event) => this.openEditor(event, this.props.configuration.id)}>{name}</a>
       </label>
     </div>
   }

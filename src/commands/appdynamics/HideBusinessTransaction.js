@@ -16,7 +16,7 @@ class HideBusinessTransaction extends Command {
       // Delete in list view
       var parentNode = this._walk(node, 3)
       if (this._checkNode(parentNode, 'x-grid-row')) {
-        this._hideNode(parentNode)
+        return this._hideNode(parentNode)
       }
     }
     return false

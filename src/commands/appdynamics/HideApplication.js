@@ -16,12 +16,12 @@ class HideApplication extends Command {
       // Delete in box view
       var parentNode = this._walk(node, 4)
       if (this._checkNode(parentNode, 'ads-application-card')) {
-        this._hideNode(parentNode)
+        return this._hideNode(parentNode)
       }
       // Delete in list view
       parentNode = this._walk(node, 3)
       if (this._checkNode(parentNode, 'x-grid-row')) {
-        this._hideNode(parentNode)
+        return this._hideNode(parentNode)
       }
     }
     return false

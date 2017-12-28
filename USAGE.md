@@ -60,9 +60,10 @@ If you want to use a option multiple time you need to provide it in array notati
 
 ## Commands
 
-Outside of namespaces you can always use the following command:
+Outside of namespaces you can always use the following commands:
 
-- **!/search/replace/modifier**: Provide a regular expression to run your replacements
+- **!/search/replace/modifier**: Provide a regular expression to run your replacements.
+- **!style(word, property)**: Change the css property of a node containing word 
 
 ## Namespaces
 

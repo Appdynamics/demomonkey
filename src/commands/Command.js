@@ -23,6 +23,7 @@ class Command {
     if (original !== node.style.display) {
       return new UndoElement(node.style, 'display', original, 'none')
     }
+    return false
   }
 }
 
