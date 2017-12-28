@@ -2,7 +2,11 @@
   "name": "demomonkey",
   "license": "Apache-2.0",
   "author": "Severin Neumann <severin.neumann@appdynamics.com>",
-  "homepage": "https://github.com/svrnm/demomonkey/",
+  "homepage": "https://github.com/Appdynamics/demomonkey/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Appdynamics/demomonkey.git"
+  },
   "description": "Tamper your Web UI to demo almost anything",
   "dependencies": {
     "axios": "^0.17.1",
@@ -12,13 +16,14 @@
     "js-base64": "^2.4.0",
     "json5": "^0.5.1",
     "jszip": "^3.1.5",
+    "keymaster": "^1.6.2",
     "mousetrap": "^1.6.1",
     "prop-types": "^15.6.0",
     "react": "^16.2.0",
     "react-ace": "^5.8.0",
     "react-chrome-redux": "^1.4.0",
     "react-dom": "^16.2.0",
-    "react-popup": "^0.8.0",
+    "react-popup": "^0.9.1",
     "react-redux": "^5.0.6",
     "react-timeago": "^3.4.3",
     "react-toggle-button": "^2.2.0",
