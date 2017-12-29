@@ -91,7 +91,9 @@ class Monkey {
 
     if (this.withUndo) {
       this.undo.reverse().forEach(undo => {
-        undo.apply()
+        if (typeof undo.apply === 'function') {
+          undo.apply()
+        }
       })
 
       this.undo = []

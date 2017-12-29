@@ -5,8 +5,7 @@ export default {
       backgroundColor: 'rgb(241, 247, 236)',
       margin: 0,
       padding: 0,
-      color: '#284907',
-      fontSize: '14px'
+      color: '#284907'
     },
     node: {
       base: {
@@ -18,7 +17,7 @@ export default {
         padding: '4px',
         width: '100%',
         display: 'block',
-        borderTop: '1px solid #a8c987'
+        borderBottom: '1px solid #a8c987'
       },
       activeLink: {
         background: '#a8c987'
