@@ -50,14 +50,17 @@ class Navigation extends React.Component {
       item.name = path.pop()
       var sub = path.reverse().reduce((acc, dir, index) => {
         var id = '/' + path.slice(index, -1).join('/')
-        return {
+        var result = {
           name: dir,
           nodeType: 'directory',
           id: id,
-          // This doesn't work since the merge will contain multiple false
-          toggled: currentIsActive || state.toggled[id],
           children: [acc]
         }
+        // This is required, since the merge might prefer a false from a previous element
+        if (currentIsActive || state.toggled[id]) {
+          result.toggled = true
+        }
+        return result
       }, item)
       tree = merge(tree, sub.children, { arrayMerge: arrayMerge })
     })
