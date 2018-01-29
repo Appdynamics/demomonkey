@@ -1,30 +1,22 @@
 import Command from '../Command'
+import Hide from '../Hide'
 
 class HideApplication extends Command {
-  constructor(appName, _, context) {
+  constructor(appName, location) {
     super()
-    this.appName = appName
-    this.context = context
-  }
-
-  _checkNode(node, className) {
-    return node !== false && node.style.display !== 'none' && typeof node.className.includes === 'function' && node.className.includes(className)
+    this.helpers = [
+      new Hide(appName, 4, 'ads-application-card', '', 'APPS_ALL_DASHBOARD', location),
+      new Hide(appName, 3, 'x-grid-row', '', 'APPS_ALL_DASHBOARD', location),
+      new Hide(appName, 2, 'ads-home-list-item', '', 'AD_HOME_OVERVIEW', location, function (_, parentNode) {
+        return parentNode.getAttribute('ng-click').includes('ViewApplicationDashboard')
+      })
+    ]
   }
 
   apply(node, key) {
-    if (typeof node[key] !== 'undefined' && node[key].trim() === this.appName && typeof this.context === 'string' && this.context.includes('APPS_ALL_DASHBOARD')) {
-      // Delete in box view
-      var parentNode = this._walk(node, 4)
-      if (this._checkNode(parentNode, 'ads-application-card')) {
-        return this._hideNode(parentNode)
-      }
-      // Delete in list view
-      parentNode = this._walk(node, 3)
-      if (this._checkNode(parentNode, 'x-grid-row')) {
-        return this._hideNode(parentNode)
-      }
-    }
-    return false
+    return this.helpers.reduce((acc, cmd) => {
+      return acc || cmd.apply(node, key)
+    }, false)
   }
 }
 

@@ -1,4 +1,5 @@
 import SearchAndReplace from '../../src/commands/SearchAndReplace'
+import Hide from '../../src/commands/Hide'
 import ReplaceFlowmapIcon from '../../src/commands/appdynamics/ReplaceFlowmapIcon'
 import HideApplication from '../../src/commands/appdynamics/HideApplication'
 import Command from '../../src/commands/Command'
@@ -46,7 +47,7 @@ describe('Command', function () {
         extracted: true,
         command: 'cmd',
         namespace: 'ns',
-        parameters: []
+        parameters: ['']
       }))
     })
 
@@ -80,7 +81,7 @@ describe('Command', function () {
 
     it('supports quoting for parameter lists', function () {
       assert.deepEqual(new CommandBuilder()._extractForCustomCommand(
-          'ns.cmd("a,\'s",\' "d \',f,  g, (h), "i\')'),
+        'ns.cmd("a,\'s",\' "d \',f,  g, (h), "i\')'),
         ({
           extracted: true,
           command: 'cmd',
@@ -95,6 +96,12 @@ describe('Command', function () {
     })
 
     it('should create a SearchAndReplace for regular expression command', function () {
+      var command = new CommandBuilder().build('!/a/', 'b')
+      expect(command).to.be.an.instanceof(SearchAndReplace)
+      expect(command.search).to.be.an.instanceof(RegExp)
+    })
+
+    it('should create a SearchAndReplace for regular expression command with standard modifier', function () {
       var command = new CommandBuilder().build('!/a/i', 'b')
       expect(command).to.be.an.instanceof(SearchAndReplace)
       expect(command.search).to.be.an.instanceof(RegExp)
@@ -123,6 +130,10 @@ describe('Command', function () {
 
     it('should create a SearchAndReplace for a quoted ! at position 0', function () {
       expect(new CommandBuilder().build('\\!a', 'b')).to.be.an.instanceof(SearchAndReplace)
+    })
+
+    it('should create a Hide command for !hide("ASDF")', function () {
+      expect(new CommandBuilder().build('!hide("ASDF")')).to.be.an.instanceof(Hide)
     })
 
     it('should create a ReplaceFlowmapIcon command for !appdynamics.replaceFlowmapIcon(Inventory-Service)',

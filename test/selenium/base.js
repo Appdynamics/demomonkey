@@ -50,6 +50,8 @@ const Base = {
     driver.findElement(By.id('configuration-title')).sendKeys(title)
     driver.findElement(By.css('li#current-configuration-editor a')).click()
     driver.findElement(By.css('#contentarea > textarea')).clear()
+    // Slow down the input, since sometimes not all chars are send
+    driver.findElement(By.css('#contentarea > textarea')).sendKeys(';;;;\n')
     driver.findElement(By.css('#contentarea > textarea')).sendKeys(content)
     driver.findElement(By.className('save-button')).click()
     return Promise.all([

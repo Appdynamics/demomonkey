@@ -1,8 +1,11 @@
 import SearchAndReplace from './SearchAndReplace'
 import Style from './Style'
+import Hide from './Hide'
 import ReplaceFlowmapIcon from './appdynamics/ReplaceFlowmapIcon'
 import HideApplication from './appdynamics/HideApplication'
-import HideBusinessTransaction from './appdynamics/HideBusinessTransaction'
+import HideDatabase from './appdynamics/HideDatabase'
+import HideBrowserApplication from './appdynamics/HideBrowserApplication'
+// import HideBusinessTransaction from './appdynamics/HideBusinessTransaction'
 import ReplaceFlowmapConnection from './appdynamics/ReplaceFlowmapConnection'
 
 import Command from './Command'
@@ -13,7 +16,7 @@ class CommandBuilder {
   }
 
   _buildRegex(search, modifiers, replace) {
-    modifiers = typeof modifiers !== 'undefined' ? modifiers + 'g' : modifiers
+    modifiers = typeof modifiers === 'string' ? modifiers : 'g'
     if (modifiers.includes('p')) {
       return new SearchAndReplace(
         new RegExp(search, modifiers.replace('p', '')),
@@ -36,12 +39,17 @@ class CommandBuilder {
         return new ReplaceFlowmapIcon(parameters[0], value)
       }
       if (command === 'hideApplication') {
-        // location.hash will be used to verify that only elements on the applications overview are hidden
-        return new HideApplication(parameters[0], value, typeof window === 'undefined' ? '' : window.location.hash)
+        return new HideApplication(parameters[0], typeof window === 'undefined' ? '' : window.location)
+      }
+      if (command === 'hideBrowserApplication') {
+        return new HideBrowserApplication(parameters[0], value, typeof window === 'undefined' ? '' : window.location)
+      }
+      if (command === 'hideDB' || command === 'hideDatabase') {
+        return new HideDatabase(parameters[0], typeof window === 'undefined' ? '' : window.location)
       }
       if (command === 'hideBT' || command === 'hideBusinessTransaction') {
-        // location.hash will be used to verify that only elements on the applications overview are hidden
-        return new HideBusinessTransaction(parameters[0], value, typeof window === 'undefined' ? '' : window.location.hash)
+        // return new HideBusinessTransaction(parameters[0], value, typeof window === 'undefined' ? '' : window.location)
+        return new Hide(parameters[0], 3, 'x-grid-row', '', 'APP_BT_LIST', typeof window === 'undefined' ? '' : window.location)
       }
       if (command === 'replaceFlowmapConnection') {
         return new ReplaceFlowmapConnection(parameters[0], parameters[1], value)
@@ -50,6 +58,10 @@ class CommandBuilder {
 
     if (command === 'style') {
       return new Style(parameters[0], parameters[1], value)
+    }
+
+    if (command === 'hide') {
+      return new Hide(parameters[0], parameters[1], parameters[2], parameters[3], parameters[4], typeof window === 'undefined' ? null : window.location)
     }
 
     return new Command()
@@ -87,7 +99,7 @@ class CommandBuilder {
         parameters[index] += letter
       })
 
-      parameters = parameters.map(e => e.trim().replace(/"(.*)"|'(.*)'/, '$1$2')).filter(e => e !== '')
+      parameters = parameters.map(e => e.trim().replace(/"(.*)"|'(.*)'/, '$1$2')) // .filter(e => e !== '')
 
       command = command.split('(')[0]
     }
