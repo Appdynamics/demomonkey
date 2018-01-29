@@ -76,7 +76,7 @@ gulp.task('mrproper', ['clean'], function () {
 })
 
 gulp.task('copy', function () {
-  return gulp.src(['README.md', 'USAGE.md', 'LICENSE', 'manifest.json', 'pages/options.html', 'pages/popup.html',
+  return gulp.src(['README.md', 'USAGE.md', 'LICENSE', 'manifest.json', 'pages/options.html', 'pages/devtools.html', 'pages/popup.html',
     'pages/background.html', 'pages/test.html', 'src/test.js', 'pages/backup.html', 'src/backup.js',
     'scripts/**/*.js'
   ])

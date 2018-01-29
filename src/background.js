@@ -54,6 +54,7 @@ import Settings from './models/Settings'
     saveOnClose: true,
     adrumTracking: true,
     editorAutocomplete: true,
+    inDevTools: true,
     // This is only a soft toggle, since the user can turn it on and off directly in the popup
     onlyShowAvailableConfigurations: true
   }

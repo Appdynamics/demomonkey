@@ -73,4 +73,6 @@ Commands specific to a certain webapplication are provided via a namespace. Curr
 - **replaceFlowmapIcon(label) = replacement**: Replace the type of a tier or backend on the flowmap.
 - **hideApplication(label)**: Hide the given application.
 - **hideBusinessTransaction(label)**: Hide the given business transaction.
+- **hideDatabase(label)**: Hide the given database
+- **hideBrowserApplication(label)**: The the given browser application for EUM
 - **replaceFlowmapConnection(label1, label2) = replacement**: Replace the color between two elements on the flowmap. Possible values for **replacement** are Warning, Critical, Unknown and Normal

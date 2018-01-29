@@ -1,5 +1,4 @@
 import selenium from 'selenium-webdriver'
-import chrome from 'selenium-webdriver/chrome'
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import base from './base'

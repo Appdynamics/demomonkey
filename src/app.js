@@ -63,9 +63,21 @@ store.ready().then(() => {
 
   updateCurrentPage()
 
-  if (root.getAttribute('data-app') === 'OptionsPageApp') {
-    renderOptionsPageApp(root, store)
-  } else {
-    renderPopupPageApp(root, store)
+  switch (root.getAttribute('data-app')) {
+    case 'OptionsPageApp':
+      renderOptionsPageApp(root, store)
+      break
+    case 'DevToolsPageApp':
+      if (window.store.state.settings.optionalFeatures.inDevTools === true) {
+        chrome.devtools.panels.create('DemoMonkey',
+          'MyPanelIcon.png',
+          'options.html',
+          function (panel) {
+            // code invoked on panel creation
+          })
+      }
+      break
+    default:
+      renderPopupPageApp(root, store)
   }
 })

@@ -23,6 +23,7 @@
   "background": {
     "page": "background.html"
   },
+  "devtools_page": "devtools.html",
   "options_page": "options.html",
   "browser_action": {
     "default_icon": "icons/monkey_16.png",
