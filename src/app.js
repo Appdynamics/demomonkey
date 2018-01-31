@@ -70,7 +70,7 @@ store.ready().then(() => {
     case 'DevToolsPageApp':
       if (window.store.state.settings.optionalFeatures.inDevTools === true) {
         chrome.devtools.panels.create('DemoMonkey',
-          'MyPanelIcon.png',
+          'icons/monkey_16.png',
           'options.html',
           function (panel) {
             // code invoked on panel creation

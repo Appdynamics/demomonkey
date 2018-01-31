@@ -172,7 +172,7 @@ class Configuration {
             return x
           }
 
-          // skip true for non-commands
+          // skip for non-commands
           if (key.charAt(0) !== '!' && content[key] === true) {
             return result
           }

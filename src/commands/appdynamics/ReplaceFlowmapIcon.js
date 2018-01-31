@@ -17,6 +17,10 @@ class ReplaceFlowmapIcon extends Command {
     'c++': 'images/icon_nodetype_native_100x100.png',
     'webserver': 'images/tierTypes/WebServers.svg',
     'apache': 'images/tierTypes/WebServers.svg',
+    'ruby': 'images/tierTypes/ruby.svg',
+    'wmb': 'images/icon_nodetype_wmb_100x100.png',
+    'go': 'images/icon_nodetype_golang_100x100.png',
+    'golang': 'images/icon_nodetype_golang_100x100.png',
     // backends
     'cache': 'svg/cache.svg',
     'cassandra': 'svg/cassandra.svg',
