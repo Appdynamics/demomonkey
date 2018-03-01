@@ -1,6 +1,8 @@
 import SearchAndReplace from './SearchAndReplace'
 import Style from './Style'
 import Hide from './Hide'
+import ReplaceImage from './ReplaceImage'
+import OverwriteHTML from './OverwriteHTML'
 import ReplaceFlowmapIcon from './appdynamics/ReplaceFlowmapIcon'
 import HideApplication from './appdynamics/HideApplication'
 import HideDatabase from './appdynamics/HideDatabase'
@@ -62,6 +64,14 @@ class CommandBuilder {
 
     if (command === 'hide') {
       return new Hide(parameters[0], parameters[1], parameters[2], parameters[3], parameters[4], typeof window === 'undefined' ? null : window.location)
+    }
+
+    if (command === 'replaceImage') {
+      return new ReplaceImage(parameters[0], value)
+    }
+
+    if (command === 'overwriteHTML' || command === 'overwrite') {
+      return new OverwriteHTML(parameters[0], parameters[1], value, typeof window === 'undefined' ? '' : window.location)
     }
 
     return new Command()

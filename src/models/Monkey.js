@@ -35,11 +35,20 @@ class Monkey {
   }
 
   apply(configuration) {
-    var xpath = '//body//text()[ normalize-space(.) != ""]'
+    this._applyOnXpathGroup(configuration, '//body//text()[ normalize-space(.) != ""]', 'text', 'data')
+    this._applyOnXpathGroup(configuration, '//body//input', 'input', 'value')
+    this._applyOnXpathGroup(configuration, '//body//img', 'image', 'src')
+    // Apply the text commands on the title element
+    this.addUndo(configuration.apply(this.scope.document, 'title', 'text'))
+    // Finally we can apply document commands on the document itself.
+    this.addUndo(configuration.apply(this.scope.document, 'documentElement', 'document'))
+  }
+
+  _applyOnXpathGroup(configuration, xpath, groupName, key) {
     var text
     var texts = this.scope.document.evaluate(xpath, this.scope.document, null, 6, null)
     for (var i = 0; (text = texts.snapshotItem(i)) !== null; i += 1) {
-      this.addUndo(configuration.apply(text, 'data'))
+      this.addUndo(configuration.apply(text, key, groupName))
       // The following is a workaround to cover <tspan> in SVG.
       // This will only work if a <title> is set.
       if (text.parentNode.tagName === 'title' &&
@@ -56,7 +65,7 @@ class Monkey {
           'value': content.join(' ')
         }
 
-        configuration.apply(pseudoNode)
+        configuration.apply(pseudoNode, 'value', groupName)
 
         var words = pseudoNode.value.split(' ')
 
@@ -72,7 +81,6 @@ class Monkey {
         })
       }
     }
-    this.addUndo(configuration.apply(this.scope.document, 'title'))
   }
 
   run(configuration) {

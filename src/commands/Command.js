@@ -5,6 +5,10 @@ class Command {
     return target
   }
 
+  isApplicableForGroup(group) {
+    return group === 'text' || group === 'input' || group === '*'
+  }
+
   _walk(node, count) {
     if (count === 0) {
       return node

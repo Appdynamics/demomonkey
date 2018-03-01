@@ -49,15 +49,31 @@ class Configuration {
 
   isTagBlacklisted(node) {
     var blacklist = this.getOptions().blacklist
-    return Array.isArray(blacklist) && typeof node.parentNode !== 'undefined' && node.parentNode !== null && blacklist.map(tag => tag.toLowerCase()).includes(node.parentNode.nodeName.toLowerCase())
+
+    if (!Array.isArray(blacklist)) {
+      return false
+    }
+
+    switch (node.nodeType) {
+      // TEXT_NODE
+      case 3:
+        return typeof node.parentNode !== 'undefined' && node.parentNode !== null && blacklist.map(tag => tag.toLowerCase()).includes(node.parentNode.nodeName.toLowerCase())
+      // ELEMENT_NODE
+      case 1:
+        return blacklist.map(tag => tag.toLowerCase()).includes(node.nodeName.toLowerCase())
+    }
   }
 
-  apply(node, key = 'value') {
+  apply(node, key = 'value', groupName = '*') {
     if (this.isTagBlacklisted(node)) {
       return []
     }
 
     var undos = this._getConfiguration().reduce(function (carry, command) {
+      if (!command.isApplicableForGroup(groupName)) {
+        return carry
+      }
+
       var undo = command.apply(node, key)
 
       if (undo === false) {
