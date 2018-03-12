@@ -201,12 +201,9 @@ class App extends React.Component {
 
     return <div className="main-grid">
       <Popup className="popup" btnClass="popup__btn" />
-      <ul className="navigation">
-        <li>
-          <h2>DemoMonkey</h2>
-          <Navigation onNavigate={(target) => this.navigateTo(target)} onUpload={(configuration) => this.addConfiguration(configuration)} items={this.props.configurations} active={activeItem} />
-        </li>
-      </ul>
+      <div className="navigation">
+        <Navigation onNavigate={(target) => this.navigateTo(target)} onUpload={(configuration) => this.addConfiguration(configuration)} items={this.props.configurations} active={activeItem} />        
+      </div>
       <div className="current-view">
         {this.getCurrentView()}
       </div>

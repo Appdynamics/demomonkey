@@ -8,27 +8,13 @@
   margin: 0px;
   min-height: 100%;
   min-width: 250px;
-  padding: 0px;
-  overflow-y: auto;
   overflow-x: hidden;
+  overflow-y: auto;
+  padding: 0px;
 
-  li {
+  ul {
+    margin: 0px;
     padding: 0px;
-
-    h2 {
-      background-color: @base;
-      border-bottom: 1px solid @base;
-      color: #ffffff;
-      display: block;
-      font-weight: bold;
-      margin: 0px;
-      padding: 16px;
-    }
-
-    ul {
-      margin: 0px;
-      padding: 0px;
-    }
   }
 
   .navigation-item {
@@ -60,26 +46,29 @@
 
   .actions {
 
+    background-color: @base;
+
     a {
+      color: #f0f0f0;
       display: block;
       padding: 8px;
       text-decoration: none;
 
       &:hover {
-        background: #ffffff;
+        background: #f0f0f0;
+        color: @base;
         text-decoration: underline;
       }
     }
 
-    border-bottom: 1px solid @base;
     display: flex;
 
     li {
-      border-right: 1px solid @base;
+      border-right: 1px solid #f0f0f0;
       list-style-type: none;
 
       &:last-of-type {
-        border-right: 0px;
+        border-right: none;
       }
     }
 
@@ -96,7 +85,7 @@
     width: 250px;
     padding-left: 4px;
     border-bottom: 1px solid @base;
-    border-top: none;
+    border-top: 1px solid @base;
     border-left: none;
     border-right: 1px solid @base;
     height: 24px;

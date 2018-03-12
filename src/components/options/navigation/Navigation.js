@@ -114,18 +114,12 @@ class Navigation extends React.Component {
   }
 
   render() {
-    /* <ul className='items'>
-      <li></li>
-      {Object.keys(this.props.items).map((key, index) => {
-        var config = this.props.items[key]
-        return <NavigationItem key={index} item={config} onClick={(id) => this.handleClick(id)} search={this.state.search} />
-      })}
-    </ul> */
-
     return (
       <div>
-        <NavigationHeader onUpload={this.props.onUpload} onNavigate={this.props.onNavigate} />
-        <input type="text" onChange={(event) => this.handleSearchUpdate(event)} value={this.state.search} placeholder="Search..." className="searchBox" />
+        <div className="navigation-header">
+          <NavigationHeader onUpload={this.props.onUpload} onNavigate={this.props.onNavigate} />
+          <input type="text" onChange={(event) => this.handleSearchUpdate(event)} value={this.state.search} placeholder="Search..." className="searchBox" />
+        </div>
         <div className="tree items">
           <Treebeard style={navigationTheme} decorators={decorators} data={this.state.data} onToggle={this.onToggle} />
         </div>

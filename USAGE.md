@@ -1,4 +1,4 @@
-# Usage
+# DemoMonkey - Usage
 
 Read on to learn how you can use DemoMonkey, to tamper your web application to demo almost anything.
 
