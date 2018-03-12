@@ -45,9 +45,9 @@ class Monkey {
   }
 
   _applyOnXpathGroup(configuration, xpath, groupName, key) {
-    var text
+    var text, i
     var texts = this.scope.document.evaluate(xpath, this.scope.document, null, 6, null)
-    for (var i = 0; (text = texts.snapshotItem(i)) !== null; i += 1) {
+    for (i = 0; (text = texts.snapshotItem(i)) !== null; i += 1) {
       this.addUndo(configuration.apply(text, key, groupName))
       // The following is a workaround to cover <tspan> in SVG.
       // This will only work if a <title> is set.

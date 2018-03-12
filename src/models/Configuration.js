@@ -62,6 +62,8 @@ class Configuration {
       case 1:
         return blacklist.map(tag => tag.toLowerCase()).includes(node.nodeName.toLowerCase())
     }
+
+    return false
   }
 
   apply(node, key = 'value', groupName = '*') {

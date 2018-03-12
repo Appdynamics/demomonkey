@@ -169,16 +169,31 @@ describe('Configuration', function () {
   describe('#isTagBlacklisted', function () {
     it('should return true if tagname is blacklisted', function () {
       var node = {
+        nodeType: 3,
         parentNode: {
+          nodeType: 1,
           nodeName: 'DIV'
         }
       }
       assert.equal(configurationWithBlacklist.isTagBlacklisted(node), true)
+      assert.equal(configurationWithBlacklist.isTagBlacklisted(node.parentNode), true)
     })
     it('should return false if tagname is not blacklisted', function () {
       var node = {
+        nodeType: 3,
         parentNode: {
+          nodeType: 1,
           nodeName: 'INPUT'
+        }
+      }
+      assert.equal(configurationWithBlacklist.isTagBlacklisted(node), false)
+      assert.equal(configurationWithBlacklist.isTagBlacklisted(node.parentNode), false)
+    })
+    it('should return false if node type is not TEXT or ELEMENT', function () {
+      var node = {
+        nodeType: 99,
+        parentNode: {
+          nodeName: 'DIV'
         }
       }
       assert.equal(configurationWithBlacklist.isTagBlacklisted(node), false)

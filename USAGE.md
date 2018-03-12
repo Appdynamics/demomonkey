@@ -65,6 +65,8 @@ Outside of namespaces you can always use the following commands:
 - **!/search/modifier = replacement**: Provide a regular expression to run your replacements.
 - **!style(word, property) = replacement**: Change the css property of a node containing word
 - **!hide(word, nthParent, cssFilter, hrefFilter, hashFilter)**: Hide a text field and its nth parent elements. You can apply multiple filters.
+- **!replaceImage(src) = replacement**: Replace the src attribute of an img tag
+- **!overwriteHTML(locationFilter, cssSelector) = replacement**: Overwrite the inner HTML of the first element matching the cssSelector. If no selector is provided the main html can be overwritten. You can filter the application by location (href, hash)
 
 ## Namespaces
 
