@@ -1,4 +1,5 @@
-import HideApplication from '../../../src/commands/appdynamics/HideApplication'
+import Group from '../../src/commands/Group'
+import Hide from '../../src/commands/Hide'
 
 var assert = require('assert')
 
@@ -49,7 +50,27 @@ var node2 = {
   }
 }
 
-describe('HideApplication', function () {
+/*
+ This test is a conversion from the old HideApplication command test. For the time being this is an easy way to
+ check if group is working
+ */
+class HideApplication {
+  constructor(appName, location) {
+    this.group = new Group([
+      new Hide(appName, 4, 'ads-application-card', '', 'APPS_ALL_DASHBOARD', location),
+      new Hide(appName, 3, 'x-grid-row', '', 'APPS_ALL_DASHBOARD', location),
+      new Hide(appName, 2, 'ads-home-list-item', '', 'AD_HOME_OVERVIEW', location, function (_, parentNode) {
+        return parentNode.getAttribute('ng-click').includes('ViewApplicationDashboard')
+      })
+    ])
+  }
+
+  apply(node, key) {
+    return this.group.apply(node, key)
+  }
+}
+
+describe('Group', function () {
   beforeEach(function () {
     appNode.style.display = 'block'
     appNode.className = 'ads-application-card'

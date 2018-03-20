@@ -1,7 +1,7 @@
 import SearchAndReplace from '../../src/commands/SearchAndReplace'
 import Hide from '../../src/commands/Hide'
+import Group from '../../src/commands/Group'
 import ReplaceFlowmapIcon from '../../src/commands/appdynamics/ReplaceFlowmapIcon'
-import HideApplication from '../../src/commands/appdynamics/HideApplication'
 import Command from '../../src/commands/Command'
 import CommandBuilder from '../../src/commands/CommandBuilder'
 import chai from 'chai'
@@ -150,10 +150,10 @@ describe('Command', function () {
       })
 
     it(
-      'should create a HideApplication command for !hideApplication("ASDF") and namespaces [appdynamics]',
+      'should create a Group command for !hideApplication("ASDF") and namespaces [appdynamics]',
       function () {
         expect(new CommandBuilder(['appdynamics']).build('!hideApplication("ASDF")'))
-          .to.be.an.instanceof(HideApplication)
+          .to.be.an.instanceof(Group)
       })
 
     it('should create a (effect-less) Command for an unknown command', function () {

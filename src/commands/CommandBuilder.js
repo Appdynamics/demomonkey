@@ -1,13 +1,10 @@
 import SearchAndReplace from './SearchAndReplace'
 import Style from './Style'
 import Hide from './Hide'
+import Group from './Group'
 import ReplaceImage from './ReplaceImage'
 import OverwriteHTML from './OverwriteHTML'
 import ReplaceFlowmapIcon from './appdynamics/ReplaceFlowmapIcon'
-import HideApplication from './appdynamics/HideApplication'
-import HideDatabase from './appdynamics/HideDatabase'
-import HideBrowserApplication from './appdynamics/HideBrowserApplication'
-// import HideBusinessTransaction from './appdynamics/HideBusinessTransaction'
 import ReplaceFlowmapConnection from './appdynamics/ReplaceFlowmapConnection'
 
 import Command from './Command'
@@ -36,25 +33,56 @@ class CommandBuilder {
   }
 
   _buildCustomCommand(namespace, command, parameters, value) {
+    var location = typeof window === 'undefined' ? '' : window.location
+
     if (namespace === 'appdynamics' || this.namespaces.includes('appdynamics')) {
       if (command === 'replaceFlowmapIcon') {
         return new ReplaceFlowmapIcon(parameters[0], value)
       }
+
       if (command === 'hideApplication') {
-        return new HideApplication(parameters[0], typeof window === 'undefined' ? '' : window.location)
+        return new Group([
+          new Hide(parameters[0], 4, 'ads-application-card', '', 'APPS_ALL_DASHBOARD', location),
+          new Hide(parameters[0], 3, 'x-grid-row', '', 'APPS_ALL_DASHBOARD', location),
+          new Hide(parameters[0], 2, 'ads-home-list-item', '', 'AD_HOME_OVERVIEW', location, function (_, parentNode) {
+            return parentNode.getAttribute('ng-click').includes('ViewApplicationDashboard')
+          })
+        ])
       }
       if (command === 'hideBrowserApplication') {
-        return new HideBrowserApplication(parameters[0], value, typeof window === 'undefined' ? '' : window.location)
+        return new Group([
+          new Hide(parameters[0], 4, 'x-grid-row', '', 'EUM_WEB_ALL_APPS', location),
+          new Hide(parameters[0], 2, 'ads-home-list-item', '', 'AD_HOME_OVERVIEW', location, function (_, parentNode) {
+            return parentNode.getAttribute('ng-click').includes('ViewEumWebApplication')
+          })
+        ])
       }
       if (command === 'hideDB' || command === 'hideDatabase') {
-        return new HideDatabase(parameters[0], typeof window === 'undefined' ? '' : window.location)
+        return new Group([
+          new Hide(parameters[0], 9, 'ads-database-card', '', 'DB_MONITORING_SERVER_LIST', location),
+          new Hide(parameters[0], 4, 'x-grid-row', '', 'DB_MONITORING_SERVER_LIST', location),
+          new Hide(parameters[0], 2, 'ads-home-list-item', '', 'AD_HOME_OVERVIEW', location, function (_, parentNode) {
+            return parentNode.getAttribute('ng-click').includes('ViewDbServer')
+          })
+        ])
       }
       if (command === 'hideBT' || command === 'hideBusinessTransaction') {
-        // return new HideBusinessTransaction(parameters[0], value, typeof window === 'undefined' ? '' : window.location)
-        return new Hide(parameters[0], 3, 'x-grid-row', '', 'APP_BT_LIST', typeof window === 'undefined' ? '' : window.location)
+        return new Hide(parameters[0], 3, 'x-grid-row', '', 'APP_BT_LIST', location)
       }
       if (command === 'replaceFlowmapConnection') {
         return new ReplaceFlowmapConnection(parameters[0], parameters[1], value)
+      }
+      if (command === 'replaceMobileScreenshot') {
+        var condition = function (document) {
+          var view = document.querySelector('.ads-session-left-panel-container-grid-with-nav .x-grid-row-selected .x-grid-cell-first .x-grid-cell-inner')
+          return view !== null && view.innerHTML === parameters[0]
+        }
+        var thumbnailHtml = '<img src="' + value + '" height="149" style="margin-left: auto;margin-right: auto;display: block;">'
+        var screenshotHtml = '<img src="' + value + '" height="380" style="margin-top: 10px;margin-left: auto;margin-right: auto;display: block;">'
+        return new Group([
+          new OverwriteHTML('EUM_MOBILE_SESSION_DETAILS', '.ads-screenshot-container', screenshotHtml, location, condition),
+          new OverwriteHTML('EUM_MOBILE_SESSION_DETAILS', '.ads-screenshot-tooltip-thumbnail-container', thumbnailHtml, location, condition)
+        ])
       }
     }
 
@@ -63,7 +91,7 @@ class CommandBuilder {
     }
 
     if (command === 'hide') {
-      return new Hide(parameters[0], parameters[1], parameters[2], parameters[3], parameters[4], typeof window === 'undefined' ? null : window.location)
+      return new Hide(parameters[0], parameters[1], parameters[2], parameters[3], parameters[4], location)
     }
 
     if (command === 'replaceImage') {
@@ -71,7 +99,7 @@ class CommandBuilder {
     }
 
     if (command === 'overwriteHTML' || command === 'overwrite') {
-      return new OverwriteHTML(parameters[0], parameters[1], value, typeof window === 'undefined' ? '' : window.location)
+      return new OverwriteHTML(parameters[0], parameters[1], value, location)
     }
 
     return new Command()
