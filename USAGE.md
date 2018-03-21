@@ -78,3 +78,16 @@ Commands specific to a certain webapplication are provided via a namespace. Curr
 - **hideDatabase(label)**: Hide the given database
 - **hideBrowserApplication(label)**: The the given browser application for EUM
 - **replaceFlowmapConnection(label1, label2) = replacement**: Replace the color between two elements on the flowmap. Possible values for **replacement** are Warning, Critical, Unknown and Normal
+- **replaceMobileScreenshot(view) = replacement**: Replace a screenshot taken during a mobile session for the given view.
+
+## Variables
+
+To make a configuration much more reusable you can introduce variables with a default value and a description:
+
+```
+$variable = default//description
+```
+
+This is especially useful if you want to have an interchangeable company or domain name.
+
+Variables are also helpful if you'd like use HTML in your replacements, especially for **!overwriteHTML**. 
