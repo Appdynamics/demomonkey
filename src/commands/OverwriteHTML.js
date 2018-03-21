@@ -54,8 +54,9 @@ class OverwriteHTML extends Command {
     if (!original.includes(this.marker)) {
       // Since the browser might modify the HTML we add a comment marker
       // to the end of the HTML to identify applied modifications
-      target.innerHTML = this._addMarker(this.html)
-      return new UndoElement(target, 'innerHTML', original, this.html)
+      var replacement = this._addMarker(this.html)
+      target.innerHTML = replacement
+      return new UndoElement(target, 'innerHTML', original, replacement)
     }
 
     return false

@@ -58,6 +58,10 @@ class ReplaceFlowmapIcon extends Command {
   }
   constructor(appName, newIcon) {
     super()
+    // newIcon can be a boolean if a user writes !replaceFlowmapIcon()
+    if (typeof newIcon !== 'string') {
+      newIcon = ''
+    }
     this.appName = appName
     this.newIcon = ReplaceFlowmapIcon.icons[newIcon.toLowerCase()] ? ReplaceFlowmapIcon.icons[newIcon.toLowerCase()] : newIcon
   }
