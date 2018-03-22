@@ -86,7 +86,8 @@ class CommandBuilder {
         var screenshotHtml = '<img src="' + value + '" height="380" style="margin-top: 10px;margin-left: auto;margin-right: auto;display: block;">'
         return new Group([
           new OverwriteHTML('EUM_MOBILE_SESSION_DETAILS', '.ads-screenshot-container', screenshotHtml, location, condition),
-          new OverwriteHTML('EUM_MOBILE_SESSION_DETAILS', '.ads-screenshot-tooltip-thumbnail-container', thumbnailHtml, location, condition)
+          new OverwriteHTML('EUM_MOBILE_SESSION_DETAILS', '.ads-screenshot-tooltip-thumbnail-container', thumbnailHtml, location, condition),
+          new OverwriteHTML('EUM_MOBILE_SESSION_DETAILS', '.ads-screenshots-thumbnail-container', thumbnailHtml, location, condition)
         ])
       }
     }
