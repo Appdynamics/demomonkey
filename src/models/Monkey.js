@@ -38,6 +38,7 @@ class Monkey {
     this._applyOnXpathGroup(configuration, '//body//text()[ normalize-space(.) != ""]', 'text', 'data')
     this._applyOnXpathGroup(configuration, '//body//input', 'input', 'value')
     this._applyOnXpathGroup(configuration, '//body//img', 'image', 'src')
+    this._applyOnXpathGroup(configuration, '//body//a', 'link', 'href')
     // Apply the text commands on the title element
     this.addUndo(configuration.apply(this.scope.document, 'title', 'text'))
     // Finally we can apply document commands on the document itself.

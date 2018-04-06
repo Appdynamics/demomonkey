@@ -3,9 +3,11 @@ import Style from './Style'
 import Hide from './Hide'
 import Group from './Group'
 import ReplaceImage from './ReplaceImage'
+import ReplaceLink from './ReplaceLink'
 import OverwriteHTML from './OverwriteHTML'
 import ReplaceFlowmapIcon from './appdynamics/ReplaceFlowmapIcon'
 import ReplaceFlowmapConnection from './appdynamics/ReplaceFlowmapConnection'
+import DelayLink from './appdynamics/DelayLink'
 
 import Command from './Command'
 
@@ -90,6 +92,9 @@ class CommandBuilder {
           new OverwriteHTML('EUM_MOBILE_SESSION_DETAILS', '.ads-screenshots-thumbnail-container', thumbnailHtml, location, condition)
         ])
       }
+      if (command === 'delayLink') {
+        return new DelayLink(parameters[0], value, window)
+      }
     }
 
     if (command === 'style') {
@@ -104,8 +109,17 @@ class CommandBuilder {
       return new ReplaceImage(parameters[0], value)
     }
 
+    if (command === 'replaceLink') {
+      return new ReplaceLink(parameters[0], value)
+    }
+
     if (command === 'overwriteHTML' || command === 'overwrite') {
       return new OverwriteHTML(parameters[0], parameters[1], value, location)
+    }
+
+    if (command === 'overwritePage') {
+      var iframeCode = '<head><title>' + parameters[1] + '</title><style>html {height:100%;}</style></head><body style="margin:0;padding:0;width:100%;height:100%;overflow:hidden;"><iframe src="' + value + '" style="width:100%;height:100%"></body>'
+      return new OverwriteHTML(parameters[0], '', iframeCode, location)
     }
 
     return new Command()

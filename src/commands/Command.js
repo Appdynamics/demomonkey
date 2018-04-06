@@ -1,8 +1,8 @@
 import UndoElement from './UndoElement'
 
 class Command {
-  apply(target) {
-    return target
+  apply() {
+    return false
   }
 
   isApplicableForGroup(group) {
