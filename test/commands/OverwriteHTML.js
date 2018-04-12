@@ -43,9 +43,9 @@ describe('OverwriteHTML', function () {
       var sub = {innerHTML: 'test'}
       var document = {
         documentElement: {
-          querySelector: function (query) {
+          querySelectorAll: function (query) {
             if (query === '.css') {
-              return sub
+              return [sub]
             }
           },
           innerHTML: 'asdf'

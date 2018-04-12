@@ -26,25 +26,7 @@ class OverwriteHTML extends Command {
     return group === 'document' || group === '*'
   }
 
-  apply(target, key = 'value') {
-    if (!this._checkLocation()) {
-      return false
-    }
-
-    if (target === null) {
-      return false
-    }
-
-    if (!this.conditionCallback(target)) {
-      return false
-    }
-
-    if (typeof this.selector === 'string' && this.selector.length > 0) {
-      target = target[key].querySelector(this.selector)
-    } else {
-      target = target[key]
-    }
-
+  _applyOnTarget(target) {
     if (target === null || typeof target !== 'object' || typeof target.innerHTML !== 'string') {
       return false
     }
@@ -60,6 +42,37 @@ class OverwriteHTML extends Command {
     }
 
     return false
+  }
+
+  apply(target, key = 'value') {
+    if (!this._checkLocation()) {
+      return false
+    }
+
+    if (target === null) {
+      return false
+    }
+
+    if (!this.conditionCallback(target)) {
+      return false
+    }
+
+    if (typeof this.selector === 'string' && this.selector.length > 0) {
+      var targetList = target[key].querySelectorAll(this.selector)
+      switch (targetList.length) {
+        case 0:
+          return false
+        case 1:
+          target = targetList[0]
+          break
+        default:
+          return Array.from(targetList).map(t => this._applyOnTarget(t))
+      }
+    } else {
+      target = target[key]
+    }
+
+    return this._applyOnTarget(target)
   }
 
   toString() {
