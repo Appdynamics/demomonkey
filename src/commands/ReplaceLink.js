@@ -18,6 +18,7 @@ class ReplaceLink extends Command {
       target[key] = this.replace
       return new UndoElement(target, key, original, this.replace)
     }
+    return false
   }
 }
 

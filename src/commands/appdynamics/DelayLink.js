@@ -64,6 +64,7 @@ class DelayLink extends Command {
       target.onclick = delayFunction
       return new UndoElement(target, 'onClick', original, delayFunction)
     }
+    return false
   }
 }
 
