@@ -120,6 +120,17 @@ class Editor extends React.Component {
         <div className="title">
           <b>Title</b>
           <input type="text" id="configuration-title" placeholder="Please provide a title for your configuration" value={current.name} onChange={(event) => this.handleUpdate('name', event.target.value, event)}/>
+          <select placeholder="Hotkey Group" value={current.hotkey} onChange={(event) => this.handleUpdate('hotkey', event.target.value, event)}>
+            <option value="1">Group 1</option>
+            <option value="2">Group 2</option>
+            <option value="3">Group 3</option>
+            <option value="4">Group 4</option>
+            <option value="5">Group 5</option>
+            <option value="6">Group 6</option>
+            <option value="7">Group 7</option>
+            <option value="8">Group 8</option>
+            <option value="9">Group 9</option>
+          </select>
           <button className={'save-button ' + (this.state.unsavedChanges ? '' : 'disabled')} onClick={(event) => this.handleClick(event, 'save')}>Save</button>
           <button className="copy-button" style={hiddenIfNew} onClick={(event) => this.handleClick(event, 'copy')}>Duplicate</button>
           <button className="download-button" style={hiddenIfNew} onClick={(event) => this.handleClick(event, 'download')}>Download</button>
