@@ -76,6 +76,15 @@ class CommandBuilder {
       if (command === 'hideBT' || command === 'hideBusinessTransaction') {
         return new Hide(parameters[0], 3, 'x-grid-row', '', 'APP_BT_LIST', location)
       }
+      if (command === 'hideDashboard') {
+        return new Group([
+          new Hide(parameters[0], 2, 'ads-home-list-item', '', 'DASHBOARDS_REPORTS_HOME', location),
+          new Hide(parameters[0], 3, 'x-grid-row', '', 'DASHBOARD_LIST', location, function (node, parentNode) {
+            // Make sure that replacements with !not work on the dashboard list, so filter for the first cell
+            return node.parentElement.parentElement.className.includes('x-grid-cell-first')
+          })
+        ])
+      }
       if (command === 'replaceFlowmapConnection') {
         return new ReplaceFlowmapConnection(parameters[0], parameters[1], value)
       }
