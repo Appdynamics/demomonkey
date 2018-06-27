@@ -127,12 +127,6 @@ class Editor extends React.Component {
             <option value="1">Shortcut #1</option>
             <option value="2">Shortcut #2</option>
             <option value="3">Shortcut #3</option>
-            <option value="4">Shortcut #4</option>
-            <option value="5">Shortcut #5</option>
-            <option value="6">Shortcut #6</option>
-            <option value="7">Shortcut #7</option>
-            <option value="8">Shortcut #8</option>
-            <option value="9">Shortcut #9</option>
           </select>
           <button className={'save-button ' + (this.state.unsavedChanges ? '' : 'disabled')} onClick={(event) => this.handleClick(event, 'save')}>Save</button>
           <button className="copy-button" style={hiddenIfNew} onClick={(event) => this.handleClick(event, 'copy')}>Duplicate</button>

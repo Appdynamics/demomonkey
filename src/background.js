@@ -105,6 +105,11 @@ import Settings from './models/Settings'
         // ghc.sync(store.getState().configurations)
       }
     })
+
+    scope.chrome.commands.onCommand.addListener(function (command) {
+      console.log('Command:', command)
+    })
+
     scope.chrome.contextMenus.create({
       'title': 'Create Replacement',
       'contexts': ['selection'],
