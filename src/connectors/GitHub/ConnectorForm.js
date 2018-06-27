@@ -122,7 +122,7 @@ class ConnectorForm extends React.Component {
       <p>
         You are already connected with GitHub using the access token <a
           href={'https://github.com/settings/tokens/' + this.props.credentials.id}
-          target="_blank">
+          target="_blank" rel='noopener noreferrer'>
           {this.props.credentials.description}
         </a>.
       </p>

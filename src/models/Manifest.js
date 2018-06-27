@@ -19,7 +19,7 @@ class Manifest {
   }
 
   homepage() {
-    return <a href={this.url()} target="_blank">{this.url()}</a>
+    return <a href={this.url()} target="_blank" rel='noopener noreferrer'>{this.url()}</a>
   }
 
   version() {
