@@ -28,12 +28,12 @@ function renderOptionsPageApp(root, store) {
 
 function renderPopupPageApp(root, store) {
   chrome.tabs.query({ 'active': true, 'lastFocusedWindow': true }, function (tabs) {
-    window.setTimeout(
-      // The timeout is important to remediate a chrome bug: https://bugs.chromium.org/p/chromium/issues/detail?id=307912
-      function () {
-        ReactDOM.render(
-          <Provider store={store}><PopupPageApp currentUrl={tabs[0].url}/></Provider>, root)
-      }, 150)
+    ReactDOM.render(
+      <Provider store={store}><PopupPageApp currentUrl={tabs[0].url}/></Provider>, root)
+    // The following is required to fix https://bugs.chromium.org/p/chromium/issues/detail?id=428044
+    window.setTimeout(() => {
+      document.body.style.minHeight = (document.body.clientHeight + 1) + 'px'
+    }, 200)
   })
 }
 
