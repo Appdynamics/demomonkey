@@ -23,27 +23,6 @@ class App extends React.Component {
     this.vPageView = null
   }
 
-  UNSAFE_componentWillMount() {
-    if (window.ADRUM) {
-      this.vPageView = new window.ADRUM.events.VPageView({
-        url: 'popup'
-      })
-      this.vPageView.start()
-      this.vPageView.markViewChangeStart()
-      this.vPageView.markViewChangeEnd()
-    }
-  }
-
-  componentDidMount() {
-    if (window.ADRUM) {
-      this.vPageView.markViewDOMLoaded()
-      this.vPageView.markXhrRequestsCompleted()
-      this.vPageView.end()
-      window.ADRUM.report(this.vPageView)
-      this.vPageView = null
-    }
-  }
-
   render() {
     return <div>
       <Tabs>

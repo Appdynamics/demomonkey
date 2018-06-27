@@ -19,49 +19,6 @@ class App extends React.Component {
     settings: PropTypes.object.isRequired
   }
 
-  constructor(props) {
-    super(props)
-    this.vPageView = null
-  }
-
-  startTracking(view) {
-    if (window.ADRUM) {
-      console.log('URL', view)
-      this.vPageView = new window.ADRUM.events.VPageView({
-        url: view
-      })
-      this.vPageView.start()
-      this.vPageView.markViewChangeStart()
-      this.vPageView.markViewChangeEnd()
-    }
-  }
-
-  stopTracking() {
-    if (window.ADRUM) {
-      this.vPageView.markViewDOMLoaded()
-      this.vPageView.markXhrRequestsCompleted()
-      this.vPageView.end()
-      window.ADRUM.report(this.vPageView)
-      this.vPageView = null
-    }
-  }
-
-  UNSAFE_componentWillMount() {
-    this.startTracking(this.props.currentView)
-  }
-
-  UNSAFE_componentWillUpdate(nextProps) {
-    this.startTracking(nextProps.currentView)
-  }
-
-  componentDidUpdate() {
-    this.stopTracking()
-  }
-
-  componentDidMount() {
-    this.stopTracking()
-  }
-
   navigateTo(target) {
     this.props.actions.setCurrentView(target)
   }
