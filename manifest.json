@@ -40,21 +40,39 @@
         "default": "Ctrl+Shift+1",
         "mac": "Command+Shift+1"
       },
-      "description": "Toggle hotkey group 1"
+      "description": "Toggle Group 1"
     },
     "toggle-hotkey-group-2": {
       "suggested_key": {
         "default": "Ctrl+Shift+2",
         "mac": "Command+Shift+2"
       },
-      "description": "Toggle hotkey group 2"
+      "description": "Toggle Group 2"
     },
     "toggle-hotkey-group-3": {
       "suggested_key": {
         "default": "Ctrl+Shift+3",
         "mac": "Command+Shift+3"
       },
-      "description": "Toggle hotkey group 3"
+      "description": "Toggle Group 3"
+    },
+    "toggle-hotkey-group-4": {
+      "description": "Toggle Group 4"
+    },
+    "toggle-hotkey-group-5": {
+      "description": "Toggle Group 5"
+    },
+    "toggle-hotkey-group-6": {
+      "description": "Toggle Group 6"
+    },
+    "toggle-hotkey-group-7": {
+      "description": "Toggle Group 7"
+    },
+    "toggle-hotkey-group-8": {
+      "description": "Toggle Group 8"
+    },
+    "toggle-hotkey-group-9": {
+      "description": "Toggle Group 9"
     }
   }
 }
