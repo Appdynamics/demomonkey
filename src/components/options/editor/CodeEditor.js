@@ -39,7 +39,7 @@ class CodeEditor extends React.Component {
         enableBasicAutocompletion: this.props.editorAutocomplete,
         enableLiveAutocompletion: this.props.editorAutocomplete
       }}
-      editorProps={{$blockScrolling: true}}
+      editorProps={{$blockScrolling: 'Infinity'}}
       name="contentarea"
       commands={[
         {

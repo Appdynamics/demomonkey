@@ -32,7 +32,7 @@ class Navigation extends React.Component {
 
   // This implementation is not very performant
   // Probably in the long run, the underyling datamodel needs to be changed
-  buildTree(items, state) {
+  static buildTree(items, state) {
     var tree = []
     var cursor = {}
     items.forEach((orig, index) => {
@@ -69,7 +69,7 @@ class Navigation extends React.Component {
 
   constructor(props) {
     super(props)
-    var {tree, cursor} = this.buildTree(this.props.items, {active: props.active, search: '', toggled: {}})
+    var {tree, cursor} = Navigation.buildTree(this.props.items, {active: props.active, search: '', toggled: {}})
     this.state = {
       data: tree,
       cursor: cursor,
@@ -80,9 +80,9 @@ class Navigation extends React.Component {
     this.onToggle = this.onToggle.bind(this)
   }
 
-  UNSAFE_componentWillReceiveProps(nextProps) {
-    var {tree, cursor} = this.buildTree(nextProps.items, {...this.state, active: nextProps.active})
-    this.setState({ data: tree, cursor: cursor })
+  static getDerivedStateFromProps(nextProps, prevState) {
+    var {tree, cursor} = Navigation.buildTree(nextProps.items, {...prevState, active: nextProps.active})
+    return { data: tree, cursor: cursor }
   }
 
   handleClick(id) {
@@ -91,7 +91,7 @@ class Navigation extends React.Component {
 
   handleSearchUpdate(event) {
     this.setState({ search: event.target.value.toLowerCase() }, function () {
-      var {tree, cursor} = this.buildTree(this.props.items, this.state)
+      var {tree, cursor} = Navigation.buildTree(this.props.items, this.state)
       this.setState({ data: tree, cursor: cursor })
     })
   }

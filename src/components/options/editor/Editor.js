@@ -30,17 +30,30 @@ class Editor extends React.Component {
     }
   }
 
-  UNSAFE_componentWillReceiveProps(nextProps) {
+  /* UNSAFE_componentWillReceiveProps(nextProps) {
     if (this.props !== nextProps) {
       if (this.props.saveOnClose && this.state.unsavedChanges) {
         this.props.onSave(this.props.currentConfiguration, this.state.currentConfiguration)
       }
+    }
+  } */
 
-      this.setState({
+  componentDidUpdate(prevProps, prevState) {
+    if (this.props.currentConfiguration.id !== prevProps.currentConfiguration.id) {
+      if (prevProps.saveOnClose && prevState.unsavedChanges) {
+        prevProps.onSave(prevProps.currentConfiguration, prevState.currentConfiguration)
+      }
+    }
+  }
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    if (nextProps.currentConfiguration.id !== prevState.currentConfiguration.id) {
+      return {
         currentConfiguration: nextProps.currentConfiguration,
         unsavedChanges: false
-      })
+      }
     }
+    return null
   }
 
   handleUpdate(key, value, event = false) {
