@@ -3,6 +3,7 @@ import { wrapStore } from 'react-chrome-redux'
 import reducers from './reducers'
 import uuidV4 from 'uuid/v4'
 import Settings from './models/Settings'
+import Configuration from './models/Configuration'
 
 (function (scope) {
   'use strict'
@@ -108,6 +109,22 @@ import Settings from './models/Settings'
 
     scope.chrome.commands.onCommand.addListener(function (command) {
       console.log('Command:', command)
+      if (command.startsWith('toggle-hotkey-group')) {
+        var group = command.split('-').pop()
+        store.getState().configurations.forEach(function (c) {
+          var config = (new Configuration(c.content, null, false, c.values))
+          if (config.isTemplate() || !config.isRestricted()) {
+            return
+          }
+          if (c.hotkey === group && !c.enabled) {
+            console.log(c.name, c.enabled)
+            store.dispatch({ 'type': 'TOGGLE_CONFIGURATION', id: c.id })
+          } else if (c.enabled) {
+            console.log(c.name, c.enabled)
+            store.dispatch({ 'type': 'TOGGLE_CONFIGURATION', id: c.id })
+          }
+        })
+      }
     })
 
     scope.chrome.contextMenus.create({
