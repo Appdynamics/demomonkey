@@ -44,6 +44,26 @@ describe('ReplaceImage', function () {
       assert.equal(img.src, 'another.png')
     })
 
+    it('should replace src with "not" match', function () {
+      var img = {
+        src: 'http://cdn.example.net/images/test.png'
+      }
+      new ReplaceImage('!http://cdn.example.net/images/test.png', 'another.png').apply(img, 'src')
+      assert.equal(img.src, 'http://cdn.example.net/images/test.png')
+      new ReplaceImage('!http://cdn.example.com/images/test.png', 'another.png').apply(img, 'src')
+      assert.equal(img.src, 'another.png')
+    })
+
+    it('should replace src with "contains" and "not" match', function () {
+      var img = {
+        src: 'http://cdn.example.net/images/test.png'
+      }
+      new ReplaceImage('!*example.net*', 'another.png').apply(img, 'src')
+      assert.equal(img.src, 'http://cdn.example.net/images/test.png')
+      new ReplaceImage('!*example.com*', 'another.png').apply(img, 'src')
+      assert.equal(img.src, 'another.png')
+    })
+
     it('should leave target unchanged for a mismatch', function () {
       var img = {
         src: 'http://cdn.example.com/images/test.png'
