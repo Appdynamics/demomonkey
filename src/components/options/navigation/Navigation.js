@@ -80,7 +80,7 @@ class Navigation extends React.Component {
     this.onToggle = this.onToggle.bind(this)
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     var {tree, cursor} = this.buildTree(nextProps.items, {...this.state, active: nextProps.active})
     this.setState({ data: tree, cursor: cursor })
   }

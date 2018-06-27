@@ -23,7 +23,7 @@ class App extends React.Component {
     this.vPageView = null
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     if (window.ADRUM) {
       this.vPageView = new window.ADRUM.events.VPageView({
         url: 'popup'

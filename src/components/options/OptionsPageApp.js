@@ -46,11 +46,11 @@ class App extends React.Component {
     }
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     this.startTracking(this.props.currentView)
   }
 
-  componentWillUpdate(nextProps) {
+  UNSAFE_componentWillUpdate(nextProps) {
     this.startTracking(nextProps.currentView)
   }
 
@@ -202,7 +202,7 @@ class App extends React.Component {
     return <div className="main-grid">
       <Popup className="popup" btnClass="popup__btn" />
       <div className="navigation">
-        <Navigation onNavigate={(target) => this.navigateTo(target)} onUpload={(configuration) => this.addConfiguration(configuration)} items={this.props.configurations} active={activeItem} />        
+        <Navigation onNavigate={(target) => this.navigateTo(target)} onUpload={(configuration) => this.addConfiguration(configuration)} items={this.props.configurations} active={activeItem} />
       </div>
       <div className="current-view">
         {this.getCurrentView()}

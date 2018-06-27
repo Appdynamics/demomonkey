@@ -30,7 +30,7 @@ class Editor extends React.Component {
     }
   }
 
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     if (this.props !== nextProps) {
       if (this.props.saveOnClose && this.state.unsavedChanges) {
         this.props.onSave(this.props.currentConfiguration, this.state.currentConfiguration)
