@@ -10,6 +10,7 @@ import Configuration from './models/Configuration'
 
   var selectedTabId = -1
   var counts = []
+  var enabledHotkeyGroup = -1
 
   function updateBadge() {
     var count = counts[selectedTabId]
@@ -107,23 +108,32 @@ import Configuration from './models/Configuration'
       }
     })
 
+    function toggleHotkeyGroup(group) {
+      var toggle = enabledHotkeyGroup !== group
+
+      enabledHotkeyGroup = toggle ? group : -1
+
+      console.log('GROUP', group, toggle)
+
+      store.getState().configurations.forEach(function (c) {
+        var config = (new Configuration(c.content, null, false, c.values))
+        if (config.isTemplate() || !config.isRestricted()) {
+          return
+        }
+
+        if (Array.isArray(c.hotkeys) && c.hotkeys.includes(group)) {
+          store.dispatch({ 'type': 'TOGGLE_CONFIGURATION', id: c.id, enabled: toggle })
+        } else if (c.enabled) {
+          store.dispatch({ 'type': 'TOGGLE_CONFIGURATION', id: c.id })
+        }
+      })
+    }
+
     scope.chrome.commands.onCommand.addListener(function (command) {
       console.log('Command:', command)
       if (command.startsWith('toggle-hotkey-group')) {
-        var group = command.split('-').pop()
-        store.getState().configurations.forEach(function (c) {
-          var config = (new Configuration(c.content, null, false, c.values))
-          if (config.isTemplate() || !config.isRestricted()) {
-            return
-          }
-          if (c.hotkey === group && !c.enabled) {
-            console.log(c.name, c.enabled)
-            store.dispatch({ 'type': 'TOGGLE_CONFIGURATION', id: c.id })
-          } else if (c.enabled) {
-            console.log(c.name, c.enabled)
-            store.dispatch({ 'type': 'TOGGLE_CONFIGURATION', id: c.id })
-          }
-        })
+        var group = parseInt(command.split('-').pop())
+        toggleHotkeyGroup(group)
       }
     })
 

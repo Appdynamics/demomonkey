@@ -8,7 +8,7 @@ const configuration = (state, action) => {
     case 'TOGGLE_CONFIGURATION':
       return {
         ...state,
-        enabled: !state.enabled
+        enabled: typeof action.enabled !== 'undefined' ? action.enabled : !state.enabled
       }
     case 'ADD_CONFIGURATION':
       return Object.assign({}, action.configuration, { id: uuidV4(), created_at: Date.now(), updated_at: Date.now(), enabled: false })
