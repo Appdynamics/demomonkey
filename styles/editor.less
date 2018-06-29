@@ -9,7 +9,6 @@
 
   .tabs {
     margin: 8px;
-    margin-bottom: 8px;
   }
 
   .title {
@@ -17,7 +16,6 @@
     color: #f0f0f0;
     display: flex;
     padding: 4px 8px;
-
 
     b {
       background-color: desaturate(lighten(@base, 79%), 40%);
@@ -34,23 +32,35 @@
       padding: 8px;
     }
 
-    input,
-    select {
+    .Select {
+      flex-grow: 1;
+      margin: 8px 8px 8px 0px;
+    }
+
+    .Select-menu-outer {
+      z-index: 15;
+    }
+
+    .Select-input > input {
+      border: 5px green;
+      font-size: inherit;
+      padding: 8px 0px 12px;
+      width: 100%;
+
+      &:focus {
+        border: 0px solid blue;
+        box-shadow: none;
+      }
+    }
+
+    input.text-input {
       border: 1px solid darken(@base, 20%);
       border-bottom-right-radius: 4px;
       border-top-right-radius: 4px;
-      font-size: 110%;
-      margin: 8px;
-      margin-left: 0px;
-      padding: 8px;
-    }
-
-    input {
       flex-grow: 3;
-    }
-
-    select {
-      flex-grow: 1;
+      font-size: 110%;
+      margin: 8px 8px 8px 0px;
+      padding: 8px;
     }
   }
 

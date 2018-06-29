@@ -25,6 +25,7 @@
     "react-dom": "^16.4.1",
     "react-popup": "^0.9.3",
     "react-redux": "^5.0.7",
+    "react-select": "^1.2.1",
     "react-timeago": "^4.1.9",
     "react-toggle-button": "^2.2.0",
     "react-treebeard": "^2.1.0",

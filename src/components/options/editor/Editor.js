@@ -8,6 +8,7 @@ import Repository from '../../../models/Repository'
 import PropTypes from 'prop-types'
 import Mousetrap from 'mousetrap'
 import showdown from 'showdown'
+import Select from 'react-select'
 
 class Editor extends React.Component {
   static propTypes = {
@@ -30,14 +31,6 @@ class Editor extends React.Component {
     }
   }
 
-  /* UNSAFE_componentWillReceiveProps(nextProps) {
-    if (this.props !== nextProps) {
-      if (this.props.saveOnClose && this.state.unsavedChanges) {
-        this.props.onSave(this.props.currentConfiguration, this.state.currentConfiguration)
-      }
-    }
-  } */
-
   componentDidUpdate(prevProps, prevState) {
     if (this.props.currentConfiguration.id !== prevProps.currentConfiguration.id) {
       if (prevProps.saveOnClose && prevState.unsavedChanges) {
@@ -57,14 +50,14 @@ class Editor extends React.Component {
   }
 
   handleUpdate(key, value, event = false) {
+    console.log(key, value)
     if (event) {
       event.preventDefault()
     }
     var config = this.state.currentConfiguration
     config[key] = value
     this.setState({ currentConfiguration: config, unsavedChanges: true }, function () {
-      // Autosave hotkey changes
-      if (key === 'hotkey') {
+      if (key === 'hotkeys') {
         this.props.onSave(this.props.currentConfiguration, this.state.currentConfiguration)
         this.setState({ unsavedChanges: false })
       }
@@ -134,25 +127,14 @@ class Editor extends React.Component {
 
     var shortcutsHtml = converter.makeHtml(shortcuts)
 
-    var hotkey = typeof current.hotkey === 'undefined' ? -1 : current.hotkey
+    var hotkeyOptions = Array.from(Array(9).keys()).map(x => ({ value: x + 1, label: '#' + (x + 1) }))
 
     return (
       <div className="editor">
         <div className="title">
           <b>Title</b>
-          <input type="text" id="configuration-title" placeholder="Please provide a title for your configuration" value={current.name} onChange={(event) => this.handleUpdate('name', event.target.value, event)}/>
-          <select value={hotkey} onChange={(event) => this.handleUpdate('hotkey', event.target.value, event)}>
-            <option value="-1">No Group</option>
-            <option value="1">Group #1</option>
-            <option value="2">Group #2</option>
-            <option value="3">Group #3</option>
-            <option value="4">Group #4</option>
-            <option value="5">Group #5</option>
-            <option value="6">Group #6</option>
-            <option value="7">Group #7</option>
-            <option value="8">Group #8</option>
-            <option value="9">Group #9</option>
-          </select>
+          <input type="text" className="text-input" id="configuration-title" placeholder="Please provide a title for your configuration" value={current.name} onChange={(event) => this.handleUpdate('name', event.target.value, event)}/>
+          <Select placeholder="Shortcut Groups..." value={current.hotkeys} multi onChange={(options) => this.handleUpdate('hotkeys', options.map(o => o.value), null)} options={hotkeyOptions}/>
           <button className={'save-button ' + (this.state.unsavedChanges ? '' : 'disabled')} onClick={(event) => this.handleClick(event, 'save')}>Save</button>
           <button className="copy-button" style={hiddenIfNew} onClick={(event) => this.handleClick(event, 'copy')}>Duplicate</button>
           <button className="download-button" style={hiddenIfNew} onClick={(event) => this.handleClick(event, 'download')}>Download</button>
