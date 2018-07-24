@@ -20,9 +20,8 @@ class ToggleConfiguration extends React.Component {
 
   openEditor(event, id) {
     event.preventDefault()
-    chrome.runtime.openOptionsPage(() => {
-      this.props.actions.setCurrentView('configuration/' + id)
-    })
+    this.props.actions.setCurrentView('configuration/' + id)
+    chrome.runtime.openOptionsPage()
   }
 
   render() {
