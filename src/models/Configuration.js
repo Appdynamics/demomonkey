@@ -94,7 +94,7 @@ class Configuration {
 
   getOptions() {
     if (this.options === false) {
-      var filterOption = function (content) {
+      var filterOption = function (content, section) {
         return function (result, key) {
           // By default ini.parse sets "true" as the value
           if (key.charAt(0) === '@') {
@@ -105,18 +105,22 @@ class Configuration {
             }
 
             if (content[key] !== true || key.substring(1) === 'template' || key.substring(1) === 'deprecated') {
-              result[key.substring(1)] = value
+              if (result.hasOwnProperty(key.substring(1))) {
+                result[key.substring(1)] = result[key.substring(1)].concat(value)
+              } else {
+                result[key.substring(1)] = value
+              }
               return result
             }
           }
 
           if (typeof content[key] === 'object' && content[key] !== null) {
-            return Object.keys(content[key]).reduce(filterOption(content[key]), result)
+            return Object.keys(content[key]).reduce(filterOption(content[key], key), result)
           }
           return result
         }
       }
-      this.options = Object.keys(this.content).reduce(filterOption(this.content), {})
+      this.options = Object.keys(this.content).reduce(filterOption(this.content, ''), {})
     }
     return this.options
   }

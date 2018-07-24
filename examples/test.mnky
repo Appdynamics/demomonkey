@@ -6,6 +6,9 @@ $y=2//Set y
 @include[] = a
 @include[] = b
 
+[OtherOptions]
+@exclude[] = c
+
 [A]
 ix = yi
 ab = $x$y

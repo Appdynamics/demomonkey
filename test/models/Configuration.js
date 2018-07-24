@@ -161,6 +161,7 @@ describe('Configuration', function () {
     })
     it('complex ini should return object with include and exclude rules', function () {
       assert.deepEqual(complexConfiguration.getOptions(), {
+        exclude: ['c'],
         include: ['a', 'b']
       })
     })

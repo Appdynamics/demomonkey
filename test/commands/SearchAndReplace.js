@@ -53,5 +53,25 @@ describe('SearchAndReplace', function () {
 
       assert.equal(node.value, 'bbbbsdf')
     })
+
+    it('should only replace a with b if location is matched', function () {
+      var node = {
+        value: 'asdf'
+      }
+
+      var location = {
+        toString: function () {
+          return 'asdf'
+        }
+      }
+
+      new SearchAndReplace('a', 'b', 'xyz', '', location).apply(node, 'value')
+
+      assert.equal(node.value, 'asdf')
+
+      new SearchAndReplace('a', 'b', 'asdf', '', location).apply(node, 'value')
+
+      assert.equal(node.value, 'bsdf')
+    })
   })
 })

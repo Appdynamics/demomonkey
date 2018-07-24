@@ -106,6 +106,10 @@ class CommandBuilder {
       }
     }
 
+    if (command === 'replace') {
+      return new SearchAndReplace(parameters[0], value, parameters[1], parameters[2], location)
+    }
+
     if (command === 'style') {
       return new Style(parameters[0], parameters[1], value)
     }
