@@ -43,7 +43,7 @@ class App extends React.Component {
     var name = 'Copy of ' + path.pop()
     this.addConfiguration({
       ...configuration,
-      name: path.join('/') + '/' + name,
+      name: path.length > 0 ? (path.join('/') + '/' + name) : name,
       id: 'new',
       enabled: false
     })
