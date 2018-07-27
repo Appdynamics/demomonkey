@@ -2,9 +2,10 @@ import Command from './Command'
 import UndoElement from './UndoElement'
 
 class Style extends Command {
-  constructor(search, property, value) {
+  constructor(search, property, nthParent, value) {
     super()
     this.search = search
+    this.nthParent = parseInt(nthParent) || 1
     this.property = property
     this.value = value
   }
@@ -12,6 +13,7 @@ class Style extends Command {
   apply(node, key = 'value') {
     if (typeof node[key] !== 'undefined' && node[key].trim() === this.search) {
       node = node.parentElement
+      node = this._walk(node, this.nthParent)
       var original = node.style[this.property]
       node.style[this.property] = this.value
       if (original !== this.value) {

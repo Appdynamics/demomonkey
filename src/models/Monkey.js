@@ -39,6 +39,8 @@ class Monkey {
     this._applyOnXpathGroup(configuration, '//body//input', 'input', 'value')
     this._applyOnXpathGroup(configuration, '//body//img', 'image', 'src')
     this._applyOnXpathGroup(configuration, '//body//a', 'link', 'href')
+    this._applyOnXpathGroup(configuration, '//body//ad-widget-timeseries-graph', 'ad-timeseries-graph', 'class')
+    this._applyOnXpathGroup(configuration, '//body//div[contains(@class, "ads-dashboard-canvas-pane")]', 'ad-dashboard', 'style')
     // Apply the text commands on the title element
     this.addUndo(configuration.apply(this.scope.document, 'title', 'text'))
     // Finally we can apply document commands on the document itself.

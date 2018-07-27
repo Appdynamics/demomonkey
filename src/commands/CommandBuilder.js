@@ -7,6 +7,8 @@ import ReplaceLink from './ReplaceLink'
 import OverwriteHTML from './OverwriteHTML'
 import ReplaceFlowmapIcon from './appdynamics/ReplaceFlowmapIcon'
 import ReplaceFlowmapConnection from './appdynamics/ReplaceFlowmapConnection'
+import RecolorTimeseriesGraph from './appdynamics/RecolorTimeseriesGraph'
+import SetDashboardBackground from './appdynamics/SetDashboardBackground'
 import DelayLink from './appdynamics/DelayLink'
 
 import Command from './Command'
@@ -104,6 +106,12 @@ class CommandBuilder {
       if (command === 'delayLink') {
         return new DelayLink(parameters[0], value, window)
       }
+      if (command === 'recolorTimeseriesGraph') {
+        return new RecolorTimeseriesGraph(parameters[0], value)
+      }
+      if (command === 'setDashboardBackground') {
+        return new SetDashboardBackground(parameters[0], value, location)
+      }
     }
 
     if (command === 'replace') {
@@ -111,7 +119,7 @@ class CommandBuilder {
     }
 
     if (command === 'style') {
-      return new Style(parameters[0], parameters[1], value)
+      return new Style(parameters[0], parameters[1], parameters[2], value)
     }
 
     if (command === 'hide') {
