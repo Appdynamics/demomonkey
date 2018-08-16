@@ -10,6 +10,7 @@
   "description": "Tamper your Web UI to demo almost anything",
   "dependencies": {
     "axios": "^0.17.1",
+    "color": "^3.0.0",
     "deepmerge": "^2.1.1",
     "github-api": "^3.0.0",
     "ini": "^1.3.5",
