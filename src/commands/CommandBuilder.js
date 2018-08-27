@@ -88,7 +88,7 @@ class CommandBuilder {
         ])
       }
       if (command === 'replaceFlowmapConnection') {
-        return new ReplaceFlowmapConnection(parameters[0], parameters[1], value)
+        return new ReplaceFlowmapConnection(parameters[0], parameters[1], value, parameters[2])
       }
       if (command === 'replaceMobileScreenshot') {
         var condition = function (document) {

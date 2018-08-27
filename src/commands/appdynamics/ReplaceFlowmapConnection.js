@@ -2,11 +2,13 @@ import Command from '../Command'
 import UndoElement from '../UndoElement'
 
 class ReplaceFlowmapConnection extends Command {
-  constructor(tier1, tier2, value) {
+  constructor(tier1, tier2, value, force) {
     super()
     this.tier1 = tier1
     this.tier2 = tier2
     this.value = value
+    console.log('FORCE', force, typeof force)
+    this.force = force === '1' || force === 'true'
   }
 
   apply(node, key) {
@@ -43,8 +45,10 @@ class ReplaceFlowmapConnection extends Command {
           var r = []
           g.parentElement.childNodes.forEach(
             (node, index) => {
+              // adsUnknownFlowMapColor
+              var searchPattern = this.force ? /ads((Normal|Critical|Warning)Node|UnknownFlowMap)Color/ : /ads(Normal|Critical|Warning)NodeColor/
               var newValue = node.className.baseVal.replace(
-                /ads(Normal|Critical|Warning)NodeColor/, 'ads' + this.value + 'NodeColor')
+                searchPattern, 'ads' + this.value + 'NodeColor')
               if (newValue !== node.className.baseVal) {
                 var original = node.className.baseVal
                 node.className.baseVal = newValue
