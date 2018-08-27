@@ -3,6 +3,7 @@ import ToggleButton from 'react-toggle-button'
 import PropTypes from 'prop-types'
 import JSZip from 'jszip'
 import AceEditor from 'react-ace'
+import GitHubConnectorForm from '../../connectors/GitHub/ConnectorForm'
 
 import 'brace/theme/textmate'
 import 'brace/mode/ini'
@@ -16,7 +17,8 @@ class Settings extends React.Component {
     onSetMonkeyInterval: PropTypes.func.isRequired,
     onToggleOptionalFeature: PropTypes.func.isRequired,
     onConnected: PropTypes.func.isRequired,
-    onDisconnected: PropTypes.func.isRequired
+    onDisconnected: PropTypes.func.isRequired,
+    onConnectionUpdated: PropTypes.func.isRequired
   }
 
   downloadAll() {
@@ -83,14 +85,16 @@ class Settings extends React.Component {
           <h2>Backup</h2>
           You can always open the <a href="backup.html">backup page</a> to download your files or manipulate your settings. Please use with caution!
           <button className="save-button" onClick={(event) => this.downloadAll(event)}>Download all configurations</button>
-          {/* <div>
-        <h2>Remote Storage</h2>
-        <p>You can use remote storages to easily backup, share, versionize your demo configurations.</p>
-        <GitHubConnectorForm credentials={this.props.settings.connectors.github}
-                         configurations={this.props.configurations}
-                         onConnected={(credentials) => this.props.onConnected('github', credentials)}
-                         onDisconnected={() => this.props.onDisconnected('github')}/>
-        </div> */}
+          <div>
+            <h2>Remote Storage</h2>
+            <p>You can use remote storages to easily backup, share, versionize your demo configurations.</p>
+            <GitHubConnectorForm credentials={this.props.settings.connectors.github}
+              configurations={this.props.configurations}
+              onConnected={(credentials) => this.props.onConnected('github', credentials)}
+              onDisconnected={() => this.props.onDisconnected('github')}
+              onConnectionUpdated={(credentials) => this.props.onConnectionUpdated('github', credentials)}
+            />
+          </div>
         </div>
       </div>
     )

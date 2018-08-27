@@ -121,6 +121,12 @@ class App extends React.Component {
     this.props.actions.addConnector(connector)
   }
 
+  updateConnection(name, credentials) {
+    var connector = {}
+    connector[name] = credentials
+    this.props.actions.updateConnector(connector)
+  }
+
   removeConnection(name) {
     this.props.actions.removeConnector(name)
   }
@@ -136,6 +142,7 @@ class App extends React.Component {
           onSetBaseTemplate={(baseTemplate) => this.setBaseTemplate(baseTemplate)}
           onSetMonkeyInterval={(event) => this.setMonkeyInterval(event.target.value)}
           onConnected={(name, credentials) => this.saveConnection(name, credentials)}
+          onConnectionUpdated={(name, credentials) => this.updateConnection(name, credentials)}
           onDisconnected={(name) => this.removeConnection(name)}/>
       case 'configuration':
         var configuration = this.getConfiguration(segments[1])
@@ -202,6 +209,9 @@ const OptionsPageApp = connect(
       },
       addConnector: (connector) => {
         dispatch({ 'type': 'ADD_CONNECTOR', connector })
+      },
+      updateConnector: (connector) => {
+        dispatch({ 'type': 'UPDATE_CONNECTOR', connector })
       },
       removeConnector: (connector) => {
         dispatch({ 'type': 'REMOVE_CONNECTOR', connector })

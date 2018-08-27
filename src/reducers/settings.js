@@ -10,6 +10,7 @@ const optionalFeatures = function (state, action) {
 
 const connectors = function (state, action) {
   switch (action.type) {
+    case 'UPDATE_CONNECTOR':
     case 'ADD_CONNECTOR':
       return Object.assign({}, state, action.connector)
     case 'REMOVE_CONNECTOR':
@@ -38,6 +39,7 @@ const settings = function (state = '', action) {
         ...state,
         optionalFeatures: optionalFeatures(state.optionalFeatures, action)
       }
+    case 'UPDATE_CONNECTOR':
     case 'ADD_CONNECTOR':
     case 'REMOVE_CONNECTOR':
       return {

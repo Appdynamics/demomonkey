@@ -4,6 +4,7 @@ import reducers from './reducers'
 import uuidV4 from 'uuid/v4'
 import Settings from './models/Settings'
 import Configuration from './models/Configuration'
+import GitHubConnector from './connectors/GitHub/Connector'
 
 (function (scope) {
   'use strict'
@@ -101,12 +102,23 @@ import Configuration from './models/Configuration'
         settings: store.getState().settings,
         monkeyID: store.getState().monkeyID
       })
-      var newSettings = new Settings(store.getState().settings)
-      if (newSettings.isConnectedWith('github') && newSettings.isFeatureEnabled('syncGist')) {
-        // var ghc = new GitHubConnector(newSettings.getConnectorCredentials('github'), store.getState().configurations)
-        // ghc.sync(store.getState().configurations)
-      }
+      syncRemoteStorage(false)
     })
+
+    function syncRemoteStorage (download) {
+      console.log('Syncing remote storage ...')
+      var newSettings = new Settings(store.getState().settings)
+      if (newSettings.isConnectedWith('github')) {
+        var ghc = new GitHubConnector(newSettings.getConnectorCredentials('github'), store.getState().configurations)
+        ghc.sync(store.getState().configurations, download).then((results) => {
+          console.log(results)
+        })
+      }
+    }
+
+    window.syncRemoteStorage = syncRemoteStorage
+
+    syncRemoteStorage(true)
 
     function toggleHotkeyGroup(group) {
       var toggle = enabledHotkeyGroup !== group

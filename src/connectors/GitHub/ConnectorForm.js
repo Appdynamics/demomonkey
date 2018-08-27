@@ -3,11 +3,14 @@ import axios from 'axios'
 import Popup from 'react-popup'
 import PropTypes from 'prop-types'
 import GitHubConnector from './Connector'
+import RepoList from './RepoList'
+import GitHub from 'github-api'
 
 class ConnectorForm extends React.Component {
   static propTypes = {
     onConnected: PropTypes.func.isRequired,
     onDisconnected: PropTypes.func.isRequired,
+    onConnectionUpdated: PropTypes.func.isRequired,
     configurations: PropTypes.arrayOf(PropTypes.object).isRequired,
     credentials: PropTypes.object
   }
@@ -18,6 +21,8 @@ class ConnectorForm extends React.Component {
       username: '',
       password: '',
       otp: '',
+      isLoaded: false,
+      repos: {},
       tokenDescription: 'Demo Monkey ' + Date.now()
     }
   }
@@ -33,6 +38,12 @@ class ConnectorForm extends React.Component {
     event.preventDefault()
     var ghc = new GitHubConnector(this.props.credentials)
     ghc.sync(this.props.configurations)
+  }
+
+  updateRepositories(selectedRepositories) {
+    var credentials = this.props.credentials
+    credentials.repos = selectedRepositories
+    this.props.onConnectionUpdated(credentials)
   }
 
   connect(event) {
@@ -124,15 +135,39 @@ class ConnectorForm extends React.Component {
           href={'https://github.com/settings/tokens/' + this.props.credentials.id}
           target="_blank" rel='noopener noreferrer'>
           {this.props.credentials.description}
-        </a>.
+        </a>. Please choose the repositories, which can be used to store/retrieve configurations:
       </p>
+      <div>
+        { (this.state.isLoaded ? <RepoList repositories={this.state.repos} selected={this.props.credentials.repos} onSelect={(selectedRepositories) => this.updateRepositories(selectedRepositories)} /> : 'loading...') }
+      </div>
       <button onClick={(event) => this.disconnect(event)} className="delete-button">Disconnect</button>
-      <button onClick={(event) => this.sync(event)} className="save-button">Sync now</button>
     </div>
   }
 
   _hasCredentials() {
     return typeof this.props.credentials === 'object' && typeof this.props.credentials.token === 'string'
+  }
+
+  componentDidMount() {
+    if (this._hasCredentials()) {
+      var gh = new GitHub({ token: this.props.credentials.token })
+      var ghUser = gh.getUser()
+
+      ghUser.listRepos((err, repos) => {
+        if (err) {
+          return
+        }
+        this.setState({
+          isLoaded: true,
+          repos: repos.map(function (repo) {
+            return {
+              value: repo.full_name,
+              label: repo.full_name
+            }
+          })
+        })
+      })
+    }
   }
 
   render() {

@@ -2,28 +2,42 @@ import GitHub from 'github-api'
 
 class Connector {
   constructor(credentials, configurations) {
-    this.gh = new GitHub({ token: credentials.token })
-    this.lastUpdates = configurations.reduce((result, configuration) => {
-      result[configuration.id] = configuration.updated_at
-    }, {})
-    console.log(this.lastUpdates)
+    this.repos = credentials.repos
+    this.gh = new GitHub({token: credentials.token})
   }
 
-  sync(configurations) {
-    configurations.slice(1, 2).forEach((item, index) => {
-      console.log(item)
-      var gist = this.gh.getGist()
-      var files = {}
-      files[item.name + '.mnky'] = { content: item.content }
-
-      gist.create({
-        public: false,
-        description: item.name,
-        files: files
-      }).then(({data}) => {
-        console.log(data.id)
-      })
+  upload(configurations) {
+    return new Promise((resolve, reject) => {
+      resolve([])
     })
+  }
+
+  download(configurations) {
+    return Promise.all(this.repos.map((r) => {
+      var [user, repoName] = (r.value.split('/'))
+
+      var repo = this.gh.getRepo(user, repoName)
+
+      return new Promise((resolve, reject) => {
+        var result = []
+        repo.getTree('master?recursive=true').then((response) => {
+          if (response.data.tree) {
+            var promises = response.data.tree.filter((element) => element.path.endsWith('.mnky')).map((element) => {
+              return repo.getBlob(element.sha, (_, blob) => result.push({name: repoName + '/' + element.path.slice(0, -5), content: blob}))
+            })
+            Promise.all(promises).then((results) => {
+              resolve(result)
+            })
+          } else {
+            reject(new Error('No tree found'))
+          }
+        })
+      })
+    }))
+  }
+
+  sync(configurations, download) {
+    return Promise.all([this.upload(configurations), this.download()])
   }
 }
 
