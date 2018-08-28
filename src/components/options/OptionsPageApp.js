@@ -41,11 +41,16 @@ class App extends React.Component {
   copyConfiguration(configuration) {
     var path = configuration.name.split('/')
     var name = 'Copy of ' + path.pop()
+    if (configuration.connector) {
+      delete configuration.connector
+      delete configuration.remoteLocation
+    }
     this.addConfiguration({
       ...configuration,
       name: path.length > 0 ? (path.join('/') + '/' + name) : name,
       id: 'new',
-      enabled: false
+      enabled: false,
+      readOnly: false
     })
   }
 

@@ -112,6 +112,10 @@ class Editor extends React.Component {
     this.props[action](this.props.currentConfiguration, this.state.currentConfiguration)
   }
 
+  _buildRemoteLocation(connector, location) {
+    return `https://github.com/${location.user}/${location.repository}/blob/master/${location.path}`
+  }
+
   render() {
     var current = this.state.currentConfiguration
     var hiddenIfNew = current.id === 'new' ? { display: 'none' } : {}
@@ -119,6 +123,7 @@ class Editor extends React.Component {
     var variables = tmpConfig.getVariables()
 
     var showTemplateWarning = tmpConfig.isTemplate() || tmpConfig.isRestricted() ? 'no-warning-box' : 'warning-box'
+    var showReadOnlyWarning = current.readOnly === true ? 'warning-box' : 'no-warning-box'
 
     var shortcuts = require('../../../../SHORTCUTS.md')
     var converter = new showdown.Converter({
@@ -126,6 +131,8 @@ class Editor extends React.Component {
     })
 
     var shortcutsHtml = converter.makeHtml(shortcuts)
+
+    var remoteLocation = current.remoteLocation ? this._buildRemoteLocation(current.connector, current.remoteLocation) : false
 
     var hotkeyOptions = Array.from(Array(9).keys()).map(x => ({ value: x + 1, label: '#' + (x + 1) }))
 
@@ -144,10 +151,15 @@ class Editor extends React.Component {
           <b>Warning:</b> Without <b>@include</b> or <b>@exclude</b> defined, your configuration can not be enabled.
          You can only import it as template into another configuration. If this is intended, add <b>@template</b> to remove this warning.
         </div>
+        <div className={showReadOnlyWarning}>
+          <b>Warning:</b> The configuration you selected is read only.
+          { remoteLocation ? <span> Go to <a href={ remoteLocation } target='_blank' rel='noopener noreferrer'>{ remoteLocation }</a> to edit this file</span> : ''}
+        </div>
         <Tabs selected={0}>
           <Pane label="Configuration" id="current-configuration-editor">
             <CodeEditor value={current.content}
               onChange={(content) => this.handleUpdate('content', content)}
+              readOnly={current.readOnly === true}
               onAutoSave={(event) => this.props.autoSave ? this.handleClick(event, 'save') : event.preventDefault() }
               editorAutocomplete={this.props.editorAutocomplete}/>
           </Pane>

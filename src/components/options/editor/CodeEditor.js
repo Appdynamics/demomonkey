@@ -17,6 +17,7 @@ class CodeEditor extends React.Component {
     value: PropTypes.string.isRequired,
     onChange: PropTypes.func.isRequired,
     onAutoSave: PropTypes.func.isRequired,
+    readOnly: PropTypes.bool,
     editorAutocomplete: PropTypes.bool.isRequired
   }
 
@@ -35,6 +36,8 @@ class CodeEditor extends React.Component {
       height="100%"
       theme="xcode"
       mode="mnky"
+      readOnly = {this.props.readOnly === true}
+      className = {this.props.readOnly === true ? 'disabled' : ''}
       setOptions={{
         enableBasicAutocompletion: this.props.editorAutocomplete,
         enableLiveAutocompletion: this.props.editorAutocomplete

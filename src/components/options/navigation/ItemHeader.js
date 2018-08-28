@@ -22,7 +22,7 @@ class ItemHeader extends React.Component {
       <div style={base} className="navigation-item">
         <div style={style.title}>
           {/* the onclick event is disabled since the interaction is managed by the navigation */}
-          <a href={'#configuration/' + this.props.node.id} onClick={(event) => event.preventDefault()}>{this.props.node.name}</a>
+          <a className={this.props.node.readOnly === true ? 'read-only-item' : ''} href={'#configuration/' + this.props.node.id} onClick={(event) => event.preventDefault()}>{this.props.node.name}</a>
         </div>
         <div className="configuration-updated-at" style={style.timestamp}>
           <TimeAgo formatter={(value, unit, suffix, date, defaultFormatter) => this.formatTime(value, unit, suffix, date, defaultFormatter)} date={this.props.node.updated_at} minPeriod="60" />

@@ -110,8 +110,25 @@ import GitHubConnector from './connectors/GitHub/Connector'
       var newSettings = new Settings(store.getState().settings)
       if (newSettings.isConnectedWith('github')) {
         var ghc = new GitHubConnector(newSettings.getConnectorCredentials('github'), store.getState().configurations)
-        ghc.sync(store.getState().configurations, download).then((results) => {
-          console.log(results)
+        var currentConfigurations = store.getState().configurations
+        ghc.sync(currentConfigurations, download).then((results) => {
+          if (results.length < 2) {
+            return
+          }
+          var downloads = results[1][0]
+          Object.keys(downloads).forEach(name => {
+            var existing = currentConfigurations.find(element => {
+              return element.name === name && element.connector === 'github'
+            })
+            if (typeof existing === 'undefined') {
+              console.log('Saving ', name, downloads[name])
+              store.dispatch({ 'type': 'ADD_CONFIGURATION', configuration: downloads[name] })
+            } else {
+              existing = Object.assign(existing, downloads[name])
+              console.log('Updating', name, existing)
+              store.dispatch({ 'type': 'SAVE_CONFIGURATION', id: existing.id, configuration: existing })
+            }
+          })
         })
       }
     }
@@ -119,6 +136,8 @@ import GitHubConnector from './connectors/GitHub/Connector'
     window.syncRemoteStorage = syncRemoteStorage
 
     syncRemoteStorage(true)
+    // Sync the remote storage every 5 minutes
+    setInterval(() => syncRemoteStorage(true), 300000)
 
     function toggleHotkeyGroup(group) {
       var toggle = enabledHotkeyGroup !== group

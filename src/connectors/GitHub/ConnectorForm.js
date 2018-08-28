@@ -1,3 +1,7 @@
+/*
+eslint no-template-curly-in-string: "off"
+*/
+
 import React from 'react'
 import axios from 'axios'
 import Popup from 'react-popup'
@@ -46,6 +50,12 @@ class ConnectorForm extends React.Component {
     this.props.onConnectionUpdated(credentials)
   }
 
+  updateDirectoryStructure(directoryStructure) {
+    var credentials = this.props.credentials
+    credentials.directoryStructure = directoryStructure
+    this.props.onConnectionUpdated(credentials)
+  }
+
   connect(event) {
     event.preventDefault()
 
@@ -68,7 +78,9 @@ class ConnectorForm extends React.Component {
         description: response.data.note,
         created_at: response.data.created_at,
         updated_at: response.data.updated_at,
-        scopes: response.data.scopes
+        scopes: response.data.scopes,
+        repos: [],
+        directoryStructure: '${u}/${r}'
       })
     }).catch((error) => {
       Popup.create({
@@ -127,6 +139,26 @@ class ConnectorForm extends React.Component {
     </div>
   }
 
+  _renderRepoList() {
+    if (this.state.isLoaded) {
+      return <div>
+        <label>Directory Structure</label>
+        <div className="input-row">
+          <input type="text" value={this.props.credentials.directoryStructure} onChange={(event) => this.updateDirectoryStructure(event.target.value)} />
+          <div className="help">All configurations loaded from github will be put within the given structure. {'Use ${r} for the repository name and ${u} for the github user/organization name'} </div>
+        </div>
+        <div>
+          <label>Selected Repositories</label>
+          <RepoList
+            repositories={this.state.repos}
+            selected={this.props.credentials.repos}
+            onSelect={(selectedRepositories) => this.updateRepositories(selectedRepositories)} />
+        </div>
+      </div>
+    }
+    return <div>loading...</div>
+  }
+
   _renderDisconnectButton() {
     return <div>
       <h3>Connect with GitHub</h3>
@@ -138,7 +170,7 @@ class ConnectorForm extends React.Component {
         </a>. Please choose the repositories, which can be used to store/retrieve configurations:
       </p>
       <div>
-        { (this.state.isLoaded ? <RepoList repositories={this.state.repos} selected={this.props.credentials.repos} onSelect={(selectedRepositories) => this.updateRepositories(selectedRepositories)} /> : 'loading...') }
+        { this._renderRepoList() }
       </div>
       <button onClick={(event) => this.disconnect(event)} className="delete-button">Disconnect</button>
     </div>
