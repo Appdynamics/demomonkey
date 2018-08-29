@@ -6,7 +6,6 @@ import React from 'react'
 import axios from 'axios'
 import Popup from 'react-popup'
 import PropTypes from 'prop-types'
-import GitHubConnector from './Connector'
 import RepoList from './RepoList'
 import GitHub from 'github-api'
 
@@ -38,11 +37,13 @@ class ConnectorForm extends React.Component {
     this.setState(newState)
   }
 
+  /*
   sync(event) {
     event.preventDefault()
     var ghc = new GitHubConnector(this.props.credentials)
     ghc.sync(this.props.configurations)
   }
+  */
 
   updateRepositories(selectedRepositories) {
     var credentials = this.props.credentials
@@ -54,6 +55,11 @@ class ConnectorForm extends React.Component {
     var credentials = this.props.credentials
     credentials.directoryStructure = directoryStructure
     this.props.onConnectionUpdated(credentials)
+  }
+
+  syncRemoteStorage(event) {
+    event.preventDefault()
+    this.props.onConnectionUpdated(this.props.credentials)
   }
 
   connect(event) {
@@ -173,6 +179,7 @@ class ConnectorForm extends React.Component {
         { this._renderRepoList() }
       </div>
       <button onClick={(event) => this.disconnect(event)} className="delete-button">Disconnect</button>
+      <button onClick={(event) => this.syncRemoteStorage(event)} className="save-button">Sync now</button>
     </div>
   }
 

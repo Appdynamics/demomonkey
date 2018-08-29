@@ -13,6 +13,8 @@ import GitHubConnector from './connectors/GitHub/Connector'
   var counts = []
   var enabledHotkeyGroup = -1
 
+  var syncRemoteStorage = function () {}
+
   function updateBadge() {
     var count = counts[selectedTabId]
     console.log('Updating badge for tab', selectedTabId, count)
@@ -30,6 +32,9 @@ import GitHubConnector from './connectors/GitHub/Connector'
     if (request.receiver && request.receiver === 'background' && typeof request.count === 'number') {
       counts[sender.tab.id] = request.count
       updateBadge()
+    }
+    if (request.receiver && request.receiver === 'background' && typeof request.task === 'string' && request.task === 'syncRemoteStorage') {
+      syncRemoteStorage(true)
     }
   })
 
@@ -105,7 +110,7 @@ import GitHubConnector from './connectors/GitHub/Connector'
       syncRemoteStorage(false)
     })
 
-    function syncRemoteStorage (download) {
+    syncRemoteStorage = function (download) {
       console.log('Syncing remote storage ...')
       var newSettings = new Settings(store.getState().settings)
       if (newSettings.isConnectedWith('github')) {
@@ -132,8 +137,6 @@ import GitHubConnector from './connectors/GitHub/Connector'
         })
       }
     }
-
-    window.syncRemoteStorage = syncRemoteStorage
 
     syncRemoteStorage(true)
     // Sync the remote storage every 5 minutes

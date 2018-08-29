@@ -129,6 +129,11 @@ class App extends React.Component {
   updateConnection(name, credentials) {
     var connector = {}
     connector[name] = credentials
+    /* TODO: Find a cleaner way for synchronization */
+    window.chrome.runtime.sendMessage({
+      receiver: 'background',
+      task: 'syncRemoteStorage'
+    })
     this.props.actions.updateConnector(connector)
   }
 
