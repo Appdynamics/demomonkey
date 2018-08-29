@@ -20,6 +20,7 @@ class Editor extends React.Component {
     onDelete: PropTypes.func.isRequired,
     autoSave: PropTypes.bool.isRequired,
     saveOnClose: PropTypes.bool.isRequired,
+    withTemplateEngine: PropTypes.bool.isRequired,
     editorAutocomplete: PropTypes.bool.isRequired
   }
 
@@ -73,8 +74,14 @@ class Editor extends React.Component {
   componentDidMount() {
     setInterval(() => {
       var node = document.getElementById('testarea')
+      var templateEngineProperties = {
+        enabled: this.props.withTemplateEngine,
+        variables: {
+          location: window.location
+        }
+      }
       var configuration = new Configuration(this.state.currentConfiguration.content, this.props.repository,
-        true, this.state.currentConfiguration.values)
+        true, this.state.currentConfiguration.values, templateEngineProperties)
 
       if (node) {
         configuration.apply(node)

@@ -15,7 +15,7 @@ describe('Integration', function () {
   after('Quit Webdriver', base.quit)
 
   describe('Un-tampered webpage', function () {
-    this.timeout(5000)
+    this.timeout(10000)
     it('github page of this project has demomonkey in its title', function () {
       base.getDriver().get(url)
       return expect(base.getDriver().getTitle()).to.eventually.include('demomonkey')
@@ -23,7 +23,7 @@ describe('Integration', function () {
   })
 
   describe('tampered webpage', function () {
-    this.timeout(5000)
+    this.timeout(10000)
     this.retries(4)
     it('allows to create new configurations', function () {
       return base.createConfig('testape', 'demomonkey = testape\n@include = /.*/')

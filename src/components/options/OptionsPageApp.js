@@ -160,6 +160,7 @@ class App extends React.Component {
         return <Editor repository={this.getRepository()} currentConfiguration={configuration}
           autoSave={this.props.settings.optionalFeatures.autoSave}
           saveOnClose={this.props.settings.optionalFeatures.saveOnClose}
+          withTemplateEngine={this.props.settings.optionalFeatures.withTemplateEngine}
           editorAutocomplete={this.props.settings.optionalFeatures.editorAutocomplete}
           onDownload={(configuration, _) => this.downloadConfiguration(configuration)}
           onSave={(_, configuration) => this.saveConfiguration(configuration)}

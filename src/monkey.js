@@ -27,21 +27,33 @@ import {Store} from 'react-chrome-redux';
   }
 
   store.ready().then(() => {
-    console.log('DemoMonkey enabled. Tampering the content.')
     var settings = new Settings(store.getState().settings)
+    console.log('DemoMonkey enabled. Tampering the content.')
     console.log('Interval: ', settings.monkeyInterval)
-    scope.$DEMO_MONKEY = new Monkey(store.getState().configurations, scope, settings.isFeatureEnabled('undo'), settings.monkeyInterval)
-    updateBadge(scope.$DEMO_MONKEY.start())
+
+    var $DEMO_MONKEY = new Monkey(store.getState().configurations, scope, settings.isFeatureEnabled('undo'), settings.monkeyInterval, settings.isFeatureEnabled('withTemplateEngine'))
+    updateBadge($DEMO_MONKEY.start())
+
+    function restart() {
+      console.log('Restart DemoMonkey')
+      // Update settings
+      var settings = new Settings(store.getState().settings)
+      var newMonkey = new Monkey(store.getState().configurations, scope, settings.isFeatureEnabled('undo'), settings.monkeyInterval, settings.isFeatureEnabled('withTemplateEngine'))
+      $DEMO_MONKEY.stop()
+      updateBadge(newMonkey.start())
+      $DEMO_MONKEY = newMonkey
+    }
 
     store.subscribe(function () {
-      var settings = new Settings(store.getState().settings)
-      console.log('Undo: ', settings.isFeatureEnabled('undo'))
-      console.log('AutoReplace: ', settings.isFeatureEnabled('autoReplace'))
       if (settings.isFeatureEnabled('autoReplace')) {
-        console.log('Restart DemoMonkey')
-        scope.$DEMO_MONKEY.stop()
-        scope.$DEMO_MONKEY = new Monkey(store.getState().configurations, scope, settings.isFeatureEnabled('undo'))
-        updateBadge(scope.$DEMO_MONKEY.start())
+        restart()
+      }
+    })
+
+    scope.chrome.runtime.onMessage.addListener(function (request) {
+      if (request.receiver === 'monkey' && request.task === 'restart') {
+        // Currently this leads to a flickering user experience, so it is disabled
+        // restart()
       }
     })
   })

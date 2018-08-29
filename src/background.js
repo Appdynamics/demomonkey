@@ -38,7 +38,14 @@ import GitHubConnector from './connectors/GitHub/Connector'
     }
   })
 
-  scope.chrome.tabs.onUpdated.addListener(function (tabId, props) {
+  scope.chrome.tabs.onUpdated.addListener(function (tabId, props, tab) {
+    console.log('UPDATE', props, tab, tabId)
+    if (props.status === 'loading') {
+      scope.chrome.tabs.sendMessage(tabId, {
+        receiver: 'monkey',
+        task: 'restart'
+      })
+    }
     if (props.status === 'complete' && tabId === selectedTabId) {
       updateBadge()
     }
@@ -64,7 +71,8 @@ import GitHubConnector from './connectors/GitHub/Connector'
     editorAutocomplete: true,
     inDevTools: true,
     // This is only a soft toggle, since the user can turn it on and off directly in the popup
-    onlyShowAvailableConfigurations: true
+    onlyShowAvailableConfigurations: true,
+    withTemplateEngine: true
   }
 
   const persistentStates = {

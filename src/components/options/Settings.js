@@ -82,6 +82,9 @@ class Settings extends React.Component {
           <div className="toggle-group">
             <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('inDevTools')} value={this.props.settings.optionalFeatures.inDevTools}/><label><b>Integrate with Chrome Dev Tools.</b> Turn this option on to see the DemoMonkey dashboard within the Chrome Developer Toolbar.</label>
           </div>
+          <div className="toggle-group">
+            <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('withTemplateEngine')} value={this.props.settings.optionalFeatures.withTemplateEngine}/><label><b>Activate Nunjuck Template Engine.</b> Turn this option on to be able to use the <a href="https://mozilla.github.io/nunjucks/templating.html" target="_blank" rel="noopener noreferrer">nunjuck templating engine</a> in your configurations.</label>
+          </div>
           <h2>Backup</h2>
           You can always open the <a href="backup.html">backup page</a> to download your files or manipulate your settings. Please use with caution!
           <button className="save-button" onClick={(event) => this.downloadAll(event)}>Download all configurations</button>
