@@ -17,6 +17,14 @@
     padding: 0px;
   }
 
+  .read-only-item {
+    font-style: italic;
+
+    a {
+      color: lighten(@base, 20%);
+    }
+  }
+
   .navigation-item {
 
     a {
@@ -26,10 +34,6 @@
 
     &:hover {
       text-decoration: underline;
-    }
-
-    .read-only-item {
-      font-style: italic
     }
 
     .configuration-name {

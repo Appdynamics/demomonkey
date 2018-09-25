@@ -38,6 +38,22 @@ class Settings extends React.Component {
       })
   }
 
+  _renderRemoteStorageSection() {
+    if (!this.props.settings.optionalFeatures.experimantal_withGithubIntegration) {
+      return false
+    }
+
+    return <div><h2>Remote Storage</h2>
+      <p>You can use remote storages to easily backup, share, versionize your demo configurations.</p>
+      <GitHubConnectorForm credentials={this.props.settings.connectors.github}
+        configurations={this.props.configurations}
+        onConnected={(credentials) => this.props.onConnected('github', credentials)}
+        onDisconnected={() => this.props.onDisconnected('github')}
+        onConnectionUpdated={(credentials) => this.props.onConnectionUpdated('github', credentials)}
+      />
+    </div>
+  }
+
   render() {
     return (
       <div className="content">
@@ -82,21 +98,18 @@ class Settings extends React.Component {
           <div className="toggle-group">
             <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('inDevTools')} value={this.props.settings.optionalFeatures.inDevTools}/><label><b>Integrate with Chrome Dev Tools.</b> Turn this option on to see the DemoMonkey dashboard within the Chrome Developer Toolbar.</label>
           </div>
+          <h3>Experimental Features</h3>
           <div className="toggle-group">
-            <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('withTemplateEngine')} value={this.props.settings.optionalFeatures.withTemplateEngine}/><label><b>Activate Nunjuck Template Engine.</b> Turn this option on to be able to use the <a href="https://mozilla.github.io/nunjucks/templating.html" target="_blank" rel="noopener noreferrer">nunjuck templating engine</a> in your configurations.</label>
+            <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('experimental_withTemplateEngine')} value={this.props.settings.optionalFeatures.experimental_withTemplateEngine}/><label><b>Activate Nunjuck Template Engine.</b> Turn this option on to be able to use the <a href="https://mozilla.github.io/nunjucks/templating.html" target="_blank" rel="noopener noreferrer">nunjuck templating engine</a> in your configurations.</label>
+          </div>
+          <div className="toggle-group">
+            <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('experimantal_withGithubIntegration')} value={this.props.settings.optionalFeatures.experimantal_withGithubIntegration}/><label><b>Activate GitHub Integration.</b> Turn this option on to synchronize your configurations with a GitHub repository.</label>
           </div>
           <h2>Backup</h2>
           You can always open the <a href="backup.html">backup page</a> to download your files or manipulate your settings. Please use with caution!
           <button className="save-button" onClick={(event) => this.downloadAll(event)}>Download all configurations</button>
           <div>
-            <h2>Remote Storage</h2>
-            <p>You can use remote storages to easily backup, share, versionize your demo configurations.</p>
-            <GitHubConnectorForm credentials={this.props.settings.connectors.github}
-              configurations={this.props.configurations}
-              onConnected={(credentials) => this.props.onConnected('github', credentials)}
-              onDisconnected={() => this.props.onDisconnected('github')}
-              onConnectionUpdated={(credentials) => this.props.onConnectionUpdated('github', credentials)}
-            />
+            { this._renderRemoteStorageSection() }
           </div>
         </div>
       </div>

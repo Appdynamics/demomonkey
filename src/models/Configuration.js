@@ -6,7 +6,8 @@ import MatchRule from './MatchRule'
 class Configuration {
   constructor(iniFile, repository, enabled = true, values = {}, templateEngineProperties = {}) {
     this.repository = repository
-    this.content = iniFile ? (new Ini(iniFile)).parse(templateEngineProperties) : []
+    this.rawContent = iniFile
+    this.content = iniFile ? (new Ini(iniFile, repository)).parse(templateEngineProperties) : []
     this.patterns = false
     this.options = false
     this.enabled = enabled

@@ -72,7 +72,8 @@ import GitHubConnector from './connectors/GitHub/Connector'
     inDevTools: true,
     // This is only a soft toggle, since the user can turn it on and off directly in the popup
     onlyShowAvailableConfigurations: true,
-    withTemplateEngine: true
+    experimental_withTemplateEngine: false,
+    experimantal_withGithubIntegration: false
   }
 
   const persistentStates = {
@@ -115,40 +116,84 @@ import GitHubConnector from './connectors/GitHub/Connector'
         settings: store.getState().settings,
         monkeyID: store.getState().monkeyID
       })
-      syncRemoteStorage(false)
+      // syncRemoteStorage(false)
     })
 
     syncRemoteStorage = function (download) {
       console.log('Syncing remote storage ...')
-      var newSettings = new Settings(store.getState().settings)
-      if (newSettings.isConnectedWith('github')) {
+      return new Promise((resolve, reject) => {
+        var newSettings = new Settings(store.getState().settings)
+        if (!newSettings.isConnectedWith('github')) {
+          resolve(false)
+        }
         var ghc = new GitHubConnector(newSettings.getConnectorCredentials('github'), store.getState().configurations)
         var currentConfigurations = store.getState().configurations
         ghc.sync(currentConfigurations, download).then((results) => {
           if (results.length < 2) {
-            return
+            resolve(false)
           }
+
+          console.log(results)
+
           var downloads = results[1][0]
-          Object.keys(downloads).forEach(name => {
-            var existing = currentConfigurations.find(element => {
-              return element.name === name && element.connector === 'github'
+
+          var allExistings = currentConfigurations.filter(element => {
+            return element.connector === 'github'
+          })
+
+          var keepIds = []
+          var result = false
+
+          // If downloads is undefined, this means that no data is synched, so we don't update
+          // but we delete everything that exists.
+          if (typeof downloads !== 'undefined') {
+            Object.keys(downloads).forEach(name => {
+              var existing = allExistings.find(element => {
+                return element.name === name
+              })
+              if (typeof existing === 'undefined') {
+                console.log('Adding', name)
+                store.dispatch({ 'type': 'ADD_CONFIGURATION', configuration: downloads[name] })
+                result = true
+              } else {
+                if (existing.content !== downloads[name].content) {
+                  existing = Object.assign(existing, downloads[name])
+                  console.log('Updating', name)
+                  store.dispatch({ 'type': 'SAVE_CONFIGURATION', id: existing.id, configuration: existing })
+                  result = true
+                }
+                keepIds.push(existing.id)
+              }
             })
-            if (typeof existing === 'undefined') {
-              console.log('Saving ', name, downloads[name])
-              store.dispatch({ 'type': 'ADD_CONFIGURATION', configuration: downloads[name] })
-            } else {
-              existing = Object.assign(existing, downloads[name])
-              console.log('Updating', name, existing)
-              store.dispatch({ 'type': 'SAVE_CONFIGURATION', id: existing.id, configuration: existing })
+          }
+
+          allExistings.forEach(element => {
+            if (!keepIds.includes(element.id)) {
+              console.log('Removing', element.name)
+              store.dispatch({ 'type': 'DELETE_CONFIGURATION', id: element.id })
+              result = true
             }
           })
+          resolve(result)
         })
-      }
+      })
     }
 
-    syncRemoteStorage(true)
-    // Sync the remote storage every 5 minutes
-    setInterval(() => syncRemoteStorage(true), 300000)
+    function timedSync(timeout = 1) {
+      syncRemoteStorage(true).then((reset) => {
+        if (reset) {
+          timeout = 1
+        }
+        console.log(`Next sync in ${timeout}s`)
+        var nextTimeout = timeout < 60 ? timeout * 2 : timeout
+        setTimeout(
+          () => timedSync(nextTimeout),
+          timeout * 1000
+        )
+      })
+    }
+
+    timedSync()
 
     function toggleHotkeyGroup(group) {
       var toggle = enabledHotkeyGroup !== group

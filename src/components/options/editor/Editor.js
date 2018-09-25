@@ -51,7 +51,6 @@ class Editor extends React.Component {
   }
 
   handleUpdate(key, value, event = false) {
-    console.log(key, value)
     if (event) {
       event.preventDefault()
     }
