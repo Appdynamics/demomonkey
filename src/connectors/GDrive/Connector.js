@@ -32,7 +32,6 @@ class Connector {
       'name': 'config.json',
       'parents': ['appDataFolder'],
       'spaces': 'appDataFolder',
-      'key': 'AIzaSyBCO8GUzvY2rW0iF2M2prG__gSaL7lsNXI',
       'mimeType': 'application/json\r\n\r\n'
     }
 
@@ -88,7 +87,7 @@ class Connector {
   }
 
   _getConfigId(token, cb, err) {
-    this._request('drive/v3/files?spaces=appDataFolder&key=AIzaSyBCO8GUzvY2rW0iF2M2prG__gSaL7lsNXI', token, {}, (data) => {
+    this._request('drive/v3/files?spaces=appDataFolder', token, {}, (data) => {
       if (data.hasOwnProperty('error')) {
         // Case 1: Error
         return err(data.error)
@@ -139,11 +138,13 @@ class Connector {
         var existing = configurations.find(element => {
           return download.id === element.id
         })
+        // Only sync unknown configurations that have not been deleted.
         if (typeof existing === 'undefined' && typeof download.deleted_at === 'undefined') {
           console.log('Adding', name)
           store.dispatch({ 'type': 'ADD_CONFIGURATION', configuration: download })
           result = true
         } else {
+          // Only update configurations that have been updated remote more recently
           if (existing.updated_at <= download.updated_at) {
             existing = Object.assign(existing, download)
             console.log('Updating', name)

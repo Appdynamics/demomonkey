@@ -10,6 +10,7 @@
   "description": "Tamper your Web UI to demo almost anything",
   "dependencies": {
     "axios": "^0.18.0",
+    "babel-preset-es2015": "^6.24.1",
     "color": "^3.0.0",
     "deepmerge": "^2.1.1",
     "github-api": "^3.0.0",
