@@ -129,10 +129,10 @@ class App extends React.Component {
   updateConnection(name, credentials) {
     var connector = {}
     connector[name] = credentials
-    /* TODO: Find a cleaner way for synchronization */
     window.chrome.runtime.sendMessage({
       receiver: 'background',
-      task: 'syncRemoteStorage'
+      task: 'syncRemoteStorage',
+      connector: name
     })
     this.props.actions.updateConnector(connector)
   }
@@ -174,10 +174,12 @@ class App extends React.Component {
   render() {
     var activeItem = this.props.currentView.indexOf('configuration/') === -1 ? false : this.props.currentView.split('/').pop()
 
+    var configurations = this.props.configurations.filter((config) => typeof config.deleted_at === 'undefined')
+
     return <div className="main-grid">
       <Popup className="popup" btnClass="popup__btn" />
       <div className="navigation">
-        <Navigation onNavigate={(target) => this.navigateTo(target)} onUpload={(configuration) => this.addConfiguration(configuration)} items={this.props.configurations} active={activeItem} />
+        <Navigation onNavigate={(target) => this.navigateTo(target)} onUpload={(configuration) => this.addConfiguration(configuration)} items={configurations} active={activeItem} />
       </div>
       <div className="current-view">
         {this.getCurrentView()}

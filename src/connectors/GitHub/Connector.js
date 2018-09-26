@@ -1,7 +1,7 @@
 import GitHub from 'github-api'
 
 class Connector {
-  constructor(credentials, configurations) {
+  constructor(credentials) {
     this.repos = credentials.repos
     this.directoryStructure = credentials.directoryStructure
     this.gh = new GitHub({token: credentials.token})
@@ -15,11 +15,15 @@ class Connector {
 
   upload(configurations) {
     return new Promise((resolve, reject) => {
-      resolve([])
+      resolve(false)
     })
   }
 
-  download() {
+  download(run) {
+    if (!run) {
+      return false
+    }
+
     return Promise.all(this.repos.map((r) => {
       var [user, repoName] = (r.value.split('/'))
 
@@ -56,11 +60,53 @@ class Connector {
     }))
   }
 
-  sync(configurations, download) {
-    if (download) {
-      return Promise.all([this.upload(configurations), this.download()])
-    }
-    return Promise.all([this.upload(configurations)])
+  sync(store, withDownload) {
+    var configurations = store.getState().configurations
+    return Promise.all([this.download(withDownload), this.upload(configurations)]).then((results) => {
+      console.log('Github processing: ', results)
+      if (!results[0]) {
+        return false
+      }
+
+      var downloads = results[0][0]
+
+      var allExistings = configurations.filter(element => {
+        return element.connector === 'github'
+      })
+
+      var keepIds = []
+      var result = false
+
+      if (typeof downloads !== 'undefined') {
+        Object.keys(downloads).forEach(name => {
+          var existing = allExistings.find(element => {
+            return element.name === name
+          })
+          if (typeof existing === 'undefined') {
+            console.log('Adding', name)
+            store.dispatch({ 'type': 'ADD_CONFIGURATION', configuration: downloads[name] })
+            result = true
+          } else {
+            if (existing.content !== downloads[name].content) {
+              existing = Object.assign(existing, downloads[name])
+              console.log('Updating', name)
+              store.dispatch({ 'type': 'SAVE_CONFIGURATION', id: existing.id, configuration: existing })
+              result = true
+            }
+            keepIds.push(existing.id)
+          }
+        })
+      }
+
+      allExistings.forEach(element => {
+        if (!keepIds.includes(element.id)) {
+          console.log('Removing', element.name)
+          store.dispatch({ 'type': 'DELETE_CONFIGURATION', id: element.id })
+          result = true
+        }
+      })
+      return result
+    })
   }
 }
 

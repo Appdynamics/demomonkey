@@ -16,6 +16,13 @@ const configuration = (state, action) => {
       // the last array is a hot fix for issue #16
       // saving the configuration should currently not include overwriting the enabled state
       return Object.assign({}, state, action.configuration, { enabled: state.enabled, updated_at: Date.now() })
+    case 'DELETE_CONFIGURATION':
+      return {
+        ...state,
+        enabled: false,
+        updated_at: Date.now(),
+        deleted_at: Date.now()
+      }
     default:
       return state
   }
@@ -25,13 +32,14 @@ const configurations = function (state = [], action) {
   switch (action.type) {
     case 'TOGGLE_CONFIGURATION':
     case 'SAVE_CONFIGURATION':
+    case 'DELETE_CONFIGURATION':
       return state.map(i =>
         configuration(i, action)
       )
-    case 'DELETE_CONFIGURATION':
+    /* case 'DELETE_CONFIGURATION':
       return state.filter(i =>
         i.id !== action.id
-      )
+      ) */
     case 'ADD_CONFIGURATION':
       return [
         ...state,

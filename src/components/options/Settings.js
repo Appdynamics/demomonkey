@@ -4,6 +4,7 @@ import PropTypes from 'prop-types'
 import JSZip from 'jszip'
 import AceEditor from 'react-ace'
 import GitHubConnectorForm from '../../connectors/GitHub/ConnectorForm'
+import GDriveConnectorForm from '../../connectors/GDrive/ConnectorForm'
 
 import 'brace/theme/textmate'
 import 'brace/mode/ini'
@@ -39,14 +40,23 @@ class Settings extends React.Component {
   }
 
   _renderRemoteStorageSection() {
-    if (!this.props.settings.optionalFeatures.experimantal_withGithubIntegration) {
+    if (
+      !this.props.settings.optionalFeatures.experimantal_withGithubIntegration &&
+      !this.props.settings.optionalFeatures.experimantal_withGoogleDriveIntegration
+    ) {
       return false
     }
 
     return <div><h2>Remote Storage</h2>
       <p>You can use remote storages to easily backup, share, versionize your demo configurations.</p>
+      <GDriveConnectorForm credentials={this.props.settings.connectors.gdrive}
+        visible={this.props.settings.optionalFeatures.experimantal_withGoogleDriveIntegration}
+        onConnected={(credentials) => this.props.onConnected('gdrive', credentials)}
+        onDisconnected={() => this.props.onDisconnected('gdrive')}
+        onConnectionUpdated={(credentials) => this.props.onConnectionUpdated('gdrive', credentials)}
+      />
       <GitHubConnectorForm credentials={this.props.settings.connectors.github}
-        configurations={this.props.configurations}
+        visible={this.props.settings.optionalFeatures.experimantal_withGithubIntegration}
         onConnected={(credentials) => this.props.onConnected('github', credentials)}
         onDisconnected={() => this.props.onDisconnected('github')}
         onConnectionUpdated={(credentials) => this.props.onConnectionUpdated('github', credentials)}
@@ -101,6 +111,9 @@ class Settings extends React.Component {
           <h3>Experimental Features</h3>
           <div className="toggle-group">
             <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('experimental_withTemplateEngine')} value={this.props.settings.optionalFeatures.experimental_withTemplateEngine}/><label><b>Activate Nunjuck Template Engine.</b> Turn this option on to be able to use the <a href="https://mozilla.github.io/nunjucks/templating.html" target="_blank" rel="noopener noreferrer">nunjuck templating engine</a> in your configurations.</label>
+          </div>
+          <div className="toggle-group">
+            <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('experimantal_withGoogleDriveIntegration')} value={this.props.settings.optionalFeatures.experimantal_withGoogleDriveIntegration}/><label><b>Activate Google Drive Integration.</b> Turn this option on to synchronize your configurations to Google Drive.</label>
           </div>
           <div className="toggle-group">
             <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('experimantal_withGithubIntegration')} value={this.props.settings.optionalFeatures.experimantal_withGithubIntegration}/><label><b>Activate GitHub Integration.</b> Turn this option on to synchronize your configurations with a GitHub repository.</label>

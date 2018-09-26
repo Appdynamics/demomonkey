@@ -24,10 +24,11 @@ class App extends React.Component {
   }
 
   render() {
+    var configurations = this.props.configurations.filter((config) => typeof config.deleted_at === 'undefined')
     return <div>
       <Tabs>
         <Pane label="Apply">
-          <ConfigurationList currentUrl={this.props.currentUrl} configurations={this.props.configurations} settings={this.props.settings} actions={this.props.actions}/>
+          <ConfigurationList currentUrl={this.props.currentUrl} configurations={configurations} settings={this.props.settings} actions={this.props.actions}/>
         </Pane>
         <Pane label="Help">
           <div>

@@ -1,3 +1,6 @@
+import GitHubConnector from '../connectors/GitHub/Connector'
+import GDriveConnector from '../connectors/GDrive/Connector'
+
 class Settings {
   constructor(settings) {
     this.baseTemplate = typeof settings.baseTemplate === 'string' ? settings.baseTemplate : ''
@@ -19,6 +22,20 @@ class Settings {
       return this.connectors[name]
     }
     return {}
+  }
+
+  getConnector(name) {
+    if (name === 'github') {
+      return new GitHubConnector(this.getConnectorCredentials(name))
+    }
+    if (name === 'gdrive') {
+      return new GDriveConnector(this.getConnectorCredentials(name))
+    }
+    return {
+      sync: () => {
+        return false
+      }
+    }
   }
 }
 

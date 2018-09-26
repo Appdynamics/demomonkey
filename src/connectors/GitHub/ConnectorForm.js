@@ -14,8 +14,8 @@ class ConnectorForm extends React.Component {
     onConnected: PropTypes.func.isRequired,
     onDisconnected: PropTypes.func.isRequired,
     onConnectionUpdated: PropTypes.func.isRequired,
-    configurations: PropTypes.arrayOf(PropTypes.object).isRequired,
-    credentials: PropTypes.object
+    credentials: PropTypes.object,
+    visible: PropTypes.bool.isRequired
   }
 
   constructor(props) {
@@ -36,14 +36,6 @@ class ConnectorForm extends React.Component {
     newState[key] = event.target.value
     this.setState(newState)
   }
-
-  /*
-  sync(event) {
-    event.preventDefault()
-    var ghc = new GitHubConnector(this.props.credentials)
-    ghc.sync(this.props.configurations)
-  }
-  */
 
   updateRepositories(selectedRepositories) {
     var credentials = this.props.credentials
@@ -210,6 +202,10 @@ class ConnectorForm extends React.Component {
   }
 
   render() {
+    if (!this.props.visible) {
+      return false
+    }
+
     if (this._hasCredentials()) {
       return this._renderDisconnectButton()
     }
