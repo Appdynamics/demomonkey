@@ -124,7 +124,8 @@ class Connector {
     var configurations = store.getState().configurations
     return Promise.all([this.download(withDownload), this.upload(configurations)]).then((results) => {
       console.log('GDrive processing: ', results)
-      if (!Array.isArray(results[0])) {
+      if (typeof results[0] !== 'object') {
+        console.log('Not an object!')
         return false
       }
 
@@ -139,13 +140,14 @@ class Connector {
           return download.id === element.id
         })
         // Only sync unknown configurations that have not been deleted.
+        // console.log(existing, download)
         if (typeof existing === 'undefined' && typeof download.deleted_at === 'undefined') {
           console.log('Adding', name)
           store.dispatch({ 'type': 'ADD_CONFIGURATION', configuration: download })
           result = true
         } else {
           // Only update configurations that have been updated remote more recently
-          if (existing.updated_at <= download.updated_at) {
+          if (existing.updated_at < download.updated_at) {
             existing = Object.assign(existing, download)
             console.log('Updating', name)
             store.dispatch({ 'type': 'SAVE_CONFIGURATION', id: existing.id, configuration: existing })
