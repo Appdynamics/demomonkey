@@ -39,6 +39,20 @@ class Settings extends React.Component {
       })
   }
 
+  _renderExperimentalFeatures() {
+    return <div><h3>Experimental Features</h3>
+      <div className="toggle-group">
+        <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('experimental_withTemplateEngine')} value={this.props.settings.optionalFeatures.experimental_withTemplateEngine}/><label><b>Activate Nunjuck Template Engine.</b> Turn this option on to be able to use the <a href="https://mozilla.github.io/nunjucks/templating.html" target="_blank" rel="noopener noreferrer">nunjuck templating engine</a> in your configurations.</label>
+      </div>
+      <div className="toggle-group">
+        <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('experimantal_withGoogleDriveIntegration')} value={this.props.settings.optionalFeatures.experimantal_withGoogleDriveIntegration}/><label><b>Activate Google Drive Integration.</b> Turn this option on to synchronize your configurations to Google Drive.</label>
+      </div>
+      <div className="toggle-group">
+        <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('experimantal_withGithubIntegration')} value={this.props.settings.optionalFeatures.experimantal_withGithubIntegration}/><label><b>Activate GitHub Integration.</b> Turn this option on to synchronize your configurations with a GitHub repository.</label>
+      </div>
+    </div>
+  }
+
   _renderRemoteStorageSection() {
     if (
       !this.props.settings.optionalFeatures.experimantal_withGithubIntegration &&
@@ -108,16 +122,7 @@ class Settings extends React.Component {
           <div className="toggle-group">
             <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('inDevTools')} value={this.props.settings.optionalFeatures.inDevTools}/><label><b>Integrate with Chrome Dev Tools.</b> Turn this option on to see the DemoMonkey dashboard within the Chrome Developer Toolbar.</label>
           </div>
-          <h3>Experimental Features</h3>
-          <div className="toggle-group">
-            <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('experimental_withTemplateEngine')} value={this.props.settings.optionalFeatures.experimental_withTemplateEngine}/><label><b>Activate Nunjuck Template Engine.</b> Turn this option on to be able to use the <a href="https://mozilla.github.io/nunjucks/templating.html" target="_blank" rel="noopener noreferrer">nunjuck templating engine</a> in your configurations.</label>
-          </div>
-          <div className="toggle-group">
-            <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('experimantal_withGoogleDriveIntegration')} value={this.props.settings.optionalFeatures.experimantal_withGoogleDriveIntegration}/><label><b>Activate Google Drive Integration.</b> Turn this option on to synchronize your configurations to Google Drive.</label>
-          </div>
-          <div className="toggle-group">
-            <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('experimantal_withGithubIntegration')} value={this.props.settings.optionalFeatures.experimantal_withGithubIntegration}/><label><b>Activate GitHub Integration.</b> Turn this option on to synchronize your configurations with a GitHub repository.</label>
-          </div>
+          {/* this._renderExperimentalFeatures() */}
           <h2>Backup</h2>
           You can always open the <a href="backup.html">backup page</a> to download your files or manipulate your settings. Please use with caution!
           <button className="save-button" onClick={(event) => this.downloadAll(event)}>Download all configurations</button>

@@ -2,7 +2,7 @@ import { createStore } from 'redux'
 import { wrapStore } from 'react-chrome-redux'
 import reducers from './reducers'
 import uuidV4 from 'uuid/v4'
-import Settings from './models/Settings'
+// import Settings from './models/Settings'
 import Configuration from './models/Configuration'
 
 (function (scope) {
@@ -12,7 +12,7 @@ import Configuration from './models/Configuration'
   var counts = []
   var enabledHotkeyGroup = -1
 
-  var syncRemoteStorage = function () {}
+  // var syncRemoteStorage = function () {}
 
   function updateBadge() {
     var count = counts[selectedTabId]
@@ -32,9 +32,9 @@ import Configuration from './models/Configuration'
       counts[sender.tab.id] = request.count
       updateBadge()
     }
-    if (request.receiver && request.receiver === 'background' && typeof request.task === 'string' && request.task === 'syncRemoteStorage') {
+    /* if (request.receiver && request.receiver === 'background' && typeof request.task === 'string' && request.task === 'syncRemoteStorage') {
       syncRemoteStorage(true, request.connector)
-    }
+    } */
   })
 
   scope.chrome.tabs.onUpdated.addListener(function (tabId, props, tab) {
@@ -119,7 +119,7 @@ import Configuration from './models/Configuration'
       // syncRemoteStorage(false)
     })
 
-    syncRemoteStorage = function (download, name = 'all') {
+    /* syncRemoteStorage = function (download, name = 'all') {
       console.log(`Syncing ${name} remote storage ...`)
 
       if (name === 'all') {
@@ -155,7 +155,7 @@ import Configuration from './models/Configuration'
       })
     }
 
-    timedSync()
+    timedSync() */
 
     function toggleHotkeyGroup(group) {
       var toggle = enabledHotkeyGroup !== group

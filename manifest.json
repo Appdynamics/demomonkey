@@ -34,11 +34,6 @@
   "permissions": [
     "storage", "unlimitedStorage", "tabs", "activeTab", "http://*/*", "https://*/*", "downloads", "contextMenus", "identity"
   ],
-  "oauth2": {
-      "client_id_dev": "102489399870-4scf2ouem35q1n2m5muas8fcs0p2aplg.apps.googleusercontent.com",
-      "client_id": "534261080696-ns06lu04jfusf2sfnpvf4itv8se57hno.apps.googleusercontent.com",
-      "scopes": ["https://www.googleapis.com/auth/drive.appfolder"]
-  },
   "commands": {
     "toggle-hotkey-group-1": {
       "suggested_key": {
