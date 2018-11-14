@@ -66,6 +66,16 @@ class CommandBuilder {
           })
         ])
       }
+      if (command === 'hideMobileApplication') {
+        return new Group([
+          new Hide(parameters[0], 4, 'ads-mobile-app-card', '', 'EUM_MOBILE_ALL_APPS', location),
+          new Hide(parameters[0], 4, 'x-grid-row', '', 'EUM_MOBILE_ALL_APPS', location),
+          new Hide(parameters[0], 5, 'x-grid-row', '', 'EUM_MOBILE_ALL_APPS', location),
+          new Hide(parameters[0], 2, 'ads-home-list-item', '', 'AD_HOME_OVERVIEW', location, function (_, parentNode) {
+            return parentNode.getAttribute('ng-click').includes('ViewEumMobileApplication')
+          })
+        ])
+      }
       if (command === 'hideDB' || command === 'hideDatabase') {
         return new Group([
           new Hide(parameters[0], 9, 'ads-database-card', '', 'DB_MONITORING_SERVER_LIST', location),
@@ -86,6 +96,15 @@ class CommandBuilder {
             return node.parentElement.parentElement.className.includes('x-grid-cell-first')
           })
         ])
+      }
+      if (command === 'hideBusinessJourney') {
+        return new Hide(parameters[0], 9, 'ads-analytics-business-outcomes-card-size', '', 'ANALYTICS_BUSINESS_OUTCOMES', location)
+      }
+      if (command === 'hideAnalyticsSearch') {
+        return new Hide(parameters[0], 7, 'ui-grid-row', '', 'ANALYTICS_SEARCH_LIST', location)
+      }
+      if (command === 'hideRemoteService') {
+        return new Hide(parameters[0], 3, 'x-grid-row', '', 'APP_BACKEND_LIST', location)
       }
       if (command === 'replaceFlowmapConnection') {
         return new ReplaceFlowmapConnection(parameters[0], parameters[1], value, parameters[2])
