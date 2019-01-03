@@ -119,6 +119,10 @@ import Configuration from './models/Configuration'
         configurationsDatabase.bulkDocs(state.configurations.map(c => {
           // Couch/PouchDB expects the id with an _ prefix
           c._id = c.id
+          // Make sure that updated_at is always set!
+          if (typeof c.updated_at === 'undefined') {
+            c.updated_at = Date.now()
+          }
           return c
         })).then(function (result) {
           // Run with state from PouchDB
@@ -152,7 +156,11 @@ import Configuration from './models/Configuration'
       })
       // Store revisions independendly for doing proper updates below.
       var revisions = {}
-      result.rows.forEach(d => { revisions[d.doc.id] = {_rev: d.doc._rev, _id: d.doc._id, updated_at: d.doc.updated_at} })
+      result.rows.forEach(d => {
+        // There are cases where updated_at is not set properly (e.g. very old configurations), force set a proper value
+        var updatedAt = typeof d.doc.updated_at === 'undefined' ? Date.now() : d.doc.updated_at
+        revisions[d.doc.id] = {_rev: d.doc._rev, _id: d.doc._id, updated_at: updatedAt}
+      })
       console.log('Running with configurations from PouchDB.')
       run(state, revisions)
     }).catch(function (error) {
@@ -184,7 +192,6 @@ import Configuration from './models/Configuration'
           // Handle update
           var newConnection = connections[idx]
           connections.splice(idx, 1)
-          console.log(newConnection, connection)
           if (newConnection.url !== connection.url || newConnection.label !== connection.label) {
             sync.cancel()
             console.log('Update', newConnection)
@@ -207,19 +214,29 @@ import Configuration from './models/Configuration'
         var [connection, sync] = pair
         if (sync === false) {
           scope.logMessage(`Starting synchronization with ${connection.url}`)
-          return [connection, PouchDB.sync('configurations', connection.url, {live: true, retry: true}).on('change', info => {
+          // var filter =  ? () => {} : () => {}
+          var syncOpts = {live: true, retry: true}
+          if (typeof connection.label === 'string' && connection.label.length > 0) {
+            syncOpts.filter = (doc) => { return doc.name.startsWith(connection.label + '/') }
+          }
+          return [connection, PouchDB.sync('configurations', connection.url, syncOpts).on('change', info => {
+            console.log('DB Sync', info)
             if (info.direction === 'pull') {
               scope.logMessage(`Pull updates from ${connection.url}`)
               reloadFromDB({docs: info.change.docs.map(doc => { return {id: doc._id, rev: doc._rev} })})
+            } else {
+              scope.logMessage(`Push updates to ${connection.url}`)
             }
           }).on('error', error => {
-            console.log(error)
+            console.log('error', error)
           }).on('paused', (error) => {
-            console.log(error)
+            console.log('paused', error)
           }).on('active', (info) => {
-            console.log(info)
+            console.log('active', info)
           }).on('denied', error => {
-            console.log(error)
+            console.log('denied', error)
+          }).on('complete', info => {
+            console.log('complete', info)
           })]
         }
         return pair
