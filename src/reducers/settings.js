@@ -1,3 +1,5 @@
+const uuidV4 = require('uuid/v4')
+
 const optionalFeatures = function (state, action) {
   switch (action.type) {
     case 'TOGGLE_OPTIONAL_FEATURE':
@@ -8,15 +10,23 @@ const optionalFeatures = function (state, action) {
   }
 }
 
-const connectors = function (state, action) {
+const connections = function (state, action) {
   switch (action.type) {
-    case 'UPDATE_CONNECTOR':
-    case 'ADD_CONNECTOR':
-      return Object.assign({}, state, action.connector)
-    case 'REMOVE_CONNECTOR':
-      var newState = state
-      delete newState[action.connector]
-      return newState
+    case 'ADD_CONNECTION':
+      if (action.connection.key === false) {
+        return [
+          ...state,
+          Object.assign(action.connection, {key: uuidV4()})
+        ]
+      }
+      return state.map(c => {
+        if (c.key === action.connection.key) {
+          return action.connection
+        }
+        return c
+      })
+    case 'REMOVE_CONNECTION':
+      return state.filter(c => c.key !== action.key)
     default:
       return state
   }
@@ -39,12 +49,11 @@ const settings = function (state = '', action) {
         ...state,
         optionalFeatures: optionalFeatures(state.optionalFeatures, action)
       }
-    case 'UPDATE_CONNECTOR':
-    case 'ADD_CONNECTOR':
-    case 'REMOVE_CONNECTOR':
+    case 'ADD_CONNECTION':
+    case 'REMOVE_CONNECTION':
       return {
         ...state,
-        connectors: connectors(state.connectors, action)
+        remoteConnections: connections(state.remoteConnections, action)
       }
     default:
       return state

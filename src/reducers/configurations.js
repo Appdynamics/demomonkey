@@ -11,11 +11,13 @@ const configuration = (state, action) => {
         enabled: typeof action.enabled !== 'undefined' ? action.enabled : !state.enabled
       }
     case 'ADD_CONFIGURATION':
-      return Object.assign({}, action.configuration, { id: uuidV4(), created_at: Date.now(), updated_at: Date.now(), enabled: false })
+      // id, created_at, updated_at can be overwritten by action.configuration
+      // if it comes from a remote source.
+      return Object.assign({ id: uuidV4(), created_at: Date.now(), updated_at: Date.now() }, action.configuration, { enabled: false })
     case 'SAVE_CONFIGURATION':
       // the last array is a hot fix for issue #16
       // saving the configuration should currently not include overwriting the enabled state
-      return Object.assign({}, state, action.configuration, { enabled: state.enabled, updated_at: Date.now() })
+      return Object.assign({}, state, action.configuration, { enabled: state.enabled, updated_at: action.sync === true ? action.configuration.updated_at : Date.now() })
     case 'DELETE_CONFIGURATION':
       return {
         ...state,

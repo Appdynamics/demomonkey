@@ -7,6 +7,23 @@ import OptionsPageApp from './components/options/OptionsPageApp'
 import PopupPageApp from './components/popup/PopupPageApp'
 
 function renderOptionsPageApp(root, store) {
+  chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+    if (request.receiver && request.receiver === 'dashboard' && typeof request.logMessage !== 'undefined') {
+      console.log('Message received', request.logMessage)
+      var msg = typeof request.logMessage === 'string' ? request.logMessage : JSON.stringify(request.logMessage)
+      var mbox = document.getElementById('message-box')
+      mbox.className = 'fade-to-visible'
+      mbox.innerHTML = '(' + new Date().toLocaleTimeString() + ') ' + msg
+      var timeoutid = setTimeout(function () {
+        console.log(timeoutid, mbox.dataset.timeoutid)
+        if (parseInt(mbox.dataset.timeoutid) === timeoutid) {
+          mbox.className = 'fade-to-hidden'
+        }
+      }, 3000)
+      mbox.dataset.timeoutid = timeoutid
+    }
+  })
+
   if (window.location.hash.substring(1) !== '') {
     console.log('Updating current view', window.location.hash.substring(1))
     store.dispatch({

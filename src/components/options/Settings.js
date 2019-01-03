@@ -3,8 +3,6 @@ import ToggleButton from 'react-toggle-button'
 import PropTypes from 'prop-types'
 import JSZip from 'jszip'
 import AceEditor from 'react-ace'
-import GitHubConnectorForm from '../../connectors/GitHub/ConnectorForm'
-import GDriveConnectorForm from '../../connectors/GDrive/ConnectorForm'
 
 import 'brace/theme/textmate'
 import 'brace/mode/ini'
@@ -18,8 +16,23 @@ class Settings extends React.Component {
     onSetMonkeyInterval: PropTypes.func.isRequired,
     onToggleOptionalFeature: PropTypes.func.isRequired,
     onConnected: PropTypes.func.isRequired,
-    onDisconnected: PropTypes.func.isRequired,
-    onConnectionUpdated: PropTypes.func.isRequired
+    onDisconnected: PropTypes.func.isRequired
+  }
+
+  constructor(props) {
+    super()
+    this.state = {
+      connections: props.settings.remoteConnections.concat({label: '', url: '', key: false})
+    }
+  }
+
+  static getDerivedStateFromProps(nextProps, prevState) {
+    if (nextProps.settings.remoteConnections.length + 1 !== prevState.connections.length) {
+      return {
+        connections: nextProps.settings.remoteConnections.concat({label: '', url: '', key: false})
+      }
+    }
+    return null
   }
 
   downloadAll() {
@@ -39,42 +52,66 @@ class Settings extends React.Component {
       })
   }
 
-  _renderExperimentalFeatures() {
-    return <div><h3>Experimental Features</h3>
-      <div className="toggle-group">
-        <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('experimental_withTemplateEngine')} value={this.props.settings.optionalFeatures.experimental_withTemplateEngine}/><label><b>Activate Nunjuck Template Engine.</b> Turn this option on to be able to use the <a href="https://mozilla.github.io/nunjucks/templating.html" target="_blank" rel="noopener noreferrer">nunjuck templating engine</a> in your configurations.</label>
-      </div>
-      <div className="toggle-group">
-        <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('experimantal_withGoogleDriveIntegration')} value={this.props.settings.optionalFeatures.experimantal_withGoogleDriveIntegration}/><label><b>Activate Google Drive Integration.</b> Turn this option on to synchronize your configurations to Google Drive.</label>
-      </div>
-      <div className="toggle-group">
-        <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('experimantal_withGithubIntegration')} value={this.props.settings.optionalFeatures.experimantal_withGithubIntegration}/><label><b>Activate GitHub Integration.</b> Turn this option on to synchronize your configurations with a GitHub repository.</label>
-      </div>
-    </div>
+  _handleConnectionUpdate(id, property, newValue) {
+    var connections = this.state.connections
+    connections[id][property] = newValue
+    connections[id].saved = false
+    this.setState(connections)
   }
 
-  _renderRemoteStorageSection() {
-    if (
-      !this.props.settings.optionalFeatures.experimantal_withGithubIntegration &&
-      !this.props.settings.optionalFeatures.experimantal_withGoogleDriveIntegration
-    ) {
-      return false
-    }
+  _saveConnection(key) {
+    var connection = this.state.connections[key]
+    this.props.onConnected({
+      key: connection.key,
+      label: connection.label,
+      url: connection.url
+    })
+  }
 
-    return <div><h2>Remote Storage</h2>
-      <p>You can use remote storages to easily backup, share, versionize your demo configurations.</p>
-      <GDriveConnectorForm credentials={this.props.settings.connectors.gdrive}
-        visible={this.props.settings.optionalFeatures.experimantal_withGoogleDriveIntegration}
-        onConnected={(credentials) => this.props.onConnected('gdrive', credentials)}
-        onDisconnected={() => this.props.onDisconnected('gdrive')}
-        onConnectionUpdated={(credentials) => this.props.onConnectionUpdated('gdrive', credentials)}
-      />
-      <GitHubConnectorForm credentials={this.props.settings.connectors.github}
-        visible={this.props.settings.optionalFeatures.experimantal_withGithubIntegration}
-        onConnected={(credentials) => this.props.onConnected('github', credentials)}
-        onDisconnected={() => this.props.onDisconnected('github')}
-        onConnectionUpdated={(credentials) => this.props.onConnectionUpdated('github', credentials)}
-      />
+  _deleteConnection(key) {
+    this.props.onDisconnected(key)
+  }
+
+  _renderConnectionRow(connection, id) {
+    return <tr key={id}>
+      <td>
+        <input onChange={(e) => this._handleConnectionUpdate(id, 'url', e.target.value)} value={connection.url} style={{width: '300px'}} />
+      </td>
+      <td>
+        <input onChange={(e) => this._handleConnectionUpdate(id, 'label', e.target.value)} value={connection.label} style={{width: '100px'}} />
+      </td>
+      <td>
+        <button onClick={(e) => this._saveConnection(id)}>Save</button>
+        <button style={{ display: connection.key === false ? 'none' : 'inherit' }} onClick={(e) => this._deleteConnection(connection.key)}>Delete</button>
+      </td>
+    </tr>
+  }
+
+  _renderSynchronizationSettings() {
+    const connections = this.state.connections
+
+    console.log('rendering')
+
+    return <div><h2>Synchronization</h2>
+      <p>
+        You can synchronize multiple instances of DemoMonkey using a remote <a href="http://couchdb.apache.org/" target="_blank" rel="noopener noreferrer">CouchDB</a>.
+        Each database you provide can have a label, that can be selected on the configuration editor for storing configurations in different locations. Use this, if you
+        have private and shared databases.
+      </p>
+      <table>
+        <thead>
+          <tr>
+            <th>URL</th>
+            <th>Label</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            connections.map((connection, id) => this._renderConnectionRow(connection, id))
+          }
+        </tbody>
+      </table>
     </div>
   }
 
@@ -122,13 +159,10 @@ class Settings extends React.Component {
           <div className="toggle-group">
             <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('inDevTools')} value={this.props.settings.optionalFeatures.inDevTools}/><label><b>Integrate with Chrome Dev Tools.</b> Turn this option on to see the DemoMonkey dashboard within the Chrome Developer Toolbar.</label>
           </div>
-          {/* this._renderExperimentalFeatures() */}
+          { this._renderSynchronizationSettings() }
           <h2>Backup</h2>
           You can always open the <a href="backup.html">backup page</a> to download your files or manipulate your settings. Please use with caution!
           <button className="save-button" onClick={(event) => this.downloadAll(event)}>Download all configurations</button>
-          <div>
-            { this._renderRemoteStorageSection() }
-          </div>
         </div>
       </div>
     )

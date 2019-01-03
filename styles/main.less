@@ -8,6 +8,7 @@
 @import 'ace';
 @import 'table';
 @import '../node_modules/react-select/less/default';
+@import (inline) '../node_modules/react-table/react-table.css';
 
 body,
 html,
@@ -204,6 +205,18 @@ label {
 
 .hidden {
   display: none;
+}
+
+.fade-to-visible {
+  opacity: 1;
+  transition: opacity 1s linear;
+  visibility: visible;
+}
+
+.fade-to-hidden {
+  opacity: 0;
+  transition: visibility 0s 1s, opacity 1s linear;
+  visibility: hidden;
 }
 
 .ace_editor {

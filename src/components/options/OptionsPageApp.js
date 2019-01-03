@@ -120,25 +120,12 @@ class App extends React.Component {
     this.props.actions.setMonkeyInterval(interval)
   }
 
-  saveConnection(name, credentials) {
-    var connector = {}
-    connector[name] = credentials
-    this.props.actions.addConnector(connector)
+  saveConnection(connection) {
+    this.props.actions.addConnection(connection)
   }
 
-  updateConnection(name, credentials) {
-    var connector = {}
-    connector[name] = credentials
-    window.chrome.runtime.sendMessage({
-      receiver: 'background',
-      task: 'syncRemoteStorage',
-      connector: name
-    })
-    this.props.actions.updateConnector(connector)
-  }
-
-  removeConnection(name) {
-    this.props.actions.removeConnector(name)
+  removeConnection(key) {
+    this.props.actions.removeConnection(key)
   }
 
   getCurrentView() {
@@ -151,9 +138,8 @@ class App extends React.Component {
           onToggleOptionalFeature={(feature) => this.toggleOptionalFeature(feature)}
           onSetBaseTemplate={(baseTemplate) => this.setBaseTemplate(baseTemplate)}
           onSetMonkeyInterval={(event) => this.setMonkeyInterval(event.target.value)}
-          onConnected={(name, credentials) => this.saveConnection(name, credentials)}
-          onConnectionUpdated={(name, credentials) => this.updateConnection(name, credentials)}
-          onDisconnected={(name) => this.removeConnection(name)}/>
+          onConnected={(connection) => this.saveConnection(connection)}
+          onDisconnected={(key) => this.removeConnection(key)}/>
       case 'configuration':
         var configuration = this.getConfiguration(segments[1])
         console.log(configuration)
@@ -220,14 +206,11 @@ const OptionsPageApp = connect(
       toggleOptionalFeature: (optionalFeature) => {
         dispatch({ 'type': 'TOGGLE_OPTIONAL_FEATURE', optionalFeature })
       },
-      addConnector: (connector) => {
-        dispatch({ 'type': 'ADD_CONNECTOR', connector })
+      addConnection: (connection) => {
+        dispatch({ 'type': 'ADD_CONNECTION', connection })
       },
-      updateConnector: (connector) => {
-        dispatch({ 'type': 'UPDATE_CONNECTOR', connector })
-      },
-      removeConnector: (connector) => {
-        dispatch({ 'type': 'REMOVE_CONNECTOR', connector })
+      removeConnection: (key) => {
+        dispatch({ 'type': 'REMOVE_CONNECTION', key })
       }
     }
   }))(App)
