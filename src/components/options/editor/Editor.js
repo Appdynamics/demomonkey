@@ -9,6 +9,7 @@ import PropTypes from 'prop-types'
 import Mousetrap from 'mousetrap'
 import showdown from 'showdown'
 import Select from 'react-select'
+import CommandBuilder from '../../../commands/CommandBuilder'
 
 class Editor extends React.Component {
   static propTypes = {
@@ -122,6 +123,45 @@ class Editor extends React.Component {
     return `https://github.com/${location.user}/${location.repository}/blob/master/${location.path}`
   }
 
+  _buildAnnotations(content) {
+    var result = []
+
+    const lines = content.split('\n')
+
+    // Capture namespaces for the command builder.
+    const nsPattern = /^@namespace(?:\[\])?\s*=\s*(.*)$/mg
+    var match
+    var namespaces = []
+    while (match = nsPattern.exec(content)) {
+      namespaces.push(match[1])
+    }
+
+    const cb = new CommandBuilder(namespaces)
+
+    lines.forEach((line, rowIdx) => {
+      // Process each line and add infos, warnings, errors
+      // Multiple = signs can lead to issues, add an info
+      if ((line.match(/=/g) || []).length > 1) {
+        result.push({row: rowIdx, column: 1, text: 'Your line contains multiple equals signs (=)!\nThe first will be used to seperate search and replacement.', type: 'warning'})
+      }
+
+      // Check if an imported configuration is available
+      if (line.startsWith('+') && line.length > 1 && !this.props.repository.hasByName(line.substring(1))) {
+        result.push({row: rowIdx, column: 3, text: `There is no configuration called "${line.substring(1)}", this line will be ignored.`, type: 'warning'})
+      }
+
+      if (line.startsWith('!') && line.length > 1) {
+        var command = line.split('=')[0].trim()
+        var cmd = cb.build(command,null).constructor.name
+        if(cmd === 'Command') {
+          result.push({row: rowIdx, column: 5, text: `Command "${command}" not found.\nPlease check the spelling and\nif all required namespaces are loaded.`, type: 'error'})
+        }
+      }
+    })
+
+    return result
+  }
+
   render() {
     var current = this.state.currentConfiguration
     var hiddenIfNew = current.id === 'new' ? { display: 'none' } : {}
@@ -166,6 +206,7 @@ class Editor extends React.Component {
             <CodeEditor value={current.content}
               onChange={(content) => this.handleUpdate('content', content)}
               readOnly={current.readOnly === true}
+              annotations={(content) => this._buildAnnotations(content)}
               onAutoSave={(event) => this.props.autoSave ? this.handleClick(event, 'save') : event.preventDefault() }
               editorAutocomplete={this.props.editorAutocomplete}/>
           </Pane>

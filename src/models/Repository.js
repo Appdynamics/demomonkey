@@ -15,6 +15,13 @@ class Repository {
     }
     return new Configuration('', null, false, {})
   }
+
+  hasByName(name) {
+    if (typeof this.configurations[name] === 'object') {
+      return true
+    }
+    return false
+  }
 }
 
 export default Repository

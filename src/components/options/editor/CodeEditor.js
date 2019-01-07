@@ -18,7 +18,8 @@ class CodeEditor extends React.Component {
     onChange: PropTypes.func.isRequired,
     onAutoSave: PropTypes.func.isRequired,
     readOnly: PropTypes.bool,
-    editorAutocomplete: PropTypes.bool.isRequired
+    editorAutocomplete: PropTypes.bool.isRequired,
+    annotations: PropTypes.func.isRequired
   }
 
   handleChange(content, event) {
@@ -26,12 +27,26 @@ class CodeEditor extends React.Component {
       event.preventDefault()
     }
     this.props.onChange(content)
+    // annotations={annotations} on the AceEditor
+    // does not work properly (probably due my misunderstanding of react;) )
+    // the following works and also adds some soft delay on the annotation update
+    setTimeout(() => this._updateAnnotations(), 150)
+  }
+
+  _updateAnnotations() {
+    if (this.editor) {
+      this.editor.session.setAnnotations(this.props.annotations(this.editor.getValue()))
+    }
   }
 
   render() {
     return <div className="editor-box"><AceEditor
       value={this.props.value}
       onChange={(content) => this.handleChange(content)}
+      onLoad={(editor) => {
+        this.editor = editor
+        this._updateAnnotations()
+      }}
       width="100%"
       height="100%"
       theme="xcode"
