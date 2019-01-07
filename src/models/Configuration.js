@@ -168,7 +168,10 @@ class Configuration {
 
     var variables = Object.keys(this.content).reduce(filterVariable(this.content), [])
 
-    return variables.map((variable) => {
+    // Variables are replaced longest first, to have a consistent behaviour for #35
+    return variables.sort((a, b) => {
+      return b.name.length - a.name.length
+    }).map((variable) => {
       return variable.bind(this.values[variable.name])
     })
   }
