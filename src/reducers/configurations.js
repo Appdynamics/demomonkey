@@ -13,6 +13,11 @@ const configuration = (state, action) => {
     case 'ADD_CONFIGURATION':
       // id, created_at, updated_at can be overwritten by action.configuration
       // if it comes from a remote source.
+      // We need to delete the action configuration if it is set to new, to make
+      // this mechanism work properly.
+      if (action.configuration.id === 'new') {
+        delete action.configuration.id
+      }
       return Object.assign({ id: uuidV4(), created_at: Date.now(), updated_at: Date.now() }, action.configuration, { enabled: false })
     case 'SAVE_CONFIGURATION':
       // the last array is a hot fix for issue #16

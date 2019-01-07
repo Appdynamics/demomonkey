@@ -21,6 +21,6 @@
     }
     interval.innerHTML = text
     counter++
-    document.getElementById('monkey-stats').innerHTML = 'Undo Length: ' + window.$DEMO_MONKEY.getUndoLength()
+    // document.getElementById('monkey-stats').innerHTML = 'Undo Length: ' + window.$DEMO_MONKEY.getUndoLength()
   }, 30)
 })()
