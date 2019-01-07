@@ -11,7 +11,7 @@ class Variable {
 
   apply(value) {
     if (typeof value.replace === 'function') {
-      return value.replace('$' + this.name, this.value)
+      return value.replace('$' + this.name, this.value).replace('${' + this.name + '}', this.value)
     }
     return value
   }
