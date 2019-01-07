@@ -141,21 +141,25 @@ class Editor extends React.Component {
     lines.forEach((line, rowIdx) => {
       // Process each line and add infos, warnings, errors
       // Multiple = signs can lead to issues, add an info
-      if ((line.match(/=/g) || []).length > 1) {
-        result.push({row: rowIdx, column: 1, text: 'Your line contains multiple equals signs (=)!\nThe first will be used to seperate search and replacement.', type: 'warning'})
+      if ((line.match(/(?:^=)|(?:[^\\]=)/g) || []).length > 1) {
+        result.push({row: rowIdx, column: 0, text: 'Your line contains multiple equals signs (=)!\nThe first will be used to seperate search and replacement.\nQuote the equal signs that are part of your patterns.', type: 'warning'})
       }
 
       // Check if an imported configuration is available
       if (line.startsWith('+') && line.length > 1 && !this.props.repository.hasByName(line.substring(1))) {
-        result.push({row: rowIdx, column: 3, text: `There is no configuration called "${line.substring(1)}", this line will be ignored.`, type: 'warning'})
+        result.push({row: rowIdx, column: 0, text: `There is no configuration called "${line.substring(1)}", this line will be ignored.`, type: 'warning'})
       }
 
       if (line.startsWith('!') && line.length > 1) {
         var command = line.split('=')[0].trim()
         var cmd = cb.build(command,null).constructor.name
         if(cmd === 'Command') {
-          result.push({row: rowIdx, column: 5, text: `Command "${command}" not found.\nPlease check the spelling and\nif all required namespaces are loaded.`, type: 'error'})
+          result.push({row: rowIdx, column: 0, text: `Command "${command}" not found.\nPlease check the spelling and\nif all required namespaces are loaded.`, type: 'error'})
         }
+      }
+
+      if (!line.startsWith(';') && line.includes(';') || !line.startsWith('#') && line.includes('#')) {
+        result.push({row: rowIdx, column: 0, text: 'Semi-colon (;) and hash (#) are interpreted as inline comments.\nMake sure to quote your patterns to use them properly.', type: 'info'})
       }
     })
 

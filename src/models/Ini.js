@@ -30,7 +30,8 @@ class Ini {
       content = this._renderWithNunjucks(content, templateEngineProperties)
     }
 
-    var r = content ? ini.parse(content) : []
+    // The replace allows quoting for =. The reverse happens in the CommandBuilder.
+    var r = content ? ini.parse(content.replace('\\=', '\u2260')) : []
 
     return r
   }

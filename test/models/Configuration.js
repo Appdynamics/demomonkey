@@ -22,6 +22,7 @@ var configurationWithInclude = new Configuration('@include = /www/')
 var configurationWithBlacklist = new Configuration('@blacklist = div')
 var configurationWithVariable = new Configuration('$a = default\rx = $a', null, true, { a: 'v' })
 var configurationWithUnsetVariable = new Configuration('$a = default\rv = $a', null, true, {})
+var configurationWithSharedPrefixVariable = new Configuration('$a = a1\r$ab = a2\rdefault = $ab', null, true, { a: 'v', ab: 'v2' })
 var configurationWithImport = new Configuration('+Cities')
 
 describe('Configuration', function () {
@@ -94,6 +95,9 @@ describe('Configuration', function () {
 
       configurationWithUnsetVariable.apply(node)
       assert.equal(node.value, 'default')
+
+      configurationWithSharedPrefixVariable.apply(node)
+      assert.equal(node.value, 'v2')
     })
 
     it('should apply patterns from imported configurations', function () {

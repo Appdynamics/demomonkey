@@ -98,7 +98,7 @@ class Configuration {
       var filterOption = function (content, section) {
         return function (result, key) {
           // By default ini.parse sets "true" as the value
-          if (key.charAt(0) === '@') {
+          if (key.charAt(0) === '@' && key.length > 1) {
             var value = content[key]
 
             if (typeof value === 'string') {
@@ -148,7 +148,8 @@ class Configuration {
     var filterVariable = function (content) {
       return function (result, key) {
         // By default ini.parse sets "true" as the value
-        if (key.charAt(0) === '$' && content[key] !== true) {
+        // $ is not a legal variable name
+        if (key.charAt(0) === '$' && key.length > 1 && content[key] !== true) {
           var t = content[key].split('//')
           result.push(new Variable(key.substring(1), t[0], t[1] ? t[1] : ''))
           return result
@@ -189,7 +190,9 @@ class Configuration {
       var filterConfiguration = function (content) {
         return function (result, key) {
           // skip all variables
-          if (key.charAt(0) === '$' || key.charAt(0) === '@') {
+          // '$' is not a variable, so we also check for the length of the variable.
+          // '@' is not an option, so we also check for the length of the option
+          if ((key.charAt(0) === '$' && key.length > 1) || (key.charAt(0) === '@' && key.length > 1)) {
             return result
           }
 
