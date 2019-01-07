@@ -3,6 +3,7 @@ import ToggleButton from 'react-toggle-button'
 import PropTypes from 'prop-types'
 import JSZip from 'jszip'
 import AceEditor from 'react-ace'
+import Synchronization from './setting/Synchronization'
 
 import 'brace/theme/textmate'
 import 'brace/mode/ini'
@@ -17,22 +18,6 @@ class Settings extends React.Component {
     onToggleOptionalFeature: PropTypes.func.isRequired,
     onConnected: PropTypes.func.isRequired,
     onDisconnected: PropTypes.func.isRequired
-  }
-
-  constructor(props) {
-    super()
-    this.state = {
-      connections: props.settings.remoteConnections.concat({label: '', url: '', key: false})
-    }
-  }
-
-  static getDerivedStateFromProps(nextProps, prevState) {
-    if (nextProps.settings.remoteConnections.length + 1 !== prevState.connections.length) {
-      return {
-        connections: nextProps.settings.remoteConnections.concat({label: '', url: '', key: false})
-      }
-    }
-    return null
   }
 
   downloadAll() {
@@ -50,69 +35,6 @@ class Settings extends React.Component {
           filename: 'demomonkey-' + (new Date()).toISOString().split('T')[0] + '.zip' // Optional
         })
       })
-  }
-
-  _handleConnectionUpdate(id, property, newValue) {
-    var connections = this.state.connections
-    connections[id][property] = newValue
-    connections[id].saved = false
-    this.setState(connections)
-  }
-
-  _saveConnection(key) {
-    var connection = this.state.connections[key]
-    this.props.onConnected({
-      key: connection.key,
-      label: connection.label,
-      url: connection.url
-    })
-  }
-
-  _deleteConnection(key) {
-    this.props.onDisconnected(key)
-  }
-
-  _renderConnectionRow(connection, id) {
-    return <tr key={id}>
-      <td>
-        <input onChange={(e) => this._handleConnectionUpdate(id, 'url', e.target.value)} value={connection.url} style={{width: '300px'}} />
-      </td>
-      <td>
-        <input onChange={(e) => this._handleConnectionUpdate(id, 'label', e.target.value)} value={connection.label} style={{width: '100px'}} />
-      </td>
-      <td>
-        <button onClick={(e) => this._saveConnection(id)}>Save</button>
-        <button style={{ display: connection.key === false ? 'none' : 'inherit' }} onClick={(e) => this._deleteConnection(connection.key)}>Delete</button>
-      </td>
-    </tr>
-  }
-
-  _renderSynchronizationSettings() {
-    const connections = this.state.connections
-
-    console.log('rendering')
-
-    return <div><h2>Synchronization</h2>
-      <p>
-        You can synchronize multiple instances of DemoMonkey using a remote <a href="http://couchdb.apache.org/" target="_blank" rel="noopener noreferrer">CouchDB</a>.
-        Each database you provide can have a label, that can be selected on the configuration editor for storing configurations in different locations. Use this, if you
-        have private and shared databases.
-      </p>
-      <table>
-        <thead>
-          <tr>
-            <th>URL</th>
-            <th>Label</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          {
-            connections.map((connection, id) => this._renderConnectionRow(connection, id))
-          }
-        </tbody>
-      </table>
-    </div>
   }
 
   render() {
@@ -159,7 +81,7 @@ class Settings extends React.Component {
           <div className="toggle-group">
             <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('inDevTools')} value={this.props.settings.optionalFeatures.inDevTools}/><label><b>Integrate with Chrome Dev Tools.</b> Turn this option on to see the DemoMonkey dashboard within the Chrome Developer Toolbar.</label>
           </div>
-          { this._renderSynchronizationSettings() }
+          <Synchronization remoteConnections={this.props.settings.remoteConnections} onConnected={this.props.onConnected} onDisconnected={this.props.onDisconnected} />
           <h2>Backup</h2>
           You can always open the <a href="backup.html">backup page</a> to download your files or manipulate your settings. Please use with caution!
           <button className="save-button" onClick={(event) => this.downloadAll(event)}>Download all configurations</button>
