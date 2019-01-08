@@ -64,6 +64,15 @@ describe('Command', function () {
       }))
     })
 
+    it('supports quoting for the parameter', function () {
+      assert.deepEqual(new CommandBuilder()._extractForCustomCommand('ns.cmd("asdf")'), ({
+        extracted: true,
+        command: 'cmd',
+        namespace: 'ns',
+        parameters: ['asdf']
+      }))
+    })
+
     it('extracts and , seperated parameter lists', function () {
       assert.deepEqual(new CommandBuilder()._extractForCustomCommand('ns.cmd(a,s,d,f)'), ({
         extracted: true,

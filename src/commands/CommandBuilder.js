@@ -126,7 +126,7 @@ class CommandBuilder {
         return new DelayLink(parameters[0], value, window)
       }
       if (command === 'recolorDashboard') {
-        return new RecolorDashboard(parameters[0], parameters[1], value, location)
+        return new RecolorDashboard(parameters[0], value, parameters[1], location)
       }
       if (command === 'setDashboardBackground') {
         return new SetDashboardBackground(parameters[0], value, location)

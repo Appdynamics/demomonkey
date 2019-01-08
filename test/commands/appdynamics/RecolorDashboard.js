@@ -43,6 +43,9 @@ var node = {
     }
     if (query === 'ad-widget-label') {
       return [{
+        querySelector(query) {
+          return {style: {color: '#ff0000'}}
+        },
         parentElement: {
           style: attr3
         }
@@ -55,17 +58,24 @@ var node = {
 describe('RecolorDashboard', function () {
   describe('#apply', function () {
     it('changes the colors of a dashboard', function () {
-      attr1 = {'fill': 'green'}
-      attr2 = {'stroke': 'green'}
-      attr3 = {backgroundColor: 'green'}
+      [['green', 'blue'], ['#008000', '#0000ff'], ['008000', '0000ff'], ['rgb(0,128,0)', 'rgb(0,0,255)'], ['nocolor', 'nocolor']].forEach(pair => {
+        var [search, replace] = pair
 
-      var result = new RecolorDashboard('1', 'green', 'blue', location).apply(node, 'data')
+        attr1 = {'fill': 'green'}
+        attr2 = {'stroke': 'green'}
+        attr3 = {'backgroundColor': 'green'}
 
-      assert.equal(result.length, 3)
+        var result = new RecolorDashboard(search, replace, '1', location).apply(node, 'data')
 
-      assert.equal(attr1.fill, 'blue')
-      assert.equal(attr2.stroke, 'blue')
-      assert.equal(attr3.backgroundColor, 'rgb(0, 0, 255)')
+        if (result !== false) {
+          assert.equal(result.length, 3)
+          assert.equal(attr1.fill, '#0000FF')
+          assert.equal(attr2.stroke, '#0000FF')
+          assert.equal(attr3.backgroundColor, '#0000FF')
+        } else {
+          assert.equal(search, 'nocolor')
+        }
+      })
     })
 
     it('does not change the colors of a dashboard if dashboard id does not match', function () {
@@ -73,9 +83,9 @@ describe('RecolorDashboard', function () {
       attr2 = {'stroke': 'green'}
       attr3 = {backgroundColor: 'green'}
 
-      new RecolorDashboard('2', 'green', 'blue', location).apply(node, 'data')
+      new RecolorDashboard('green', 'blue', '2', location).apply(node, 'data')
 
-      assert.equal(new RecolorDashboard('2', 'green', 'blue', location).apply(node, 'data'), false)
+      assert.equal(new RecolorDashboard('green', 'blue', '2', location).apply(node, 'data'), false)
 
       assert.equal(attr1.fill, 'green')
       assert.equal(attr2.stroke, 'green')
