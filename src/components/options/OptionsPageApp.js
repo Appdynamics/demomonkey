@@ -160,7 +160,7 @@ class App extends React.Component {
   render() {
     var activeItem = this.props.currentView.indexOf('configuration/') === -1 ? false : this.props.currentView.split('/').pop()
 
-    var configurations = this.props.configurations.filter((config) => typeof config.deleted_at === 'undefined')
+    var configurations = this.props.configurations.filter((config) => typeof config.deleted_at === 'undefined' && typeof config._deleted === 'undefined')
 
     return <div className="main-grid">
       <Popup className="popup" btnClass="popup__btn" />

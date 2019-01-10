@@ -62,23 +62,35 @@ If you want to use a option multiple time you need to provide it in array notati
 
 Outside of namespaces you can always use the following commands:
 
+- **!replace(word, locationFilter)** = replacement: Replace the given word with the replacement if the locationFilter matches
 - **!/search/modifier = replacement**: Provide a regular expression to run your replacements.
 - **!style(word, property) = replacement**: Change the css property of a node containing word
 - **!hide(word, nthParent, cssFilter, hrefFilter, hashFilter)**: Hide a text field and its nth parent elements. You can apply multiple filters.
 - **!replaceImage(src) = replacement**: Replace the src attribute of an img tag
 - **!overwriteHTML(locationFilter, cssSelector) = replacement**: Overwrite the inner HTML of the first element matching the cssSelector. If no selector is provided the main html can be overwritten. You can filter the application by location (href, hash)
+- **!overwritePage(locationFilter, pageTitle) = url**: Overwrite the whole page with a fullscreen iframe that shows url.
+- **!replaceLink(url) = newUrl**: Replace the target of a hyperlink with newUrl
+- **!replaceNeighbor(word, replacement, nthParent, cssSelector, locationFilter)**: Search for word, walk up the DOM tree to the nth parent and apply a css selector to find a child where the replacement is applied. This is especially useful to replace labels "close by" a text
 
 ## Namespaces
 
-Commands specific to a certain webapplication are provided via a namespace. Currently DemoMonkey only knows the **appdynamics** namespace with the following commands:
+Commands specific to a certain web application are provided via a namespace. Currently DemoMonkey only knows the **appdynamics** namespace with the following commands:
 
-- **replaceFlowmapIcon(label) = replacement**: Replace the type of a tier or backend on the flowmap.
-- **hideApplication(label)**: Hide the given application.
-- **hideBusinessTransaction(label)**: Hide the given business transaction.
-- **hideDatabase(label)**: Hide the given database
-- **hideBrowserApplication(label)**: The the given browser application for EUM
-- **replaceFlowmapConnection(label1, label2) = replacement**: Replace the color between two elements on the flowmap. Possible values for **replacement** are Warning, Critical, Unknown and Normal
-- **replaceMobileScreenshot(view) = replacement**: Replace a screenshot taken during a mobile session for the given view.
+- **!replaceFlowmapIcon(label) = replacement**: Replace the type of a tier or backend on the flowmap.
+- **!hideApplication(label)**: Hide the given application.
+- **!hideBusinessTransaction(label)**: Hide the given business transaction.
+- **!hideDatabase(label)**: Hide the given database
+- **!hideBrowserApplication(label)**: Hide the given browser application for EUM
+- **!hideMobileApplication(label)**: Hide the given mobile application for EUM
+- **!hideBusinessJourney(label)**: Hide the given business journey
+- **!hideAnalyticsSearch(label)**: Hide the given analytics search
+- **!hideRemoteService(label)**: Hide the given remote service in the list view
+- **!replaceFlowmapConnection(label1, label2, force) = replacement**: Replace the color between two elements on the flowmap. Possible values for **replacement** are Warning, Critical, Unknown and Normal. Set the force option to replace the label even if no baseline is shown.
+- **!replaceMobileScreenshot(view) = replacement**: Replace a screenshot taken during a mobile session for the given view.
+- **!replaceNodeCount(nodeName) = replacement**: Replace the node count on the flowmap for the node with name nodeName
+- **!recolorDashboard(oldColor, dashboardId) = newColor**: Replace the oldColor with newColor on a dashboard. If provided, only if dashboardId matches.
+- **!setDashboardBackground(dasboardID) = background**: Change the background of a dasbhoard. You can provide an image url or a color. If provided, the background is only replaced if the dasbhoardId matches.
+- **!delayLink(url) = seconds**: Delay a link by the given number of seconds
 
 ## Variables
 
@@ -90,4 +102,4 @@ $variable = default//description
 
 This is especially useful if you want to have an interchangeable company or domain name.
 
-Variables are also helpful if you'd like use HTML in your replacements, especially for **!overwriteHTML**. 
+Variables are also helpful if you'd like use HTML in your replacements, especially for **!overwriteHTML**.

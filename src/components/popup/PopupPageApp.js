@@ -24,7 +24,7 @@ class App extends React.Component {
   }
 
   render() {
-    var configurations = this.props.configurations.filter((config) => typeof config.deleted_at === 'undefined')
+    var configurations = this.props.configurations.filter((config) => typeof config.deleted_at === 'undefined' && typeof config._deleted === 'undefined')
     return <div>
       <Tabs>
         <Pane label="Apply">
