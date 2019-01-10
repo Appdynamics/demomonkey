@@ -41,11 +41,18 @@ class RecolorDashboard extends Command {
     svgs.forEach((svg) => {
       var dots = svg.querySelectorAll('path[fill="' + this.search.hex() + '"], path[fill="' + this.search.hex().toLowerCase() + '"], path[fill="' + this.search.rgb().string() + '"]')
 
+      var rects = svg.querySelectorAll('rect[fill="' + this.search.hex() + '"], path[fill="' + this.search.hex().toLowerCase() + '"], rect[fill="' + this.search.rgb().string() + '"]')
+
       var lines = svg.querySelectorAll('path[stroke="' + this.search.hex() + '"], path[stroke="' + this.search.hex().toLowerCase() + '"], path[stroke="' + this.search.rgb().string() + '"]')
 
       dots.forEach(path => {
         path.setAttribute('fill', this.replace.hex())
         r.push(new UndoElement(path.attributes.fill, 'value', this.search.hex(), this.replace.hex()))
+      })
+
+      rects.forEach(rect => {
+        rect.setAttribute('fill', this.replace.hex())
+        r.push(new UndoElement(rect.attributes.fill, 'value', this.search.hex(), this.replace.hex()))
       })
 
       lines.forEach(path => {

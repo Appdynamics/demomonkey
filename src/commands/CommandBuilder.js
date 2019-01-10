@@ -4,6 +4,7 @@ import Hide from './Hide'
 import Group from './Group'
 import ReplaceImage from './ReplaceImage'
 import ReplaceLink from './ReplaceLink'
+import ReplaceNeighbor from './ReplaceNeighbor'
 import OverwriteHTML from './OverwriteHTML'
 import ReplaceFlowmapIcon from './appdynamics/ReplaceFlowmapIcon'
 import ReplaceFlowmapConnection from './appdynamics/ReplaceFlowmapConnection'
@@ -131,10 +132,20 @@ class CommandBuilder {
       if (command === 'setDashboardBackground') {
         return new SetDashboardBackground(parameters[0], value, location)
       }
+      if (command === 'replaceNodeCount') {
+        return new Group([
+          new ReplaceNeighbor(parameters[0], value, 2, 'text.adsNodeCountText', '', location),
+          new ReplaceNeighbor(parameters[0], parseInt(value) === 1 ? 'Node' : 'Nodes', 2, 'text.adsNodeCountTextSmall', '', location)
+        ])
+      }
     }
 
     if (command === 'replace') {
       return new SearchAndReplace(parameters[0], value, parameters[1], parameters[2], location)
+    }
+
+    if (command === 'replaceNeighbor') {
+      return new ReplaceNeighbor(parameters[0], value, parameters[1], parameters[2], parameters[3], location)
     }
 
     if (command === 'style') {
