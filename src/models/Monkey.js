@@ -73,8 +73,8 @@ class Monkey {
     // In AppDynamics Analytics the Tree widget view uses <tspan> in <text> to split
     // text over multiple lines. The full text is contained in a <title> tag.
     // So we search for the <title> in the <text> and check if tspans are contained.
-    document.querySelectorAll('svg text title').forEach(title => {
-      var tspans = title.parentNode.querySelectorAll('tspan')
+    this.scope.document.querySelectorAll('svg text title').forEach(title => {
+      var tspans = title.parentElement.querySelectorAll('tspan')
       if (tspans.length > 1) {
         var content = []
         tspans.forEach(function (tspan) {
@@ -107,7 +107,7 @@ class Monkey {
 
     // In AppDynamics Analytics the Business Journey view shortens labels over the milestones.
     // In the source it looks like the following: Case <text>Lon...<title>Long Text</title></text>
-    document.querySelectorAll('svg text title').forEach(title => {
+    this.scope.document.querySelectorAll('svg text title').forEach(title => {
       if (title.parentElement.textContent.includes('...')) {
         var [short, long] = title.parentElement.textContent.split('...')
         if (long.startsWith(short)) {
@@ -126,6 +126,20 @@ class Monkey {
           undos.push(new UndoElement(textNode, 'data', original, textNode.data))
         }
       }
+    })
+
+    // The Service Now Event Management Dashboard shortens words by space on a box
+    // The full name is kept as "name" of the tspan
+    this.scope.document.querySelectorAll('svg > g text > tspan[name]').forEach(tspan => {
+      var pseudoNode = {
+        'value': tspan.attributes.name.value
+      }
+      configuration.apply(pseudoNode, 'value', 'text')
+
+      var original = tspan.textContent
+      tspan.textContent = pseudoNode.value.substring(0, tspan.textContent.length)
+
+      undos.push(new UndoElement(tspan, 'textContent', original, tspan.textContent))
     })
     this.addUndo(undos)
   }

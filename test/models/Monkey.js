@@ -15,12 +15,7 @@ var node = {
   'parentNode': {
     'tagName': 'title',
     'parentNode': {
-      'tagName': 'text',
-      'querySelectorAll': function (query) {
-        if (query === 'tspan') {
-          return tspans
-        }
-      }
+      'tagName': 'text'
     }
   }
 }
@@ -38,6 +33,22 @@ var scope = {
   },
   document: {
     title: 'demomonkeydemo',
+    querySelectorAll: function (selector) {
+      if (selector === 'svg text title') {
+        return [{
+          parentElement: {
+            textContent: '',
+            querySelectorAll(selector) {
+              if (selector === 'tspan') {
+                return tspans
+              }
+              return []
+            }
+          }
+        }]
+      }
+      return []
+    },
     evaluate: function (xpath) {
       return {
         snapshotItem: function (i) {
