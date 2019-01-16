@@ -16,7 +16,7 @@ class DelayLink extends Command {
   apply(target, key = 'value') {
     var document = this.window.document
 
-    if (this.search === target[key]) {
+    if (this._match(target[key], this.search)) {
       var delayFunction = (event) => {
         event.preventDefault()
         var icons = [

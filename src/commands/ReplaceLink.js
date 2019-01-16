@@ -14,7 +14,7 @@ class ReplaceLink extends Command {
 
   apply(target, key = 'value') {
     var original = target[key]
-    if (this.search === original && this.replace !== original) {
+    if (this._match(original, this.search, this.replace)) {
       target[key] = this.replace
       return new UndoElement(target, key, original, this.replace)
     }
