@@ -95,6 +95,9 @@ class CommandBuilder {
           new Hide(parameters[0], 3, 'x-grid-row', '', 'DASHBOARD_LIST', location, function (node, parentNode) {
             // Make sure that replacements with !not work on the dashboard list, so filter for the first cell
             return node.parentElement.parentElement.className.includes('x-grid-cell-first')
+          }),
+          new Hide(parameters[0], 2, 'ads-home-list-item', '', 'AD_HOME_OVERVIEW', location, function (_, parentNode) {
+            return parentNode.getAttribute('ng-click').includes('ViewCustomDashboard')
           })
         ])
       }
