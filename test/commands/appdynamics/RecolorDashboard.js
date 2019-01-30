@@ -17,7 +17,7 @@ var node = {
     if (query === 'ad-widget-timeseries-graph svg') {
       return [{
         querySelectorAll(query) {
-          if (query.includes('fill')) {
+          if (query.includes('path[fill')) {
             return [{
               attributes: attr1,
               setAttribute(attr, value) {
@@ -29,7 +29,7 @@ var node = {
         }
       }, {
         querySelectorAll(query) {
-          if (query.includes('stroke')) {
+          if (query.includes('path[stroke')) {
             return [{
               attributes: attr2,
               setAttribute(attr, value) {
@@ -66,6 +66,7 @@ describe('RecolorDashboard', function () {
         attr3 = {'backgroundColor': 'green'}
 
         var result = new RecolorDashboard(search, replace, '1', location).apply(node, 'data')
+
 
         if (result !== false) {
           assert.equal(result.length, 3)
