@@ -2,16 +2,16 @@ import Command from './Command'
 import UndoElement from './UndoElement'
 import uuidV4 from 'uuid/v4'
 
-class InsertBefore extends Command {
+class InsertHTML extends Command {
   // Using '' as locationFilter and location as {} works with _checkLocation
   // since every string includes ''
   // cssFilter is not yet implemented
-  constructor(search, insert, cssSelector, locationFilter = '', location = {}) {
+  constructor(position, search, insert, nthParent = 1, locationFilter = '', location = {}) {
     super()
+    this.nthParent = nthParent
+    this.position = position
     this.search = search
-    console.log(search, insert, cssSelector, locationFilter)
     this.insert = insert
-    this.cssSelector = cssSelector
     this.locationFilter = locationFilter
     this.location = location
     this.marker = uuidV4()
@@ -28,16 +28,15 @@ class InsertBefore extends Command {
 
   apply(target, key = 'value') {
     if (!this._checkLocation()) {
-      console.log('Location Check Failed')
       return false
     }
 
     // Check if we can find search in the current node
     if (this.input !== '' && typeof target[key] !== 'undefined' && this._match(target[key].trim(), this.search, null) && this._checkLocation()) {
-      var parentElement = target.parentElement
+      var parentElement = this._walk(target, this.nthParent)
       if (parentElement && !parentElement.innerHTML.includes(this.marker)) {
         var original = parentElement.innerHTML
-        parentElement.insertAdjacentHTML('afterbegin', this._addMarker(this.insert))
+        parentElement.insertAdjacentHTML(this.position, this._addMarker(this.insert))
         return new UndoElement(parentElement, 'innerHTML', original, parentElement.innerHTML)
       }
     }
@@ -45,4 +44,4 @@ class InsertBefore extends Command {
   }
 }
 
-export default InsertBefore
+export default InsertHTML

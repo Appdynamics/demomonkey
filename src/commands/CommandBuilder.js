@@ -157,7 +157,7 @@ class CommandBuilder {
     }
 
     if (command === 'insertAfter') {
-      return new InsertHTML('afterend', parameters[0], value, parameters[1], parameters[2], location)
+      return new InsertHTML('beforeend', parameters[0], value, parameters[1], parameters[2], location)
     }
 
     if (command === 'style') {

@@ -2,9 +2,6 @@ import Command from './Command'
 import UndoElement from './UndoElement'
 
 class ReplaceNeighbor extends Command {
-  // Using '' as locationFilter and location as {} works with _checkLocation
-  // since every string includes ''
-  // cssFilter is not yet implemented
   constructor(search, replace, nthParent, cssSelector, locationFilter = '', location = {}) {
     super()
     this.search = search
