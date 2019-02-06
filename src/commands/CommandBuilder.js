@@ -5,6 +5,7 @@ import Group from './Group'
 import ReplaceImage from './ReplaceImage'
 import ReplaceLink from './ReplaceLink'
 import ReplaceNeighbor from './ReplaceNeighbor'
+import InsertHTML from './InsertHTML'
 import OverwriteHTML from './OverwriteHTML'
 import ReplaceFlowmapIcon from './appdynamics/ReplaceFlowmapIcon'
 import ReplaceFlowmapConnection from './appdynamics/ReplaceFlowmapConnection'
@@ -149,6 +150,14 @@ class CommandBuilder {
 
     if (command === 'replaceNeighbor') {
       return new ReplaceNeighbor(parameters[0], value, parameters[1], parameters[2], parameters[3], location)
+    }
+
+    if (command === 'insertBefore') {
+      return new InsertHTML('afterbegin', parameters[0], value, parameters[1], parameters[2], location)
+    }
+
+    if (command === 'insertAfter') {
+      return new InsertHTML('afterend', parameters[0], value, parameters[1], parameters[2], location)
     }
 
     if (command === 'style') {

@@ -22,7 +22,6 @@ class ReplaceNeighbor extends Command {
 
   apply(target, key = 'value') {
     if (!this._checkLocation()) {
-      console.log('Location Check Failed')
       return false
     }
 
