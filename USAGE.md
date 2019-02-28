@@ -71,6 +71,8 @@ Outside of namespaces you can always use the following commands:
 - **!overwritePage(locationFilter, pageTitle) = url**: Overwrite the whole page with a fullscreen iframe that shows url.
 - **!replaceLink(url) = newUrl**: Replace the target of a hyperlink with newUrl
 - **!replaceNeighbor(word, replacement, nthParent, cssSelector, locationFilter)**: Search for word, walk up the DOM tree to the nth parent and apply a css selector to find a child where the replacement is applied. This is especially useful to replace labels "close by" a text
+- **!insertBefore(search, nthParent, locationFilter) = html**: Inject HTML before the search word. Use the nthParent parameter to walk up the DOM tree.
+- **!insertAfter(search, nthParent, locationFilter) = html**: Inject HTML after the search word. Use the nthParent parameter to walk up the DOM tree.
 
 ## Namespaces
 
@@ -85,7 +87,8 @@ Commands specific to a certain web application are provided via a namespace. Cur
 - **!hideBusinessJourney(label)**: Hide the given business journey
 - **!hideAnalyticsSearch(label)**: Hide the given analytics search
 - **!hideRemoteService(label)**: Hide the given remote service in the list view
-- **!replaceFlowmapConnection(label1, label2, force) = replacement**: Replace the color between two elements on the flowmap. Possible values for **replacement** are Warning, Critical, Unknown and Normal. Set the force option to replace the label even if no baseline is shown.
+- **!replaceFlowmapConnection(label1, label2, force) = replacement**: Replace the color between two elements on the flowmap. Possible values for **replacement** are Warning, Critical, Unknown, Normal, Async and Hide. Set the force option to replace the label even if no baseline is shown.
+- **!hideFlowmapConnection(label1, label2)**: Hide the connection between two elements on the flowmap.
 - **!replaceMobileScreenshot(view) = replacement**: Replace a screenshot taken during a mobile session for the given view.
 - **!replaceNodeCount(nodeName) = replacement**: Replace the node count on the flowmap for the node with name nodeName
 - **!recolorDashboard(oldColor, dashboardId) = newColor**: Replace the oldColor with newColor on a dashboard. If provided, only if dashboardId matches.
