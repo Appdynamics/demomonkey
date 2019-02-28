@@ -75,11 +75,13 @@ import Configuration from './models/Configuration'
     experimental_withTemplateEngine: false
   }
 
+  /* disable pouchdb
   const configurationsDatabase = new PouchDB('configurations')
 
   var reloadFromDB = function () {
     console.log('Store not yet initialized')
   }
+  */
 
   const persistentStates = {
     configurations: [{
@@ -114,6 +116,7 @@ import Configuration from './models/Configuration'
     // While migrating from storage.local to PouchDB we have to check
     // if the DB has been setup and if not, we move the data from old
     // to new storage.
+    /* disable pouchdb
     configurationsDatabase.info().then(result => {
       if (result.doc_count === 0) {
         configurationsDatabase.bulkDocs(state.configurations.map(c => {
@@ -138,8 +141,11 @@ import Configuration from './models/Configuration'
         loadStateFromDB(state)
       }
     })
+    */
+    run(state)
   })
 
+  /* disable pouchdb
   function loadStateFromDB(state) {
     configurationsDatabase.allDocs({
       include_docs: true,
@@ -169,6 +175,7 @@ import Configuration from './models/Configuration'
       run(state)
     })
   }
+  */
 
   function run(state, revisions = {}) {
     console.log('Background Script started')
@@ -178,6 +185,7 @@ import Configuration from './models/Configuration'
     // Persist monkey ID. Shouldn't change after first start.
     scope.chrome.storage.local.set({monkeyID: store.getState().monkeyID})
 
+    /* disable pouchdb
     // ongoing remote synchronizations
     var syncs = []
     function doSync(_connections) {
@@ -272,6 +280,7 @@ import Configuration from './models/Configuration'
     }
 
     doSync(store.getState().settings.remoteConnections)
+    */
 
     store.subscribe(function () {
       console.log('Saving changes...')
@@ -287,6 +296,7 @@ import Configuration from './models/Configuration'
         monkeyID: store.getState().monkeyID
       })
 
+      /* disable pouchdb
       // Sync data back into PouchDB
       configurationsDatabase.bulkDocs(configurations.filter(c => {
         return !revisions[c.id] || c.updated_at > revisions[c.id].updated_at
@@ -311,6 +321,7 @@ import Configuration from './models/Configuration'
       })
 
       doSync(settings.remoteConnections)
+      */
     })
 
     function toggleHotkeyGroup(group) {

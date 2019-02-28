@@ -81,7 +81,7 @@ class Settings extends React.Component {
           <div className="toggle-group">
             <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('inDevTools')} value={this.props.settings.optionalFeatures.inDevTools}/><label><b>Integrate with Chrome Dev Tools.</b> Turn this option on to see the DemoMonkey dashboard within the Chrome Developer Toolbar.</label>
           </div>
-          <Synchronization remoteConnections={this.props.settings.remoteConnections} onConnected={this.props.onConnected} onDisconnected={this.props.onDisconnected} />
+          { /* <Synchronization remoteConnections={this.props.settings.remoteConnections} onConnected={this.props.onConnected} onDisconnected={this.props.onDisconnected} /> */ }
           <h2>Backup</h2>
           You can always open the <a href="backup.html">backup page</a> to download your files or manipulate your settings. Please use with caution!
           <button className="save-button" onClick={(event) => this.downloadAll(event)}>Download all configurations</button>
