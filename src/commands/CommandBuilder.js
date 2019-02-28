@@ -114,6 +114,9 @@ class CommandBuilder {
       if (command === 'replaceFlowmapConnection') {
         return new ReplaceFlowmapConnection(parameters[0], parameters[1], value, parameters[2])
       }
+      if (command === 'hideFlowmapConnection') {
+        return new ReplaceFlowmapConnection(parameters[0], parameters[1], 'Hide')
+      }
       if (command === 'replaceMobileScreenshot') {
         var condition = function (document) {
           var view = document.querySelector('.ads-session-left-panel-container-grid-with-nav .x-grid-row-selected .x-grid-cell-first .x-grid-cell-inner')
