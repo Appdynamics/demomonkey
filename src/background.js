@@ -2,7 +2,7 @@ import { createStore } from 'redux'
 import { wrapStore } from 'react-chrome-redux'
 import reducers from './reducers'
 import uuidV4 from 'uuid/v4'
-import PouchDB from 'pouchdb'
+// import PouchDB from 'pouchdb'
 // import Settings from './models/Settings'
 import Configuration from './models/Configuration'
 
