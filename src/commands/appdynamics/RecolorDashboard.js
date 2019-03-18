@@ -111,6 +111,25 @@ class RecolorDashboard extends Command {
     return r
   }
 
+  _recolorAnalytics(node) {
+    var analyticsWidgets = node.querySelectorAll('ad-widget-analytics')
+
+    var r = []
+
+    analyticsWidgets.forEach((widget) => {
+      var currentBackgroundColor = Color(widget.parentElement.style.backgroundColor)
+      if (this.search.hex() === currentBackgroundColor.hex()) {
+        Array.from(widget.querySelectorAll('[style*="background-color"]')).concat(widget.parentElement).forEach(element => {
+          var original = element.style.backgroundColor
+          element.style.backgroundColor = this.replace.hex()
+          r.push(new UndoElement(element.style, 'backgroundColor', original, element.style.backgroundColor))
+        })
+      }
+    })
+
+    return r
+  }
+
   apply(node, key = 'value') {
     if (!this._checkDashboardId() || !this.search || !this.replace) {
       return false
@@ -118,8 +137,9 @@ class RecolorDashboard extends Command {
     var tsg = this._recolorTimeseriesGraph(node)
     var labels = this._recolorLabels(node)
     var images = this._recolorImages(node)
+    var analytics = this._recolorAnalytics(node)
 
-    return tsg.concat(labels).concat(images)
+    return tsg.concat(labels).concat(images).concat(analytics)
   }
 }
 

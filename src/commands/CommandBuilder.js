@@ -3,6 +3,7 @@ import Style from './Style'
 import Hide from './Hide'
 import Group from './Group'
 import ReplaceImage from './ReplaceImage'
+import RecolorImage from './RecolorImage'
 import ReplaceLink from './ReplaceLink'
 import ReplaceNeighbor from './ReplaceNeighbor'
 import InsertHTML from './InsertHTML'
@@ -173,6 +174,10 @@ class CommandBuilder {
 
     if (command === 'replaceImage') {
       return new ReplaceImage(parameters[0], value)
+    }
+
+    if (command === 'recolorImage' || command === 'recolourImage') {
+      return new RecolorImage(parameters[0], value)
     }
 
     if (command === 'replaceLink') {

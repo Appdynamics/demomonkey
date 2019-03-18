@@ -7,8 +7,24 @@ class UndoElement {
   }
 
   apply() {
-    if (this.target[this.key] === this.replacement) {
-      this.target[this.key] = this.original
+    var target = this.target
+    if (typeof target === 'string' && target.startsWith('dmid-')) {
+      target = document.querySelector(`[data-demo-monkey-id=${target}]`)
+    }
+
+    var key = this.key
+
+    if (key.includes('.')) {
+      var path = key.split('.')
+      key = path.pop()
+      // Note that there is no error handling, so if the path is broken, strange things can happen.
+      path.forEach(k => {
+        target = target[k]
+      })
+    }
+
+    if (target[key] === this.replacement) {
+      target[key] = this.original
       return true
     }
     return false
