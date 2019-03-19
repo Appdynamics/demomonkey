@@ -31,12 +31,6 @@ class ConfigurationList extends React.Component {
   }
 
   renderPath(configuration, index) {
-    /* var path = configuration.name.split('/')
-    path.pop()
-    if (this.currentDirectory !== path.join('/')) {
-      this.currentDirectory = path.join('/')
-      return <div key={configuration.id}><b>{this.currentDirectory}</b>{this.renderItem(configuration, index)}</div>
-    } */
     return <div key={configuration.id}>{this.renderItem(configuration, index)}</div>
   }
 

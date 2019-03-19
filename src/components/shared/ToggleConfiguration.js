@@ -28,7 +28,7 @@ class ToggleConfiguration extends React.Component {
     var tmpConfig = (new Configuration(this.props.configuration.content, null, false, this.props.configuration.values))
     var name = this.props.configuration.name // .split('/').pop()
 
-    if ((this.props.onlyShowAvailable && !tmpConfig.isAvailableForUrl(this.props.currentUrl)) || tmpConfig.isTemplate() || !tmpConfig.isRestricted()) {
+    if ((this.props.onlyShowAvailable && !tmpConfig.isAvailableForUrl(this.props.currentUrl)) || tmpConfig.isTemplate() || !tmpConfig.isRestricted() || name.toLowerCase().startsWith('zzz_archive/')) {
       return <div></div>
     }
 

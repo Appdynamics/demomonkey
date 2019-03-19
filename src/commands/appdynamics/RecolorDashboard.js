@@ -1,28 +1,15 @@
 import Command from '../Command'
 import Color from 'color'
+import colorString from 'color-string'
 import UndoElement from '../UndoElement'
 
 class RecolorDashboard extends Command {
   constructor(search, replace, dashboardId = '', location) {
     super()
     this.dashboardId = dashboardId
-    this.search = typeof search === 'string' ? RecolorDashboard._getValue(search) : false
-    this.replace = typeof replace === 'string' ? RecolorDashboard._getValue(replace) : false
+    this.search = typeof search === 'string' ? Command._getColorFromValue(search) : false
+    this.replace = typeof replace === 'string' ? Command._getColorFromValue(replace) : false
     this.location = location
-  }
-
-  static _getValue(value) {
-    // We want to accept colors from hex 'xxxxxx' and 'xxx'
-    if (value.match(/^[0-9a-f]{3}(?:[0-9a-f]{3})?$/i) !== null) {
-      value = '#' + value
-    }
-    var color = false
-    try {
-      color = Color(value)
-    } catch (e) {
-      console.log(e.message)
-    }
-    return color
   }
 
   _checkDashboardId() {
@@ -45,19 +32,26 @@ class RecolorDashboard extends Command {
 
       var lines = svg.querySelectorAll('path[stroke="' + this.search.hex() + '"], path[stroke="' + this.search.hex().toLowerCase() + '"], path[stroke="' + this.search.rgb().string() + '"]')
 
+      var stops = svg.querySelectorAll('stop[stop-color="' + this.search.hex() + '"], stop[stop-color="' + this.search.hex().toLowerCase() + '"], stop[stop-color="' + this.search.rgb().string() + '"]')
+
       dots.forEach(path => {
-        path.setAttribute('fill', this.replace.hex())
-        r.push(new UndoElement(path.attributes.fill, 'value', this.search.hex(), this.replace.hex()))
+        path.setAttribute('fill', this.replace.rgb().toString())
+        r.push(new UndoElement(path.attributes.fill, 'value', this.search.rgb().toString(), this.replace.rgb().toString()))
       })
 
       rects.forEach(rect => {
-        rect.setAttribute('fill', this.replace.hex())
-        r.push(new UndoElement(rect.attributes.fill, 'value', this.search.hex(), this.replace.hex()))
+        rect.setAttribute('fill', this.replace.rgb().toString())
+        r.push(new UndoElement(rect.attributes.fill, 'value', this.search.rgb().toString(), this.replace.rgb().toString()))
       })
 
       lines.forEach(path => {
-        path.setAttribute('stroke', this.replace.hex())
-        r.push(new UndoElement(path.attributes.stroke, 'value', this.search.hex(), this.replace.hex()))
+        path.setAttribute('stroke', this.replace.rgb().toString())
+        r.push(new UndoElement(path.attributes.stroke, 'value', this.search.rgb().toString(), this.replace.rgb().toString()))
+      })
+
+      stops.forEach(stop => {
+        stop.setAttribute('stop-color', this.replace.rgb().toString())
+        r.push(new UndoElement(stop.attributes['stop-color'], 'value', this.search.rgb().toString(), this.replace.rgb().toString()))
       })
     })
 
@@ -71,9 +65,9 @@ class RecolorDashboard extends Command {
     labels.forEach((label) => {
       var currentBackgroundColor = Color(label.parentElement.style.backgroundColor)
 
-      if (this.search.hex() === currentBackgroundColor.hex()) {
+      if (this.search.rgb().toString() === currentBackgroundColor.rgb().toString()) {
         var original = label.parentElement.style.backgroundColor
-        label.parentElement.style.backgroundColor = this.replace.hex()
+        label.parentElement.style.backgroundColor = this.replace.rgb().toString()
         r.push(new UndoElement(label.parentElement.style, 'backgroundColor', original, label.parentElement.style.backgroundColor))
       }
 
@@ -81,9 +75,9 @@ class RecolorDashboard extends Command {
       if (textLabel !== null) {
         var currentTextColor = Color(textLabel.style.color)
 
-        if (this.search.hex() === currentTextColor.hex()) {
+        if (this.search.rgb().toString() === currentTextColor.rgb().toString()) {
           var original2 = textLabel.style.color
-          textLabel.style.color = this.replace.hex()
+          textLabel.style.color = this.replace.rgb().toString()
           r.push(new UndoElement(textLabel.style, 'color', original2, textLabel.style.color))
         }
       }
@@ -102,7 +96,12 @@ class RecolorDashboard extends Command {
         return
       }
       var original = img.src
-      img.src = img.src.replace(new RegExp('(fill|stroke)="' + this.search.hex() + '"'), '$1="' + this.replace.hex() + '"')
+
+      img.src = img.src.replace(new RegExp('(fill|stroke)="(%23|#)' + (this.search.hex().slice(1)) + '"', 'gi'), '$1="$2' + this.replace.hex().slice(1) + '"')
+      // Rerun with short color code
+      var shortHex = colorString.to.hex(this.search.array()).split('').filter((_, i) => [1, 3, 5, 7].includes(i)).join('')
+      img.src = img.src.replace(new RegExp('(fill|stroke)="(%23|#)' + (shortHex) + '"', 'gi'), '$1="$2' + this.replace.hex().slice(1) + '"')
+
       if (original !== img.src) {
         r.push(new UndoElement(img, 'src', original, img.src))
       }
@@ -118,10 +117,10 @@ class RecolorDashboard extends Command {
 
     analyticsWidgets.forEach((widget) => {
       var currentBackgroundColor = Color(widget.parentElement.style.backgroundColor)
-      if (this.search.hex() === currentBackgroundColor.hex()) {
+      if (this.search.rgb().toString() === currentBackgroundColor.rgb().toString()) {
         Array.from(widget.querySelectorAll('[style*="background-color"]')).concat(widget.parentElement).forEach(element => {
           var original = element.style.backgroundColor
-          element.style.backgroundColor = this.replace.hex()
+          element.style.backgroundColor = this.replace.rgb().toString()
           r.push(new UndoElement(element.style, 'backgroundColor', original, element.style.backgroundColor))
         })
       }

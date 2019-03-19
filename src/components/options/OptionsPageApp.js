@@ -151,7 +151,9 @@ class App extends React.Component {
           onDownload={(configuration, _) => this.downloadConfiguration(configuration)}
           onSave={(_, configuration) => this.saveConfiguration(configuration)}
           onCopy={(configuration, _) => this.copyConfiguration(configuration)}
-          onDelete={(configuration, _) => this.deleteConfiguration(configuration)}/>
+          onDelete={(configuration, _) => this.deleteConfiguration(configuration)}
+          toggleConfiguration={() => this.props.actions.toggleConfiguration(configuration.id)}
+        />
       default:
         return <Welcome />
     }

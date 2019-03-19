@@ -17,9 +17,11 @@ class UndoElement {
     if (key.includes('.')) {
       var path = key.split('.')
       key = path.pop()
-      // Note that there is no error handling, so if the path is broken, strange things can happen.
+      // Note that there is no proper error handling, so if the path is broken, strange things can happen.
       path.forEach(k => {
-        target = target[k]
+        if (target && target[k]) {
+          target = target[k]
+        }
       })
     }
 

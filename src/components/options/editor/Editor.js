@@ -10,6 +10,7 @@ import Mousetrap from 'mousetrap'
 import showdown from 'showdown'
 import Select from 'react-select'
 import CommandBuilder from '../../../commands/CommandBuilder'
+import ToggleButton from 'react-toggle-button'
 
 class Editor extends React.Component {
   static propTypes = {
@@ -22,7 +23,8 @@ class Editor extends React.Component {
     autoSave: PropTypes.bool.isRequired,
     saveOnClose: PropTypes.bool.isRequired,
     withTemplateEngine: PropTypes.bool.isRequired,
-    editorAutocomplete: PropTypes.bool.isRequired
+    editorAutocomplete: PropTypes.bool.isRequired,
+    toggleConfiguration: PropTypes.func.isRequired
   }
 
   constructor(props) {
@@ -69,6 +71,10 @@ class Editor extends React.Component {
     var values = this.state.currentConfiguration.values ? this.state.currentConfiguration.values : {}
     values[name] = value
     this.handleUpdate('values', values)
+  }
+
+  toggle() {
+    this.props.toggleConfiguration()
   }
 
   componentDidMount() {
@@ -132,7 +138,7 @@ class Editor extends React.Component {
     const nsPattern = /^@namespace(?:\[\])?\s*=\s*(.*)$/mg
     var match
     var namespaces = []
-    while (match = nsPattern.exec(content)) {
+    while ((match = nsPattern.exec(content))) {
       namespaces.push(match[1])
     }
 
@@ -152,13 +158,13 @@ class Editor extends React.Component {
 
       if (line.startsWith('!') && line.length > 1) {
         var command = line.split('=')[0].trim()
-        var cmd = cb.build(command,null).constructor.name
-        if(cmd === 'Command') {
+        var cmd = cb.build(command, null).constructor.name
+        if (cmd === 'Command') {
           result.push({row: rowIdx, column: 0, text: `Command "${command}" not found.\nPlease check the spelling and\nif all required namespaces are loaded.`, type: 'error'})
         }
       }
 
-      if (!line.startsWith(';') && line.includes(';') || !line.startsWith('#') && line.includes('#')) {
+      if ((!line.startsWith(';') && line.includes(';')) || (!line.startsWith('#') && line.includes('#'))) {
         result.push({row: rowIdx, column: 0, text: 'Semi-colon (;) and hash (#) are interpreted as inline comments.\nMake sure to quote your patterns to use them properly.', type: 'info'})
       }
     })
@@ -189,8 +195,9 @@ class Editor extends React.Component {
     return (
       <div className="editor">
         <div className="title">
-          <b>Title</b>
-          <input type="text" className="text-input" id="configuration-title" placeholder="Please provide a title for your configuration" value={current.name} onChange={(event) => this.handleUpdate('name', event.target.value, event)}/>
+          <ToggleButton colors={{active: {base: '#5c832f', hover: '#90c256'}}} value={this.props.currentConfiguration.enabled} onToggle={() => { this.toggle() }} />
+          <b>Name</b>
+          <input type="text" className="text-input" id="configuration-title" placeholder="Please provide a name. You can use slahes (/) in it to create folders." value={current.name} onChange={(event) => this.handleUpdate('name', event.target.value, event)}/>
           <Select placeholder="Shortcut Groups..." value={current.hotkeys} multi onChange={(options) => this.handleUpdate('hotkeys', options.map(o => o.value), null)} options={hotkeyOptions}/>
           <button className={'save-button ' + (this.state.unsavedChanges ? '' : 'disabled')} onClick={(event) => this.handleClick(event, 'save')}>Save</button>
           <button className="copy-button" style={hiddenIfNew} onClick={(event) => this.handleClick(event, 'copy')}>Duplicate</button>
