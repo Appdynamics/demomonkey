@@ -70,9 +70,9 @@ describe('RecolorDashboard', function () {
 
         if (result !== false) {
           assert.equal(result.length, 3)
-          assert.equal(attr1.fill, '#0000FF')
-          assert.equal(attr2.stroke, '#0000FF')
-          assert.equal(attr3.backgroundColor, '#0000FF')
+          assert.equal(attr1.fill, 'rgb(0, 0, 255)')
+          assert.equal(attr2.stroke, 'rgb(0, 0, 255)')
+          assert.equal(attr3.backgroundColor, 'rgb(0, 0, 255)')
         } else {
           assert.equal(search, 'nocolor')
         }

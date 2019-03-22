@@ -138,7 +138,7 @@ class CommandBuilder {
         return new RecolorDashboard(parameters[0], value, parameters[1], location)
       }
       if (command === 'setDashboardBackground') {
-        return new SetDashboardBackground(parameters[0], value, location)
+        return new SetDashboardBackground(parameters[0], parameters[1], value, location)
       }
       if (command === 'replaceNodeCount') {
         return new Group([

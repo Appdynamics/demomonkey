@@ -3,10 +3,11 @@ import UndoElement from '../UndoElement'
 import Color from 'color'
 
 class SetDashboardBackground extends Command {
-  constructor(dashboardId = '', value, location) {
+  constructor(dashboardId = '', opacity = 0, value, location) {
     super()
     this.dashboardId = dashboardId
     const [ newValue, isImage ] = typeof value === 'string' ? SetDashboardBackground._getValue(value) : [false, false]
+    this.opacity = opacity
     this.value = newValue
     this.isImage = isImage
     this.location = location
@@ -35,18 +36,46 @@ class SetDashboardBackground extends Command {
 
   apply(target, key = 'style') {
     if (!this._checkDashboardId() || !this.value) {
-      console.log('NOPE')
       return false
     }
+
+    var r = []
 
     const attribute = this.isImage ? 'backgroundImage' : 'backgroundColor'
     var original = target.style[attribute]
     var replacement = this.value
     if (replacement !== original) {
       target.style[attribute] = replacement
-      return new UndoElement(target.style, attribute, original, replacement)
+      r.push(new UndoElement(target.style, attribute, original, replacement))
     }
-    return false
+
+    const originalBackgroundSize = target.style.backgroundSize
+    const replacementBackgroundSize = 'cover'
+
+    if (originalBackgroundSize !== replacementBackgroundSize) {
+      target.style.backgroundSize = replacementBackgroundSize
+      r.push(new UndoElement(target.style, 'backgroundSize', originalBackgroundSize, replacementBackgroundSize))
+    }
+
+    if (this.opacity && this.isImage) {
+      const originalColor = target.style.backgroundColor
+      const replacementColor = `rgba(255, 255, 255, ${this.opacity})`
+
+      if (originalColor !== replacementColor) {
+        target.style.backgroundColor = replacementColor
+        r.push(new UndoElement(target.style, 'backgroundColor', originalColor, replacementColor))
+      }
+
+      const originalBlendMode = target.style.backgroundBlendMode
+      const replacementBlendMode = 'screen'
+
+      if (originalBlendMode !== replacementBlendMode) {
+        target.style.backgroundBlendMode = replacementBlendMode
+        r.push(new UndoElement(target.style, 'backgroundBlendMode', originalBlendMode, replacementBlendMode))
+      }
+    }
+
+    return r
   }
 }
 
