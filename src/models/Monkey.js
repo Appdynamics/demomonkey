@@ -144,57 +144,6 @@ class Monkey {
     this.addUndo(undos)
   }
 
-  _cornerCasesOld(text, configuration, groupName, undos) {
-    // The following are workarounds to cover some corner cases in AppD
-    // One is the usage of <tspan> to split text over multiple lines
-    // Another is where the text is shortened and only "title" holds the full text
-    // This will only work if a <title> is set.
-    if (text.parentNode.tagName === 'title' &&
-        text.parentNode.parentNode !== null &&
-        text.parentNode.parentNode.tagName === 'text') {
-      var textNode = text.parentNode.parentNode
-      var tspans = textNode.querySelectorAll('tspan')
-      // Text is split over multiple <tspan>
-      if (tspans.length > 1) {
-        var content = []
-        tspans.forEach(function (tspan) {
-          content = content.concat(tspan.textContent.split(' '))
-        })
-        var counter = content.length
-
-        var pseudoNode = {
-          'value': content.join(' ')
-        }
-
-        configuration.apply(pseudoNode, 'value', groupName)
-
-        var words = pseudoNode.value.split(' ')
-
-        if (words.length > counter) {
-          words = words.slice(0, counter)
-          words[counter - 1] = '...'
-        }
-        var wordCounter = 0
-        tspans.forEach(function (tspan) {
-          tspan.textContent = words.slice(wordCounter,
-            wordCounter + tspan.textContent.split(' ').length).join(' ')
-          wordCounter += tspan.textContent.split(' ').length
-        })
-      }
-      // Case <text>Lon...<title>Long Text</title></text>
-      if (undos.length > 0 && textNode.textContent.includes('...')) {
-        // textNode.textContent is "Lon...Long Text" (where Long Text might already be modified through DemoMonkey)
-        var short = textNode.textContent.split('...')[0]
-        if (undos[0].original.includes(short)) {
-          // document.querySelectorAll('text').forEach(node => {console.log(Array.from(node.childNodes).filter(e => e.nodeType === 3))});
-          var shortTextNode = Array.from(textNode.childNodes).filter(e => e.nodeType === 3)[0]
-          shortTextNode[key] = undos[0].original
-          // configuration.apply(shortTextNode, key, groupName)
-        }
-      }
-    }
-  }
-
   run(configuration) {
     return this.scope.setInterval(() => this.apply(configuration), this.intervalTime)
   }
