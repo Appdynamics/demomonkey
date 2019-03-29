@@ -3,7 +3,7 @@ import ToggleButton from 'react-toggle-button'
 import PropTypes from 'prop-types'
 import JSZip from 'jszip'
 import AceEditor from 'react-ace'
-import Synchronization from './setting/Synchronization'
+// import Synchronization from './setting/Synchronization'
 
 import 'brace/theme/textmate'
 import 'brace/mode/ini'
@@ -80,6 +80,9 @@ class Settings extends React.Component {
           </div>
           <div className="toggle-group">
             <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('inDevTools')} value={this.props.settings.optionalFeatures.inDevTools}/><label><b>Integrate with Chrome Dev Tools.</b> Turn this option on to see the DemoMonkey dashboard within the Chrome Developer Toolbar.</label>
+          </div>
+          <div className="toggle-group">
+            <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('webRequestHook')} value={this.props.settings.optionalFeatures.webRequestHook}/><label><b>Hook into Web Requests.</b>Turn thise feature on, if you want to use the commands !delayURL and !redirectURL. This will allow DemoMonkey to hook into web requests.</label>
           </div>
           { /* <Synchronization remoteConnections={this.props.settings.remoteConnections} onConnected={this.props.onConnected} onDisconnected={this.props.onDisconnected} /> */ }
           <h2>Backup</h2>

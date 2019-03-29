@@ -31,14 +31,33 @@ import {Store} from 'react-chrome-redux';
     console.log('DemoMonkey enabled. Tampering the content.')
     console.log('Interval: ', settings.monkeyInterval)
 
-    var $DEMO_MONKEY = new Monkey(store.getState().configurations, scope, settings.isFeatureEnabled('undo'), settings.monkeyInterval, settings.isFeatureEnabled('experimantal_withTemplateEngine'))
+    // We don't use the redux store, since below we restart demo monkey
+    // every time the store is updated, which would lead to a loop.
+    var urlManager = {
+      add: (url) => {
+        scope.chrome.runtime.sendMessage({
+          receiver: 'background',
+          task: 'addUrl',
+          url
+        })
+      },
+      remove: (id) => {
+        scope.chrome.runtime.sendMessage({
+          receiver: 'background',
+          task: 'removeUrl',
+          id
+        })
+      }
+    }
+
+    var $DEMO_MONKEY = new Monkey(store.getState().configurations, scope, settings.isFeatureEnabled('undo'), settings.monkeyInterval, settings.isFeatureEnabled('experimantal_withTemplateEngine'), urlManager)
     updateBadge($DEMO_MONKEY.start())
 
     function restart() {
       console.log('Restart DemoMonkey')
       // Update settings
       var settings = new Settings(store.getState().settings)
-      var newMonkey = new Monkey(store.getState().configurations, scope, settings.isFeatureEnabled('undo'), settings.monkeyInterval, settings.isFeatureEnabled('experimantal_withTemplateEngine'))
+      var newMonkey = new Monkey(store.getState().configurations, scope, settings.isFeatureEnabled('undo'), settings.monkeyInterval, settings.isFeatureEnabled('experimantal_withTemplateEngine'), urlManager)
       $DEMO_MONKEY.stop()
       updateBadge(newMonkey.start())
       $DEMO_MONKEY = newMonkey

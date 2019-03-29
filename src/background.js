@@ -2,9 +2,9 @@ import { createStore } from 'redux'
 import { wrapStore } from 'react-chrome-redux'
 import reducers from './reducers'
 import uuidV4 from 'uuid/v4'
-// import PouchDB from 'pouchdb'
-// import Settings from './models/Settings'
 import Configuration from './models/Configuration'
+import ConfigurationSync from './models/ConfigurationSync'
+import match from './helpers/match.js'
 
 (function (scope) {
   'use strict'
@@ -33,10 +33,69 @@ import Configuration from './models/Configuration'
     })
   }
 
+  var hookedIntoWebRequests = false
+
+  var hookedUrls = {}
+
+  var hooks = {
+    block: () => { return { cancel: true } },
+    delay: (options) => {
+      var counter = 0
+      for (var start = Date.now(); Date.now() - start < options.delay * 1000;) {
+        counter++
+        if (counter % 10000 === 0) {
+          console.log('Delay', counter)
+        }
+      }
+      console.log('Done', counter)
+      return {}
+    },
+    replace: (options) => {
+      return { redirectUrl: options.replace }
+    }
+  }
+
+  function webRequestHook(details) {
+    return Object.keys(hookedUrls).reduce((acc, id) => {
+      const { url, action, options } = hookedUrls[id]
+      if (match(details.url, url)) {
+        return Object.assign(acc, hooks[action](options))
+      }
+      return acc
+    }, {})
+  }
+
+  function hookIntoWebRequests(feature, running) {
+    console.log(feature, running, hookedIntoWebRequests)
+    if (!hookedIntoWebRequests && feature && running) {
+      console.log('Hooking into web requests')
+      scope.chrome.webRequest.onBeforeRequest.addListener(
+        webRequestHook,
+        {urls: ['<all_urls>']},
+        ['blocking']
+      )
+      hookedIntoWebRequests = true
+    } else if (hookedIntoWebRequests && (!feature || !running)) {
+      console.log('De-Hooking into web requests')
+      scope.chrome.webRequest.onBeforeRequest.removeListener(webRequestHook)
+      hookedIntoWebRequests = false
+    }
+  }
+
   scope.chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-    if (request.receiver && request.receiver === 'background' && typeof request.count === 'number') {
-      counts[sender.tab.id] = request.count
-      updateBadge()
+    if (request.receiver && request.receiver === 'background') {
+      if (typeof request.count === 'number') {
+        counts[sender.tab.id] = request.count
+        updateBadge()
+      }
+      if (request.task && request.task === 'addUrl' && typeof request.url === 'object') {
+        console.log(request.url)
+        hookedUrls[request.url.id] = request.url
+        console.log(hookedUrls)
+      }
+      if (request.task && request.task === 'removeUrl' && typeof request.id === 'string') {
+        delete hookedUrls[request.id]
+      }
     }
   })
 
@@ -58,8 +117,10 @@ import Configuration from './models/Configuration'
   })
 
   scope.chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-    selectedTabId = tabs[0].id
-    updateBadge()
+    if (tabs.length > 0) {
+      selectedTabId = tabs[0].id
+      updateBadge()
+    }
   })
 
   const defaultsForOptionalFeatures = {
@@ -70,18 +131,12 @@ import Configuration from './models/Configuration'
     adrumTracking: true,
     editorAutocomplete: true,
     inDevTools: true,
+    webRequestHook: false,
+    remoteSync: false,
     // This is only a soft toggle, since the user can turn it on and off directly in the popup
     onlyShowAvailableConfigurations: true,
     experimental_withTemplateEngine: false
   }
-
-  /* disable pouchdb
-  const configurationsDatabase = new PouchDB('configurations')
-
-  var reloadFromDB = function () {
-    console.log('Store not yet initialized')
-  }
-  */
 
   const persistentStates = {
     configurations: [{
@@ -113,69 +168,8 @@ import Configuration from './models/Configuration'
     // issues rendering the UI.
     state.currentView = 'welcome'
 
-    // While migrating from storage.local to PouchDB we have to check
-    // if the DB has been setup and if not, we move the data from old
-    // to new storage.
-    /* disable pouchdb
-    configurationsDatabase.info().then(result => {
-      if (result.doc_count === 0) {
-        configurationsDatabase.bulkDocs(state.configurations.map(c => {
-          // Couch/PouchDB expects the id with an _ prefix
-          c._id = c.id
-          // Make sure that updated_at is always set!
-          if (typeof c.updated_at === 'undefined') {
-            c.updated_at = Date.now()
-          }
-          return c
-        })).then(function (result) {
-          // Run with state from PouchDB
-          console.log('Initial PouchDB setup finished.')
-          loadStateFromDB(state)
-        }).catch(function (error) {
-          // Ooops... run with state from chrome.storage
-          console.log(error)
-          run(state)
-        })
-      } else {
-        // Run with state from PouchDB
-        loadStateFromDB(state)
-      }
-    })
-    */
     run(state)
   })
-
-  /* disable pouchdb
-  function loadStateFromDB(state) {
-    configurationsDatabase.allDocs({
-      include_docs: true,
-      attachments: true
-    }).then(function (result) {
-      // console.log(result)
-      state.configurations = result.rows.map(d => {
-        var result = Object.assign({}, d.doc)
-        // The revisions and _id shall not be assumed outside the PouchDB
-        // so we safely remove them and store them independendly below.
-        delete result._id
-        delete result._rev
-        return result
-      })
-      // Store revisions independendly for doing proper updates below.
-      var revisions = {}
-      result.rows.forEach(d => {
-        // There are cases where updated_at is not set properly (e.g. very old configurations), force set a proper value
-        var updatedAt = typeof d.doc.updated_at === 'undefined' ? Date.now() : d.doc.updated_at
-        revisions[d.doc.id] = {_rev: d.doc._rev, _id: d.doc._id, updated_at: updatedAt}
-      })
-      console.log('Running with configurations from PouchDB.')
-      run(state, revisions)
-    }).catch(function (error) {
-      // Ooops... run with state from chrome.storage
-      console.log(error)
-      run(state)
-    })
-  }
-  */
 
   function run(state, revisions = {}) {
     console.log('Background Script started')
@@ -185,101 +179,22 @@ import Configuration from './models/Configuration'
     // Persist monkey ID. Shouldn't change after first start.
     scope.chrome.storage.local.set({monkeyID: store.getState().monkeyID})
 
-    /* disable pouchdb
-    // ongoing remote synchronizations
-    var syncs = []
-    function doSync(_connections) {
-      // Terminate ongoing synchronizations, that have been removed
+    hookIntoWebRequests(store.getState().settings.optionalFeatures.webRequestHook, store.getState().configurations.filter(c => c.enabled).length > 0)
 
-      var connections = [].concat(_connections)
-
-      syncs = syncs.map(pair => {
-        var [connection, sync] = pair
-        var idx = connections.findIndex(c => c.key === connection.key)
-        if (idx !== -1) {
-          // Handle update
-          var newConnection = connections[idx]
-          connections.splice(idx, 1)
-          if (newConnection.url !== connection.url || newConnection.label !== connection.label) {
-            sync.cancel()
-            console.log('Update', newConnection)
-            return [newConnection, false]
-          }
-          // Handle no change
-          console.log('No change', pair)
-          return pair
+    /*
+    var sync = new ConfigurationSync(
+      scope.chrome.storage,
+      {
+        saveConfiguration: (id, configuration) => {
+          store.dispatch({ 'type': 'SAVE_CONFIGURATION', id, configuration, sync: true })
+        },
+        addConfiguration: (configuration) => {
+          store.dispatch({ 'type': 'ADD_CONFIGURATION', configuration, sync: true })
         }
-        // Handle delete
-        scope.logMessage(`Terminating synchronization with ${connection.url}`)
-        sync.cancel()
-        console.log('Delete', pair)
-        return false
-      })
-
-      syncs = syncs.concat(connections.map(c => [c, false]))
-
-      syncs = syncs.filter(s => s !== false).map(pair => {
-        var [connection, sync] = pair
-        if (sync === false) {
-          scope.logMessage(`Starting synchronization with ${connection.url}`)
-          // var filter =  ? () => {} : () => {}
-          var syncOpts = {live: true, retry: true}
-          if (typeof connection.label === 'string' && connection.label.length > 0) {
-            syncOpts.filter = (doc) => { return doc.name.startsWith(connection.label + '/') }
-          }
-          return [connection, PouchDB.sync('configurations', connection.url, syncOpts).on('change', info => {
-            console.log('DB Sync', info)
-            if (info.direction === 'pull') {
-              scope.logMessage(`Pull updates from ${connection.url}`)
-              reloadFromDB({docs: info.change.docs.map(doc => { return {id: doc._id, rev: doc._rev} })})
-            } else {
-              scope.logMessage(`Push updates to ${connection.url}`)
-            }
-          }).on('error', error => {
-            console.log('error', error)
-          }).on('paused', (error) => {
-            console.log('paused', error)
-          }).on('active', (info) => {
-            console.log('active', info)
-          }).on('denied', error => {
-            console.log('denied', error)
-          }).on('complete', info => {
-            console.log('complete', info)
-          })]
-        }
-        return pair
-      })
-    }
-
-    reloadFromDB = function (changeSet) {
-      console.log(changeSet)
-      configurationsDatabase.bulkGet(changeSet).then(result => {
-        console.log(result)
-        result.results.forEach(r => {
-          console.log(r)
-          if (r.docs[0].ok) {
-            var doc = r.docs[0].ok
-            console.log(doc)
-            // Update the revision, to avoid conflicts
-            var exists = revisions.hasOwnProperty(doc.id)
-            revisions[doc.id] = {_rev: doc._rev, _id: doc._id, updated_at: doc.updated_at}
-            var configuration = Object.assign({}, doc)
-            delete configuration._id
-            delete configuration._rev
-            console.log(exists, configuration)
-            if (exists) {
-              store.dispatch({ 'type': 'SAVE_CONFIGURATION', id: doc.id, configuration, sync: true })
-            } else {
-              store.dispatch({ 'type': 'ADD_CONFIGURATION', configuration })
-            }
-          }
-        })
-      }).catch(error => {
-        console.log(error)
-      })
-    }
-
-    doSync(store.getState().settings.remoteConnections)
+      },
+      'http://localhost:17485'
+    )
+    sync.start()
     */
 
     store.subscribe(function () {
@@ -296,32 +211,10 @@ import Configuration from './models/Configuration'
         monkeyID: store.getState().monkeyID
       })
 
-      /* disable pouchdb
-      // Sync data back into PouchDB
-      configurationsDatabase.bulkDocs(configurations.filter(c => {
-        return !revisions[c.id] || c.updated_at > revisions[c.id].updated_at
-      }).map(c => {
-        if (revisions[c.id]) {
-          c._id = revisions[c.id]._id
-          c._rev = revisions[c.id]._rev
-        } else {
-          c._id = c.id
-        }
-        return c
-      })).then(resultSet => {
-        resultSet.forEach(result => {
-          if (result.ok) {
-            // Setting the updated_at to Date.now() is "dirty" since this value is different
-            // to the updated_at in the state. Fast changes to a document may break this?!
-            revisions[result.id] = {_rev: result.rev, _id: result.id, updated_at: Date.now()}
-          }
-        })
-      }).catch(error => {
-        console.log(error)
-      })
+      console.log(settings.optionalFeatures.webRequestHook)
+      console.log(configurations.filter(c => c.enabled).length)
 
-      doSync(settings.remoteConnections)
-      */
+      hookIntoWebRequests(settings.optionalFeatures.webRequestHook, configurations.filter(c => c.enabled).length > 0)
     })
 
     function toggleHotkeyGroup(group) {

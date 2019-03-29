@@ -13,7 +13,9 @@ import ReplaceFlowmapConnection from './appdynamics/ReplaceFlowmapConnection'
 import RecolorDashboard from './appdynamics/RecolorDashboard'
 import SetDashboardBackground from './appdynamics/SetDashboardBackground'
 import DelayLink from './appdynamics/DelayLink'
-
+import BlockUrl from './BlockUrl'
+import DelayUrl from './DelayUrl'
+import ReplaceUrl from './ReplaceUrl'
 import Command from './Command'
 
 class CommandBuilder {
@@ -182,6 +184,18 @@ class CommandBuilder {
 
     if (command === 'replaceLink') {
       return new ReplaceLink(parameters[0], value)
+    }
+
+    if (command === 'blockUrl') {
+      return new BlockUrl(parameters[0])
+    }
+
+    if (command === 'delayUrl') {
+      return new DelayUrl(parameters[0], value)
+    }
+
+    if (command === 'replaceUrl') {
+      return new ReplaceUrl(parameters[0], value)
     }
 
     if (command === 'overwriteHTML' || command === 'overwrite') {

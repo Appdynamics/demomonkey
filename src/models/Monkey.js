@@ -3,7 +3,7 @@ import Repository from './Repository'
 import UndoElement from '../commands/UndoElement'
 
 class Monkey {
-  constructor(rawConfigurations, scope, withUndo = true, intervalTime = 100, withTemplateEngine = false) {
+  constructor(rawConfigurations, scope, withUndo = true, intervalTime = 100, withTemplateEngine = false, urlManager = false) {
     this.scope = scope
     this.undo = []
     this.repository = new Repository({})
@@ -25,6 +25,7 @@ class Monkey {
       this.repository.addConfiguration(rawConfig.name, config)
       return [rawConfig.name, config]
     })
+    this.urlManager = urlManager === false ? {add: () => {}, remove: () => {}} : urlManager
   }
 
   getUndoLength() {
@@ -39,6 +40,11 @@ class Monkey {
     if (this.withUndo) {
       this.undo = this.undo.concat(arr)
     }
+  }
+
+  applyOnce(configuration) {
+    // Execute the commands for webRequest hooks only once
+    this.addUndo(configuration.apply(this.urlManager, 'value', 'url'))
   }
 
   apply(configuration) {
@@ -145,6 +151,7 @@ class Monkey {
   }
 
   run(configuration) {
+    this.applyOnce(configuration)
     return this.scope.setInterval(() => this.apply(configuration), this.intervalTime)
   }
 

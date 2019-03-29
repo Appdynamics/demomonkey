@@ -45,8 +45,9 @@ function renderOptionsPageApp(root, store) {
 
 function renderPopupPageApp(root, store) {
   chrome.tabs.query({ 'active': true, 'lastFocusedWindow': true }, function (tabs) {
+    let currentUrl = tabs.length > 0 ? tabs[0].url : ''
     ReactDOM.render(
-      <Provider store={store}><PopupPageApp currentUrl={tabs[0].url}/></Provider>, root)
+      <Provider store={store}><PopupPageApp currentUrl={currentUrl}/></Provider>, root)
     // The following is required to fix https://bugs.chromium.org/p/chromium/issues/detail?id=428044
     window.setTimeout(() => {
       document.body.style.minHeight = (document.body.clientHeight + 1) + 'px'
