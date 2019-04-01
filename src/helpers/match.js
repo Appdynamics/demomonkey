@@ -1,4 +1,4 @@
-export default function match(original, search, replace) {
+function match(original, search, replace) {
   // This also works with "startsWithNot" (see below)
   // !search === replace becomes search !== replace
   // original === replace is evaluated before the code below
@@ -11,7 +11,7 @@ export default function match(original, search, replace) {
   var endsWithStar = search.slice(-1) === '*'
 
   if (startsWithNot) {
-    return match(original, search.slice(1), replace)
+    return !match(original, search.slice(1), replace)
   }
 
   if (startsWithStar && endsWithStar) {
@@ -28,3 +28,5 @@ export default function match(original, search, replace) {
 
   return original === search
 }
+
+export default match
