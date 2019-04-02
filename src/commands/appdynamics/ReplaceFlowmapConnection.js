@@ -71,7 +71,7 @@ class ReplaceFlowmapConnection extends Command {
                     r.push(new UndoElement(node, 'innerHTML', innerHTML, node.innerHTML))
                   }
                 }
-                if (replacement === 'Hide') {
+                if (replacement === 'Hide' && node.style.display !== 'none') {
                   var oldDisplay = node.style.display
                   node.style.display = 'none'
                   r.push(new UndoElement(node, 'style.display', oldDisplay, node.style.display))

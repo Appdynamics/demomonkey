@@ -9,6 +9,9 @@ class Monkey {
     this.repository = new Repository({})
     this.withUndo = withUndo
     this.withDebug = withDebug
+    this.avgRunTime = 0
+    this.maxRunTime = 0
+    this.runCount = 0
     this.intervalTime = intervalTime
     if (typeof this.intervalTime !== 'number' || this.intervalTime < 100) {
       console.log('Interval time is not well-defined: ' + this.intervalTime)
@@ -41,7 +44,10 @@ class Monkey {
     if (this.scope.document.getElementById('demo-monkey-debug-helper-style') === null) {
       this.scope.document.head.insertAdjacentHTML('beforeend', `<style id="demo-monkey-debug-helper-style">
       [data-demo-monkey-debug] { background-color: rgba(255, 255, 0, 0.5); }
-      svg [data-demo-monkey-debug] { filter: url(#dm-debug-filter) }
+      svg [data-demo-monkey-debug] { filter: url(#dm-debug-filter-visible) }
+      [data-demo-monkey-debug-display] { display: var(--data-demo-monkey-debug-display) !important; background-color: rgba(255, 0, 0, 0.5); }
+      svg [data-demo-monkey-debug-display] { display: var(--data-demo-monkey-debug-display) !important; filter: url(#dm-debug-filter-hidden) }
+      #demo-monkey-debug-box { position: fixed; top: 25px; right: 25px; border: 1px solid black; background: rgb(255,255,255,0.8); z-index: 9999; padding: 15px; pointer-events: none;}
       </style>`)
     }
 
@@ -53,12 +59,54 @@ class Monkey {
     if (this.scope.document.body && this.scope.document.getElementById('demo-monkey-debug-helper-svg') === null) {
       this.scope.document.body.insertAdjacentHTML('beforeend', `<svg id="demo-monkey-debug-helper-svg">
         <defs>
-          <filter x="0" y="0" width="1" height="1" id="dm-debug-filter">
+          <filter x="0" y="0" width="1" height="1" id="dm-debug-filter-visible">
             <feFlood flood-color="yellow" flood-opacity="0.5" />
+            <feComposite in="SourceGraphic" />
+          </filter>
+          <filter x="0" y="0" width="1" height="1" id="dm-debug-filter-hidden">
+            <feFlood flood-color="red" flood-opacity="0.5" />
             <feComposite in="SourceGraphic" />
           </filter>
         </defs>
       </svg>`)
+    }
+
+    if (this.scope.document.body && this.scope.document.getElementById('demo-monkey-debug-box') === null) {
+      this.scope.document.body.insertAdjacentHTML('beforeend', `<div id="demo-monkey-debug-box">
+      Demo Monkey - Debug Box
+        <div>Runtime: <span id="demo-monkey-last-runtime"></span></div>
+        <div>Inspected Elements: <span id="demo-monkey-elements-count"></span></div>
+        <div>Undo Length: <span id="demo-monkey-undo-length"></span></div>
+      </div>`)
+    }
+  }
+
+  updateDebugBox(lastTime, sum) {
+    var e1 = this.scope.document.getElementById('demo-monkey-last-runtime')
+    if (e1) {
+      this.runCount++
+      this.avgRunTime += (lastTime - this.avgRunTime) / this.runCount
+      this.maxRunTime = Math.max(lastTime, this.maxRunTime)
+      if (this.runCount % 10 === 0) {
+        e1.innerHTML = lastTime + ' (avg: ' + this.avgRunTime + ', max: ' + this.maxRunTime + ', count: ' + this.runCount + ')'
+      }
+    }
+    var e2 = this.scope.document.getElementById('demo-monkey-undo-length')
+    if (e2) {
+      e2.innerHTML = this.undo.length
+    }
+    var e3 = this.scope.document.getElementById('demo-monkey-elements-count')
+    if (e3) {
+      e3.innerHTML = sum.join(',')
+    }
+  }
+
+  addDebugAttribute(element, isHidden) {
+    // UndoElement(node, 'display.style', original, 'none')
+    element.dataset.demoMonkeyDebug = true
+    if (isHidden !== false) {
+      element.dataset.demoMonkeyDebugDisplay = isHidden === '' ? 'initial' : isHidden
+      element.style.setProperty('--data-demo-monkey-debug-display', isHidden === '' ? 'initial' : isHidden)
     }
   }
 
@@ -68,15 +116,16 @@ class Monkey {
     }
     if (this.withDebug) {
       arr.forEach((undoElement) => {
+        const isHidden = undoElement.key === 'style.display' && undoElement.replacement === 'none' ? undoElement.original : false
         switch (undoElement.target.nodeType) {
           case 1:
             if (undoElement.target && undoElement.target.dataset) {
-              undoElement.target.dataset.demoMonkeyDebug = 'true'
+              this.addDebugAttribute(undoElement.target, isHidden)
             }
             break
           case 3:
             if (undoElement.target && undoElement.target.parentElement && undoElement.target.parentElement.dataset) {
-              undoElement.target.parentElement.dataset.demoMonkeyDebug = 'true'
+              this.addDebugAttribute(undoElement.target.parentElement, isHidden)
             }
             break
         }
@@ -91,22 +140,28 @@ class Monkey {
   }
 
   apply(configuration) {
+    var t0 = this.scope.performance.now()
+    var sum = [] // Start with 2 for document.title and the document itself, currently we ignore corner cases
     // Some UIs provide corner cases we want to cover with DemoMonkey for ease of use
     // Most of them are text, that is shortened or split over multiple elements.
     // We do them early, because later modfications may cause problems to get them solved.
     this._cornerCases(configuration)
 
-    this._applyOnXpathGroup(configuration, '//body//text()[ normalize-space(.) != ""]', 'text', 'data')
-    this._applyOnXpathGroup(configuration, '//body//input', 'input', 'value')
-    this._applyOnXpathGroup(configuration, '//body//img', 'image', 'src')
-    this._applyOnXpathGroup(configuration, '//body//a', 'link', 'href')
-    this._applyOnXpathGroup(configuration, '//body//div[contains(@class, "ads-dashboard-canvas-pane")]', 'ad-dashboard', 'style')
+    sum.push(this._applyOnXpathGroup(configuration, '//body//text()[ normalize-space(.) != ""]', 'text', 'data'))
+    sum.push(this._applyOnXpathGroup(configuration, '//body//input', 'input', 'value'))
+    sum.push(this._applyOnXpathGroup(configuration, '//body//img', 'image', 'src'))
+    sum.push(this._applyOnXpathGroup(configuration, '//body//a', 'link', 'href'))
+    sum.push(this._applyOnXpathGroup(configuration, '//body//div[contains(@class, "ads-dashboard-canvas-pane")]', 'ad-dashboard', 'style'))
 
     // Apply the text commands on the title element
     this.addUndo(configuration.apply(this.scope.document, 'title', 'text'))
 
     // Finally we can apply document commands on the document itself.
     this.addUndo(configuration.apply(this.scope.document, 'documentElement', 'document'))
+    if (this.withDebug) {
+      this.updateDebugBox(this.scope.performance.now() - t0, sum)
+    }
+    // console.log("Call to doSomething took " + (t1 - t0) + " milliseconds.")
   }
 
   _applyOnXpathGroup(configuration, xpath, groupName, key) {
@@ -115,6 +170,7 @@ class Monkey {
     for (i = 0; (text = texts.snapshotItem(i)) !== null; i += 1) {
       this.addUndo(configuration.apply(text, key, groupName))
     }
+    return i
   }
 
   _cornerCases(configuration) {
@@ -220,7 +276,13 @@ class Monkey {
     if (this.withDebug) {
       this.scope.document.querySelectorAll('[data-demo-monkey-debug]').forEach((element) => {
         delete element.dataset.demoMonkeyDebug
+        delete element.dataset.demoMonkeyDebugDisplay
+        element.style.removeProperty('--data-demo-monkey-debug-display')
       })
+      var elem = document.querySelector('#demo-monkey-debug-box')
+      if (elem) {
+        elem.parentNode.removeChild(elem)
+      }
     }
   }
 

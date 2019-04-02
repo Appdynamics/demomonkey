@@ -82,7 +82,7 @@ class Command {
     var original = node.style.display
     node.style.display = 'none'
     if (original !== node.style.display) {
-      return new UndoElement(node.style, 'display', original, 'none')
+      return new UndoElement(node, 'style.display', original, 'none')
     }
     return false
   }

@@ -21,6 +21,11 @@ var node = {
 }
 
 var scope = {
+  performance: {
+    now: function () {
+      return 0
+    }
+  },
   setInterval: function (callback, interval) {
     callback()
     return intervalId++
