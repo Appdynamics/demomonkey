@@ -46,7 +46,7 @@ class SetDashboardBackground extends Command {
     var replacement = this.value
     if (replacement !== original) {
       target.style[attribute] = replacement
-      r.push(new UndoElement(target.style, attribute, original, replacement))
+      r.push(new UndoElement(target, 'style.' + attribute, original, replacement))
     }
 
     const originalBackgroundSize = target.style.backgroundSize
@@ -54,7 +54,7 @@ class SetDashboardBackground extends Command {
 
     if (originalBackgroundSize !== replacementBackgroundSize) {
       target.style.backgroundSize = replacementBackgroundSize
-      r.push(new UndoElement(target.style, 'backgroundSize', originalBackgroundSize, replacementBackgroundSize))
+      r.push(new UndoElement(target, 'style.backgroundSize', originalBackgroundSize, replacementBackgroundSize))
     }
 
     if (this.opacity && this.isImage) {
@@ -63,7 +63,7 @@ class SetDashboardBackground extends Command {
 
       if (originalColor !== replacementColor) {
         target.style.backgroundColor = replacementColor
-        r.push(new UndoElement(target.style, 'backgroundColor', originalColor, replacementColor))
+        r.push(new UndoElement(target, 'style.backgroundColor', originalColor, replacementColor))
       }
 
       const originalBlendMode = target.style.backgroundBlendMode
@@ -71,7 +71,7 @@ class SetDashboardBackground extends Command {
 
       if (originalBlendMode !== replacementBlendMode) {
         target.style.backgroundBlendMode = replacementBlendMode
-        r.push(new UndoElement(target.style, 'backgroundBlendMode', originalBlendMode, replacementBlendMode))
+        r.push(new UndoElement(target, 'style.backgroundBlendMode', originalBlendMode, replacementBlendMode))
       }
     }
 

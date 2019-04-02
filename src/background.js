@@ -3,7 +3,7 @@ import { wrapStore } from 'react-chrome-redux'
 import reducers from './reducers'
 import uuidV4 from 'uuid/v4'
 import Configuration from './models/Configuration'
-import ConfigurationSync from './models/ConfigurationSync'
+// import ConfigurationSync from './models/ConfigurationSync'
 import match from './helpers/match.js'
 
 (function (scope) {
@@ -157,6 +157,7 @@ import match from './helpers/match.js'
     settings: {
       baseTemplate: require('../examples/baseTemplate.mnky'),
       optionalFeatures: defaultsForOptionalFeatures,
+      debugMode: false,
       monkeyInterval: 100,
       remoteConnections: []
     },

@@ -50,14 +50,14 @@ import {Store} from 'react-chrome-redux';
       }
     }
 
-    var $DEMO_MONKEY = new Monkey(store.getState().configurations, scope, settings.isFeatureEnabled('undo'), settings.monkeyInterval, settings.isFeatureEnabled('experimantal_withTemplateEngine'), urlManager)
+    var $DEMO_MONKEY = new Monkey(store.getState().configurations, scope, settings.isFeatureEnabled('undo'), settings.monkeyInterval, settings.isFeatureEnabled('experimantal_withTemplateEngine'), urlManager, settings.isDebugEnabled())
     updateBadge($DEMO_MONKEY.start())
 
     function restart() {
       console.log('Restart DemoMonkey')
       // Update settings
       var settings = new Settings(store.getState().settings)
-      var newMonkey = new Monkey(store.getState().configurations, scope, settings.isFeatureEnabled('undo'), settings.monkeyInterval, settings.isFeatureEnabled('experimantal_withTemplateEngine'), urlManager)
+      var newMonkey = new Monkey(store.getState().configurations, scope, settings.isFeatureEnabled('undo'), settings.monkeyInterval, settings.isFeatureEnabled('experimantal_withTemplateEngine'), urlManager, settings.isDebugEnabled())
       $DEMO_MONKEY.stop()
       updateBadge(newMonkey.start())
       $DEMO_MONKEY = newMonkey

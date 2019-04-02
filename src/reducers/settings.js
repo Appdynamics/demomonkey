@@ -44,6 +44,11 @@ const settings = function (state = '', action) {
         ...state,
         baseTemplate: action.baseTemplate
       }
+    case 'TOGGLE_DEBUG_MODE':
+      return {
+        ...state,
+        debugMode: !state.debugMode
+      }
     case 'TOGGLE_OPTIONAL_FEATURE':
       return {
         ...state,

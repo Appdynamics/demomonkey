@@ -30,6 +30,10 @@ class ConfigurationList extends React.Component {
     this.setState({ onlyShowAvailable: !this.state.onlyShowAvailable })
   }
 
+  toggleDebugMode() {
+    this.props.actions.toggleDebugMode()
+  }
+
   renderPath(configuration, index) {
     return <div key={configuration.id}>{this.renderItem(configuration, index)}</div>
   }
@@ -62,6 +66,7 @@ class ConfigurationList extends React.Component {
     return <div>
       <div><input type="text" onChange={(event) => this.handleSearchUpdate(event)} value={this.state.search} placeholder="Search..." className="searchBox" /></div>
       <div><input type="checkbox" checked={this.state.onlyShowAvailable} onChange={(event) => this.toggleOnlyShowAvailable()} /> Only show configurations available for the current url</div>
+      <div><input type="checkbox" checked={this.props.settings.debugMode} onChange={(event) => this.toggleDebugMode()} /> Run in <i>Debug Mode</i></div>
       <div className="configurations-list">
         {this.props.configurations.length < 1 ? this.renderEmpty() : this.renderList() }
       </div>

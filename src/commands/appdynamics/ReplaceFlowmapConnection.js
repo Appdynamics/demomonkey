@@ -53,7 +53,7 @@ class ReplaceFlowmapConnection extends Command {
                   if (newValue !== node.className.baseVal) {
                     var original = node.className.baseVal
                     node.className.baseVal = newValue
-                    r.push(new UndoElement(node.className, 'baseVal', original, newValue))
+                    r.push(new UndoElement(node, 'className.baseVal', original, newValue))
                   }
                 }
                 if (replacement === 'Async') {
@@ -74,7 +74,7 @@ class ReplaceFlowmapConnection extends Command {
                 if (replacement === 'Hide') {
                   var oldDisplay = node.style.display
                   node.style.display = 'none'
-                  r.push(new UndoElement(node.style, 'display', oldDisplay, node.style.display))
+                  r.push(new UndoElement(node, 'style.display', oldDisplay, node.style.display))
                 }
               })
             }

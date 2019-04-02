@@ -3,11 +3,12 @@ import Repository from './Repository'
 import UndoElement from '../commands/UndoElement'
 
 class Monkey {
-  constructor(rawConfigurations, scope, withUndo = true, intervalTime = 100, withTemplateEngine = false, urlManager = false) {
+  constructor(rawConfigurations, scope, withUndo = true, intervalTime = 100, withTemplateEngine = false, urlManager = false, withDebug = false) {
     this.scope = scope
     this.undo = []
     this.repository = new Repository({})
     this.withUndo = withUndo
+    this.withDebug = withDebug
     this.intervalTime = intervalTime
     if (typeof this.intervalTime !== 'number' || this.intervalTime < 100) {
       console.log('Interval time is not well-defined: ' + this.intervalTime)
@@ -36,9 +37,51 @@ class Monkey {
     return this.intervals.length
   }
 
+  injectDebugHelper() {
+    if (this.scope.document.getElementById('demo-monkey-debug-helper-style') === null) {
+      this.scope.document.head.insertAdjacentHTML('beforeend', `<style id="demo-monkey-debug-helper-style">
+      [data-demo-monkey-debug] { background-color: rgba(255, 255, 0, 0.5); }
+      svg [data-demo-monkey-debug] { filter: url(#dm-debug-filter) }
+      </style>`)
+    }
+
+    /*
+    f = (e) => { document.body.insertAdjacentHTML('beforeend', '<div style="width: 50px; height: 50px; position: fixed; top: '+(e.target.getClientRects()[0].y-20)+'px; left: '+(e.target.getClientRects()[0].x+e.target.getClientRects()[0].width/2)+'px">123</div>'); console.log(e); }
+    document.querySelectorAll("[data-demo-monkey-debug]").forEach(elem => elem.addEventListener('mouseover', (e) => f(e)))
+    */
+
+    if (this.scope.document.body && this.scope.document.getElementById('demo-monkey-debug-helper-svg') === null) {
+      this.scope.document.body.insertAdjacentHTML('beforeend', `<svg id="demo-monkey-debug-helper-svg">
+        <defs>
+          <filter x="0" y="0" width="1" height="1" id="dm-debug-filter">
+            <feFlood flood-color="yellow" flood-opacity="0.5" />
+            <feComposite in="SourceGraphic" />
+          </filter>
+        </defs>
+      </svg>`)
+    }
+  }
+
   addUndo(arr) {
     if (this.withUndo) {
       this.undo = this.undo.concat(arr)
+    }
+    if (this.withDebug) {
+      arr.forEach((undoElement) => {
+        switch (undoElement.target.nodeType) {
+          case 1:
+            if (undoElement.target && undoElement.target.dataset) {
+              undoElement.target.dataset.demoMonkeyDebug = 'true'
+            }
+            break
+          case 3:
+            if (undoElement.target && undoElement.target.parentElement && undoElement.target.parentElement.dataset) {
+              undoElement.target.parentElement.dataset.demoMonkeyDebug = 'true'
+            }
+            break
+        }
+      })
+      this.injectDebugHelper()
     }
   }
 
@@ -171,8 +214,13 @@ class Monkey {
           undo.apply()
         }
       })
-
       this.undo = []
+    }
+
+    if (this.withDebug) {
+      this.scope.document.querySelectorAll('[data-demo-monkey-debug]').forEach((element) => {
+        delete element.dataset.demoMonkeyDebug
+      })
     }
   }
 

@@ -75,7 +75,7 @@ class ReplaceFlowmapIcon extends Command {
           var original = image.href.baseVal
           image.href.baseVal = this.newIcon
           if (original !== this.newIcon) {
-            return new UndoElement(image.href, 'baseVal', original, this.newIcon)
+            return new UndoElement(image, 'href.baseVal', original, this.newIcon)
           }
         }
       }

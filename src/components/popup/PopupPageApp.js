@@ -69,6 +69,9 @@ const PopupPageApp = connect(
       },
       toggleConfiguration: (id) => {
         dispatch({ 'type': 'TOGGLE_CONFIGURATION', id: id })
+      },
+      toggleDebugMode: () => {
+        dispatch({ 'type': 'TOGGLE_DEBUG_MODE' })
       }
     }
   }))(App)
