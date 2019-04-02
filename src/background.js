@@ -22,13 +22,15 @@ import match from './helpers/match.js'
   }
 
   function updateBadge() {
-    var count = counts[selectedTabId]
+    const count = counts[selectedTabId]
+    const text = count > 0 ? count + '' : 'off'
+    const color = count > 0 ? '#952613' : '#5c832f'
     scope.chrome.browserAction.setBadgeText({
-      text: count > 0 ? count + '' : 'off',
+      text,
       tabId: selectedTabId
     })
     scope.chrome.browserAction.setBadgeBackgroundColor({
-      color: count > 0 ? '#952613' : '#5c832f',
+      color,
       tabId: selectedTabId
     })
   }
@@ -84,7 +86,7 @@ import match from './helpers/match.js'
 
   scope.chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     if (request.receiver && request.receiver === 'background') {
-      if (typeof request.count === 'number') {
+      if (typeof request.count === 'number' && typeof sender.tab === 'object' && typeof sender.tab.id === 'number') {
         counts[sender.tab.id] = request.count
         updateBadge()
       }

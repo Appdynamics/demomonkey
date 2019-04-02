@@ -116,6 +116,9 @@ class Monkey {
     }
     if (this.withDebug) {
       arr.forEach((undoElement) => {
+        if (!undoElement.target) {
+          return
+        }
         const isHidden = undoElement.key === 'style.display' && undoElement.replacement === 'none' ? undoElement.original : false
         switch (undoElement.target.nodeType) {
           case 1:
