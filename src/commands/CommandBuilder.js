@@ -187,15 +187,15 @@ class CommandBuilder {
     }
 
     if (command === 'blockUrl') {
-      return new BlockUrl(parameters[0])
+      return new BlockUrl(parameters[0], parameters[1])
     }
 
     if (command === 'delayUrl') {
-      return new DelayUrl(parameters[0], value)
+      return new DelayUrl(parameters[0], value, parameters[1])
     }
 
-    if (command === 'replaceUrl') {
-      return new ReplaceUrl(parameters[0], value)
+    if (command === 'replaceUrl' || command === 'redirectUrl') {
+      return new ReplaceUrl(parameters[0], value, parameters[1])
     }
 
     if (command === 'overwriteHTML' || command === 'overwrite') {

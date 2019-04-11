@@ -1,11 +1,12 @@
 import Command from './Command'
 
 class DelayUrl extends Command {
-  constructor(search, delay) {
+  constructor(search, delay, type = '*') {
     super()
     this.search = search
     this.delay = delay
-    this.id = this.search + '-delay-' + this.delay
+    this.type = type
+    this.id = this.search + '-delay-' + this.delay + '-type-' + this.type
   }
 
   isApplicableForGroup(group) {
@@ -17,6 +18,7 @@ class DelayUrl extends Command {
       id: this.id,
       url: this.search,
       action: 'delay',
+      type: this.type,
       options: { delay: this.delay }
     })
 

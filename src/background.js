@@ -45,7 +45,7 @@ import match from './helpers/match.js'
       var counter = 0
       for (var start = Date.now(); Date.now() - start < options.delay * 1000;) {
         counter++
-        if (counter % 10000 === 0) {
+        if (counter % 1000000 === 0) {
           console.log('Delay', counter)
         }
       }
@@ -59,8 +59,10 @@ import match from './helpers/match.js'
 
   function webRequestHook(details) {
     return Object.keys(hookedUrls).reduce((acc, id) => {
-      const { url, action, options } = hookedUrls[id]
-      if (match(details.url, url)) {
+      const { url, type, action, options } = hookedUrls[id]
+      // "main_frame", "sub_frame", "stylesheet", "script", "image", "font", "object", "xmlhttprequest", "ping", "csp_report", "media", "websocket", or "other"
+      if (match(details.url, url) && (type === '*' || type.split(',').map(e => e.trim()).includes(details.type))) {
+        console.log(details)
         return Object.assign(acc, hooks[action](options))
       }
       return acc
@@ -135,6 +137,7 @@ import match from './helpers/match.js'
     inDevTools: true,
     webRequestHook: false,
     remoteSync: false,
+    debugBox: false,
     // This is only a soft toggle, since the user can turn it on and off directly in the popup
     onlyShowAvailableConfigurations: true,
     experimental_withTemplateEngine: false

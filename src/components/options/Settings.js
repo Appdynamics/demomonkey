@@ -84,6 +84,9 @@ class Settings extends React.Component {
           <div className="toggle-group">
             <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('webRequestHook')} value={this.props.settings.optionalFeatures.webRequestHook}/><label><b>Hook into Web Requests.</b> Turn this feature on, if you want to use the commands !delayURL and !redirectURL. This will allow DemoMonkey to hook into web requests.</label>
           </div>
+          <div className="toggle-group">
+            <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('debugBox')} value={this.props.settings.optionalFeatures.debugBox}/><label><b>Debug Box.</b> Turn this feature on, to show a debug box with statistics when running demo monkey in <i>debug mode</i> </label>
+          </div>
           { /* <Synchronization remoteConnections={this.props.settings.remoteConnections} onConnected={this.props.onConnected} onDisconnected={this.props.onDisconnected} /> */ }
           <h2>Backup</h2>
           You can always open the <a href="backup.html">backup page</a> to download your files or manipulate your settings. Please use with caution!

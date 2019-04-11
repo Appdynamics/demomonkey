@@ -3,12 +3,13 @@ import Repository from './Repository'
 import UndoElement from '../commands/UndoElement'
 
 class Monkey {
-  constructor(rawConfigurations, scope, withUndo = true, intervalTime = 100, withTemplateEngine = false, urlManager = false, withDebug = false) {
+  constructor(rawConfigurations, scope, withUndo = true, intervalTime = 100, withTemplateEngine = false, urlManager = false, withDebug = false, withDebugBox = false) {
     this.scope = scope
     this.undo = []
     this.repository = new Repository({})
     this.withUndo = withUndo
     this.withDebug = withDebug
+    this.withDebugBox = withDebugBox
     this.avgRunTime = 0
     this.maxRunTime = 0
     this.runCount = 0
@@ -71,7 +72,7 @@ class Monkey {
       </svg>`)
     }
 
-    if (this.scope.document.body && this.scope.document.getElementById('demo-monkey-debug-box') === null) {
+    if (this.withDebugBox && this.scope.document.body && this.scope.document.getElementById('demo-monkey-debug-box') === null) {
       this.scope.document.body.insertAdjacentHTML('beforeend', `<div id="demo-monkey-debug-box">
       Demo Monkey - Debug Box
         <div>Runtime: <span id="demo-monkey-last-runtime"></span></div>
@@ -82,22 +83,24 @@ class Monkey {
   }
 
   updateDebugBox(lastTime, sum) {
-    var e1 = this.scope.document.getElementById('demo-monkey-last-runtime')
-    if (e1) {
-      this.runCount++
-      this.avgRunTime += (lastTime - this.avgRunTime) / this.runCount
-      this.maxRunTime = Math.max(lastTime, this.maxRunTime)
-      if (this.runCount % 10 === 0) {
-        e1.innerHTML = lastTime + ' (avg: ' + this.avgRunTime + ', max: ' + this.maxRunTime + ', count: ' + this.runCount + ')'
+    if (this.withDebugBox) {
+      var e1 = this.scope.document.getElementById('demo-monkey-last-runtime')
+      if (e1) {
+        this.runCount++
+        this.avgRunTime += (lastTime - this.avgRunTime) / this.runCount
+        this.maxRunTime = Math.max(lastTime, this.maxRunTime)
+        if (this.runCount % 10 === 0) {
+          e1.innerHTML = lastTime + ' (avg: ' + this.avgRunTime + ', max: ' + this.maxRunTime + ', count: ' + this.runCount + ')'
+        }
       }
-    }
-    var e2 = this.scope.document.getElementById('demo-monkey-undo-length')
-    if (e2) {
-      e2.innerHTML = this.undo.length
-    }
-    var e3 = this.scope.document.getElementById('demo-monkey-elements-count')
-    if (e3) {
-      e3.innerHTML = sum.join(',')
+      var e2 = this.scope.document.getElementById('demo-monkey-undo-length')
+      if (e2) {
+        e2.innerHTML = this.undo.length
+      }
+      var e3 = this.scope.document.getElementById('demo-monkey-elements-count')
+      if (e3) {
+        e3.innerHTML = sum.join(',')
+      }
     }
   }
 

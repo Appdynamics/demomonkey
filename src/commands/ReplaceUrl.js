@@ -1,11 +1,12 @@
 import Command from './Command'
 
 class ReplaceUrl extends Command {
-  constructor(search, replace) {
+  constructor(search, replace, type = '*') {
     super()
     this.search = search
     this.replace = replace
-    this.id = this.search + '-replace-' + this.replace
+    this.type = type
+    this.id = this.search + '-replace-' + this.replace + '-type-' + this.type
   }
 
   isApplicableForGroup(group) {
@@ -17,6 +18,7 @@ class ReplaceUrl extends Command {
       id: this.id,
       url: this.search,
       action: 'replace',
+      type: this.type,
       options: { replace: this.replace }
     })
 
