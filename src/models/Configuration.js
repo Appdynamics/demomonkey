@@ -52,8 +52,10 @@ class Configuration {
     var blacklist = this.getOptions().blacklist
 
     if (!Array.isArray(blacklist)) {
-      return false
+      blacklist = []
     }
+
+    blacklist.push('style', 'script')
 
     switch (node.nodeType) {
       // TEXT_NODE
