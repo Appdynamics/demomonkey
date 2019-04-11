@@ -50,12 +50,19 @@ class Configuration {
 
   isTagBlacklisted(node) {
     var blacklist = this.getOptions().blacklist
+    var whitelist = this.getOptions().whitelist
 
     if (!Array.isArray(blacklist)) {
       blacklist = []
     }
 
+    if (!Array.isArray(whitelist)) {
+      whitelist = []
+    }
+
     blacklist.push('style', 'script')
+
+    blacklist = blacklist.filter(x => !whitelist.includes(x))
 
     switch (node.nodeType) {
       // TEXT_NODE

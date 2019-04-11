@@ -20,6 +20,7 @@ var simpleConfiguration = new Configuration('a = b')
 var configurationWithOption = new Configuration('@a = b')
 var configurationWithInclude = new Configuration('@include = /www/')
 var configurationWithBlacklist = new Configuration('@blacklist = div')
+var configurationWithWhitelist = new Configuration('@whitelist = style')
 var configurationWithVariable = new Configuration('$a = default\rx = $a', null, true, { a: 'v' })
 var configurationWithUnsetVariable = new Configuration('$a = default\rv = $a', null, true, {})
 var configurationWithSharedPrefixVariable = new Configuration('$a = a1\r$ab = a2\rdefault = $ab', null, true, { a: 'v', ab: 'v2' })
@@ -182,6 +183,39 @@ describe('Configuration', function () {
       }
       assert.equal(configurationWithBlacklist.isTagBlacklisted(node), true)
       assert.equal(configurationWithBlacklist.isTagBlacklisted(node.parentNode), true)
+    })
+    it('should return true if tagname is script', function () {
+      var node = {
+        nodeType: 3,
+        parentNode: {
+          nodeType: 1,
+          nodeName: 'SCRIPT'
+        }
+      }
+      assert.equal(configurationWithBlacklist.isTagBlacklisted(node), true)
+      assert.equal(configurationWithBlacklist.isTagBlacklisted(node.parentNode), true)
+    })
+    it('should return true if tagname is style', function () {
+      var node = {
+        nodeType: 3,
+        parentNode: {
+          nodeType: 1,
+          nodeName: 'STYLE'
+        }
+      }
+      assert.equal(configurationWithBlacklist.isTagBlacklisted(node), true)
+      assert.equal(configurationWithBlacklist.isTagBlacklisted(node.parentNode), true)
+    })
+    it('should return false if tagname is style and style is whitelisted', function () {
+      var node = {
+        nodeType: 3,
+        parentNode: {
+          nodeType: 1,
+          nodeName: 'STYLE'
+        }
+      }
+      assert.equal(configurationWithWhitelist.isTagBlacklisted(node), false)
+      assert.equal(configurationWithWhitelist.isTagBlacklisted(node.parentNode), false)
     })
     it('should return false if tagname is not blacklisted', function () {
       var node = {
