@@ -47,6 +47,12 @@ import {Store} from 'react-chrome-redux';
           task: 'removeUrl',
           id
         })
+      },
+      clear: () => {
+        scope.chrome.runtime.sendMessage({
+          receiver: 'background',
+          task: 'clearUrls'
+        })
       }
     }
 

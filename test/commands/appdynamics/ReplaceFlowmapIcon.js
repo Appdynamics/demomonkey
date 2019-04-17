@@ -11,7 +11,7 @@ var node = {
   parentElement: {
     parentElement: {
       querySelector: function (string) {
-        if (string === 'image.adsFlowNodeTypeIcon') {
+        if (string === 'image.adsFlowNodeTypeIcon, image.adsFlowMapBackendImage') {
           return {
             href: href
           }

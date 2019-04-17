@@ -38,12 +38,28 @@ html,
   }
 
   .configurations-list {
-    max-height: 480px;
+    max-height: 430px;
     overflow-y: auto;
   }
 
   label {
    margin: 8px 0px;
+  }
+
+  .latest-configurations {
+    background-color: lighten(@base, 75%);
+    border-bottom: 1px solid @base;
+    border-top: 1px solid @base;
+    margin-top: 10px;
+
+    .latest-title {
+      font-size: 80%;
+      margin-top: -10px;
+      margin-left: 10px;
+      background: linear-gradient(180deg, white 50%, lighten(@base, 75%) 50%);
+      width: 40px;
+      text-align: center;
+    }
   }
 }
 

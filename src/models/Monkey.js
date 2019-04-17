@@ -30,7 +30,7 @@ class Monkey {
       this.repository.addConfiguration(rawConfig.name, config)
       return [rawConfig.name, config]
     })
-    this.urlManager = urlManager === false ? {add: () => {}, remove: () => {}} : urlManager
+    this.urlManager = urlManager === false ? {add: () => {}, remove: () => {}, clear: () => {}} : urlManager
   }
 
   getUndoLength() {
@@ -278,6 +278,8 @@ class Monkey {
       })
       this.undo = []
     }
+
+    this.urlManager.clear()
 
     if (this.withDebug) {
       this.scope.document.querySelectorAll('[data-demo-monkey-debug]').forEach((element) => {

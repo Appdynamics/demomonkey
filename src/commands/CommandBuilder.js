@@ -17,6 +17,7 @@ import BlockUrl from './BlockUrl'
 import DelayUrl from './DelayUrl'
 import ReplaceUrl from './ReplaceUrl'
 import Command from './Command'
+import UndoElement from './UndoElement'
 
 class CommandBuilder {
   constructor(namespaces = []) {
@@ -143,6 +144,36 @@ class CommandBuilder {
         return new SetDashboardBackground(parameters[0], parameters[1], value, location)
       }
       if (command === 'replaceNodeCount') {
+        if (typeof value === 'string' && ['λ', 'lambda'].includes(value.toLowerCase())) {
+          return new Group([
+            new ReplaceNeighbor(parameters[0], '', 2, 'text.adsNodeCountText', '', location),
+            new ReplaceNeighbor(parameters[0], '', 2, 'text.adsNodeCountTextSmall', '', location),
+            new ReplaceNeighbor(parameters[0], 'images/tierTypes/AWSLambda.svg', 2, 'g.adsNodeCountContainer image', '', location, (search, replace, node) => {
+              // <image transform="translate(-15, -15 )" width="30" height="30" xlink:href=""></image>
+              const bg = node.parentElement.querySelector('.adsNodeCountBackground')
+              if (bg && bg.style && bg.style.fill !== 'rgb(255, 255, 255)') {
+                replace = 'images/tierTypes/AWSLambda_white.svg'
+              }
+              if (node.href.baseVal !== replace) {
+                const original = node.href.baseVal
+                const originalWidth = node.width.baseVal.value
+                const originalHeight = node.height.baseVal.value
+                const originalTransform = node.transform
+                node.href.baseVal = replace
+                node.width.baseVal.value = 30
+                node.height.baseVal.value = 30
+                node.setAttribute('transform', 'translate(-15,-15)')
+                return [
+                  new UndoElement(node, 'href.baseVal', original, replace),
+                  new UndoElement(node, 'width.baseVal.value', originalWidth, 30),
+                  new UndoElement(node, 'height.baseVal.value', originalHeight, 30),
+                  new UndoElement(node, 'transform', originalTransform, 'translate(-15,-15)')
+                ]
+              }
+              return false
+            })
+          ])
+        }
         return new Group([
           new ReplaceNeighbor(parameters[0], value, 2, 'text.adsNodeCountText', '', location),
           new ReplaceNeighbor(parameters[0], parseInt(value) === 1 ? 'Node' : 'Nodes', 2, 'text.adsNodeCountTextSmall', '', location)

@@ -26,6 +26,10 @@ class UndoElement {
     }
 
     if (target[key] === this.replacement) {
+      // Fix for transform attribute of SVGElement which is read-only
+      if (key === 'transform' && target instanceof SVGElement) {
+        target.setAttribute(key, this.original)
+      }
       target[key] = this.original
       return true
     }

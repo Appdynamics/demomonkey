@@ -1,7 +1,6 @@
 /* global chrome */
 import React from 'react'
 import ToggleButton from 'react-toggle-button'
-import Configuration from '../../models/Configuration'
 import PropTypes from 'prop-types'
 
 class ToggleConfiguration extends React.Component {
@@ -25,17 +24,10 @@ class ToggleConfiguration extends React.Component {
   }
 
   render() {
-    var tmpConfig = (new Configuration(this.props.configuration.content, null, false, this.props.configuration.values))
-    var name = this.props.configuration.name // .split('/').pop()
-
-    if ((this.props.onlyShowAvailable && !tmpConfig.isAvailableForUrl(this.props.currentUrl)) || tmpConfig.isTemplate() || !tmpConfig.isRestricted() || name.toLowerCase().startsWith('zzz_archive/')) {
-      return <div></div>
-    }
-
     return <div className={'toggle-group ' + this.props.className}>
       <ToggleButton colors={{active: {base: '#5c832f', hover: '#90c256'}}} value={this.props.configuration.enabled} onToggle={() => { this.toggle(this.props.configuration.id) }}/>
       <label>
-        <a href="#" onClick={(event) => this.openEditor(event, this.props.configuration.id)}>{name}</a>
+        <a href="#" onClick={(event) => this.openEditor(event, this.props.configuration.id)}>{this.props.configuration.name}</a>
       </label>
     </div>
   }

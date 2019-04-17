@@ -100,6 +100,10 @@ import match from './helpers/match.js'
       if (request.task && request.task === 'removeUrl' && typeof request.id === 'string') {
         delete hookedUrls[request.id]
       }
+      if (request.task && request.task === 'clearUrls') {
+        console.log('Clearing hooked URLs')
+        hookedUrls = {}
+      }
     }
   })
 
@@ -216,10 +220,6 @@ import match from './helpers/match.js'
         settings,
         monkeyID: store.getState().monkeyID
       })
-
-      console.log(settings.optionalFeatures.webRequestHook)
-      console.log(configurations.filter(c => c.enabled).length)
-
       hookIntoWebRequests(settings.optionalFeatures.webRequestHook, configurations.filter(c => c.enabled).length > 0)
     })
 
@@ -227,8 +227,6 @@ import match from './helpers/match.js'
       var toggle = enabledHotkeyGroup !== group
 
       enabledHotkeyGroup = toggle ? group : -1
-
-      console.log('GROUP', group, toggle)
 
       store.getState().configurations.forEach(function (c) {
         var config = (new Configuration(c.content, null, false, c.values))

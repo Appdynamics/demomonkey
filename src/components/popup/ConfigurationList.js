@@ -1,7 +1,8 @@
 /* global chrome */
 import React from 'react'
-import ToggleConfiguration from '../shared/ToggleConfiguration'
 import PropTypes from 'prop-types'
+import Configuration from '../../models/Configuration'
+import ToggleConfiguration from '../shared/ToggleConfiguration'
 
 class ConfigurationList extends React.Component {
   static propTypes = {
@@ -17,17 +18,21 @@ class ConfigurationList extends React.Component {
     console.log(props.settings)
     this.state = {
       search: '',
+      onlyShowActivated: false,
       onlyShowAvailable: props.settings.optionalFeatures.onlyShowAvailableConfigurations === true
     }
   }
 
   handleSearchUpdate(event) {
-    console.log(event.target.value.toLowerCase())
     this.setState({ search: event.target.value.toLowerCase() })
   }
 
   toggleOnlyShowAvailable() {
     this.setState({ onlyShowAvailable: !this.state.onlyShowAvailable })
+  }
+
+  toggleOnlyShowActivated() {
+    this.setState({ onlyShowActivated: !this.state.onlyShowActivated })
   }
 
   toggleDebugMode() {
@@ -39,17 +44,58 @@ class ConfigurationList extends React.Component {
   }
 
   renderItem(configuration, index) {
-    return <div><ToggleConfiguration onlyShowAvailable={this.state.onlyShowAvailable} currentUrl={this.props.currentUrl} className={configuration.name.toLowerCase().indexOf(this.state.search) === -1 ? 'hidden' : 'visible'}
+    var tmpConfig = (new Configuration(configuration.content, null, false, configuration.values))
+
+    if ((this.state.onlyShowAvailable && !tmpConfig.isAvailableForUrl(this.props.currentUrl)) ||
+    (this.state.onlyShowActivated && !configuration.enabled) ||
+    tmpConfig.isTemplate() ||
+    !tmpConfig.isRestricted() ||
+    configuration.name.toLowerCase().startsWith('zzz_archive/')) {
+      return <div></div>
+    }
+
+    return <div><ToggleConfiguration
+      onlyShowAvailable={this.state.onlyShowAvailable}
+      currentUrl={this.props.currentUrl}
       index={index}
       actions={this.props.actions}
       configuration={configuration}/></div>
   }
 
+  getConfigurations() {
+    return this.props.configurations.filter(c => {
+      return c.name.toLowerCase().indexOf(this.state.search) > -1
+    })
+  }
+
+  getLatest() {
+    return this.getConfigurations().sort((a, b) => {
+      return a.updated_at < b.updated_at ? 1 : -1
+    }).slice(0, 3)
+  }
+
+  getList() {
+    return this.getConfigurations().sort((a, b) => {
+      return a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1
+    })
+  }
+
+  renderLatest() {
+    if (this.getConfigurations().length < 20) {
+      return
+    }
+    return <div className="latest-configurations">
+      <div className="latest-title">Latest</div>
+      {this.getLatest().map((configuration, index) => this.renderPath(configuration, index))}
+    </div>
+  }
+
   renderList() {
     return <div>
-      {this.props.configurations.sort((a, b) => {
-        return a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1
-      }).map((configuration, index) => this.renderPath(configuration, index))}
+      {this.renderLatest()}
+      <div>
+        {this.getList().map((configuration, index) => this.renderPath(configuration, index))}
+      </div>
     </div>
   }
 
@@ -66,9 +112,10 @@ class ConfigurationList extends React.Component {
     return <div>
       <div><input type="text" onChange={(event) => this.handleSearchUpdate(event)} value={this.state.search} placeholder="Search..." className="searchBox" /></div>
       <div><input type="checkbox" checked={this.state.onlyShowAvailable} onChange={(event) => this.toggleOnlyShowAvailable()} /> Only show configurations available for the current url</div>
+      <div><input type="checkbox" checked={this.state.onlyShowActivated} onChange={(event) => this.toggleOnlyShowActivated()} /> Only show activated configurations</div>
       <div><input type="checkbox" checked={this.props.settings.debugMode} onChange={(event) => this.toggleDebugMode()} /> Run in <i>Debug Mode</i></div>
       <div className="configurations-list">
-        {this.props.configurations.length < 1 ? this.renderEmpty() : this.renderList() }
+        {this.getConfigurations().length < 1 ? this.renderEmpty() : this.renderList() }
       </div>
     </div>
   }
