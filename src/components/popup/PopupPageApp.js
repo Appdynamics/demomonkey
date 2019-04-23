@@ -23,6 +23,10 @@ class App extends React.Component {
     this.vPageView = null
   }
 
+  toggleLiveMode() {
+    this.props.actions.toggleLiveMode()
+  }
+
   render() {
     var configurations = this.props.configurations.filter((config) => typeof config.deleted_at === 'undefined' && typeof config._deleted === 'undefined')
     return <div>
@@ -51,6 +55,11 @@ class App extends React.Component {
           e.preventDefault()
           chrome.runtime.openOptionsPage()
         }} label="Dashboard"/>
+        <Pane link={(e) => {
+          e.preventDefault()
+          this.toggleLiveMode()
+          window.close()
+        }} label="Live"/>
       </Tabs>
     </div>
   }
@@ -72,6 +81,9 @@ const PopupPageApp = connect(
       },
       toggleDebugMode: () => {
         dispatch({ 'type': 'TOGGLE_DEBUG_MODE' })
+      },
+      toggleLiveMode: () => {
+        dispatch({ 'type': 'TOGGLE_LIVE_MODE' })
       }
     }
   }))(App)

@@ -23,7 +23,7 @@ import match from './helpers/match.js'
 
   function updateBadge() {
     const count = counts[selectedTabId]
-    const text = count > 0 ? count + '' : 'off'
+    const text = count > 0 ? count + '' : '0'
     const color = count > 0 ? '#952613' : '#5c832f'
     scope.chrome.browserAction.setBadgeText({
       text,
@@ -33,6 +33,32 @@ import match from './helpers/match.js'
       color,
       tabId: selectedTabId
     })
+  }
+
+  var liveModeInterval = -1
+
+  function doLiveMode(liveMode) {
+    console.log(liveMode)
+    if (liveMode && liveModeInterval < 0) {
+      var time = 0
+      const updateLiveTimer = () => scope.chrome.browserAction.getBadgeText({ tabId: selectedTabId }, (text) => {
+        text = text.split('/')[0]
+        console.log(text + '/' + time, selectedTabId)
+        scope.chrome.browserAction.setBadgeText({
+          text: text + '/' + time,
+          tabId: selectedTabId
+        })
+      })
+      updateLiveTimer()
+      liveModeInterval = setInterval(() => {
+        console.log('live')
+        time++
+        updateLiveTimer()
+      }, 60000)
+    } else if (!liveMode) {
+      clearInterval(liveModeInterval)
+      liveModeInterval = -1
+    }
   }
 
   var hookedIntoWebRequests = false
@@ -178,6 +204,8 @@ import match from './helpers/match.js'
     // issues rendering the UI.
     state.currentView = 'welcome'
 
+    state.settings.liveMode = false
+
     run(state)
   })
 
@@ -220,6 +248,9 @@ import match from './helpers/match.js'
         settings,
         monkeyID: store.getState().monkeyID
       })
+
+      doLiveMode(settings.liveMode)
+
       hookIntoWebRequests(settings.optionalFeatures.webRequestHook, configurations.filter(c => c.enabled).length > 0)
     })
 
@@ -247,6 +278,14 @@ import match from './helpers/match.js'
       if (command.startsWith('toggle-hotkey-group')) {
         var group = parseInt(command.split('-').pop())
         toggleHotkeyGroup(group)
+      }
+    })
+
+    scope.chrome.contextMenus.create({
+      title: 'Live',
+      contexts: ['browser_action'],
+      onclick: function () {
+        store.dispatch({ 'type': 'TOGGLE_LIVE_MODE' })
       }
     })
 
