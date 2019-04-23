@@ -59,7 +59,7 @@ class App extends React.Component {
           e.preventDefault()
           this.toggleLiveMode()
           window.close()
-        }} label="Live"/>
+        }} label={this.props.settings.liveMode === true ? 'Stop Live Demo' : 'Start Live Demo'} />
       </Tabs>
     </div>
   }

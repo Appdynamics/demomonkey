@@ -57,6 +57,14 @@ import match from './helpers/match.js'
       }, 60000)
     } else if (!liveMode) {
       clearInterval(liveModeInterval)
+      scope.chrome.browserAction.getBadgeText({ tabId: selectedTabId }, (text) => {
+        text = text.split('/')[0]
+        console.log(text + '/' + time, selectedTabId)
+        scope.chrome.browserAction.setBadgeText({
+          text: text,
+          tabId: selectedTabId
+        })
+      })
       liveModeInterval = -1
     }
   }
@@ -282,10 +290,18 @@ import match from './helpers/match.js'
     })
 
     scope.chrome.contextMenus.create({
-      title: 'Live',
+      title: 'Toggle Live Mode',
       contexts: ['browser_action'],
       onclick: function () {
         store.dispatch({ 'type': 'TOGGLE_LIVE_MODE' })
+      }
+    })
+
+    scope.chrome.contextMenus.create({
+      title: 'Toggle Debug Mode',
+      contexts: ['browser_action'],
+      onclick: function () {
+        store.dispatch({ 'type': 'TOGGLE_DEBUG_MODE' })
       }
     })
 
