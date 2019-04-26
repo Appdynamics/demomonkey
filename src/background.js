@@ -3,6 +3,7 @@ import { wrapStore } from 'react-chrome-redux'
 import reducers from './reducers'
 import uuidV4 from 'uuid/v4'
 import Configuration from './models/Configuration'
+import Badge from './models/Badge'
 // import ConfigurationSync from './models/ConfigurationSync'
 import match from './helpers/match.js'
 
@@ -13,6 +14,8 @@ import match from './helpers/match.js'
   var counts = []
   var enabledHotkeyGroup = -1
 
+  const badge = new Badge(scope.chrome.browserAction)
+
   scope.logMessage = function (message) {
     console.log(message)
     scope.chrome.runtime.sendMessage({
@@ -22,17 +25,8 @@ import match from './helpers/match.js'
   }
 
   function updateBadge() {
-    const count = counts[selectedTabId]
-    const text = count > 0 ? count + '' : '0'
-    const color = count > 0 ? '#952613' : '#5c832f'
-    scope.chrome.browserAction.setBadgeText({
-      text,
-      tabId: selectedTabId
-    })
-    scope.chrome.browserAction.setBadgeBackgroundColor({
-      color,
-      tabId: selectedTabId
-    })
+    const count = counts[selectedTabId] ? counts[selectedTabId] : 0
+    badge.updateDemoCounter(count, selectedTabId)
   }
 
   var liveModeInterval = -1
@@ -41,30 +35,15 @@ import match from './helpers/match.js'
     console.log(liveMode)
     if (liveMode && liveModeInterval < 0) {
       var time = 0
-      const updateLiveTimer = () => scope.chrome.browserAction.getBadgeText({ tabId: selectedTabId }, (text) => {
-        text = text.split('/')[0]
-        console.log(text + '/' + time, selectedTabId)
-        scope.chrome.browserAction.setBadgeText({
-          text: text + '/' + time,
-          tabId: selectedTabId
-        })
-      })
-      updateLiveTimer()
+      badge.updateTimer(time, selectedTabId)
       liveModeInterval = setInterval(() => {
         console.log('live')
         time++
-        updateLiveTimer()
+        badge.updateTimer(time, selectedTabId)
       }, 60000)
     } else if (!liveMode) {
       clearInterval(liveModeInterval)
-      scope.chrome.browserAction.getBadgeText({ tabId: selectedTabId }, (text) => {
-        text = text.split('/')[0]
-        console.log(text + '/' + time, selectedTabId)
-        scope.chrome.browserAction.setBadgeText({
-          text: text,
-          tabId: selectedTabId
-        })
-      })
+      badge.clearTimer(selectedTabId)
       liveModeInterval = -1
     }
   }
