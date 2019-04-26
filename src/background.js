@@ -3,6 +3,7 @@ import { wrapStore } from 'react-chrome-redux'
 import reducers from './reducers'
 import uuidV4 from 'uuid/v4'
 import Configuration from './models/Configuration'
+import MatchRule from './models/MatchRule'
 import Badge from './models/Badge'
 // import ConfigurationSync from './models/ConfigurationSync'
 import match from './helpers/match.js'
@@ -58,7 +59,7 @@ import match from './helpers/match.js'
       var counter = 0
       for (var start = Date.now(); Date.now() - start < options.delay * 1000;) {
         counter++
-        if (counter % 1000000 === 0) {
+        if (counter % 10000000 === 0) {
           console.log('Delay', counter)
         }
       }
@@ -66,15 +67,16 @@ import match from './helpers/match.js'
       return {}
     },
     replace: (options) => {
+      console.log('Redirecting to ', options.replace)
       return { redirectUrl: options.replace }
     }
   }
 
   function webRequestHook(details) {
     return Object.keys(hookedUrls).reduce((acc, id) => {
-      const { url, type, action, options } = hookedUrls[id]
+      const { url, type, action, options, includeRules, excludeRules } = hookedUrls[id]
       // "main_frame", "sub_frame", "stylesheet", "script", "image", "font", "object", "xmlhttprequest", "ping", "csp_report", "media", "websocket", or "other"
-      if (match(details.url, url) && (type === '*' || type.split(',').map(e => e.trim()).includes(details.type))) {
+      if (new MatchRule(includeRules, excludeRules).test(details.url) && match(details.url, url) && (type === '*' || type.split(',').map(e => e.trim()).includes(details.type))) {
         console.log(details)
         return Object.assign(acc, hooks[action](options))
       }

@@ -1,11 +1,13 @@
 import Command from './Command'
 
 class BlockUrl extends Command {
-  constructor(search, type = '*') {
+  constructor(search, type = '*', includeRules, excludeRules) {
     super()
     this.search = search
     this.type = type
-    this.id = this.search + '-block' + '-type-' + this.type
+    this.includeRules = includeRules
+    this.excludeRules = excludeRules
+    this.id = this.search + '-block' + '-type-' + this.type + '-includes-' + this.includeRules.join('--') + '-excludes-' + this.excludeRules.join('--')
   }
 
   isApplicableForGroup(group) {
@@ -18,7 +20,9 @@ class BlockUrl extends Command {
       url: this.search,
       type: this.type,
       action: 'block',
-      options: {}
+      options: {},
+      includeRules: this.includeRules,
+      excludeRules: this.excludeRules
     })
 
     return {

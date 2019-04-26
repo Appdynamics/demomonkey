@@ -20,8 +20,10 @@ import Command from './Command'
 import UndoElement from './UndoElement'
 
 class CommandBuilder {
-  constructor(namespaces = []) {
+  constructor(namespaces = [], includeRules, excludeRules) {
     this.namespaces = namespaces
+    this.includeRules = includeRules
+    this.excludeRules = excludeRules
   }
 
   _buildRegex(search, modifiers, replace) {
@@ -218,15 +220,15 @@ class CommandBuilder {
     }
 
     if (command === 'blockUrl') {
-      return new BlockUrl(parameters[0], parameters[1])
+      return new BlockUrl(parameters[0], parameters[1], this.includeRules, this.excludeRules)
     }
 
     if (command === 'delayUrl') {
-      return new DelayUrl(parameters[0], value, parameters[1])
+      return new DelayUrl(parameters[0], value, parameters[1], this.includeRules, this.excludeRules)
     }
 
     if (command === 'replaceUrl' || command === 'redirectUrl') {
-      return new ReplaceUrl(parameters[0], value, parameters[1])
+      return new ReplaceUrl(parameters[0], value, parameters[1], this.includeRules, this.excludeRules)
     }
 
     if (command === 'overwriteHTML' || command === 'overwrite') {

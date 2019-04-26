@@ -142,7 +142,7 @@ class Editor extends React.Component {
       namespaces.push(match[1])
     }
 
-    const cb = new CommandBuilder(namespaces)
+    const cb = new CommandBuilder(namespaces, [], [])
 
     lines.forEach((line, rowIdx) => {
       // Process each line and add infos, warnings, errors

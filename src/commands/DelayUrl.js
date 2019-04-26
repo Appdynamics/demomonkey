@@ -1,12 +1,14 @@
 import Command from './Command'
 
 class DelayUrl extends Command {
-  constructor(search, delay, type = '*') {
+  constructor(search, delay, type = '*', includeRules, excludeRules) {
     super()
     this.search = search
     this.delay = delay
     this.type = type
-    this.id = this.search + '-delay-' + this.delay + '-type-' + this.type
+    this.includeRules = includeRules
+    this.excludeRules = excludeRules
+    this.id = this.search + '-delay-' + this.delay + '-type-' + this.type + '-includes-' + this.includeRules.join('--') + '-excludes-' + this.excludeRules.join('--')
   }
 
   isApplicableForGroup(group) {
@@ -19,7 +21,9 @@ class DelayUrl extends Command {
       url: this.search,
       action: 'delay',
       type: this.type,
-      options: { delay: this.delay }
+      options: { delay: this.delay },
+      includeRules: this.includeRules,
+      excludeRules: this.excludeRules
     })
 
     return {

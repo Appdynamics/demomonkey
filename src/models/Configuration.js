@@ -194,7 +194,11 @@ class Configuration {
       var values = this.values
       var repository = this.repository
 
-      var commandBuilder = new CommandBuilder(Array.isArray(options.namespace) ? options.namespace : [])
+      var commandBuilder = new CommandBuilder(
+        Array.isArray(options.namespace) ? options.namespace : [],
+        Array.isArray(options.include) ? options.include : [],
+        Array.isArray(options.exclude) ? options.exclude : []
+      )
 
       var filterConfiguration = function (content) {
         return function (result, key) {
