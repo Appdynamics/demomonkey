@@ -68,6 +68,7 @@
     "gulp-rename": "^1.4.0",
     "gulp-replace": "^0.6.1",
     "gulp-sourcemaps": "^2.6.5",
+    "gulp-util": "^3.0.8",
     "gulp-zip": "^4.2.0",
     "less": "^3.9.0",
     "mocha": "^4.1.0",

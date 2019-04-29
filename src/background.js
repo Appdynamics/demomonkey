@@ -268,6 +268,12 @@ import match from './helpers/match.js'
         var group = parseInt(command.split('-').pop())
         toggleHotkeyGroup(group)
       }
+      if (command === 'live-mode') {
+        store.dispatch({ 'type': 'TOGGLE_LIVE_MODE' })
+      }
+      if (command === 'debug-mode') {
+        store.dispatch({ 'type': 'TOGGLE_DEBUG_MODE' })
+      }
     })
 
     scope.chrome.contextMenus.create({
