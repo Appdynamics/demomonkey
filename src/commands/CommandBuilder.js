@@ -244,6 +244,8 @@ class CommandBuilder {
       return new OverwriteHTML(parameters[0], '', iframeCode, location)
     }
 
+    // Add new commands above this line.
+
     return new Command()
   }
 
