@@ -187,6 +187,10 @@ class CommandBuilder {
       return new SearchAndReplace(parameters[0], value, parameters[1], parameters[2], location)
     }
 
+    if (command === 'protect') {
+      return new SearchAndReplace(parameters[0], parameters[0].split('').join(String.fromCharCode(0x200B)), parameters[1], parameters[2], location)
+    }
+
     if (command === 'replaceNeighbor') {
       return new ReplaceNeighbor(parameters[0], value, parameters[1], parameters[2], parameters[3], location)
     }
