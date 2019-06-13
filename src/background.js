@@ -5,7 +5,7 @@ import uuidV4 from 'uuid/v4'
 import Configuration from './models/Configuration'
 import MatchRule from './models/MatchRule'
 import Badge from './models/Badge'
-// import ConfigurationSync from './models/ConfigurationSync'
+import ConfigurationSync from './models/ConfigurationSync'
 import match from './helpers/match.js'
 
 (function (scope) {
@@ -17,8 +17,8 @@ import match from './helpers/match.js'
 
   const badge = new Badge(scope.chrome.browserAction)
 
-  scope.logMessage = function (message) {
-    console.log(message)
+  function logMessage(message) {
+    console.log('MESSAGE', message)
     scope.chrome.runtime.sendMessage({
       receiver: 'dashboard',
       logMessage: message
@@ -101,6 +101,43 @@ import match from './helpers/match.js'
     }
   }
 
+  var configSync = false
+  var previousServer = false
+  var previousIsEnabled = false
+
+  function syncConfigs(isEnabled, server, store) {
+    if (server === previousServer && previousIsEnabled === isEnabled) {
+      return
+    }
+    previousServer = server
+    previousIsEnabled = isEnabled
+    console.log('Syncing configurations: ', isEnabled)
+    if (configSync !== false) {
+      console.log('--- STOP')
+      configSync.stop()
+    }
+    if (isEnabled && server.startsWith('http')) {
+      console.log('--- START')
+      configSync = new ConfigurationSync(
+        scope.chrome.storage,
+        {
+          saveConfiguration: (id, configuration) => {
+            store.dispatch({ 'type': 'SAVE_CONFIGURATION', id, configuration, sync: true })
+          },
+          addConfiguration: (configuration) => {
+            store.dispatch({ 'type': 'ADD_CONFIGURATION', configuration, sync: true })
+          },
+          setState: (connectionState) => {
+            store.dispatch({ 'type': 'SET_CONNECTION_STATE', connectionState })
+          }
+        },
+        server,
+        logMessage
+      )
+      configSync.start()
+    }
+  }
+
   scope.chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     if (request.receiver && request.receiver === 'background') {
       if (typeof request.count === 'number' && typeof sender.tab === 'object' && typeof sender.tab.id === 'number') {
@@ -157,6 +194,7 @@ import match from './helpers/match.js'
     webRequestHook: false,
     remoteSync: false,
     debugBox: false,
+    configSync: false,
     // This is only a soft toggle, since the user can turn it on and off directly in the popup
     onlyShowAvailableConfigurations: true,
     experimental_withTemplateEngine: false
@@ -183,6 +221,7 @@ import match from './helpers/match.js'
       optionalFeatures: defaultsForOptionalFeatures,
       debugMode: false,
       monkeyInterval: 100,
+      demoMonkeyServer: '',
       remoteConnections: []
     },
     monkeyID: uuidV4()
@@ -192,6 +231,8 @@ import match from './helpers/match.js'
     // currentView is not persistent but should be defined to avoid
     // issues rendering the UI.
     state.currentView = 'welcome'
+
+    state.connectionState = 'unknown'
 
     state.settings.liveMode = false
 
@@ -208,21 +249,7 @@ import match from './helpers/match.js'
 
     hookIntoWebRequests(store.getState().settings.optionalFeatures.webRequestHook, store.getState().configurations.filter(c => c.enabled).length > 0)
 
-    /*
-    var sync = new ConfigurationSync(
-      scope.chrome.storage,
-      {
-        saveConfiguration: (id, configuration) => {
-          store.dispatch({ 'type': 'SAVE_CONFIGURATION', id, configuration, sync: true })
-        },
-        addConfiguration: (configuration) => {
-          store.dispatch({ 'type': 'ADD_CONFIGURATION', configuration, sync: true })
-        }
-      },
-      'http://localhost:17485'
-    )
-    sync.start()
-    */
+    syncConfigs(store.getState().settings.optionalFeatures.configSync, store.getState().settings.demoMonkeyServer, store)
 
     store.subscribe(function () {
       console.log('Saving changes...')
@@ -239,6 +266,8 @@ import match from './helpers/match.js'
       })
 
       doLiveMode(settings.liveMode)
+
+      syncConfigs(settings.optionalFeatures.configSync, settings.demoMonkeyServer, store)
 
       hookIntoWebRequests(settings.optionalFeatures.webRequestHook, configurations.filter(c => c.enabled).length > 0)
     })

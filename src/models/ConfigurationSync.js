@@ -1,13 +1,14 @@
 import axios from 'axios'
 
 class ConfigurationSync {
-  constructor(storage, actions, remoteUrl) {
+  constructor(storage, actions, remoteUrl, logger = console.log) {
     this.storage = storage
     this.actions = actions
     this.remoteUrl = remoteUrl
     this.started = false
     this.connected = false
     this.backuped_at = 0
+    this.logger = logger
   }
 
   getChanges(olds, news, addMarker = false) {
@@ -33,7 +34,7 @@ class ConfigurationSync {
   }
 
   backup() {
-    console.log('Trying to backup...')
+    this.logger('Trying to backup...')
     this.storage.local.get('configurations', (data) => {
       axios({
         url: `${this.remoteUrl}/backup`,
@@ -56,11 +57,13 @@ class ConfigurationSync {
       console.log('Please disconnect before connecting again.')
       return
     }
-    console.log('Connecting')
+    this.actions.setState('Connecting')
+    this.logger(`Connecting to server ${this.remoteUrl} ...`)
     this.configStream = new EventSource(`${this.remoteUrl}/configuration`)
 
     this.configStream.onopen = () => {
-      console.log('Connection to server opened.')
+      this.logger(`Connection to server ${this.remoteUrl} opened.`)
+      this.actions.setState('Connected')
       this.connectionRetries = 0
       this.connected = true
       this.heartbeat()
@@ -110,7 +113,7 @@ class ConfigurationSync {
   }
 
   initialSync(local, remote) {
-    console.log('Running initial sync ...')
+    this.logger(`Running initial sync with ${this.remoteUrl}`)
     const remoteUpdates = this.getChanges(local, remote, true)
     if (remoteUpdates.length > 0) {
       remoteUpdates.forEach((config) => {
@@ -141,13 +144,14 @@ class ConfigurationSync {
 
   reconnect(reason) {
     this.disconnect()
-    console.log('Trying to reconnect', reason)
+    this.logger(`Trying to reconnect: ${reason}`)
 
     if (this.connectionRetries < 10) {
       setTimeout(() => this.connect(), (2 ** this.connectionRetries) * 100)
       this.connectionRetries++
     } else {
-      console.log('Could not reach server after 10 retries, stopping.')
+      this.logger('Could not reach server after 10 retries, stopping.')
+      this.actions.setState('Failed')
     }
   }
 
@@ -157,6 +161,7 @@ class ConfigurationSync {
     }
     this.connected = false
     clearTimeout(this.heartbeatTimer)
+    this.actions.setState('Disconnected')
   }
 
   stop() {

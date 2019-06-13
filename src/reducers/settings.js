@@ -39,6 +39,11 @@ const settings = function (state = '', action) {
         ...state,
         monkeyInterval: action.monkeyInterval
       }
+    case 'SET_DEMO_MONKEY_SERVER':
+      return {
+        ...state,
+        demoMonkeyServer: action.demoMonkeyServer
+      }
     case 'SET_BASE_TEMPLATE':
       return {
         ...state,

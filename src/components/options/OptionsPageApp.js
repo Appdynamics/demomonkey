@@ -16,6 +16,7 @@ class App extends React.Component {
     actions: PropTypes.objectOf(PropTypes.func).isRequired,
     configurations: PropTypes.arrayOf(PropTypes.object).isRequired,
     currentView: PropTypes.string.isRequired,
+    connectionState: PropTypes.string.isRequired,
     settings: PropTypes.object.isRequired
   }
 
@@ -116,16 +117,11 @@ class App extends React.Component {
   }
 
   setMonkeyInterval(interval) {
-    console.log(interval)
     this.props.actions.setMonkeyInterval(interval)
   }
 
-  saveConnection(connection) {
-    this.props.actions.addConnection(connection)
-  }
-
-  removeConnection(key) {
-    this.props.actions.removeConnection(key)
+  setDemoMonkeyServer(value) {
+    this.props.actions.setDemoMonkeyServer(value)
   }
 
   getCurrentView() {
@@ -135,11 +131,11 @@ class App extends React.Component {
       case 'settings':
         return <Settings settings={this.props.settings}
           configurations={this.props.configurations}
+          connectionState={this.props.connectionState}
           onToggleOptionalFeature={(feature) => this.toggleOptionalFeature(feature)}
           onSetBaseTemplate={(baseTemplate) => this.setBaseTemplate(baseTemplate)}
           onSetMonkeyInterval={(event) => this.setMonkeyInterval(event.target.value)}
-          onConnected={(connection) => this.saveConnection(connection)}
-          onDisconnected={(key) => this.removeConnection(key)}/>
+          onSetDemoMonkeyServer={(value) => this.setDemoMonkeyServer(value)}/>
       case 'configuration':
         var configuration = this.getConfiguration(segments[1])
         console.log(configuration)
@@ -179,7 +175,7 @@ class App extends React.Component {
 const OptionsPageApp = connect(
   // map state to props
   state => {
-    return { configurations: state.configurations, currentView: state.currentView, settings: state.settings }
+    return { configurations: state.configurations, currentView: state.currentView, connectionState: state.connectionState, settings: state.settings }
   },
   // map dispatch to props
   dispatch => ({
@@ -189,6 +185,9 @@ const OptionsPageApp = connect(
       },
       setMonkeyInterval: (monkeyInterval) => {
         dispatch({ 'type': 'SET_MONKEY_INTERVAL', monkeyInterval })
+      },
+      setDemoMonkeyServer: (demoMonkeyServer) => {
+        dispatch({ 'type': 'SET_DEMO_MONKEY_SERVER', demoMonkeyServer })
       },
       toggleConfiguration: (id) => {
         dispatch({ 'type': 'TOGGLE_CONFIGURATION', id: id })
@@ -207,12 +206,6 @@ const OptionsPageApp = connect(
       },
       toggleOptionalFeature: (optionalFeature) => {
         dispatch({ 'type': 'TOGGLE_OPTIONAL_FEATURE', optionalFeature })
-      },
-      addConnection: (connection) => {
-        dispatch({ 'type': 'ADD_CONNECTION', connection })
-      },
-      removeConnection: (key) => {
-        dispatch({ 'type': 'REMOVE_CONNECTION', key })
       }
     }
   }))(App)
