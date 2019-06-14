@@ -55,11 +55,6 @@ class App extends React.Component {
           e.preventDefault()
           chrome.runtime.openOptionsPage()
         }} label="Dashboard"/>
-        <Pane link={(e) => {
-          e.preventDefault()
-          this.toggleLiveMode()
-          window.close()
-        }} label={this.props.settings.liveMode === true ? 'Stop Live Demo' : 'Start Live Demo'} />
       </Tabs>
     </div>
   }

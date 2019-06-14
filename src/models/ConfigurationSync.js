@@ -7,7 +7,6 @@ class ConfigurationSync {
     this.remoteUrl = remoteUrl
     this.started = false
     this.connected = false
-    this.backuped_at = 0
     this.logger = logger
   }
 
@@ -34,17 +33,29 @@ class ConfigurationSync {
   }
 
   backup() {
-    this.logger('Trying to backup...')
-    this.storage.local.get('configurations', (data) => {
-      axios({
-        url: `${this.remoteUrl}/backup`,
-        method: 'POST',
-        data: data.configurations}
-      ).then(response => {
-        console.log(response.data.created_at)
-        this.backuped_at = response.data.created_at
-      }).catch(error => console.log(error))
+    axios({
+      url: `${this.remoteUrl}/latestBackup`
+    }).then(response => {
+      if (response.data.created_at + 86400000 > Date.now()) {
+        console.log('No backup necessary.')
+        return
+      }
+      this.logger('Trying to backup...')
+      this.storage.local.get('configurations', (data) => {
+        axios({
+          url: `${this.remoteUrl}/backup`,
+          method: 'POST',
+          data: data.configurations
+        }).then(response => {
+          this.logger(`Remote backup saved at ${this.remoteUrl}`)
+        }).catch(error => {
+          this.logger(`Backup failed: ${error.toString()}`)
+        })
+      })
+    }).catch(error => {
+      this.logger(`Backup failed: ${error.toString()}`)
     })
+    this.backupTimer = setTimeout(() => this.backup(), 86400000)
   }
 
   heartbeat() {
@@ -68,10 +79,7 @@ class ConfigurationSync {
       this.connected = true
       this.heartbeat()
 
-      console.log(this.backuped_at, Date.now())
-      if (this.backuped_at + 86400000 < Date.now()) {
-        this.backup()
-      }
+      this.backup()
     }
 
     this.configStream.addEventListener('heartbeat', (e) => {
@@ -161,6 +169,7 @@ class ConfigurationSync {
     }
     this.connected = false
     clearTimeout(this.heartbeatTimer)
+    clearTimeout(this.backupTimer)
     this.actions.setState('Disconnected')
   }
 

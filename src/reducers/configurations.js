@@ -48,6 +48,10 @@ const configurations = function (state = [], action) {
         i.id !== action.id
       ) */
     case 'ADD_CONFIGURATION':
+      // In the case of remote sync we have to protect ourselves against re-insertion
+      if (action.sync === true && state.findIndex(c => c.id === action.configuration.id) !== -1) {
+        return state
+      }
       return [
         ...state,
         configuration(undefined, action)

@@ -119,7 +119,9 @@ class Settings extends React.Component {
       <button className="save-button" onClick={() => this.clearRemoteLocation()}>Clear</button>
       (Connection: {this.props.connectionState})
       <div style={{color: 'red'}}>{ this.state.remoteLocationError !== null ? this.state.remoteLocationError : ''}</div>
-      <p>Demo Monkey Server keeps backups of your configurations. You can find them at <a href={backupLocation} target="_blank" rel="noopener noreferrer">{backupLocation}</a></p>
+      { this.state.remoteLocation === '' ? ''
+        : <p>Demo Monkey Server keeps backups of your configurations. You can find them at <a href={backupLocation} target="_blank" rel="noopener noreferrer">{backupLocation}</a></p>
+      }
     </div>
   }
 
