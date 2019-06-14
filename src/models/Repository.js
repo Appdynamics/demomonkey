@@ -16,6 +16,10 @@ class Repository {
     return new Configuration('', null, false, {})
   }
 
+  getNames() {
+    return Object.keys(this.configurations)
+  }
+
   hasByName(name) {
     if (typeof this.configurations[name] === 'object') {
       return true

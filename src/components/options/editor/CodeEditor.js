@@ -1,20 +1,28 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import AceEditor from 'react-ace'
+import brace from 'brace'
+import Repository from '../../../models/Repository'
 
-import 'brace/theme/xcode'
-import './ace/mnky'
-import 'brace/ext/language_tools'
+import autocomplete from './ace/autocomplete.js'
+
 import 'brace/ext/searchbox'
+import 'brace/theme/xcode'
+import 'brace/ext/language_tools'
+import './ace/mnky'
+
+var langTools = brace.acequire('ace/ext/language_tools')
 
 class CodeEditor extends React.Component {
   constructor(props) {
     super(props)
     this.bound = false
+    autocomplete(langTools, props.repository)
   }
 
   static propTypes = {
     value: PropTypes.string.isRequired,
+    repository: PropTypes.instanceOf(Repository).isRequired,
     onChange: PropTypes.func.isRequired,
     onAutoSave: PropTypes.func.isRequired,
     readOnly: PropTypes.bool,
@@ -54,7 +62,7 @@ class CodeEditor extends React.Component {
       readOnly = {this.props.readOnly === true}
       className = {this.props.readOnly === true ? 'disabled' : ''}
       setOptions={{
-        enableBasicAutocompletion: this.props.editorAutocomplete,
+        enableBasicAutocompletion: false,
         enableLiveAutocompletion: this.props.editorAutocomplete
       }}
       editorProps={{$blockScrolling: 'Infinity'}}
@@ -65,7 +73,6 @@ class CodeEditor extends React.Component {
           bindKey: {win: 'Enter', mac: 'Enter'},
           exec: (editor) => {
             editor.insert('\n')
-            console.log('AUTOSAVE')
             this.props.onAutoSave(event)
           }
         }

@@ -192,6 +192,8 @@ class Editor extends React.Component {
 
     var hotkeyOptions = Array.from(Array(9).keys()).map(x => ({ value: x + 1, label: '#' + (x + 1) }))
 
+    var autosave = current.id === 'new' ? false : this.props.autoSave
+
     return (
       <div className="editor">
         <div className="title">
@@ -214,11 +216,11 @@ class Editor extends React.Component {
         </div>
         <Tabs selected={0}>
           <Pane label="Configuration" id="current-configuration-editor">
-            <CodeEditor value={current.content}
+            <CodeEditor value={current.content} repository={this.props.repository}
               onChange={(content) => this.handleUpdate('content', content)}
               readOnly={current.readOnly === true}
               annotations={(content) => this._buildAnnotations(content)}
-              onAutoSave={(event) => this.props.autoSave ? this.handleClick(event, 'save') : event.preventDefault() }
+              onAutoSave={(event) => autosave ? this.handleClick(event, 'save') : event.preventDefault() }
               editorAutocomplete={this.props.editorAutocomplete}/>
           </Pane>
           <Pane label="Variables">

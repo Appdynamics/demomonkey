@@ -161,7 +161,7 @@ class Settings extends React.Component {
             <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('adrumTracking')} value={this.props.settings.optionalFeatures.adrumTracking}/><label><b>Allow browser monitoring.</b> DemoMonkey uses AppDynamics End-User Monitoring to analyze user behavior. You need to reload your browser window after changing this value!</label>
           </div>
           <div className="toggle-group" id="toggle-editorAutocomplete">
-            <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('editorAutocomplete')} value={this.props.settings.optionalFeatures.editorAutocomplete}/><label><b>Autocomplete on existing words.</b> The editor for configurations will display an auto completion providing words that are already existing within your configuration.</label>
+            <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('editorAutocomplete')} value={this.props.settings.optionalFeatures.editorAutocomplete}/><label><b>Autocomplete.</b> The editor for configurations will display an auto completion for commands, options & imports.</label>
           </div>
           <div className="toggle-group" id="toggle-onlyShowAvailableConfigurations">
             <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('onlyShowAvailableConfigurations')} value={this.props.settings.optionalFeatures.onlyShowAvailableConfigurations}/><label><b>Only show available configurations.</b> Set the default value for the popup toggle, which hides configurations that are not available for the current url.</label>
@@ -170,7 +170,7 @@ class Settings extends React.Component {
             <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('inDevTools')} value={this.props.settings.optionalFeatures.inDevTools}/><label><b>Integrate with Chrome Dev Tools.</b> Turn this option on to see the DemoMonkey dashboard within the Chrome Developer Toolbar.</label>
           </div>
           <div className="toggle-group" id="toggle-webRequestHook">
-            <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('webRequestHook')} value={this.props.settings.optionalFeatures.webRequestHook}/><label><b>Hook into Web Requests.</b> Turn this feature on, if you want to use the commands !delayURL and !redirectURL. This will allow DemoMonkey to hook into web requests.</label>
+            <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('webRequestHook')} value={this.props.settings.optionalFeatures.webRequestHook}/><label><b>Hook into Web Requests.</b> Turn this feature on, if you want to use the commands !delayUrl, !blockUrl and !redirectUrl. This will allow DemoMonkey to hook into web requests.</label>
           </div>
           <div className="toggle-group" id="toggle-debugBox">
             <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('debugBox')} value={this.props.settings.optionalFeatures.debugBox}/><label><b>Debug Box.</b> Turn this feature on, to show a debug box with statistics when running demo monkey in <i>debug mode</i> </label>
