@@ -115,6 +115,11 @@ class Monkey {
 
   addUndo(arr) {
     if (this.withUndo) {
+      // Simple protection against loops that fill up the undo array.
+      if (this.undo.length > 100000) {
+        console.log('Too many undo elements, disabling undo feature.')
+        this.withUndo = false
+      }
       this.undo = this.undo.concat(arr)
     }
     if (this.withDebug) {
