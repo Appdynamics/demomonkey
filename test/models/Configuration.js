@@ -23,8 +23,8 @@ var configurationWithBlacklist = new Configuration('@blacklist = div')
 var configurationWithWhitelist = new Configuration('@whitelist = style')
 var configurationWithVariable = new Configuration('$a = default\rx = $a', null, true, { a: 'v' })
 var configurationWithUnsetVariable = new Configuration('$a = default\rv = $a', null, true, {})
-var configurationWithSharedPrefixVariable = new Configuration('$a = a1\r$ab = a2\rdefault = $ab', null, true, { a: 'v', ab: 'v2' })
-var configurationWithImport = new Configuration('+Cities')
+var configurationWithSharedPrefixVariable = new Configuration('[Section]\r[Section.SubSection]\r$a = a1\r$ab = a2\rdefault = $ab', null, true, { a: 'v', ab: 'v2' })
+var configurationWithImport = new Configuration('[Section]\r+Cities')
 
 describe('Configuration', function () {
   describe('#getVariables', function () {

@@ -85,12 +85,14 @@ class App extends React.Component {
   }
 
   getRepository() {
-    var configurations = this.props.configurations.reduce(function (repo, rawConfig) {
+    return this._repo
+  }
+
+  updateRepository() {
+    this._repo = new Repository(this.props.configurations.reduce(function (repo, rawConfig) {
       repo[rawConfig.name] = new Configuration(rawConfig.content)
       return repo
-    }, {})
-
-    return new Repository(configurations)
+    }, {}))
   }
 
   getConfiguration(id) {
@@ -127,6 +129,8 @@ class App extends React.Component {
   getCurrentView() {
     var segments = this.props.currentView.split('/')
 
+    this.updateRepository()
+
     switch (segments[0]) {
       case 'settings':
         return <Settings settings={this.props.settings}
@@ -138,8 +142,7 @@ class App extends React.Component {
           onSetDemoMonkeyServer={(value) => this.setDemoMonkeyServer(value)}/>
       case 'configuration':
         var configuration = this.getConfiguration(segments[1])
-        console.log(configuration)
-        return <Editor repository={this.getRepository()} currentConfiguration={configuration}
+        return <Editor getRepository={() => this.getRepository()} currentConfiguration={configuration}
           autoSave={this.props.settings.optionalFeatures.autoSave}
           saveOnClose={this.props.settings.optionalFeatures.saveOnClose}
           withTemplateEngine={this.props.settings.optionalFeatures.experimental_withTemplateEngine}

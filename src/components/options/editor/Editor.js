@@ -4,7 +4,6 @@ import Pane from '../../shared/Pane'
 import Variable from './Variable'
 import CodeEditor from './CodeEditor'
 import Configuration from '../../../models/Configuration'
-import Repository from '../../../models/Repository'
 import PropTypes from 'prop-types'
 import Mousetrap from 'mousetrap'
 import showdown from 'showdown'
@@ -15,7 +14,7 @@ import ToggleButton from 'react-toggle-button'
 class Editor extends React.Component {
   static propTypes = {
     currentConfiguration: PropTypes.object.isRequired,
-    repository: PropTypes.instanceOf(Repository).isRequired,
+    getRepository: PropTypes.func.isRequired,
     onSave: PropTypes.func.isRequired,
     onCopy: PropTypes.func.isRequired,
     onDownload: PropTypes.func.isRequired,
@@ -86,7 +85,7 @@ class Editor extends React.Component {
           location: window.location
         }
       }
-      var configuration = new Configuration(this.state.currentConfiguration.content, this.props.repository,
+      var configuration = new Configuration(this.state.currentConfiguration.content, this.props.getRepository(),
         true, this.state.currentConfiguration.values, templateEngineProperties)
 
       if (node) {
@@ -152,7 +151,7 @@ class Editor extends React.Component {
       }
 
       // Check if an imported configuration is available
-      if (line.startsWith('+') && line.length > 1 && !this.props.repository.hasByName(line.substring(1))) {
+      if (line.startsWith('+') && line.length > 1 && !this.props.getRepository().hasByName(line.substring(1))) {
         result.push({row: rowIdx, column: 0, text: `There is no configuration called "${line.substring(1)}", this line will be ignored.`, type: 'warning'})
       }
 
@@ -175,7 +174,7 @@ class Editor extends React.Component {
   render() {
     var current = this.state.currentConfiguration
     var hiddenIfNew = current.id === 'new' ? { display: 'none' } : {}
-    var tmpConfig = (new Configuration(current.content, this.props.repository, false, current.values))
+    var tmpConfig = (new Configuration(current.content, this.props.getRepository(), false, current.values))
     var variables = tmpConfig.getVariables()
 
     var showTemplateWarning = tmpConfig.isTemplate() || tmpConfig.isRestricted() ? 'no-warning-box' : 'warning-box'
@@ -216,7 +215,7 @@ class Editor extends React.Component {
         </div>
         <Tabs selected={0}>
           <Pane label="Configuration" id="current-configuration-editor">
-            <CodeEditor value={current.content} repository={this.props.repository}
+            <CodeEditor value={current.content} getRepository={this.props.getRepository}
               onChange={(content) => this.handleUpdate('content', content)}
               readOnly={current.readOnly === true}
               annotations={(content) => this._buildAnnotations(content)}

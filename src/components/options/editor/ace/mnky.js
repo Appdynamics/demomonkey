@@ -32,7 +32,7 @@ ace.define("ace/mode/mnky_highlight_rules", ["require", "exports", "module", "ac
         }]
       }, {
         token: ['variable.mnky'],
-        regex: '(\\$[a-zA-Z0-9]+)'
+        regex: '(\\${?[a-zA-Z0-9]+)}?'
       }, {
         token: ['constant.library.mnky', 'text', 'punctuation.separator.key-value.mnky'],
         regex: '^(@[^=]+)(\\s*)(=)?'
@@ -176,3 +176,9 @@ ace.define("ace/mode/mnky", ["require", "exports", "module", "ace/lib/oop", "ace
 
   exports.Mode = Mode;
 });
+
+/*ace.define("ace/snippets/mnky",["require","exports","module"],function(e,t,n){
+  "use strict";
+  t.snippetText=require('./mnky.snippets')
+  t.scope="mnky"
+})*/

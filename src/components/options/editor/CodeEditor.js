@@ -1,28 +1,25 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import AceEditor from 'react-ace'
-import brace from 'brace'
-import Repository from '../../../models/Repository'
 
 import autocomplete from './ace/autocomplete.js'
 
+import 'brace/ext/language_tools'
 import 'brace/ext/searchbox'
 import 'brace/theme/xcode'
-import 'brace/ext/language_tools'
-import './ace/mnky'
 
-var langTools = brace.acequire('ace/ext/language_tools')
+import './ace/mnky'
 
 class CodeEditor extends React.Component {
   constructor(props) {
     super(props)
     this.bound = false
-    autocomplete(langTools, props.repository)
+    autocomplete(props.getRepository)
   }
 
   static propTypes = {
     value: PropTypes.string.isRequired,
-    repository: PropTypes.instanceOf(Repository).isRequired,
+    getRepository: PropTypes.func.isRequired,
     onChange: PropTypes.func.isRequired,
     onAutoSave: PropTypes.func.isRequired,
     readOnly: PropTypes.bool,
@@ -61,10 +58,9 @@ class CodeEditor extends React.Component {
       mode="mnky"
       readOnly = {this.props.readOnly === true}
       className = {this.props.readOnly === true ? 'disabled' : ''}
-      setOptions={{
-        enableBasicAutocompletion: false,
-        enableLiveAutocompletion: this.props.editorAutocomplete
-      }}
+      enableBasicAutocompletion={true}
+      enableLiveAutocompletion={this.props.editorAutocomplete}
+      enableSnippets={false}
       editorProps={{$blockScrolling: 'Infinity'}}
       name="contentarea"
       commands={[

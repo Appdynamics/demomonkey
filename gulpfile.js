@@ -24,7 +24,7 @@ function compile(file, withWatchify = false) {
   var bundler = browserify('./src/' + file + '.js', watchify.args
   ).transform(stringify, {
     appliesTo: {
-      includeExtensions: ['.mnky', '.md']
+      includeExtensions: ['.mnky', '.md', '.snippets']
     }
   })
 
@@ -59,7 +59,7 @@ gulp.task('watch-background', compile('background', true))
 
 gulp.task('watch', function () {
   gulp.watch(['styles/**/*.less'], gulp.series('styles'))
-  gulp.watch(['src/**/*.js'], gulp.parallel('watch-app', 'watch-monkey', 'watch-background'))
+  gulp.watch(['src/**/*.js', 'src/**/*.snippets'], gulp.parallel('watch-app', 'watch-monkey', 'watch-background'))
   compile('app', true)
   compile('monkey', true)
   compile('background', true)

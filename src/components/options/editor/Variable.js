@@ -26,7 +26,6 @@ class Variable extends React.Component {
       <AceEditor height="4.5em"
         name={this.props.variable.name}
         minLines={1}
-        maxLines="Infinity"
         theme="textmate"
         mode="html"
         highlightActiveLine={false}
@@ -35,6 +34,7 @@ class Variable extends React.Component {
         value={this.props.variable.value}
         ref={(c) => { this.editor = c }}
         onChange={(event) => this.updateVariable(event)}
+        editorProps={{$blockScrolling: 'Infinity'}}
       />
       <div className="help">{this.props.variable.description}</div>
     </div>

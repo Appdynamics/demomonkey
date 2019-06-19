@@ -73,7 +73,7 @@ Outside of namespaces you can always use the following commands:
 - **!delayUrl(url) = seconds**: Delay a url by the given number of seconds
 - **!blockUrl(url)**: Block access to url
 - **!redirectUrl(url) = otherurl**: Redirect url to otherurl
-- **!replaceNeighbor(word, replacement, nthParent, cssSelector, locationFilter)**: Search for word, walk up the DOM tree to the nth parent and apply a css selector to find a child where the replacement is applied. This is especially useful to replace labels "close by" a text
+- **!replaceNeighbor(word, nthParent, cssSelector, locationFilter) = replacement**: Search for word, walk up the DOM tree to the nth parent and apply a css selector to find a child where the replacement is applied. This is especially useful to replace labels "close by" a text
 - **!insertBefore(search, nthParent, locationFilter) = html**: Inject HTML before the search word. Use the nthParent parameter to walk up the DOM tree.
 - **!insertAfter(search, nthParent, locationFilter) = html**: Inject HTML after the search word. Use the nthParent parameter to walk up the DOM tree.
 
