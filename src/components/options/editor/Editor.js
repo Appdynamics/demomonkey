@@ -77,21 +77,6 @@ class Editor extends React.Component {
   }
 
   componentDidMount() {
-    setInterval(() => {
-      var node = document.getElementById('testarea')
-      var templateEngineProperties = {
-        enabled: this.props.withTemplateEngine,
-        variables: {
-          location: window.location
-        }
-      }
-      var configuration = new Configuration(this.state.currentConfiguration.content, this.props.getRepository(),
-        true, this.state.currentConfiguration.values, templateEngineProperties)
-
-      if (node) {
-        configuration.apply(node)
-      }
-    }, 150)
     Mousetrap.prototype.stopCallback = function (e, element, combo) {
       if (combo === 'mod+s') {
         return false
@@ -180,13 +165,6 @@ class Editor extends React.Component {
     var showTemplateWarning = tmpConfig.isTemplate() || tmpConfig.isRestricted() ? 'no-warning-box' : 'warning-box'
     var showReadOnlyWarning = current.readOnly === true ? 'warning-box' : 'no-warning-box'
 
-    var shortcuts = require('../../../../SHORTCUTS.md')
-    var converter = new showdown.Converter({
-      'tables': true
-    })
-
-    var shortcutsHtml = converter.makeHtml(shortcuts)
-
     var remoteLocation = current.remoteLocation ? this._buildRemoteLocation(current.connector, current.remoteLocation) : false
 
     var hotkeyOptions = Array.from(Array(9).keys()).map(x => ({ value: x + 1, label: '#' + (x + 1) }))
@@ -230,21 +208,10 @@ class Editor extends React.Component {
               })}
             </div>
           </Pane>
-          <Pane label="Testing">
-            <textarea value={current.test} style={{
-              width: '100%',
-              height: '50%'
-            }} onChange={(event) => this.handleUpdate('test', event.target.value)}/>
-            <textarea value={current.test} id="testarea" className="read-only" readOnly="readOnly" style={{
-              width: '100%',
-              height: '50%'
-            }}/>
-          </Pane>
-          <Pane label="Shortcuts">
-            <div className="scrolling-pane">
-              <div dangerouslySetInnerHTML={{__html: shortcutsHtml}}></div>
-            </div>
-          </Pane>
+          <Pane link={(e) => {
+            e.preventDefault()
+            window.open('https://github.com/Appdynamics/demomonkey/blob/master/SHORTCUTS.md')
+          }} label="Shortcuts"/>
         </Tabs>
       </div>
     )

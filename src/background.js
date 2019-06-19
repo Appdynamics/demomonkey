@@ -33,7 +33,6 @@ import match from './helpers/match.js'
   var liveModeInterval = -1
 
   function doLiveMode(liveMode) {
-    console.log(liveMode)
     if (liveMode && liveModeInterval < 0) {
       var time = 0
       badge.updateTimer(time, selectedTabId)
@@ -85,7 +84,6 @@ import match from './helpers/match.js'
   }
 
   function hookIntoWebRequests(feature, running) {
-    console.log(feature, running, hookedIntoWebRequests)
     if (!hookedIntoWebRequests && feature && running) {
       console.log('Hooking into web requests')
       scope.chrome.webRequest.onBeforeRequest.addListener(
@@ -252,7 +250,14 @@ import match from './helpers/match.js'
     syncConfigs(store.getState().settings.optionalFeatures.configSync, store.getState().settings.demoMonkeyServer, store)
 
     store.subscribe(function () {
-      console.log('Saving changes...')
+      const lastAction = store.getState().lastAction
+
+      console.log(lastAction)
+
+      // updating the current view does not require any updates
+      if (lastAction.type === 'SET_CURRENT_VIEW') {
+        return
+      }
 
       var configurations = store.getState().configurations
 

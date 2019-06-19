@@ -114,11 +114,13 @@ class Configuration {
               value = [value]
             }
 
-            if (content[key] !== true || key.substring(1) === 'template' || key.substring(1) === 'deprecated') {
-              if (result.hasOwnProperty(key.substring(1))) {
-                result[key.substring(1)] = result[key.substring(1)].concat(value)
+            const option = key.substring(1)
+
+            if (content[key] !== true || option === 'template' || option === 'deprecated') {
+              if (result.hasOwnProperty(option) && Array.isArray(result[option])) {
+                result[option] = result[option].concat(value)
               } else {
-                result[key.substring(1)] = value
+                result[option] = value
               }
               return result
             }

@@ -70,6 +70,11 @@ import {Store} from 'react-chrome-redux';
     }
 
     store.subscribe(function () {
+      const lastAction = store.getState().lastAction
+      // updating the current view does not require any updates
+      if (lastAction.type === 'SET_CURRENT_VIEW') {
+        return
+      }
       if (settings.isFeatureEnabled('autoReplace')) {
         restart()
       }
