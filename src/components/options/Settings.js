@@ -105,6 +105,15 @@ class Settings extends React.Component {
       })
   }
 
+  renderSyncToggle() {
+    if (!this.props.settings.optionalFeatures.beta_configSync) {
+      return ''
+    }
+    return <div className="toggle-group" id="toggle-configSync">
+      <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('configSync')} value={this.props.settings.optionalFeatures.configSync}/><label><b>Synchronize Configurations.</b> This this feature on, to synchronize your configurations with an instance of Demo Monkey Server.</label>
+    </div>
+  }
+
   renderSync() {
     if (!this.props.settings.optionalFeatures.configSync) {
       return ''
@@ -175,9 +184,10 @@ class Settings extends React.Component {
           <div className="toggle-group" id="toggle-debugBox">
             <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('debugBox')} value={this.props.settings.optionalFeatures.debugBox}/><label><b>Debug Box.</b> Turn this feature on, to show a debug box with statistics when running demo monkey in <i>debug mode</i> </label>
           </div>
-          <div className="toggle-group" id="toggle-configSync">
-            <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('configSync')} value={this.props.settings.optionalFeatures.configSync}/><label><b>Synchronize Configurations.</b> This this feature on, to synchronize your configurations with an instance of Demo Monkey Server.</label>
+          <div className="toggle-group" id="toggle-beta_configSync" style={{ display: window.location.href.includes('?beta') ? 'flex' : 'none' }}>
+            <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('beta_configSync')} value={this.props.settings.optionalFeatures.beta_configSync}/><label><b>Config Sync Beta.</b> Turn on the option for config sync beta. </label>
           </div>
+          { this.renderSyncToggle() }
           { this.renderSync() }
           <h2>Backup</h2>
           You can always open the <a href="backup.html">backup page</a> to download your files or manipulate your settings. Please use with caution!

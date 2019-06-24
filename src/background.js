@@ -76,7 +76,6 @@ import match from './helpers/match.js'
       const { url, type, action, options, includeRules, excludeRules } = hookedUrls[id]
       // "main_frame", "sub_frame", "stylesheet", "script", "image", "font", "object", "xmlhttprequest", "ping", "csp_report", "media", "websocket", or "other"
       if (new MatchRule(includeRules, excludeRules).test(details.url) && match(details.url, url) && (type === '*' || type.split(',').map(e => e.trim()).includes(details.type))) {
-        console.log(details)
         return Object.assign(acc, hooks[action](options))
       }
       return acc
@@ -192,6 +191,7 @@ import match from './helpers/match.js'
     webRequestHook: false,
     remoteSync: false,
     debugBox: false,
+    beta_configSync: false,
     configSync: false,
     // This is only a soft toggle, since the user can turn it on and off directly in the popup
     onlyShowAvailableConfigurations: true,
