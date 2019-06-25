@@ -45,7 +45,7 @@ describe('Integration', function () {
       return Promise.all([
         base.createConfig('GermanCities', 'San Francisco = Berlin\nSeattle = Köln\n!replaceUrl(*demomonkey*) = https://github.com/Appdynamics/api-commandline-tool'),
         base.createConfig('Test Config', '+GermanCities\n@include = /.*/'),
-        base.createConfig('AppDynamics Config', '@include = /.*/\n@namespace[] = appdynamics\n!replaceFlowmapIcon(ECommerce-Services) = PHP\nECommerce = Selenium')
+        base.createConfig('AppDynamics Config', '@include = /.*/\n@namespace[] = appdynamics\n!replaceFlowmapIcon(ECommerce-Services) = php\nECommerce = Selenium')
       ])
     })
 
