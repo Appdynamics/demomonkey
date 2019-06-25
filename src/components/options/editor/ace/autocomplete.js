@@ -1,6 +1,8 @@
 /* eslint no-template-curly-in-string: "off" */
 import brace from 'brace'
 import 'brace/ext/language_tools'
+import colors from 'color-name'
+import ReplaceFlowmapIcon from '../../../../commands/appdynamics/ReplaceFlowmapIcon'
 
 var langTools = brace.acequire('ace/ext/language_tools')
 var { snippetManager } = (brace.acequire('ace/snippets'))
@@ -83,6 +85,7 @@ function autocomplete(getRepository) {
   langTools.setCompleters([{
     identifierRegexps: [/[a-zA-Z_0-9$!%/@+\-\u00A2-\uFFFF]/],
     getCompletions: function (editor, session, pos, prefix, callback) {
+      console.log(prefix)
       if (prefix.startsWith('%') && pos.column - prefix.length === 0) {
         callback(null, getRepository().getNames().sort().map(c => {
           return {
@@ -132,6 +135,28 @@ function autocomplete(getRepository) {
             meta: 'commands'
           }
         }))
+      } else {
+        // Manage cases that look at the full line, e.g. after a first insert
+        const fullLine = editor.session.getLine(pos.row)
+        const lineToPos = fullLine.substr(0, pos.column - prefix.length)
+        // replaceFlowmapIcon provides some values.
+        console.log(fullLine, lineToPos)
+        if (fullLine.match(/^!(?:appdynamics.)?replaceFlowmapIcon\(.*\)\s*=\s*/)) {
+          callback(null, Object.keys(ReplaceFlowmapIcon.icons).map(value => { return {value, meta: 'icon'} }))
+        } else if (lineToPos.match(/^!(?:appdynamics.)?hideApplication\($/)) {
+          callback(null, [
+            'AD-DevOps', 'AD-Travel', 'Online-Retail', 'AD-Financial', 'Movie Tickets Online', 'AD-DevOps-Offers', 'ECommerce',
+            'AD-MovieTickets-Core', 'ECommerce-Fulfillment', 'AD-Financial-Cloud', 'SAP-ERP'
+          ].sort().map(value => { return {value, meta: 'application'} }))
+        } else if (lineToPos.match(/^!(?:appdynamics.)?recolorDashboard\($/) || fullLine.match(/^!(?:appdynamics.)?recolorDashboard\(.*\)\s*=\s*/)) {
+          callback(null, Object.keys(colors).concat([
+            'ad-purple',
+            'ad-cyan',
+            'ad-blue',
+            'ad-green'
+          ]).sort().map(value => { return {value, meta: 'color'} }))
+        }
+        console.log('OUT')
       }
     }
   }])

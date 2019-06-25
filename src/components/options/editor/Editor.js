@@ -154,7 +154,7 @@ class Editor extends React.Component {
 
       if (line.includes('=') && !['!', '@', '+', ';', '#', '[', '$'].includes(line.charAt(0))) {
         const [ lhs, rhs ] = line.split(/=(.+)/, 2).map(e => e.trim())
-        if (rhs.includes(lhs)) {
+        if (rhs && rhs.includes(lhs)) {
           result.push({row: rowIdx, column: 0, text: 'Your replacement includes the search pattern, which will lead to a replacement loop.', type: 'warning'})
         }
       }
