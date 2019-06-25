@@ -5,7 +5,8 @@ import TimeAgo from 'react-timeago'
 class ItemHeader extends React.Component {
   static propTypes = {
     style: PropTypes.object.isRequired,
-    node: PropTypes.object.isRequired
+    node: PropTypes.object.isRequired,
+    onDelete: PropTypes.func.isRequired
   }
 
   formatTime(value, unit, suffix, date, defaultFormatter) {
@@ -25,7 +26,13 @@ class ItemHeader extends React.Component {
           <a href={'#configuration/' + this.props.node.id} onClick={(event) => event.preventDefault()}>{this.props.node.name}</a>
         </div>
         <div className="configuration-updated-at" style={style.timestamp}>
-          <TimeAgo formatter={(value, unit, suffix, date, defaultFormatter) => this.formatTime(value, unit, suffix, date, defaultFormatter)} date={this.props.node.updated_at} minPeriod="60" />
+          { this.props.node.updated_at
+            ? <TimeAgo formatter={(value, unit, suffix, date, defaultFormatter) => this.formatTime(value, unit, suffix, date, defaultFormatter)} date={this.props.node.updated_at} minPeriod="60" />
+            : ''
+          }
+        </div>
+        <div className="configuration-hover-delete">
+          <button onClick={() => this.props.onDelete(event, this.props.node)}>x</button>
         </div>
       </div>
     )

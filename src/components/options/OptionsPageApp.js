@@ -77,7 +77,14 @@ class App extends React.Component {
           action: () => {
             Popup.close()
             this.props.actions.setCurrentView('welcome')
-            this.props.actions.deleteConfiguration(configuration.id)
+            // Delete all configurations within it if a directory is given
+            if (configuration.nodeType === 'directory') {
+              configuration.children.forEach(c => {
+                this.props.actions.deleteConfigurationByPrefix(configuration.id.split('').reverse().join(''))
+              })
+            } else {
+              this.props.actions.deleteConfiguration(configuration.id)
+            }
           }
         }]
       }
@@ -166,7 +173,11 @@ class App extends React.Component {
     return <div className="main-grid">
       <Popup className="popup" btnClass="popup__btn" />
       <div className="navigation">
-        <Navigation onNavigate={(target) => this.navigateTo(target)} onUpload={(configuration) => this.addConfiguration(configuration)} items={configurations} active={activeItem} />
+        <Navigation onNavigate={(target) => this.navigateTo(target)}
+          onUpload={(configuration) => this.addConfiguration(configuration)}
+          onDelete={(configuration) => this.deleteConfiguration(configuration)}
+          items={configurations}
+          active={activeItem} />
       </div>
       <div className="current-view">
         {this.getCurrentView()}
@@ -200,6 +211,9 @@ const OptionsPageApp = connect(
       },
       deleteConfiguration: (id) => {
         dispatch({ 'type': 'DELETE_CONFIGURATION', id })
+      },
+      deleteConfigurationByPrefix: (prefix) => {
+        dispatch({ 'type': 'DELETE_CONFIGURATION_BY_PREFIX', prefix })
       },
       addConfiguration: (configuration) => {
         return dispatch({ 'type': 'ADD_CONFIGURATION', configuration })

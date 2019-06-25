@@ -151,6 +151,13 @@ class Editor extends React.Component {
       if ((!line.startsWith(';') && line.includes(';')) || (!line.startsWith('#') && line.includes('#'))) {
         result.push({row: rowIdx, column: 0, text: 'Semi-colon (;) and hash (#) are interpreted as inline comments.\nMake sure to quote your patterns to use them properly.', type: 'info'})
       }
+
+      if (line.includes('=') && !['!', '@', '+', ';', '#', '[', '$'].includes(line.charAt(0))) {
+        const [ lhs, rhs ] = line.split(/=(.+)/, 2).map(e => e.trim())
+        if (rhs.includes(lhs)) {
+          result.push({row: rowIdx, column: 0, text: 'Your replacement includes the search pattern, which will lead to a replacement loop.', type: 'warning'})
+        }
+      }
     })
 
     return result

@@ -1,6 +1,15 @@
 const uuidV4 = require('uuid/v4')
 
 const configuration = (state, action) => {
+  console.log(state, action)
+  if (state && action.type === 'DELETE_CONFIGURATION_BY_PREFIX' && state.name.startsWith(action.prefix)) {
+    return {
+      ...state,
+      enabled: false,
+      updated_at: Date.now(),
+      deleted_at: Date.now()
+    }
+  }
   if (state && state.id !== action.id) {
     return state
   }
@@ -40,6 +49,7 @@ const configurations = function (state = [], action) {
     case 'TOGGLE_CONFIGURATION':
     case 'SAVE_CONFIGURATION':
     case 'DELETE_CONFIGURATION':
+    case 'DELETE_CONFIGURATION_BY_PREFIX':
       return state.map(i =>
         configuration(i, action)
       )

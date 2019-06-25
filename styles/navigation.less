@@ -36,6 +36,30 @@
       text-decoration: underline;
     }
 
+    .configuration-hover-delete {
+      position: absolute;
+      right: 12px;
+      top: 4px;
+
+      &:focus button,
+      &:hover button {
+          box-shadow: none;
+          visibility: visible;
+      }
+
+      & button {
+        background: transparent;
+        border: 0px;
+        color: red;
+        cursor: pointer;
+        font-size: 140%;
+        font-weight: bold;
+        margin: 0px;
+        padding: 0px;
+        visibility: hidden;
+      }
+    }
+
     .configuration-name {
       display: inline-block;
       max-width: 140px;

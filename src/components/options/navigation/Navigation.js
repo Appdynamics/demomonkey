@@ -8,8 +8,6 @@ import merge from 'deepmerge'
 // import NavigationItem from './NavigationItem'
 import { Treebeard, decorators } from 'react-treebeard'
 
-decorators.Header = ItemHeader
-
 function arrayMerge(dst, src, opt) {
   var i = dst.findIndex((e) => e.name === src[0].name && e.nodeType === src[0].nodeType && e.nodeType === 'directory')
   if (i !== -1) {
@@ -27,7 +25,8 @@ class Navigation extends React.Component {
     items: PropTypes.arrayOf(PropTypes.object).isRequired,
     onNavigate: PropTypes.func.isRequired,
     active: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]).isRequired,
-    onUpload: PropTypes.func.isRequired
+    onUpload: PropTypes.func.isRequired,
+    onDelete: PropTypes.func.isRequired
   }
 
   // This implementation is not very performant
@@ -113,7 +112,17 @@ class Navigation extends React.Component {
     this.setState({ cursor: node, active: node.id })
   }
 
+  onDelete(event, node) {
+    event.preventDefault()
+    console.log(node)
+    this.props.onDelete(node)
+  }
+
   render() {
+    decorators.Header = (props) => {
+      return <ItemHeader style={props.style} node={props.node} onDelete={(event, node) => this.onDelete(event, node)} />
+    }
+
     return (
       <div>
         <div className="navigation-header">
