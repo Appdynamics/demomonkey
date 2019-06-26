@@ -11,6 +11,11 @@ describe('Ini', function () {
       assert.deepEqual(new Ini('a = b\r[section]\ra=b\r;comment\rx = y').parse(), { a: 'b', section: { a: 'b', x: 'y' } })
     })
 
+    it('allows = to be escaped', function () {
+      assert.deepEqual(new Ini('a = b = c').parse(), { a: 'b = c' })
+      assert.deepEqual(new Ini('a \\= b = c').parse(), { 'a ≠ b': 'c' })
+    })
+
     it('parses an ini file with nunjuck templates', function () {
       assert.deepEqual(new Ini('{{ "a" | title }} = b').parse({enabled: true}), { A: 'b' })
 
