@@ -10,6 +10,7 @@ class SearchAndReplace extends Command {
     this.search = search
     this.replace = replace
     this.locationFilter = locationFilter
+    this.cssFilter = cssFilter
     this.location = location
   }
 
@@ -18,8 +19,15 @@ class SearchAndReplace extends Command {
       this.location.toString().includes(this.locationFilter)
   }
 
+  _checkCss(target) {
+    if (this.cssFilter === '') {
+      return true
+    }
+    return typeof target !== 'object' || target.parentNode === null || typeof target.parentNode.matches !== 'function' || target.parentNode.matches(this.cssFilter)
+  }
+
   apply(target, key = 'value') {
-    if (!this._checkLocation()) {
+    if (!this._checkLocation() || !this._checkCss(target)) {
       return false
     }
 

@@ -16,6 +16,7 @@ import DelayLink from './appdynamics/DelayLink'
 import BlockUrl from './BlockUrl'
 import DelayUrl from './DelayUrl'
 import ReplaceUrl from './ReplaceUrl'
+import Limit from './Limit'
 import Command from './Command'
 import UndoElement from './UndoElement'
 
@@ -254,6 +255,10 @@ class CommandBuilder {
     if (command === 'overwritePage') {
       var iframeCode = '<head><title>' + parameters[1] + '</title><style>html {height:100%;}</style></head><body style="margin:0;padding:0;width:100%;height:100%;overflow:hidden;"><iframe src="' + value + '" style="width:100%;height:100%"></body>'
       return new OverwriteHTML(parameters[0], '', iframeCode, location)
+    }
+
+    if (command === 'limit') {
+      return new Limit(this.build(parameters[0], value), parameters[1], parameters[2])
     }
 
     // Add new commands above this line.

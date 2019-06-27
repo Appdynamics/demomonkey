@@ -73,5 +73,31 @@ describe('SearchAndReplace', function () {
 
       assert.equal(node.value, 'bsdf')
     })
+
+    it('should only replace a with b if css selector is matched', function () {
+      let node1 = {
+        value: 'asdf',
+        parentNode: {
+          matches: (selector) => {
+            return selector === '.x'
+          }
+        }
+      }
+
+      let node2 = {
+        value: 'asdf',
+        parentNode: {
+          matches: (selector) => {
+            return selector === '.css'
+          }
+        }
+      }
+
+      new SearchAndReplace('a', 'b', '', '.css').apply(node1, 'value')
+      new SearchAndReplace('a', 'b', '', '.css').apply(node2, 'value')
+
+      assert.equal(node1.value, 'asdf')
+      assert.equal(node2.value, 'bsdf')
+    })
   })
 })
