@@ -25,6 +25,7 @@ var configurationWithVariable = new Configuration('$a = default\rx = $a', null, 
 var configurationWithUnsetVariable = new Configuration('$a = default\rv = $a', null, true, {})
 var configurationWithSharedPrefixVariable = new Configuration('[Section]\r[Section.SubSection]\r$a = a1\r$ab = a2\rdefault = $ab', null, true, { a: 'v', ab: 'v2' })
 var configurationWithImport = new Configuration('[Section]\r+Cities')
+var configurationWithCommand = new Configuration('[Section]\r!replace(a) = b\r$x = y\r$z = w\r!replace($x) = $z')
 
 describe('Configuration', function () {
   describe('#getVariables', function () {
@@ -59,6 +60,24 @@ describe('Configuration', function () {
         value: '2',
         description: 'Set y'
       }])
+    })
+    it('configuration with commands should return object 2 variables', function () {
+      assert.deepEqual(configurationWithCommand.getVariables(), [{
+        name: 'x',
+        value: 'y',
+        description: ''
+      }, {
+        name: 'z',
+        value: 'w',
+        description: ''
+      }])
+    })
+  })
+
+  describe('#_getConfiguration', function () {
+    it('should apply variables on commands', function () {
+      const config = configurationWithCommand._getConfiguration()
+      assert.deepEqual(config, [{search: 'a', replace: 'b', locationFilter: '', location: ''}, {search: 'y', 'replace': 'w', location: '', locationFilter: ''}])
     })
   })
 

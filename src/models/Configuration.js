@@ -224,11 +224,16 @@ class Configuration {
           if (typeof content[key] === 'object' && content[key] !== null) {
             return result.concat(Object.keys(content[key]).reduce(filterConfiguration(content[key]), []))
           }
-          var value = variables.reduce((value, variable) => {
+
+          var lhs = variables.reduce((value, variable) => {
+            return variable.apply(value)
+          }, key)
+
+          var rhs = variables.reduce((value, variable) => {
             return variable.apply(value)
           }, content[key])
 
-          result.push(commandBuilder.build(key, value))
+          result.push(commandBuilder.build(lhs, rhs))
 
           return result
         }

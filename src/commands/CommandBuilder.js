@@ -52,6 +52,18 @@ class CommandBuilder {
         return new ReplaceFlowmapIcon(parameters[0], value)
       }
 
+      if (command === 'replaceApplication') {
+        return value === '' || value === true
+          ? this._buildCustomCommand(namespace, 'hideApplication', parameters, value)
+          : new SearchAndReplace(parameters[0], value)
+      }
+
+      if (command === 'replaceBT' || command === 'replaceBusinessTransaction') {
+        return value === '' || value === true
+          ? this._buildCustomCommand(namespace, 'hideBusinessTransaction', parameters, value)
+          : new SearchAndReplace(parameters[0], value)
+      }
+
       if (command === 'hideApplication') {
         return new Group([
           new Hide(parameters[0], 4, 'ads-application-card', '', 'APPS_ALL_DASHBOARD', location),

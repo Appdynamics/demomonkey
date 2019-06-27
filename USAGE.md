@@ -96,6 +96,8 @@ Commands specific to a certain web application are provided via a namespace. Cur
 - **!replaceNodeCount(nodeName) = replacement**: Replace the node count on the flowmap for the node with name nodeName
 - **!recolorDashboard(oldColor, dashboardId) = newColor**: Replace the oldColor with newColor on a dashboard. If provided, only if dashboardId matches.
 - **!setDashboardBackground(dasboardID) = background**: Change the background of a dasbhoard. You can provide an image url or a color. If provided, the background is only replaced if the dasbhoardId matches.
+- **!replaceApplication(app) = replacement**: If replacement is empty, this behaves like !hideApplication, otherwise app is replaced with replacement.
+- **!replaceBusinessTransaction(bt) = replacement**: If replacement is empty, this behaves like !hideBusinessTransaction, otherwise bt is replaced with replacement.
 
 
 ## Variables

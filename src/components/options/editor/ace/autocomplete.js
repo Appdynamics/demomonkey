@@ -42,7 +42,9 @@ function autocomplete(getRepository) {
       {caption: '!replaceMobileScreenshot', snippet: '!replaceMobileScreenshot(${1}) = ${2}'},
       {caption: '!replaceNodeCount', snippet: '!replaceNodeCount(${1}) = ${2}'},
       {caption: '!recolorDashboard', snippet: '!recolorDashboard(${1}, ${2}) = ${3}'},
-      {caption: '!setDashboardBackground', snippet: '!setDashboardBackground(${1}) = ${2}'}
+      {caption: '!setDashboardBackground', snippet: '!setDashboardBackground(${1}) = ${2}'},
+      {caption: '!replaceApplication', snippet: '!replaceApplication(${1}) = ${2}'},
+      {caption: '!replaceBusinessTransaction', snippet: '!replaceBusinessTransaction(${1}) = ${2}'}
     ].sort()
   }
 
@@ -76,7 +78,7 @@ function autocomplete(getRepository) {
     }
     let content = getRepository().findByName(data.configName).rawContent
     if (content.includes('@template')) {
-      snippetManager.insertSnippet(editor, content)
+      snippetManager.insertSnippet(editor, content.replace('@template', ''))
     } else {
       editor.execCommand('insertstring', content)
     }
@@ -143,7 +145,7 @@ function autocomplete(getRepository) {
         console.log(fullLine, lineToPos)
         if (fullLine.match(/^!(?:appdynamics.)?replaceFlowmapIcon\(.*\)\s*=\s*/)) {
           callback(null, Object.keys(ReplaceFlowmapIcon.icons).map(value => { return {value, meta: 'icon'} }))
-        } else if (lineToPos.match(/^!(?:appdynamics.)?hideApplication\($/)) {
+        } else if (lineToPos.match(/^!(?:appdynamics.)?(hide|replace)Application\($/)) {
           callback(null, [
             'AD-DevOps', 'AD-Travel', 'Online-Retail', 'AD-Financial', 'Movie Tickets Online', 'AD-DevOps-Offers', 'ECommerce',
             'AD-MovieTickets-Core', 'ECommerce-Fulfillment', 'AD-Financial-Cloud', 'SAP-ERP'
