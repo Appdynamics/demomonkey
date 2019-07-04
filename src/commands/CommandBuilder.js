@@ -161,9 +161,9 @@ class CommandBuilder {
       if (command === 'replaceNodeCount') {
         if (typeof value === 'string' && ['λ', 'lambda'].includes(value.toLowerCase())) {
           return new Group([
-            new ReplaceNeighbor(parameters[0], '', 2, 'text.adsNodeCountText', '', location),
-            new ReplaceNeighbor(parameters[0], '', 2, 'text.adsNodeCountTextSmall', '', location),
-            new ReplaceNeighbor(parameters[0], 'images/tierTypes/AWSLambda.svg', 2, 'g.adsNodeCountContainer image', '', location, (search, replace, node) => {
+            new ReplaceNeighbor(parameters[0], '', 2, 'text.adsNodeCountText', '', '', location),
+            new ReplaceNeighbor(parameters[0], '', 2, 'text.adsNodeCountTextSmall', '', '', location),
+            new ReplaceNeighbor(parameters[0], 'images/tierTypes/AWSLambda.svg', 2, 'g.adsNodeCountContainer image', '', '', location, (search, replace, node) => {
               // <image transform="translate(-15, -15 )" width="30" height="30" xlink:href=""></image>
               const bg = node.parentElement.querySelector('.adsNodeCountBackground')
               if (bg && bg.style && bg.style.fill !== 'rgb(255, 255, 255)') {
@@ -190,8 +190,8 @@ class CommandBuilder {
           ])
         }
         return new Group([
-          new ReplaceNeighbor(parameters[0], value, 2, 'text.adsNodeCountText', '', location),
-          new ReplaceNeighbor(parameters[0], parseInt(value) === 1 ? 'Node' : 'Nodes', 2, 'text.adsNodeCountTextSmall', '', location)
+          new ReplaceNeighbor(parameters[0], value, 2, 'text.adsNodeCountText', '', '', location),
+          new ReplaceNeighbor(parameters[0], parseInt(value) === 1 ? 'Node' : 'Nodes', 2, 'text.adsNodeCountTextSmall', '', '', location)
         ])
       }
     }
@@ -205,7 +205,7 @@ class CommandBuilder {
     }
 
     if (command === 'replaceNeighbor') {
-      return new ReplaceNeighbor(parameters[0], value, parameters[1], parameters[2], parameters[3], location)
+      return new ReplaceNeighbor(parameters[0], value, parameters[1], parameters[2], parameters[3], parameters[4], location)
     }
 
     if (command === 'insertBefore') {

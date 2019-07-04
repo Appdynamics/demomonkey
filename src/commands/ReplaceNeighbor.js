@@ -2,13 +2,14 @@ import Command from './Command'
 import UndoElement from './UndoElement'
 
 class ReplaceNeighbor extends Command {
-  constructor(search, replace, nthParent, cssSelector, locationFilter = '', location = {}, cb = null) {
+  constructor(search, replace, nthParent, cssSelector, locationFilter = '', property = '', location = {}, cb = null) {
     super()
     this.search = search
     this.replace = replace
     this.nthParent = nthParent
     this.cssSelector = cssSelector
     this.locationFilter = locationFilter
+    this.property = property
     this.location = location
     this.cb = cb
   }
@@ -36,9 +37,17 @@ class ReplaceNeighbor extends Command {
         if (neighbor) {
           if (typeof this.cb === 'function') {
             return this.cb(this.search, this.replace, neighbor)
+          } else if (this.property !== '') {
+            let original = neighbor[this.property]
+            console.log(this.property, neighbor, this.replace, original)
+            if (original !== this.replace) {
+              neighbor[this.property] = this.replace
+              console.log(neighbor, neighbor[this.property])
+              return new UndoElement(neighbor, this.property, original, this.replace)
+            }
           } else if (neighbor.childNodes && neighbor.childNodes.length > 0) {
-            var neighborText = Array.from(neighbor.childNodes).filter(node => node.nodeType === 3)[0]
-            var original = neighborText.data
+            let neighborText = Array.from(neighbor.childNodes).filter(node => node.nodeType === 3)[0]
+            let original = neighborText.data
             if (original !== this.replace) {
               neighborText.data = this.replace
               return new UndoElement(neighborText, 'data', original, this.replace)

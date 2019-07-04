@@ -72,6 +72,7 @@ import match from './helpers/match.js'
   }
 
   function webRequestHook(details) {
+    console.log(details)
     return Object.keys(hookedUrls).reduce((acc, id) => {
       const { url, type, action, options, includeRules, excludeRules } = hookedUrls[id]
       // "main_frame", "sub_frame", "stylesheet", "script", "image", "font", "object", "xmlhttprequest", "ping", "csp_report", "media", "websocket", or "other"

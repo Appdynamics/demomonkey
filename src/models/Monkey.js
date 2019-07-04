@@ -1,15 +1,17 @@
 import Configuration from './Configuration'
 import Repository from './Repository'
 import UndoElement from '../commands/UndoElement'
+import Manifest from './Manifest'
 
 class Monkey {
-  constructor(rawConfigurations, scope, withUndo = true, intervalTime = 100, withTemplateEngine = false, urlManager = false, withDebug = false, withDebugBox = false) {
+  constructor(rawConfigurations, scope, withUndo = true, intervalTime = 100, withTemplateEngine = false, urlManager = false, withDebug = false, withDebugBox = false, withLiveMode = false) {
     this.scope = scope
     this.undo = []
     this.repository = new Repository({})
     this.withUndo = withUndo
     this.withDebug = withDebug
     this.withDebugBox = withDebugBox
+    this.withLiveMode = withLiveMode
     this.avgRunTime = 0
     this.maxRunTime = 0
     this.runCount = 0
@@ -31,6 +33,7 @@ class Monkey {
       return [rawConfig.name, config]
     })
     this.urlManager = urlManager === false ? {add: () => {}, remove: () => {}, clear: () => {}} : urlManager
+    this.manifest = new Manifest()
   }
 
   getUndoLength() {
@@ -39,6 +42,13 @@ class Monkey {
 
   countRunningConfigurations() {
     return this.intervals.length
+  }
+
+  injectMonkeyHead() {
+    if (this.scope.document.head) {
+      this.scope.document.head.dataset.demoMonkeyVersion = this.manifest.version()
+      this.scope.document.head.dataset.demoMonkeyMode = this.withDebug ? 'debug' : (this.withLiveMode ? 'live' : 'unknown')
+    }
   }
 
   injectDebugHelper() {
@@ -99,7 +109,9 @@ class Monkey {
       }
       var e3 = this.scope.document.getElementById('demo-monkey-elements-count')
       if (e3) {
-        e3.innerHTML = sum.join(',')
+        e3.innerHTML = Object.keys(sum).reduce((acc, key) => {
+          return acc.concat(`${key}: ${sum[key]}`)
+        }, []).join(', ')
       }
     }
   }
@@ -122,6 +134,7 @@ class Monkey {
       }
       this.undo = this.undo.concat(arr)
     }
+    this.injectMonkeyHead()
     if (this.withDebug) {
       arr.forEach((undoElement) => {
         if (!undoElement.target) {
@@ -152,17 +165,17 @@ class Monkey {
 
   apply(configuration) {
     var t0 = this.scope.performance.now()
-    var sum = [] // Start with 2 for document.title and the document itself, currently we ignore corner cases
+    var sum = {}
     // Some UIs provide corner cases we want to cover with DemoMonkey for ease of use
     // Most of them are text, that is shortened or split over multiple elements.
     // We do them early, because later modfications may cause problems to get them solved.
     this._cornerCases(configuration)
 
-    sum.push(this._applyOnXpathGroup(configuration, '//body//text()[ normalize-space(.) != ""]', 'text', 'data'))
-    sum.push(this._applyOnXpathGroup(configuration, '//body//input', 'input', 'value'))
-    sum.push(this._applyOnXpathGroup(configuration, '//body//img', 'image', 'src'))
-    sum.push(this._applyOnXpathGroup(configuration, '//body//a', 'link', 'href'))
-    sum.push(this._applyOnXpathGroup(configuration, '//body//div[contains(@class, "ads-dashboard-canvas-pane")]', 'ad-dashboard', 'style'))
+    sum.text = (this._applyOnXpathGroup(configuration, '//body//text()[ normalize-space(.) != ""]', 'text', 'data'))
+    sum.input = (this._applyOnXpathGroup(configuration, '//body//input', 'input', 'value'))
+    sum.image = (this._applyOnXpathGroup(configuration, '//body//img', 'image', 'src'))
+    sum.link = (this._applyOnXpathGroup(configuration, '//body//a', 'link', 'href'))
+    sum.dashboard = (this._applyOnXpathGroup(configuration, '//body//div[contains(@class, "ads-dashboard-canvas-pane")]', 'ad-dashboard', 'style'))
 
     // Apply the text commands on the title element
     this.addUndo(configuration.apply(this.scope.document, 'title', 'text'))
@@ -170,9 +183,12 @@ class Monkey {
     // Finally we can apply document commands on the document itself.
     this.addUndo(configuration.apply(this.scope.document, 'documentElement', 'document'))
     if (this.withDebug) {
-      this.updateDebugBox(this.scope.performance.now() - t0, sum)
+      const rt = this.scope.performance.now() - t0
+      this.updateDebugBox(rt, sum)
+      if (rt > this.intervalTime) {
+        console.log(`Run took longer than ${this.intervalTime}: ${rt}`)
+      }
     }
-    // console.log("Call to doSomething took " + (t1 - t0) + " milliseconds.")
   }
 
   _applyOnXpathGroup(configuration, xpath, groupName, key) {

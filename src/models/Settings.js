@@ -5,6 +5,7 @@ class Settings {
     this.connectors = typeof settings.connectors === 'object' ? settings.connectors : {}
     this.monkeyInterval = typeof settings.monkeyInterval === 'number' ? settings.monkeyInterval : parseInt(settings.monkeyInterval)
     this.debugMode = typeof settings.debugMode === 'boolean' ? settings.debugMode : false
+    this.liveMode = typeof settings.liveMode === 'boolean' ? settings.liveMode : false
   }
 
   isFeatureEnabled(featureName) {
@@ -13,6 +14,10 @@ class Settings {
 
   isDebugEnabled() {
     return this.debugMode
+  }
+
+  isLiveModeEnabled() {
+    return this.liveMode
   }
 }
 
