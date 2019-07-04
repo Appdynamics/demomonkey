@@ -194,6 +194,12 @@ class CommandBuilder {
           new ReplaceNeighbor(parameters[0], parseInt(value) === 1 ? 'Node' : 'Nodes', 2, 'text.adsNodeCountTextSmall', '', '', location)
         ])
       }
+      if (command === 'replaceInnerNodeHealth') {
+        if (value && ['normal', 'warning', 'critical'].includes(value.toLowerCase())) {
+          value = {'normal': '#00d180', 'warning': '#ffd301', 'critical': '#ff202e'}[value.toLowerCase()]
+        }
+        return new ReplaceNeighbor(parameters[0], value, 2, '.adsNodeCountBackground', '', 'fill', location)
+      }
     }
 
     if (command === 'replace') {

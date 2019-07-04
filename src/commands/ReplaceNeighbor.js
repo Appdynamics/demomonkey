@@ -38,12 +38,10 @@ class ReplaceNeighbor extends Command {
           if (typeof this.cb === 'function') {
             return this.cb(this.search, this.replace, neighbor)
           } else if (this.property !== '') {
-            let original = neighbor[this.property]
-            console.log(this.property, neighbor, this.replace, original)
+            let original = neighbor.style[this.property]
             if (original !== this.replace) {
-              neighbor[this.property] = this.replace
-              console.log(neighbor, neighbor[this.property])
-              return new UndoElement(neighbor, this.property, original, this.replace)
+              neighbor.style[this.property] = this.replace
+              return new UndoElement(neighbor, 'style.' + this.property, original, this.replace)
             }
           } else if (neighbor.childNodes && neighbor.childNodes.length > 0) {
             let neighborText = Array.from(neighbor.childNodes).filter(node => node.nodeType === 3)[0]
