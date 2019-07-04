@@ -4,7 +4,6 @@ import UndoElement from './UndoElement'
 class SearchAndReplace extends Command {
   // Using '' as locationFilter and location as {} works with _checkLocation
   // since every string includes ''
-  // cssFilter is not yet implemented
   constructor(search, replace, locationFilter = '', cssFilter = '', location = {}) {
     super()
     this.search = search
