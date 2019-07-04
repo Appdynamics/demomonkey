@@ -200,6 +200,13 @@ class CommandBuilder {
         }
         return new ReplaceNeighbor(parameters[0], value, 2, '.adsNodeCountBackground', '', 'fill', location)
       }
+      if (command === 'replaceBusinessTransactionHealth' || command === 'replaceBTHealth') {
+        // !appdynamics.replaceNeighbor(Homepage, 3, img.adsSvgIconSmall, ,src) = images/health/critical.svg
+        if (value && ['normal', 'warning', 'critical'].includes(value.toLowerCase())) {
+          value = {'normal': 'images/health/normal.svg', 'warning': 'images/health/warning.svg', 'critical': 'images/health/critical.svg'}[value.toLowerCase()]
+        }
+        return new ReplaceNeighbor(parameters[0], value, 3, 'img.adsSvgIconSmall', '', 'src', location)
+      }
     }
 
     if (command === 'replace') {

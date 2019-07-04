@@ -37,6 +37,13 @@ class ReplaceNeighbor extends Command {
         if (neighbor) {
           if (typeof this.cb === 'function') {
             return this.cb(this.search, this.replace, neighbor)
+          } else if (this.property === 'src') {
+            let original = neighbor.src
+            // Make sure that also relative paths are matched
+            if (original !== this.replace && !original.endsWith(this.replace)) {
+              neighbor.src = this.replace
+              return new UndoElement(neighbor, 'src', original, neighbor.src)
+            }
           } else if (this.property !== '') {
             let original = neighbor.style[this.property]
             if (original !== this.replace) {

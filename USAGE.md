@@ -98,6 +98,8 @@ Commands specific to a certain web application are provided via a namespace. Cur
 - **!setDashboardBackground(dasboardID) = background**: Change the background of a dasbhoard. You can provide an image url or a color. If provided, the background is only replaced if the dasbhoardId matches.
 - **!replaceApplication(app) = replacement**: If replacement is empty, this behaves like !hideApplication, otherwise app is replaced with replacement.
 - **!replaceBusinessTransaction(bt) = replacement**: If replacement is empty, this behaves like !hideBusinessTransaction, otherwise bt is replaced with replacement.
+- **!replaceBusinessTransactionHealth(bt) = status**: Set the health status of a business transaction.
+- **!replaceInnerNodeHealth(label) = status**: Set the inner health status of a node on the flowmap.
 
 
 ## Variables
