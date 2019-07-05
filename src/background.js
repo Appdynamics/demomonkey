@@ -193,6 +193,7 @@ import match from './helpers/match.js'
     debugBox: false,
     beta_configSync: false,
     configSync: false,
+    withEvalCommand: false,
     // This is only a soft toggle, since the user can turn it on and off directly in the popup
     onlyShowAvailableConfigurations: true,
     experimental_withTemplateEngine: false

@@ -1,7 +1,6 @@
 const uuidV4 = require('uuid/v4')
 
 const configuration = (state, action) => {
-  console.log(state, action)
   if (state && action.type === 'DELETE_CONFIGURATION_BY_PREFIX' && state.name.startsWith(action.prefix)) {
     return {
       ...state,

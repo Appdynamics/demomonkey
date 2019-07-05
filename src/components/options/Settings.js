@@ -184,6 +184,9 @@ class Settings extends React.Component {
           <div className="toggle-group" id="toggle-debugBox">
             <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('debugBox')} value={this.props.settings.optionalFeatures.debugBox}/><label><b>Debug Box.</b> Turn this feature on, to show a debug box with statistics when running demo monkey in <i>debug mode</i> </label>
           </div>
+          <div className="toggle-group" id="toggle-withEvalCommand">
+            <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('withEvalCommand')} value={this.props.settings.optionalFeatures.withEvalCommand}/><label><b>Allow !eval.</b> By turning on this flag, you can use the command !eval which allows you to write arbitrary javascript code. Use with caution!</label>
+          </div>
           <div className="toggle-group" id="toggle-beta_configSync" style={{ display: window.location.href.includes('?beta') ? 'flex' : 'none' }}>
             <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('beta_configSync')} value={this.props.settings.optionalFeatures.beta_configSync}/><label><b>Config Sync Beta.</b> Turn on the option for config sync beta. </label>
           </div>

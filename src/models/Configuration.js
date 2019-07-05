@@ -4,7 +4,7 @@ import Variable from './Variable'
 import MatchRule from './MatchRule'
 
 class Configuration {
-  constructor(iniFile, repository, enabled = true, values = {}, templateEngineProperties = {}) {
+  constructor(iniFile, repository, enabled = true, values = {}, templateEngineProperties = {}, withEvalCommand = false) {
     this.repository = repository
     this.rawContent = iniFile
     this.content = iniFile ? (new Ini(iniFile, repository)).parse(templateEngineProperties) : []
@@ -12,6 +12,7 @@ class Configuration {
     this.options = false
     this.enabled = enabled
     this.values = values
+    this.withEvalCommand = withEvalCommand
   }
 
   isTemplate() {
@@ -199,7 +200,8 @@ class Configuration {
       var commandBuilder = new CommandBuilder(
         Array.isArray(options.namespace) ? options.namespace : [],
         Array.isArray(options.include) ? options.include : [],
-        Array.isArray(options.exclude) ? options.exclude : []
+        Array.isArray(options.exclude) ? options.exclude : [],
+        this.withEvalCommand
       )
 
       var filterConfiguration = function (content) {

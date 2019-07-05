@@ -17,14 +17,16 @@ import BlockUrl from './BlockUrl'
 import DelayUrl from './DelayUrl'
 import ReplaceUrl from './ReplaceUrl'
 import Limit from './Limit'
+import Eval from './Eval'
 import Command from './Command'
 import UndoElement from './UndoElement'
 
 class CommandBuilder {
-  constructor(namespaces = [], includeRules, excludeRules) {
+  constructor(namespaces = [], includeRules, excludeRules, withEvalCommand = false) {
     this.namespaces = namespaces
     this.includeRules = includeRules
     this.excludeRules = excludeRules
+    this.withEvalCommand = withEvalCommand
   }
 
   _buildRegex(search, modifiers, replace) {
@@ -200,6 +202,18 @@ class CommandBuilder {
         }
         return new ReplaceNeighbor(parameters[0], value, 2, '.adsNodeCountBackground', '', 'fill', location)
       }
+      if (command === 'replaceOuterNodeHealth') {
+        if (value && ['normal', 'warning', 'critical'].includes(value.toLowerCase())) {
+          value = {'normal': '#00d180', 'warning': '#ffd301', 'critical': '#ff202e'}[value.toLowerCase()]
+        }
+        if (parameters[1] && ['normal', 'warning', 'critical'].includes(parameters[1].toLowerCase())) {
+          parameters[1] = {'normal': '.adsNormalNodeColor', 'warning': '.adsWarningNodeColor', 'critical': '.adsCriticalNodeColor'}[parameters[1].toLowerCase()]
+        } else {
+          parameters[1] = '.adsNormalNodeColor'
+        }
+        return new ReplaceNeighbor(parameters[0], value, 2, parameters[1], '', 'fill', location)
+      }
+
       if (command === 'replaceBusinessTransactionHealth' || command === 'replaceBTHealth') {
         // !appdynamics.replaceNeighbor(Homepage, 3, img.adsSvgIconSmall, ,src) = images/health/critical.svg
         if (value && ['normal', 'warning', 'critical'].includes(value.toLowerCase())) {
@@ -274,6 +288,9 @@ class CommandBuilder {
       return new Limit(this.build(parameters[0], value), parameters[1], parameters[2])
     }
 
+    if (this.withEvalCommand && command === 'eval') {
+      return new Eval(parameters.shift(), parameters, value)
+    }
     // Add new commands above this line.
 
     return new Command()

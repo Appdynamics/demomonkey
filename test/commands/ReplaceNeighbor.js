@@ -34,7 +34,7 @@ describe('ReplaceNeighbor', function () {
           }
         }
       }
-      var cmd = new ReplaceNeighbor('Order-Processing-Services', '13', 4, 'text.adsNodeCountText', '', location)
+      var cmd = new ReplaceNeighbor('Order-Processing-Services', '13', 4, 'text.adsNodeCountText', '', '', location)
 
       expect(cmd.apply(node, 'value')).to.be.an.instanceof(UndoElement)
 

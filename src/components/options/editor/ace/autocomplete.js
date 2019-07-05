@@ -46,6 +46,7 @@ function autocomplete(getRepository) {
       {caption: '!replaceApplication', snippet: '!replaceApplication(${1}) = ${2}'},
       {caption: '!replaceBusinessTransaction', snippet: '!replaceBusinessTransaction(${1}) = ${2}'},
       {caption: '!replaceInnerNodeHealth', snippet: '!replaceInnerNodeHealth(${1}) = ${2}'},
+      {caption: '!replaceOuterNodeHealth', snippet: '!replaceInnerNodeHealth(${1}, ${2}) = ${3}'},
       {caption: '!replaceBusinessTransactionHealth', snippet: '!replaceBusinessTransactionHealth(${1}) = ${2}'}
     ].sort()
   }

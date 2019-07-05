@@ -126,7 +126,7 @@ class Editor extends React.Component {
       namespaces.push(match[1])
     }
 
-    const cb = new CommandBuilder(namespaces, [], [])
+    const cb = new CommandBuilder(namespaces, [], [], true)
 
     lines.forEach((line, rowIdx) => {
       // Process each line and add infos, warnings, errors
@@ -145,6 +145,9 @@ class Editor extends React.Component {
         var cmd = cb.build(command, null).constructor.name
         if (cmd === 'Command') {
           result.push({row: rowIdx, column: 0, text: `Command "${command}" not found.\nPlease check the spelling and\nif all required namespaces are loaded.`, type: 'error'})
+        }
+        if (cmd === 'Eval') {
+          result.push({row: rowIdx, column: 0, text: `!eval allows you to inject arbitrary javascript code in a page, please use with caution!`, type: 'warning'})
         }
       }
 

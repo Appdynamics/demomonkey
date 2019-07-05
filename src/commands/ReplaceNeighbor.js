@@ -48,7 +48,7 @@ class ReplaceNeighbor extends Command {
             let original = neighbor.style[this.property]
             if (original !== this.replace) {
               neighbor.style[this.property] = this.replace
-              return new UndoElement(neighbor, 'style.' + this.property, original, this.replace)
+              return new UndoElement(neighbor, 'style.' + this.property, original, neighbor.style[this.property])
             }
           } else if (neighbor.childNodes && neighbor.childNodes.length > 0) {
             let neighborText = Array.from(neighbor.childNodes).filter(node => node.nodeType === 3)[0]

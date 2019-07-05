@@ -4,7 +4,7 @@ import UndoElement from '../commands/UndoElement'
 import Manifest from './Manifest'
 
 class Monkey {
-  constructor(rawConfigurations, scope, withUndo = true, intervalTime = 100, withTemplateEngine = false, urlManager = false, withDebug = false, withDebugBox = false, withLiveMode = false) {
+  constructor(rawConfigurations, scope, withUndo = true, intervalTime = 100, withTemplateEngine = false, urlManager = false, withDebug = false, withDebugBox = false, withLiveMode = false, withEvalCommand = false) {
     this.scope = scope
     this.undo = []
     this.repository = new Repository({})
@@ -12,6 +12,7 @@ class Monkey {
     this.withDebug = withDebug
     this.withDebugBox = withDebugBox
     this.withLiveMode = withLiveMode
+    this.withEvalCommand = withEvalCommand
     this.avgRunTime = 0
     this.maxRunTime = 0
     this.runCount = 0
@@ -28,7 +29,7 @@ class Monkey {
       }
     }
     this.configurations = rawConfigurations.map((rawConfig) => {
-      var config = new Configuration(rawConfig.content, this.repository, rawConfig.enabled === true, rawConfig.values, templateEngineProperties)
+      var config = new Configuration(rawConfig.content, this.repository, rawConfig.enabled === true, rawConfig.values, templateEngineProperties, withEvalCommand)
       this.repository.addConfiguration(rawConfig.name, config)
       return [rawConfig.name, config]
     })
