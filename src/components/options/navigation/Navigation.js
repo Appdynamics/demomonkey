@@ -114,7 +114,6 @@ class Navigation extends React.Component {
 
   onDelete(event, node) {
     event.preventDefault()
-    console.log(node)
     this.props.onDelete(node)
   }
 

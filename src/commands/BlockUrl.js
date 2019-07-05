@@ -28,7 +28,6 @@ class BlockUrl extends Command {
     return {
       target: target,
       apply: () => {
-        console.log('Undo')
         target.remove(this.id)
         return true
       }
