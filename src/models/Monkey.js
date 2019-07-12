@@ -58,6 +58,7 @@ class Monkey {
       [data-demo-monkey-debug] { background-color: rgba(255, 255, 0, 0.5); }
       svg [data-demo-monkey-debug] { filter: url(#dm-debug-filter-visible) }
       [data-demo-monkey-debug-display] { display: var(--data-demo-monkey-debug-display) !important; background-color: rgba(255, 0, 0, 0.5); }
+      [data-demo-monkey-debug-display] * { display: var(--data-demo-monkey-debug-display) !important; background-color: rgba(255, 0, 0, 0.5); }
       svg [data-demo-monkey-debug-display] { display: var(--data-demo-monkey-debug-display) !important; filter: url(#dm-debug-filter-hidden) }
       #demo-monkey-debug-box { position: fixed; top: 25px; right: 25px; border: 1px solid black; background: rgb(255,255,255,0.8); z-index: 9999; padding: 15px; pointer-events: none;}
       </style>`)
@@ -203,6 +204,25 @@ class Monkey {
 
   _cornerCases(configuration) {
     var undos = []
+    // On the flowmap nodes might be shorten by name, but the full name is still kept in the title.
+    // We can use that knowledge to replace the shortened names
+    this.scope.document.querySelectorAll('svg .adsFlowMapNode > title').forEach(title => {
+      title.parentElement.querySelectorAll('.adsFlowMapTextContainer tspan').forEach(tspan => {
+        if (tspan.textContent.includes('...')) {
+          let pseudoNode = {
+            'value': title.textContent
+          }
+          configuration.apply(pseudoNode, 'value', 'text')
+          const replacement = pseudoNode.value.length > 32 ? pseudoNode.value.substr(0, 15) + '...' + pseudoNode.value.substr(-15) : pseudoNode.value
+          if (tspan.textContent !== replacement) {
+            const original = tspan.textContent
+            tspan.textContent = replacement
+            undos.push(new UndoElement(tspan, 'textContent', original, tspan.textContent))
+          }
+        }
+      })
+    })
+
     // In AppDynamics Analytics the Tree widget view uses <tspan> in <text> to split
     // text over multiple lines. The full text is contained in a <title> tag.
     // So we search for the <title> in the <text> and check if tspans are contained.

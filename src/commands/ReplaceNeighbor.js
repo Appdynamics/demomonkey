@@ -20,6 +20,10 @@ class ReplaceNeighbor extends Command {
   }
 
   apply(target, key = 'value') {
+    if (typeof this.replace === 'undefined') {
+      return false
+    }
+
     if (!this._checkLocation()) {
       return false
     }

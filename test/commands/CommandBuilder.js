@@ -2,6 +2,7 @@ import SearchAndReplace from '../../src/commands/SearchAndReplace'
 import Hide from '../../src/commands/Hide'
 import Group from '../../src/commands/Group'
 import ReplaceFlowmapIcon from '../../src/commands/appdynamics/ReplaceFlowmapIcon'
+import ReplaceNeighbor from '../../src/commands/ReplaceNeighbor'
 import Command from '../../src/commands/Command'
 import CommandBuilder from '../../src/commands/CommandBuilder'
 import chai from 'chai'
@@ -168,6 +169,16 @@ describe('Command', function () {
     it('should create a (effect-less) Command for an unknown command', function () {
       var command = new CommandBuilder().build('!unknown', 'b')
       expect(command).to.be.an.instanceof(Command)
+    })
+
+    it('should create a group of commands for !replaceFlowmapNode and namespaces [appdynamics]', function () {
+      var command = new CommandBuilder(['appdynamics']).build('!replaceFlowmapNode(service1)', 'new-name,php,5,critical,critical')
+      expect(command).to.be.an.instanceof(Group)
+      expect(command.helpers[0]).to.be.an.instanceof(ReplaceFlowmapIcon)
+      expect(command.helpers[1]).to.be.an.instanceof(Group)
+      expect(command.helpers[2]).to.be.an.instanceof(ReplaceNeighbor)
+      expect(command.helpers[3]).to.be.an.instanceof(ReplaceNeighbor)
+      expect(command.helpers[4]).to.be.an.instanceof(SearchAndReplace)
     })
   })
 })

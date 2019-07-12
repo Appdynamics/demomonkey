@@ -2,12 +2,18 @@
 import React from 'react'
 
 class Manifest {
+  constructor() {
+    this.manifestVersion = chrome.runtime.getManifest().version
+    this.manifestAuthor = chrome.runtime.getManifest().author
+    this.homepageUrl = chrome.runtime.getManifest().homepage_url
+  }
+
   authorMail() {
-    return chrome.runtime.getManifest().author.split('<')[1].replace('>', '')
+    return this.manifestAuthor.split('<')[1].replace('>', '')
   }
 
   authorName() {
-    return chrome.runtime.getManifest().author.split('<')[0]
+    return this.manifestAuthor.split('<')[0]
   }
 
   author() {
@@ -15,7 +21,7 @@ class Manifest {
   }
 
   url() {
-    return chrome.runtime.getManifest().homepage_url
+    return this.homepageUrl
   }
 
   homepage() {
@@ -23,7 +29,7 @@ class Manifest {
   }
 
   version() {
-    return chrome.runtime.getManifest().version
+    return this.manifestVersion
   }
 }
 

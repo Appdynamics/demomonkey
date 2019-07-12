@@ -6,9 +6,9 @@ function match(original, search, replace) {
     return false
   }
 
-  var startsWithNot = search.charAt(0) === '!'
-  var startsWithStar = search.charAt(0) === '*'
-  var endsWithStar = search.slice(-1) === '*'
+  const startsWithNot = search.charAt(0) === '!'
+  const startsWithStar = search.charAt(0) === '*'
+  const endsWithStar = search.slice(-1) === '*'
 
   if (startsWithNot) {
     return !match(original, search.slice(1), replace)

@@ -61,12 +61,6 @@ class CommandBuilder {
           : new SearchAndReplace(parameters[0], value)
       }
 
-      if (command === 'replaceBT' || command === 'replaceBusinessTransaction') {
-        return value === '' || value === true
-          ? this._buildCustomCommand(namespace, 'hideBusinessTransaction', parameters, value)
-          : new SearchAndReplace(parameters[0], value)
-      }
-
       if (command === 'hideApplication') {
         return new Group([
           new Hide(parameters[0], 4, 'ads-application-card', '', 'APPS_ALL_DASHBOARD', location),
@@ -164,6 +158,7 @@ class CommandBuilder {
         if (typeof value === 'string' && ['λ', 'lambda'].includes(value.toLowerCase())) {
           return new Group([
             new ReplaceNeighbor(parameters[0], '', 2, 'text.adsNodeCountText', '', '', location),
+            new ReplaceNeighbor(parameters[0], '', 2, 'text.adsNodeCountTextLarge', '', '', location),
             new ReplaceNeighbor(parameters[0], '', 2, 'text.adsNodeCountTextSmall', '', '', location),
             new ReplaceNeighbor(parameters[0], 'images/tierTypes/AWSLambda.svg', 2, 'g.adsNodeCountContainer image', '', '', location, (search, replace, node) => {
               // <image transform="translate(-15, -15 )" width="30" height="30" xlink:href=""></image>
@@ -198,13 +193,13 @@ class CommandBuilder {
       }
       if (command === 'replaceInnerNodeHealth') {
         if (value && ['normal', 'warning', 'critical'].includes(value.toLowerCase())) {
-          value = {'normal': '#00d180', 'warning': '#ffd301', 'critical': '#ff202e'}[value.toLowerCase()]
+          value = {'normal': 'rgb(0, 209, 128)', 'warning': 'rgb(255, 211, 1)', 'critical': 'rgb(255, 32, 46)'}[value.toLowerCase()]
         }
         return new ReplaceNeighbor(parameters[0], value, 2, '.adsNodeCountBackground', '', 'fill', location)
       }
       if (command === 'replaceOuterNodeHealth') {
         if (value && ['normal', 'warning', 'critical'].includes(value.toLowerCase())) {
-          value = {'normal': '#00d180', 'warning': '#ffd301', 'critical': '#ff202e'}[value.toLowerCase()]
+          value = {'normal': 'rgb(0, 209, 128)', 'warning': 'rgb(255, 211, 1)', 'critical': 'rgb(255, 32, 46)'}[value.toLowerCase()]
         }
         if (parameters[1] && ['normal', 'warning', 'critical'].includes(parameters[1].toLowerCase())) {
           parameters[1] = {'normal': '.adsNormalNodeColor', 'warning': '.adsWarningNodeColor', 'critical': '.adsCriticalNodeColor'}[parameters[1].toLowerCase()]
@@ -220,6 +215,38 @@ class CommandBuilder {
           value = {'normal': 'images/health/normal.svg', 'warning': 'images/health/warning.svg', 'critical': 'images/health/critical.svg'}[value.toLowerCase()]
         }
         return new ReplaceNeighbor(parameters[0], value, 3, 'img.adsSvgIconSmall', '', 'src', location)
+      }
+      if (command === 'replaceFlowmapNode') {
+        value = typeof value === 'string' ? this._extractParameters(value) : []
+        let commands = [
+          new ReplaceFlowmapIcon(parameters[0], value[1]),
+          this._buildCustomCommand(namespace, 'replaceNodeCount', [parameters[0]], value[2]),
+          this._buildCustomCommand(namespace, 'replaceInnerNodeHealth', [parameters[0]], value[3]),
+          this._buildCustomCommand(namespace, 'replaceOuterNodeHealth', [parameters[0]], value[4])
+        ].reduce((result, cmd, index) => {
+          if (typeof value[index + 1] === 'string' && value[index + 1] !== '') {
+            result.push(cmd)
+          }
+          return result
+        }, [])
+        return new Group(commands.concat(new SearchAndReplace(parameters[0], value[0])))
+      }
+      if (command === 'replaceBusinessTransactionOriginalName' || command === 'replabeBTOriginalName') {
+        return new SearchAndReplace(parameters[0], value, 'APP_BT_LIST', 'tr td:nth-child(3) .x-grid-cell-inner', location)
+      }
+      if (command === 'replaceBT' || command === 'replaceBusinessTransaction') {
+        if (typeof value !== 'string' || value === '') {
+          return this._buildCustomCommand(namespace, 'hideBusinessTransaction', parameters, value)
+        }
+        value = this._extractParameters(value)
+        let commands = [new SearchAndReplace(parameters[0], value[0])]
+        if (typeof value[1] === 'string' && value[1] !== '') {
+          commands.unshift(this._buildCustomCommand(namespace, 'replaceBusinessTransactionOriginalName', [parameters[0]], value[1]))
+        }
+        if (typeof value[1] === 'string' && value[2] !== '') {
+          commands.unshift(this._buildCustomCommand(namespace, 'replaceBusinessTransactionHealth', [parameters[0]], value[2]))
+        }
+        return new Group(commands)
       }
     }
 
@@ -296,6 +323,29 @@ class CommandBuilder {
     return new Command()
   }
 
+  _extractParameters(params) {
+    let parameters = []
+    // parameters = command.slice(command.indexOf('(') + 1, -1).split(/\s*,\s*/).filter(elem => elem !== '')
+    let index = 0
+    parameters.push('')
+    let open = ''
+    params.split('').forEach(letter => {
+      if (open !== '\'' && letter === '"') {
+        open = open === '"' ? '' : letter
+      }
+      if (open !== '"' && letter === '\'') {
+        open = open === '\'' ? '' : letter
+      }
+      if (open === '' && letter === ',') {
+        index++
+        parameters.push('')
+        return
+      }
+      parameters[index] += letter
+    })
+    return parameters.map(e => e.trim().replace(/"(.*)"|'(.*)'/, '$1$2')) // .filter(e => e !== '')
+  }
+
   _extractForCustomCommand(command) {
     if (typeof command !== 'string' || command === '') {
       return {extracted: false}
@@ -308,27 +358,7 @@ class CommandBuilder {
       if (command.substr(-1) !== ')') {
         return {extracted: false}
       }
-      // parameters = command.slice(command.indexOf('(') + 1, -1).split(/\s*,\s*/).filter(elem => elem !== '')
-      var index = 0
-      var params = command.slice(command.indexOf('(') + 1, -1)
-      parameters.push('')
-      var open = ''
-      params.split('').forEach(letter => {
-        if (open !== '\'' && letter === '"') {
-          open = open === '"' ? '' : letter
-        }
-        if (open !== '"' && letter === '\'') {
-          open = open === '\'' ? '' : letter
-        }
-        if (open === '' && letter === ',') {
-          index++
-          parameters.push('')
-          return
-        }
-        parameters[index] += letter
-      })
-
-      parameters = parameters.map(e => e.trim().replace(/"(.*)"|'(.*)'/, '$1$2')) // .filter(e => e !== '')
+      parameters = this._extractParameters(command.slice(command.indexOf('(') + 1, -1))
 
       command = command.split('(')[0]
     }
