@@ -12,7 +12,8 @@ function autocomplete(getRepository) {
   // Build auto completion for all commands
   let cmds = [
     {caption: '!/regex/', snippet: '!/${1}/${2}/${3:pi} = ${4}'},
-    {caption: '!replace', snippet: '!replace(${1}, ${2}) = ${3}'},
+    {caption: '!replace', snippet: '!replace(${1}, ${2}, ${3}, ${4}) = ${5}'},
+    {caption: '!replaceAttribute', snippet: '!replace(${1}, ${2}, ${3}, ${4}) = ${5}'},
     {caption: '!protect', snippet: '!protect(${1})'},
     {caption: '!hide', snippet: '!hide(${1}, ${2}, ${3}, ${4})'},
     {caption: '!replaceImage', snippet: '!replaceImage(${1}) = ${2}'},
@@ -47,7 +48,8 @@ function autocomplete(getRepository) {
       {caption: '!replaceBusinessTransaction', snippet: '!replaceBusinessTransaction(${1}) = ${2}'},
       {caption: '!replaceInnerNodeHealth', snippet: '!replaceInnerNodeHealth(${1}) = ${2}'},
       {caption: '!replaceOuterNodeHealth', snippet: '!replaceInnerNodeHealth(${1}, ${2}) = ${3}'},
-      {caption: '!replaceBusinessTransactionHealth', snippet: '!replaceBusinessTransactionHealth(${1}) = ${2}'}
+      {caption: '!replaceBusinessTransactionHealth', snippet: '!replaceBusinessTransactionHealth(${1}) = ${2}'},
+      {caption: '!replaceFlowmapNode', snippet: '!replaceFlowmapNode(${1}) = ${2},${3},${4},${5},${6}'}
     ].sort()
   }
 

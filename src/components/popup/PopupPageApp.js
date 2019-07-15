@@ -7,7 +7,7 @@ import { connect } from 'react-redux'
 import ConfigurationList from './ConfigurationList'
 import PropTypes from 'prop-types'
 
-const manifest = new Manifest()
+const manifest = new Manifest(chrome)
 
 /* The PopupPageApp will be defined below */
 class App extends React.Component {

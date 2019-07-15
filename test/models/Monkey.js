@@ -21,6 +21,15 @@ var node = {
 }
 
 var scope = {
+  chrome: {
+    runtime: {
+      getManifest: function () {
+        return {
+
+        }
+      }
+    }
+  },
   performance: {
     now: function () {
       return 0

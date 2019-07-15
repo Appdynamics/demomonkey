@@ -232,7 +232,7 @@ class CommandBuilder {
         return new Group(commands.concat(new SearchAndReplace(parameters[0], value[0])))
       }
       if (command === 'replaceBusinessTransactionOriginalName' || command === 'replabeBTOriginalName') {
-        return new SearchAndReplace(parameters[0], value, 'APP_BT_LIST', 'tr td:nth-child(3) .x-grid-cell-inner', location)
+        return new SearchAndReplace(parameters[0], value, 'APP_BT_LIST', 'tr td:nth-child(3) .x-grid-cell-inner', '', location)
       }
       if (command === 'replaceBT' || command === 'replaceBusinessTransaction') {
         if (typeof value !== 'string' || value === '') {
@@ -251,11 +251,15 @@ class CommandBuilder {
     }
 
     if (command === 'replace') {
-      return new SearchAndReplace(parameters[0], value, parameters[1], parameters[2], location)
+      return new SearchAndReplace(parameters[0], value, parameters[1], parameters[2], parameters[3], location)
+    }
+
+    if (command === 'replaceAttribute') {
+      return new SearchAndReplace(parameters[0], value, parameters[2], parameters[3], parameters[1], location)
     }
 
     if (command === 'protect') {
-      return new SearchAndReplace(parameters[0], parameters[0].split('').join(String.fromCharCode(0x200B)), parameters[1], parameters[2], location)
+      return new SearchAndReplace(parameters[0], parameters[0].split('').join(String.fromCharCode(0x200B)), parameters[1], parameters[2], parameters[3], location)
     }
 
     if (command === 'replaceNeighbor') {

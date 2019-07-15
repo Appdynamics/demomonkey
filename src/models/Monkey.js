@@ -34,7 +34,7 @@ class Monkey {
       return [rawConfig.name, config]
     })
     this.urlManager = urlManager === false ? {add: () => {}, remove: () => {}, clear: () => {}} : urlManager
-    this.manifest = new Manifest()
+    this.manifest = new Manifest(scope.chrome)
   }
 
   getUndoLength() {

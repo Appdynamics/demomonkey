@@ -1,8 +1,7 @@
-/* global chrome */
 import React from 'react'
 
 class Manifest {
-  constructor() {
+  constructor(chrome) {
     this.manifestVersion = chrome.runtime.getManifest().version
     this.manifestAuthor = chrome.runtime.getManifest().author
     this.homepageUrl = chrome.runtime.getManifest().homepage_url

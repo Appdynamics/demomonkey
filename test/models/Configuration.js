@@ -77,7 +77,7 @@ describe('Configuration', function () {
   describe('#_getConfiguration', function () {
     it('should apply variables on commands', function () {
       const config = configurationWithCommand._getConfiguration()
-      assert.deepEqual(config, [{search: 'a', replace: 'b', locationFilter: '', cssFilter: '', location: ''}, {search: 'y', 'replace': 'w', location: '', cssFilter: '', locationFilter: ''}])
+      assert.deepEqual(config, [{search: 'a', replace: 'b', locationFilter: '', cssFilter: '', property: '', location: ''}, {search: 'y', 'replace': 'w', location: '', cssFilter: '', property: '', locationFilter: ''}])
     })
   })
 

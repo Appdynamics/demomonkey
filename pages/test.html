@@ -4,13 +4,21 @@
 <head>
   <meta charset="utf-8">
 </head>
-
+<style>
+[data-label]:after {
+  border: 1px solid blue;
+  content: attr(data-label);
+}
+</style>
 <body>
   <div style="border: 1px solid green">
     <h1>DemoMonkey Test Page</h1>
     <div id="monkey-stats">
 
     </div>
+  </div>
+  <div data-label="San Francisco">
+    asdf
   </div>
   <div contenteditable id="input"></div>
   <h2 id="ajax">AJAX</h2>
