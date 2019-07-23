@@ -9,49 +9,24 @@ const By = selenium.By
 const until = selenium.until
 
 describe('Integration', function () {
-  const url = 'https://github.com/Appdynamics/demomonkey'
-
   before('Start Webdriver', base.start)
   after('Quit Webdriver', base.quit)
 
-  describe('Un-tampered webpage', function () {
-    this.timeout(10000)
-    it('github page of this project has demomonkey in its title', function () {
-      base.getDriver().get(url)
-      return expect(base.getDriver().getTitle()).to.eventually.include('demomonkey')
-    })
-  })
-
-  describe('tampered webpage', function () {
-    this.timeout(10000)
-    this.retries(4)
-    it('allows to create new configurations', function () {
-      return base.createConfig('testape', 'demomonkey = testape\n@include = /.*/')
-    })
-    it('has toggle buttons on the popup menu', function () {
-      this.retries(4)
-      return base.enableConfig('testape')
-    })
-    it('github page of this project will have testape in its title', function () {
-      base.getDriver().get(url)
-      base.getDriver().sleep(1000)
-      return expect(base.getDriver().getTitle()).to.eventually.include('testape')
-    })
-  })
+  this.timeout(20000)
+  this.retries(4)
 
   describe('test page', function () {
     it('will create a test configurations', function () {
-      this.timeout(10000)
+      base.getDriver().sleep(500)
       return Promise.all([
-        base.createConfig('GermanCities', 'San Francisco = Berlin\nSeattle = Köln\n!replaceUrl(*demomonkey*) = https://github.com/Appdynamics/api-commandline-tool'),
-        base.createConfig('Test Config', '+GermanCities\n@include = /.*/'),
+        base.createConfig('GermanCities', 'San Francisco = Berlin\nSeattle = Köln'),
+        base.createConfig('Test Config', '+GermanCities\n@include = /.*/\n!replaceUrl(*demomonkey*) = https://github.com/Appdynamics/api-commandline-tool'),
         // base.createConfig('AppDynamics Config', '@include = /.*/\n@namespace[] = appdynamics\n!replaceFlowmapIcon(ECommerce-Services) = php\nECommerce = Selenium\n!replace(San Francisco,,,data-label) = Berlin')
         base.createConfig('AppDynamics Config', '@include = /.*/\n@namespace[] = appdynamics\n!replaceFlowmapIcon(ECommerce-Services) = php\nECommerce = Selenium\n!replace(San Francisco,,,data-label) = Berlin')
       ])
     })
 
     it('will enable the test configurations', function () {
-      this.retries(4)
       return Promise.all([
         base.enableConfig('Test Config'),
         base.enableConfig('AppDynamics Config')
@@ -59,13 +34,10 @@ describe('Integration', function () {
     })
 
     it('will enable webRequestHook', function () {
-      this.retries(4)
       return base.enableOptionalFeature('webRequestHook')
     })
 
     it('will modify the test page', function () {
-      this.retries(4)
-      this.timeout(20000)
       var driver = base.getDriver()
       driver.get(base.testUrl)
       driver.findElement(By.id('input')).sendKeys('San Francisco')
