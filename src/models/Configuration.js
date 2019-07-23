@@ -49,6 +49,13 @@ class Configuration {
     return new MatchRule(options.include, options.exclude).test(url)
   }
 
+  getTextAttributes() {
+    let ta = this.getOptions().textAttributes
+    const d = ['placeholder']
+    // the chain after ta makes sure that lists are split by comma and spaces are removed.
+    return !Array.isArray(ta) ? d : ta.map(e => e.split(',')).flat().map(e => e.trim()).filter(e => e !== '').concat(d)
+  }
+
   isTagBlacklisted(node) {
     var blacklist = this.getOptions().blacklist
     var whitelist = this.getOptions().whitelist

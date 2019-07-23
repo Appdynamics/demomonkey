@@ -54,6 +54,10 @@ class SearchAndReplace extends Command {
       return this._replaceByProperty(target)
     }
 
+    if (typeof target[key] === 'undefined') {
+      return false
+    }
+
     var original = target[key]
     var replacement = target[key].replace(this.search, this.replace)
     if (replacement !== original) {

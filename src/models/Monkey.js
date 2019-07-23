@@ -174,6 +174,9 @@ class Monkey {
     this._cornerCases(configuration)
 
     sum.text = (this._applyOnXpathGroup(configuration, '//body//text()[ normalize-space(.) != ""]', 'text', 'data'))
+    configuration.getTextAttributes().forEach(attribute => {
+      sum.text += (this._applyOnXpathGroup(configuration, `//*[@${attribute}]`, 'text', attribute))
+    })
     sum.input = (this._applyOnXpathGroup(configuration, '//body//input', 'input', 'value'))
     sum.image = (this._applyOnXpathGroup(configuration, '//body//img', 'image', 'src'))
     sum.link = (this._applyOnXpathGroup(configuration, '//body//a', 'link', 'href'))
