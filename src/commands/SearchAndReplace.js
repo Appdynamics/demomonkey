@@ -50,8 +50,14 @@ class SearchAndReplace extends Command {
     if (!this._checkLocation() || !this._checkCss(target)) {
       return false
     }
+
     if (typeof this.property === 'string' && this.property !== '') {
       return this._replaceByProperty(target)
+    }
+
+    if (key.startsWith('data-') && typeof target.dataset === 'object' && target.dataset !== null) {
+      target = target.dataset
+      key = key.substr(5)
     }
 
     if (typeof target[key] === 'undefined') {

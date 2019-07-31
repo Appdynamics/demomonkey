@@ -33,6 +33,7 @@ function autocomplete(getRepository) {
       {caption: '!hideApplication', snippet: '!hideApplication(${1})'},
       {caption: '!hideBusinessTransaction', snippet: '!hideBusinessTransaction(${1})'},
       {caption: '!hideDatabase', snippet: '!hideDatabase(${1})'},
+      {caption: '!hideDashboard', snippet: '!hideDashboard(${1})'},
       {caption: '!hideBrowserApplication', snippet: '!hideBrowserApplication(${1})'},
       {caption: '!hideMobileApplication', snippet: '!hideMobileApplication(${1})'},
       {caption: '!hideBusinessJourney', snippet: '!hideBusinessJourney(${1})'},
@@ -61,6 +62,7 @@ function autocomplete(getRepository) {
     {caption: '@blacklist', snippet: '@blacklist[] = ${1}'},
     {caption: '@whitelist', snippet: '@whitelist[] = ${1}'},
     {caption: '@author', snippet: '@author[] = ${1}'},
+    {caption: '@textAttributes', snippet: '@textAttributes[] = ${1}'},
     {caption: '@template', snippet: '@template\n'},
     {caption: '@deprecated', snippet: '@deprecated\n'}
   ].sort().map(c => {
@@ -160,7 +162,12 @@ function autocomplete(getRepository) {
             'ad-purple',
             'ad-cyan',
             'ad-blue',
-            'ad-green'
+            'ad-green',
+            'ad-turquoise',
+            'ad-lightgray',
+            'ad-lightgrey',
+            'ad-darkgrey',
+            'ad-darkgray'
           ]).sort().map(value => { return {value, meta: 'color'} }))
         }
         console.log('OUT')

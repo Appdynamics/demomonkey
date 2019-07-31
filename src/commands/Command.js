@@ -30,7 +30,12 @@ class Command {
         'ad-purple': Color('#7e69d2'),
         'ad-cyan': Color('#01CEDA'),
         'ad-blue': Color('#0084E5'),
-        'ad-green': Color('#33C561')
+        'ad-green': Color('#33C561'),
+        'ad-turquoise': Color('#00ced9'),
+        'ad-lightgray': Color('#eaeaea'),
+        'ad-lightgrey': Color('#eaeaea'),
+        'ad-darkgray': Color('#404040'),
+        'ad-darkgrey': Color('#404040')
       }[value.toLowerCase()]
     }
 

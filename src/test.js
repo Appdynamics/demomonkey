@@ -22,7 +22,7 @@
     interval.innerHTML = text
     counter++
     // document.getElementById('monkey-stats').innerHTML = 'Undo Length: ' + window.$DEMO_MONKEY.getUndoLength()
-  }, 30)
+  }, 3000)
   fetch('https://github.com/Appdynamics/demomonkey').then(function (response) {
     return response.text()
   }).then(function (response) {
