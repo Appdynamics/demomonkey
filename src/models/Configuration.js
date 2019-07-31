@@ -51,7 +51,7 @@ class Configuration {
 
   getTextAttributes() {
     let ta = this.getOptions().textAttributes
-    const d = []
+    const d = ['placeholder']
     // the chain after ta makes sure that lists are split by comma and spaces are removed.
     const result = !Array.isArray(ta) ? d : ta.map(e => e.split(',')).flat().map(e => e.trim()).filter(e => e !== '').concat(d)
     return result
