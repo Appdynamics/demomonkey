@@ -163,12 +163,17 @@ class Configuration {
     return Object.keys(this.content).reduce(filterImport(this.content), [])
   }
 
-  getValue(id) {
-    return this.values[id]
+  getValue(owner, name) {
+    console.log(owner, name)
+    if (this.values[name]) {
+      return this.values[name]
+    }
+    return this.values[owner + '::' + name]
   }
 
   getVariables(owner = '', bindValues = true) {
     let localNames = []
+
     const filterVariable = (content) => {
       return (result, key) => {
         // $ is not a legal variable name
@@ -206,7 +211,7 @@ class Configuration {
 
     if (bindValues) {
       return variables.map((variable) => {
-        return variable.bind(this.getValue(variable.id))
+        return variable.bind(this.getValue(variable.owner, variable.name))
       })
     }
 

@@ -4,6 +4,7 @@ import NavigationHeader from './NavigationHeader'
 import navigationTheme from './NavigationTheme'
 import ItemHeader from './ItemHeader'
 import merge from 'deepmerge'
+import ErrorBox from '../../shared/ErrorBox'
 
 // import NavigationItem from './NavigationItem'
 import { Treebeard, decorators } from 'react-treebeard'
@@ -117,6 +118,14 @@ class Navigation extends React.Component {
     this.props.onDelete(node)
   }
 
+  _safeRenderTree() {
+    try {
+      return <Treebeard style={navigationTheme} decorators={decorators} data={this.state.data} onToggle={this.onToggle} />
+    } catch (e) {
+      return <ErrorBox error={e} />
+    }
+  }
+
   render() {
     decorators.Header = (props) => {
       return <ItemHeader style={props.style} node={props.node} onDelete={(event, node) => this.onDelete(event, node)} />
@@ -129,7 +138,7 @@ class Navigation extends React.Component {
           <input type="text" onChange={(event) => this.handleSearchUpdate(event)} value={this.state.search} placeholder="Search..." className="searchBox" />
         </div>
         <div className="tree items">
-          <Treebeard style={navigationTheme} decorators={decorators} data={this.state.data} onToggle={this.onToggle} />
+          {this._safeRenderTree()}
         </div>
       </div>
     )

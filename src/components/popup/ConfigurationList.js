@@ -3,6 +3,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import Configuration from '../../models/Configuration'
 import ToggleConfiguration from '../shared/ToggleConfiguration'
+import ErrorBox from '../shared/ErrorBox'
 
 class ConfigurationList extends React.Component {
   static propTypes = {
@@ -121,11 +122,7 @@ class ConfigurationList extends React.Component {
         </div>
       </div>
     } catch (e) {
-      return <div style={{ color: 'red' }}>
-        <div>Oops! Something went wrong: </div>
-        <div><b title={ e.stack }>{ e.message }</b></div>
-        <div><a href={`https://github.com/Appdynamics/demomonkey/issues/new?title=${e.message}&body=${e.stack}`} target="blank" rel="noopener noreferer">Report Issue.</a></div>
-      </div>
+      return <ErrorBox error={e} />
     }
   }
 }

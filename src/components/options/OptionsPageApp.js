@@ -9,6 +9,7 @@ import Configuration from '../../models/Configuration'
 import PropTypes from 'prop-types'
 import Repository from '../../models/Repository'
 import { Base64 } from 'js-base64'
+import ErrorBox from '../shared/ErrorBox'
 
 /* The OptionsPageApp will be defined below */
 class App extends React.Component {
@@ -28,6 +29,19 @@ class App extends React.Component {
     if (configuration.id === 'new') {
       this.addConfiguration(configuration)
     } else {
+      const variables = (new Configuration(configuration.content, this.getRepository(), false, configuration.values)).getVariables().map(v => v.id)
+
+      console.log('BEFORE', configuration.values)
+
+      Object.keys(configuration.values).forEach(name => {
+        if (!variables.includes(name)) {
+          delete configuration.values[name]
+        }
+      })
+
+
+      console.log('AFTER', configuration.values)
+
       this.props.actions.saveConfiguration(configuration.id, configuration)
     }
   }
@@ -134,34 +148,42 @@ class App extends React.Component {
   }
 
   getCurrentView() {
-    var segments = this.props.currentView.split('/')
+    try {
+      var segments = this.props.currentView.split('/')
 
-    this.updateRepository()
+      this.updateRepository()
 
-    switch (segments[0]) {
-      case 'settings':
-        return <Settings settings={this.props.settings}
-          configurations={this.props.configurations}
-          connectionState={this.props.connectionState}
-          onToggleOptionalFeature={(feature) => this.toggleOptionalFeature(feature)}
-          onSetBaseTemplate={(baseTemplate) => this.setBaseTemplate(baseTemplate)}
-          onSetMonkeyInterval={(event) => this.setMonkeyInterval(event.target.value)}
-          onSetDemoMonkeyServer={(value) => this.setDemoMonkeyServer(value)}/>
-      case 'configuration':
-        var configuration = this.getConfiguration(segments[1])
-        return <Editor getRepository={() => this.getRepository()} currentConfiguration={configuration}
-          autoSave={this.props.settings.optionalFeatures.autoSave}
-          saveOnClose={this.props.settings.optionalFeatures.saveOnClose}
-          withTemplateEngine={this.props.settings.optionalFeatures.experimental_withTemplateEngine}
-          editorAutocomplete={this.props.settings.optionalFeatures.editorAutocomplete}
-          onDownload={(configuration, _) => this.downloadConfiguration(configuration)}
-          onSave={(_, configuration) => this.saveConfiguration(configuration)}
-          onCopy={(configuration, _) => this.copyConfiguration(configuration)}
-          onDelete={(configuration, _) => this.deleteConfiguration(configuration)}
-          toggleConfiguration={() => this.props.actions.toggleConfiguration(configuration.id)}
-        />
-      default:
-        return <Welcome />
+      switch (segments[0]) {
+        case 'settings':
+          return <Settings settings={this.props.settings}
+            configurations={this.props.configurations}
+            connectionState={this.props.connectionState}
+            onToggleOptionalFeature={(feature) => this.toggleOptionalFeature(feature)}
+            onSetBaseTemplate={(baseTemplate) => this.setBaseTemplate(baseTemplate)}
+            onSetMonkeyInterval={(event) => this.setMonkeyInterval(event.target.value)}
+            onSetDemoMonkeyServer={(value) => this.setDemoMonkeyServer(value)}/>
+        case 'configuration':
+          var configuration = this.getConfiguration(segments[1])
+          // If an unknown ID is selected, we throw an error.
+          if (typeof configuration === 'undefined') {
+            return <ErrorBox error={{ message: `Unknown Configuration ${segments[1]}` }} />
+          }
+          return <Editor getRepository={() => this.getRepository()} currentConfiguration={configuration}
+            autoSave={this.props.settings.optionalFeatures.autoSave}
+            saveOnClose={this.props.settings.optionalFeatures.saveOnClose}
+            withTemplateEngine={this.props.settings.optionalFeatures.experimental_withTemplateEngine}
+            editorAutocomplete={this.props.settings.optionalFeatures.editorAutocomplete}
+            onDownload={(configuration, _) => this.downloadConfiguration(configuration)}
+            onSave={(_, configuration) => this.saveConfiguration(configuration)}
+            onCopy={(configuration, _) => this.copyConfiguration(configuration)}
+            onDelete={(configuration, _) => this.deleteConfiguration(configuration)}
+            toggleConfiguration={() => this.props.actions.toggleConfiguration(configuration.id)}
+          />
+        default:
+          return <Welcome />
+      }
+    } catch (e) {
+      return <ErrorBox error={e} />
     }
   }
 

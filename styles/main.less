@@ -214,6 +214,31 @@ label {
   padding: 4px;
 }
 
+.error-box {
+  background: lighten(@danger, 57%);
+  border: 1px solid @danger;
+  color: @danger;
+  margin: 8px;
+  margin-bottom: 0px;
+  margin-top: 0px;
+  padding: 4px;
+
+  .error-title {
+    font-weight: bold;
+    font-size: 125%;
+  }
+
+  .error-message {
+    font-weight: bold;
+    font-size: 110%;
+  }
+
+  .error-message, .error-details {
+    margin: 8px;
+    margin-left: 0px;
+  }
+}
+
 .no-warning-box {
   display: none;
 }
