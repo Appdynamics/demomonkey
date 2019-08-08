@@ -37,5 +37,13 @@ describe('MatchRule', function () {
         'http://demo2.appdynamics.com/controller/#/location=ANALYTICS_ADQL_SEARCH&timeRange=last_15_minutes.BEFORE_NOW.-1.-1.15&searchId=2'
       ), true)
     })
+
+    it('should return false if regex is invalid', function () {
+      assert.equal(new MatchRule(['/??/']).test('asdf'), false)
+    })
+
+    it('should do a simple includes check for a non-regex', function () {
+      assert.equal(new MatchRule(['te?st']).test('te?st'), true)
+    })
   })
 })

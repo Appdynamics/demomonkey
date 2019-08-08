@@ -94,7 +94,7 @@ function autocomplete(getRepository) {
   langTools.setCompleters([{
     identifierRegexps: [/[a-zA-Z_0-9$!%/@+\-\u00A2-\uFFFF]/],
     getCompletions: function (editor, session, pos, prefix, callback) {
-      console.log(prefix)
+      // console.log(prefix)
       if (prefix.startsWith('%') && pos.column - prefix.length === 0) {
         callback(null, getRepository().getNames().sort().map(c => {
           return {
@@ -149,7 +149,7 @@ function autocomplete(getRepository) {
         const fullLine = editor.session.getLine(pos.row)
         const lineToPos = fullLine.substr(0, pos.column - prefix.length)
         // replaceFlowmapIcon provides some values.
-        console.log(fullLine, lineToPos)
+        // console.log(fullLine, lineToPos)
         if (fullLine.match(/^!(?:appdynamics.)?replaceFlowmapIcon\(.*\)\s*=\s*/)) {
           callback(null, Object.keys(ReplaceFlowmapIcon.icons).map(value => { return {value, meta: 'icon'} }))
         } else if (lineToPos.match(/^!(?:appdynamics.)?(hide|replace)Application\($/)) {
@@ -170,7 +170,7 @@ function autocomplete(getRepository) {
             'ad-darkgray'
           ]).sort().map(value => { return {value, meta: 'color'} }))
         }
-        console.log('OUT')
+        // console.log('OUT')
       }
     }
   }])

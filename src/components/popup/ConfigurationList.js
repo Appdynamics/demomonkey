@@ -109,15 +109,24 @@ class ConfigurationList extends React.Component {
   }
 
   render() {
-    return <div>
-      <div><input type="text" onChange={(event) => this.handleSearchUpdate(event)} value={this.state.search} placeholder="Search..." className="searchBox" /></div>
-      <div><input type="checkbox" checked={this.state.onlyShowAvailable} onChange={(event) => this.toggleOnlyShowAvailable()} /> Only show configurations available for the current url</div>
-      <div><input type="checkbox" checked={this.state.onlyShowActivated} onChange={(event) => this.toggleOnlyShowActivated()} /> Only show activated configurations</div>
-      <div><input type="checkbox" checked={this.props.settings.debugMode} onChange={(event) => this.toggleDebugMode()} /> Run in <i>Debug Mode</i></div>
-      <div className="configurations-list">
-        {this.getConfigurations().length < 1 ? this.renderEmpty() : this.renderList() }
+    // If the rendering of the list throws any exception we display an error and the user should still be able to access the options page.
+    try {
+      return <div>
+        <div><input type="text" onChange={(event) => this.handleSearchUpdate(event)} value={this.state.search} placeholder="Search..." className="searchBox" /></div>
+        <div><input type="checkbox" checked={this.state.onlyShowAvailable} onChange={(event) => this.toggleOnlyShowAvailable()} /> Only show configurations available for the current url</div>
+        <div><input type="checkbox" checked={this.state.onlyShowActivated} onChange={(event) => this.toggleOnlyShowActivated()} /> Only show activated configurations</div>
+        <div><input type="checkbox" checked={this.props.settings.debugMode} onChange={(event) => this.toggleDebugMode()} /> Run in <i>Debug Mode</i></div>
+        <div className="configurations-list">
+          {this.getConfigurations().length < 1 ? this.renderEmpty() : this.renderList() }
+        </div>
       </div>
-    </div>
+    } catch (e) {
+      return <div style={{ color: 'red' }}>
+        <div>Oops! Something went wrong: </div>
+        <div><b title={ e.stack }>{ e.message }</b></div>
+        <div><a href={`https://github.com/Appdynamics/demomonkey/issues/new?title=${e.message}&body=${e.stack}`} target="blank" rel="noopener noreferer">Report Issue.</a></div>
+      </div>
+    }
   }
 }
 

@@ -30,21 +30,27 @@ class CommandBuilder {
   }
 
   _buildRegex(search, modifiers, replace) {
-    modifiers = typeof modifiers === 'string' ? modifiers : 'g'
-    if (modifiers.includes('p')) {
-      return new SearchAndReplace(
-        new RegExp(search, modifiers.replace('p', '')),
-        function (match) {
-          if (match.toUpperCase() === match) {
-            replace = replace.toUpperCase()
-          }
-          if (match.toLowerCase() === match) {
-            replace = replace.toLowerCase()
-          }
-          return match.replace(new RegExp(search, modifiers.replace('p', '')), replace)
-        })
+    // If the provided regular expression is invalid, an exception is thrown
+    // We capture that exception and return an dummy command
+    try {
+      modifiers = typeof modifiers === 'string' ? modifiers : 'g'
+      if (modifiers.includes('p')) {
+        return new SearchAndReplace(
+          new RegExp(search, modifiers.replace('p', '')),
+          function (match) {
+            if (match.toUpperCase() === match) {
+              replace = replace.toUpperCase()
+            }
+            if (match.toLowerCase() === match) {
+              replace = replace.toLowerCase()
+            }
+            return match.replace(new RegExp(search, modifiers.replace('p', '')), replace)
+          })
+      }
+      return new SearchAndReplace(new RegExp(search, modifiers), replace)
+    } catch (e) {
+      return new Command()
     }
-    return new SearchAndReplace(new RegExp(search, modifiers), replace)
   }
 
   _buildCustomCommand(namespace, command, parameters, value) {

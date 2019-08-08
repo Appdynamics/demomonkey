@@ -13,18 +13,23 @@ class Variable extends React.Component {
   }
 
   updateVariable(value) {
-    this.props.onValueUpdate(this.props.variable.name, value)
+    this.props.onValueUpdate(this.props.variable.id, value)
+  }
+
+  resetVariable(event) {
+    event.preventDefault()
+    this.updateVariable(null)
   }
 
   render() {
     return <div className="variable-box">
-      <label htmlFor="variable-1">{this.props.variable.name}</label>
-      {/* <input name={this.props.variable.name} type="text"
-        onChange={(event) => this.updateVariable(event)}
-        placeholder={this.props.variable.placeholder}
-        defaultValue={this.props.variable.value}/> */}
+      <label htmlFor="variable-1">
+        {this.props.variable.name}&nbsp;
+        {this.props.variable.owner === '' ? '' : `(from: ${this.props.variable.owner})`}&nbsp;
+        <small><a href="#" onClick={(e) => this.resetVariable(e)}>(reset value)</a></small>
+      </label>
       <AceEditor height="4.5em"
-        name={this.props.variable.name}
+        name={this.props.variable.id}
         minLines={1}
         theme="textmate"
         mode="html"

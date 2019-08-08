@@ -163,20 +163,25 @@ class Configuration {
     return Object.keys(this.content).reduce(filterImport(this.content), [])
   }
 
-  getVariables() {
-    var repository = this.repository
-    var filterVariable = function (content) {
-      return function (result, key) {
-        // By default ini.parse sets "true" as the value
+  getValue(id) {
+    return this.values[id]
+  }
+
+  getVariables(owner = '', bindValues = true) {
+    let localNames = []
+    const filterVariable = (content) => {
+      return (result, key) => {
         // $ is not a legal variable name
-        if (key.charAt(0) === '$' && key.length > 1 && content[key] !== true) {
-          var t = content[key].split('//')
-          result.push(new Variable(key.substring(1), t[0], t[1] ? t[1] : ''))
+        if (key.charAt(0) === '$' && key.length > 1) {
+          // By default ini.parse sets "true" as the value
+          const t = content[key] === true ? ['', ''] : content[key].split('//')
+          result.push(new Variable(key.substring(1), t[0], t[1] ? t[1] : '', owner))
+          localNames.push(key.substring(1))
           return result
         }
 
-        if (typeof repository === 'object' && key.charAt(0) === '+') {
-          return result.concat(repository.findByName(key.substring(1)).getVariables())
+        if (typeof this.repository === 'object' && key.charAt(0) === '+') {
+          return result.concat(this.repository.findByName(key.substring(1)).getVariables(key.substring(1), false))
         }
 
         if (typeof content[key] === 'object' && content[key] !== null) {
@@ -187,33 +192,42 @@ class Configuration {
       }
     }
 
-    var variables = Object.keys(this.content).reduce(filterVariable(this.content), [])
-
     // Variables are replaced longest first, to have a consistent behaviour for #35
-    return variables.sort((a, b) => {
-      return b.name.length - a.name.length
-    }).map((variable) => {
-      return variable.bind(this.values[variable.name])
-    })
+    // Also, "local variables" are shadowing variables of imports
+    const variables = Object.keys(this.content).reduce(filterVariable(this.content), [])
+      .sort((a, b) => {
+        return b.name.length - a.name.length
+      }).reduce((carry, variable) => {
+        if (localNames.includes(variable.name) && variable.owner !== owner) {
+          return carry
+        }
+        return carry.concat(variable)
+      }, [])
+
+    if (bindValues) {
+      return variables.map((variable) => {
+        return variable.bind(this.getValue(variable.id))
+      })
+    }
+
+    return variables
   }
 
   _getConfiguration() {
     if (this.patterns === false) {
       // get all variables upfront
-      var variables = this.getVariables()
-      var options = this.getOptions()
-      var values = this.values
-      var repository = this.repository
+      const variables = this.getVariables()
+      const options = this.getOptions()
 
-      var commandBuilder = new CommandBuilder(
+      const commandBuilder = new CommandBuilder(
         Array.isArray(options.namespace) ? options.namespace : [],
         Array.isArray(options.include) ? options.include : [],
         Array.isArray(options.exclude) ? options.exclude : [],
         this.withEvalCommand
       )
 
-      var filterConfiguration = function (content) {
-        return function (result, key) {
+      const filterConfiguration = (content) => {
+        return (result, key) => {
           // skip all variables
           // '$' is not a variable, so we also check for the length of the variable.
           // '@' is not an option, so we also check for the length of the option
@@ -222,8 +236,14 @@ class Configuration {
           }
 
           if (key.charAt(0) === '+') {
-            var x = result.concat(repository.findByName(key.substring(1)).updateValues(values)._getConfiguration())
-            return x
+            const configName = key.substring(1)
+            const valuesFromVariables = variables.reduce((carry, variable) => {
+              if (variable.owner === '') {
+                carry[variable.name] = variable.value
+              }
+              return carry
+            }, {})
+            return result.concat(this.repository.findByName(configName).updateValues(Object.assign(this.values, valuesFromVariables))._getConfiguration())
           }
 
           // skip for non-commands
@@ -235,11 +255,11 @@ class Configuration {
             return result.concat(Object.keys(content[key]).reduce(filterConfiguration(content[key]), []))
           }
 
-          var lhs = variables.reduce((value, variable) => {
+          const lhs = variables.reduce((value, variable) => {
             return variable.apply(value)
           }, key)
 
-          var rhs = variables.reduce((value, variable) => {
+          const rhs = variables.reduce((value, variable) => {
             return variable.apply(value)
           }, content[key])
 

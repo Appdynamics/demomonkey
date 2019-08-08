@@ -117,6 +117,11 @@ describe('Command', function () {
       expect(command.search).to.be.an.instanceof(RegExp)
     })
 
+    it('should create an no-op Command for an invalid regular expression', function () {
+      var command = new CommandBuilder().build('!/??/i', 'b')
+      expect(command).to.be.an.instanceof(Command)
+    })
+
     it('should create a SearchAndReplace for regular expression command with p modifier', function () {
       var command = new CommandBuilder().build('!/TestCase/ip', 'CaseTested')
       expect(command).to.be.an.instanceof(SearchAndReplace)

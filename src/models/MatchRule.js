@@ -4,14 +4,27 @@ class MatchRule {
     this.excludes = excludes
   }
 
-  test(str) {
-    var included = this.includes.length < 1 || this.includes.reduce(function (carry, pattern) {
-      return carry || (new RegExp(pattern.substr(1, pattern.length - 2))).test(str)
-    }, false)
+  _testString(pattern, str) {
+    if (pattern.startsWith('/') && pattern.endsWith('/')) {
+      return (new RegExp(pattern.substr(1, pattern.length - 2))).test(str)
+    }
+    return str.includes(pattern)
+  }
 
-    var excluded = this.excludes.length > 0 && (this.excludes.reduce(function (carry, pattern) {
-      return carry || (new RegExp(pattern.substr(1, pattern.length - 2))).test(str)
-    }, false))
+  _reducer(set, str) {
+    return set.reduce((carry, pattern) => {
+      try {
+        return carry || this._testString(pattern, str)
+      } catch (e) {
+        return carry
+      }
+    }, false)
+  }
+
+  test(str) {
+    var included = this.includes.length < 1 || this._reducer(this.includes, str)
+
+    var excluded = this.excludes.length > 0 && this._reducer(this.excludes, str)
 
     return included && !excluded
   }

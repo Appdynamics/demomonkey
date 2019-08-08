@@ -39,37 +39,59 @@ describe('Configuration', function () {
       assert.deepEqual(configurationWithVariable.getVariables(), [{
         name: 'a',
         value: 'v',
-        description: ''
+        description: '',
+        owner: '',
+        id: 'a'
       }])
     })
     it('should return the variables from imported configurations', function () {
       var repository = new Repository({ 'other': configurationWithVariable })
       assert.deepEqual((new Configuration('+other', repository)).getVariables(), [{
         name: 'a',
-        value: 'v',
-        description: ''
+        value: 'default',
+        description: '',
+        owner: 'other',
+        id: 'other::a'
+      }])
+    })
+    it('should return variables with reassigned value', function () {
+      var repository = new Repository({ 'other': configurationWithVariable })
+      assert.deepEqual((new Configuration('+other\r$a = reassigned', repository)).getVariables(), [{
+        name: 'a',
+        value: 'reassigned',
+        description: '',
+        owner: '',
+        id: 'a'
       }])
     })
     it('complex ini should return object 2 variables', function () {
       assert.deepEqual(complexConfiguration.getVariables(), [{
         name: 'x',
         value: '1',
-        description: ''
+        description: '',
+        owner: '',
+        id: 'x'
       }, {
         name: 'y',
         value: '2',
-        description: 'Set y'
+        description: 'Set y',
+        owner: '',
+        id: 'y'
       }])
     })
     it('configuration with commands should return object 2 variables', function () {
       assert.deepEqual(configurationWithCommand.getVariables(), [{
         name: 'x',
         value: 'y',
-        description: ''
+        description: '',
+        owner: '',
+        id: 'x'
       }, {
         name: 'z',
         value: 'w',
-        description: ''
+        description: '',
+        owner: '',
+        id: 'z'
       }])
     })
   })
@@ -78,6 +100,41 @@ describe('Configuration', function () {
     it('should apply variables on commands', function () {
       const config = configurationWithCommand._getConfiguration()
       assert.deepEqual(config, [{search: 'a', replace: 'b', locationFilter: '', cssFilter: '', property: '', location: ''}, {search: 'y', 'replace': 'w', location: '', cssFilter: '', property: '', locationFilter: ''}])
+    })
+    it('should apply variables on imports', function () {
+      /* eslint no-template-curly-in-string: "off" */
+      const repository = new Repository({
+        'other1': new Configuration('$a = default\r$b = default\rx${b} = $a', null, true, { a: 'v' }),
+        'other2': new Configuration('+other3\r$a = default\r$b = default\ry${b} = $a\r$c = reassigned\r$d = middle', new Repository(
+          {'other3': new Configuration('$c = default\r$d = bottom\r$e = default\rz${d} = ${c}${e}', null, true, { c: 'u' })}
+        ), true, { a: 'w' })
+      })
+      assert.deepEqual((new Configuration('+other1\r+other2\r$a = reassigned\r$b = b\r$d = top', repository, true, { e: 'value' }))._getConfiguration(), [
+        {
+          cssFilter: '',
+          location: {},
+          locationFilter: '',
+          property: '',
+          search: 'xb',
+          replace: 'reassigned'
+        },
+        {
+          cssFilter: '',
+          location: {},
+          locationFilter: '',
+          property: '',
+          search: 'ztop',
+          replace: 'reassignedvalue'
+        },
+        {
+          cssFilter: '',
+          location: {},
+          locationFilter: '',
+          property: '',
+          search: 'yb',
+          replace: 'reassigned'
+        }
+      ])
     })
   })
 

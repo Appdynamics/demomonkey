@@ -6,7 +6,6 @@ import CodeEditor from './CodeEditor'
 import Configuration from '../../../models/Configuration'
 import PropTypes from 'prop-types'
 import Mousetrap from 'mousetrap'
-import showdown from 'showdown'
 import Select from 'react-select'
 import CommandBuilder from '../../../commands/CommandBuilder'
 import ToggleButton from 'react-toggle-button'
@@ -66,9 +65,13 @@ class Editor extends React.Component {
     })
   }
 
-  updateVariable(name, value) {
+  updateVariable(id, value) {
     var values = this.state.currentConfiguration.values ? this.state.currentConfiguration.values : {}
-    values[name] = value
+    if (value === null) {
+      delete values[id]
+    } else {
+      values[id] = value
+    }
     this.handleUpdate('values', values)
   }
 
@@ -214,7 +217,7 @@ class Editor extends React.Component {
             <div className="scrolling-pane">
               {variables.length > 0 ? '' : <div className="no-variables">No variables defined</div>}
               {variables.map((variable, index) => {
-                return <Variable key={variable.name} onValueUpdate={(name, value) => this.updateVariable(name, value)} variable={variable}/>
+                return <Variable key={variable.id} onValueUpdate={(id, value) => this.updateVariable(id, value)} variable={variable}/>
               })}
             </div>
           </Pane>
