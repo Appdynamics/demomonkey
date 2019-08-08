@@ -28,7 +28,7 @@ class Variable extends React.Component {
         {this.props.variable.owner === '' ? '' : `(from: ${this.props.variable.owner})`}&nbsp;
         <small><a href="#" onClick={(e) => this.resetVariable(e)}>(reset value)</a></small>
       </label>
-      <AceEditor height="4.5em"
+      <AceEditor height="4.5em" width="700px"
         name={this.props.variable.id}
         minLines={1}
         theme="textmate"

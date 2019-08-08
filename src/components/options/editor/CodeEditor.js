@@ -53,7 +53,7 @@ class CodeEditor extends React.Component {
         this._updateAnnotations()
       }}
       width="100%"
-      height="95%"
+      height="calc(100% - 40px)"
       theme="xcode"
       mode="mnky"
       readOnly = {this.props.readOnly === true}
