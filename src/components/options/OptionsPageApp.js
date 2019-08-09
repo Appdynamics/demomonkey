@@ -29,26 +29,31 @@ class App extends React.Component {
     if (configuration.id === 'new') {
       this.addConfiguration(configuration)
     } else {
-      const variables = (new Configuration(configuration.content, this.getRepository(), false, configuration.values)).getVariables().map(v => v.id)
+      if (typeof configuration.values !== 'undefined') {
+        const variables = (new Configuration(configuration.content, this.getRepository(), false, configuration.values)).getVariables().map(v => v.id)
 
-      console.log('BEFORE', configuration.values)
-
-      Object.keys(configuration.values).forEach(name => {
-        if (!variables.includes(name)) {
-          delete configuration.values[name]
-        }
-      })
-
-
-      console.log('AFTER', configuration.values)
+        Object.keys(configuration.values).forEach(name => {
+          if (!variables.includes(name)) {
+            delete configuration.values[name]
+          }
+        })
+      }
 
       this.props.actions.saveConfiguration(configuration.id, configuration)
     }
   }
 
+  uploadConfiguration(upload) {
+    if (Array.isArray(upload)) {
+      this.props.actions.batchAddConfiguration(upload)
+    } else {
+      this.addConfiguration(upload)
+    }
+  }
+
   addConfiguration(configuration) {
     this.props.actions.addConfiguration(configuration).then(() => {
-      var latest = this.props.configurations[this.props.configurations.length - 1]
+      const latest = this.props.configurations[this.props.configurations.length - 1]
       this.props.actions.setCurrentView('configuration/' + latest.id)
     })
   }
@@ -93,9 +98,7 @@ class App extends React.Component {
             this.props.actions.setCurrentView('welcome')
             // Delete all configurations within it if a directory is given
             if (configuration.nodeType === 'directory') {
-              configuration.children.forEach(c => {
-                this.props.actions.deleteConfigurationByPrefix(configuration.id.split('').reverse().join(''))
-              })
+              this.props.actions.deleteConfigurationByPrefix(configuration.id.split('/').reverse().join('/'))
             } else {
               this.props.actions.deleteConfiguration(configuration.id)
             }
@@ -110,10 +113,14 @@ class App extends React.Component {
   }
 
   updateRepository() {
-    this._repo = new Repository(this.props.configurations.reduce(function (repo, rawConfig) {
+    this._repo = new Repository(this.getConfigurations().reduce(function (repo, rawConfig) {
       repo[rawConfig.name] = new Configuration(rawConfig.content)
       return repo
     }, {}))
+  }
+
+  getConfigurations() {
+    return this.props.configurations.filter((config) => typeof config.deleted_at === 'undefined' && typeof config._deleted === 'undefined')
   }
 
   getConfiguration(id) {
@@ -131,7 +138,6 @@ class App extends React.Component {
   }
 
   toggleOptionalFeature(feature) {
-    console.log(feature)
     this.props.actions.toggleOptionalFeature(feature)
   }
 
@@ -190,13 +196,13 @@ class App extends React.Component {
   render() {
     var activeItem = this.props.currentView.indexOf('configuration/') === -1 ? false : this.props.currentView.split('/').pop()
 
-    var configurations = this.props.configurations.filter((config) => typeof config.deleted_at === 'undefined' && typeof config._deleted === 'undefined')
+    var configurations = this.getConfigurations()
 
     return <div className="main-grid">
       <Popup className="popup" btnClass="popup__btn" />
       <div className="navigation">
         <Navigation onNavigate={(target) => this.navigateTo(target)}
-          onUpload={(configuration) => this.addConfiguration(configuration)}
+          onUpload={(upload) => this.uploadConfiguration(upload)}
           onDelete={(configuration) => this.deleteConfiguration(configuration)}
           items={configurations}
           active={activeItem} />
@@ -236,6 +242,9 @@ const OptionsPageApp = connect(
       },
       deleteConfigurationByPrefix: (prefix) => {
         dispatch({ 'type': 'DELETE_CONFIGURATION_BY_PREFIX', prefix })
+      },
+      batchAddConfiguration: (configurations) => {
+        return dispatch({ 'type': 'BATCH_ADD_CONFIGURATION', configurations })
       },
       addConfiguration: (configuration) => {
         return dispatch({ 'type': 'ADD_CONFIGURATION', configuration })

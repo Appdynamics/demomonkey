@@ -65,6 +65,11 @@ class CodeEditor extends React.Component {
       name="contentarea"
       commands={[
         {
+          name: 'Toggle Comment',
+          bindKey: {win: 'Ctrl-Shift-7', mac: 'Cmd-Shift-7'},
+          exec: 'togglecomment'
+        },
+        {
           name: 'Save On Enter',
           bindKey: {win: 'Enter', mac: 'Enter'},
           exec: (editor) => {

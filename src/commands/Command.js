@@ -25,18 +25,21 @@ class Command {
 
   static _getColorFromValue(value) {
     // There are some "magic" colors for appdynamics dashboards
-    if (['ad-purple', 'ad-cyan', 'ad-blue'].includes(value.toLowerCase())) {
-      return {
-        'ad-purple': Color('#7e69d2'),
-        'ad-cyan': Color('#01CEDA'),
-        'ad-blue': Color('#0084E5'),
-        'ad-green': Color('#33C561'),
-        'ad-turquoise': Color('#00ced9'),
-        'ad-lightgray': Color('#eaeaea'),
-        'ad-lightgrey': Color('#eaeaea'),
-        'ad-darkgray': Color('#404040'),
-        'ad-darkgrey': Color('#404040')
-      }[value.toLowerCase()]
+    const magicColors = {
+      'ad-purple': Color('#7e69d2'),
+      'ad-cyan': Color('#01CEDA'),
+      'ad-blue': Color('#0084E5'),
+      'ad-green': Color('#33C561'),
+      'ad-turquoise': Color('#00ced9'),
+      'ad-lightgray': Color('#eaeaea'),
+      'ad-lightgrey': Color('#eaeaea'),
+      'ad-darkgray': Color('#404040'),
+      'ad-darkgrey': Color('#404040'),
+      'ad-pink': Color('#e38ead'),
+      'ad-red': Color('#ff3333')
+    }
+    if (magicColors.hasOwnProperty(value.toLowerCase())) {
+      return magicColors[value.toLowerCase()]
     }
 
     // We want to accept colors from hex 'xxxxxx(aa)' and 'xxx(a)'

@@ -52,10 +52,8 @@ const configurations = function (state = [], action) {
       return state.map(i =>
         configuration(i, action)
       )
-    /* case 'DELETE_CONFIGURATION':
-      return state.filter(i =>
-        i.id !== action.id
-      ) */
+    case 'BATCH_ADD_CONFIGURATION':
+      return state.concat(action.configurations.map(c => configuration(undefined, {configuration: c, type: 'ADD_CONFIGURATION'})))
     case 'ADD_CONFIGURATION':
       // In the case of remote sync we have to protect ourselves against re-insertion
       if (action.sync === true && state.findIndex(c => c.id === action.configuration.id) !== -1) {

@@ -64,8 +64,22 @@ describe('Configuration', function () {
         id: 'a'
       }])
     })
-    it('complex ini should return object 2 variables', function () {
+    it('complex ini should return multiple variables', function () {
       assert.deepEqual(complexConfiguration.getVariables(), [{
+        name: 'url2',
+        value: 'https://demomonkey',
+        description: 'another url with https://',
+        owner: '',
+        id: 'url2'
+      },
+      {
+        name: 'url',
+        value: 'https://demomonkey',
+        description: '',
+        owner: '',
+        id: 'url'
+      },
+      {
         name: 'x',
         value: '1',
         description: '',

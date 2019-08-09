@@ -43,24 +43,23 @@ class ConfigurationUpload extends React.Component {
           reader.readAsText(file)
         } else if (extension === 'zip') {
           JSZip.loadAsync(file).then((zip) => {
+            let zipPromises = []
             zip.forEach((relativePath, zipEntry) => {
-              console.log(zipEntry, relativePath)
-              // const baseName = zipEntry.name.substring(zipEntry.name.lastIndexOf('/') + 1)
               const extension = zipEntry.name.split('.').pop()
-              console.log(zipEntry.name)
-              console.log(extension)
               if (extension === 'mnky' || extension === 'ini' || extension === 'json') {
-                zipEntry.async('string').then((content) => {
-                  console.log(content)
-                  this.props.onUpload({
+                zipPromises.push(zipEntry.async('string').then((content) => {
+                  return {
                     name: zipEntry.name.replace(new RegExp('\\.' + extension + '$'), ''),
                     content: this.getIni(content, extension),
                     test: '',
                     enabled: false,
                     id: 'new'
-                  })
-                })
+                  }
+                }))
               }
+            })
+            Promise.all(zipPromises).then(results => {
+              this.props.onUpload(results)
             })
           })
         } else {

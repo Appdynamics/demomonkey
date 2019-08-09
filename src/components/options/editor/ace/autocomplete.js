@@ -8,7 +8,6 @@ var langTools = brace.acequire('ace/ext/language_tools')
 var { snippetManager } = (brace.acequire('ace/snippets'))
 
 function autocomplete(getRepository) {
-  console.log('Autocomplete...')
   // Build auto completion for all commands
   let cmds = [
     {caption: '!/regex/', snippet: '!/${1}/${2}/${3:pi} = ${4}'},
@@ -167,7 +166,9 @@ function autocomplete(getRepository) {
             'ad-lightgray',
             'ad-lightgrey',
             'ad-darkgrey',
-            'ad-darkgray'
+            'ad-darkgray',
+            'ad-pink',
+            'ad-red'
           ]).sort().map(value => { return {value, meta: 'color'} }))
         }
         // console.log('OUT')

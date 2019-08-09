@@ -17,6 +17,11 @@ class ReplaceImage extends Command {
 
     var search = this._lookupImage(this.search)
 
+    // An empty replacement seems to break the image, so we ignore it.
+    if (this.replace === '') {
+      return false
+    }
+
     if (this._match(original, search, this.replace)) {
       target[key] = this.replace
       return new UndoElement(target, key, original, this.replace)

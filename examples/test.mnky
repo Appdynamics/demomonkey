@@ -1,6 +1,8 @@
 [Variables]
 $x=1
 $y=2//Set y
+$url=https://demomonkey
+$url2=https://demomonkey//another url with https://
 
 [Options]
 @include[] = a
