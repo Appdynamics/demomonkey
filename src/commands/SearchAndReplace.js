@@ -23,7 +23,7 @@ class SearchAndReplace extends Command {
     if (this.cssFilter === '') {
       return true
     }
-    return typeof target !== 'object' || target.parentNode === null || typeof target.parentNode.matches !== 'function' || target.parentNode.matches(this.cssFilter)
+    return typeof target !== 'object' || target.parentNode === null || typeof target.parentNode !== 'object' || typeof target.parentNode.matches !== 'function' || target.parentNode.matches(this.cssFilter)
   }
 
   _replaceByProperty(target) {

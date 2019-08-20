@@ -14,7 +14,7 @@ class ReplaceFlowmapConnection extends Command {
     // It would be probably more efficient to run the following directly on the document
     // and search for the connection. This is currently not possible with DemoMonkey
     // An "advantage" of this approach is, that by going from the node "up" makes sure that we are within the (right) flowmap
-    if (node[key].trim() === this.tier1) {
+    if (typeof node[key] === 'string' && node[key].trim() === this.tier1) {
       var topLevelGraphics = this._walk(node, 3)
       if (topLevelGraphics.className.baseVal === 'topLevelGraphics') {
         var tier1id = ''

@@ -139,16 +139,11 @@ class CommandBuilder {
         return new ReplaceFlowmapConnection(parameters[0], parameters[1], 'Hide')
       }
       if (command === 'replaceMobileScreenshot') {
-        var condition = function (document) {
-          var view = document.querySelector('.ads-session-left-panel-container-grid-with-nav .x-grid-row-selected .x-grid-cell-first .x-grid-cell-inner')
-          return view !== null && view.innerHTML === parameters[0]
-        }
-        var thumbnailHtml = '<img src="' + value + '" height="149" style="margin-left: auto;margin-right: auto;display: block;">'
-        var screenshotHtml = '<img src="' + value + '" height="380" style="margin-top: 10px;margin-left: auto;margin-right: auto;display: block;">'
+        const thumbnailHtml = '<img src="' + value + '" height="152" width="84">'
+        const screenshotHtml = '<img src="' + value + '" height="400" width="224">'
         return new Group([
-          new OverwriteHTML('EUM_MOBILE_SESSION_DETAILS', '.ads-screenshot-container', screenshotHtml, location, condition),
-          new OverwriteHTML('EUM_MOBILE_SESSION_DETAILS', '.ads-screenshot-tooltip-thumbnail-container', thumbnailHtml, location, condition),
-          new OverwriteHTML('EUM_MOBILE_SESSION_DETAILS', '.ads-screenshots-thumbnail-container', thumbnailHtml, location, condition)
+          new OverwriteHTML('EUM_MOBILE_SESSION_DETAILS', 'ad-screenshot-tile-stitcher[ad-container-width="500"] > div', screenshotHtml, location),
+          new OverwriteHTML('EUM_MOBILE_SESSION_DETAILS', 'ad-screenshot-tile-stitcher[ad-container-width="202"] > div', thumbnailHtml, location)
         ])
       }
       if (command === 'delayLink') {
@@ -253,6 +248,9 @@ class CommandBuilder {
           commands.unshift(this._buildCustomCommand(namespace, 'replaceBusinessTransactionHealth', [parameters[0]], value[2]))
         }
         return new Group(commands)
+      }
+      if (command === 'replaceIOTNumericWidget') {
+        return new ReplaceNeighbor(parameters[0], value, 10, '.number-label', 'EUM_IOT_DEVICE_DASHBOARD', '', location)
       }
     }
 

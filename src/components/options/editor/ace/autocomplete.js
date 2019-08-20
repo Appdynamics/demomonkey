@@ -49,7 +49,9 @@ function autocomplete(getRepository) {
       {caption: '!replaceInnerNodeHealth', snippet: '!replaceInnerNodeHealth(${1}) = ${2}'},
       {caption: '!replaceOuterNodeHealth', snippet: '!replaceInnerNodeHealth(${1}, ${2}) = ${3}'},
       {caption: '!replaceBusinessTransactionHealth', snippet: '!replaceBusinessTransactionHealth(${1}) = ${2}'},
-      {caption: '!replaceFlowmapNode', snippet: '!replaceFlowmapNode(${1}) = ${2},${3},${4},${5},${6}'}
+      {caption: '!replaceBusinessTransactionOriginalName', snippet: '!replaceBusinessTransactionOriginalName(${1}) = ${2}'},
+      {caption: '!replaceFlowmapNode', snippet: '!replaceFlowmapNode(${1}) = ${2},${3},${4},${5},${6}'},
+      {caption: '!replaceIOTNumericWidget', snippet: '!replaceIOTNumericWidget(${1}) = ${2}'}
     ].sort()
   }
 

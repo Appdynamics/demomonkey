@@ -67,7 +67,7 @@ class ReplaceFlowmapIcon extends Command {
   }
 
   apply(node, key) {
-    if (this.newIcon !== '' && node[key].trim() === this.appName) {
+    if (this.newIcon !== '' && typeof node[key] === 'string' && node[key].trim() === this.appName) {
       var parent = this._walk(node, 2)
       if (parent !== false) {
         var image = parent.querySelector('image.adsFlowNodeTypeIcon, image.adsFlowMapBackendImage')
