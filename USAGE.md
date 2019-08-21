@@ -46,9 +46,11 @@ You can use the following options:
 - **@include = regex**: The configuration is only available if the url matches the given regex.
 - **@exclude** = regex: The configuration doesn't work if the url matches the given regex.
 - **@blacklist = tag**: The configuration ignores the given tag.
+- **@whitelist = tag**: The configuration includes the given tag (`script` and `style` are blacklisted by default).
 - **@namespace = ns**: Load commands from a given namespace. Read below to learn more about namespaces
 - **@template**: The configuration is only used as template, so no include/exclude is required.
 - **@deprecated**: The configuration is deprecated and will not be available.
+- **@textAttributes**: The given attributes are treated as text. The default is the `placeholder` attribute.
 - **@author = name <email>**: A reserved keyword, you can use to add your name as author to a given configuration.
 
 If you want to use a option multiple time you need to provide it in array notation:
@@ -62,7 +64,8 @@ If you want to use a option multiple time you need to provide it in array notati
 
 Outside of namespaces you can always use the following commands:
 
-- **!replace(word, locationFilter)** = replacement: Replace the given word with the replacement if the locationFilter matches
+- **!replace(word, locationFilter, cssFilter, attribute)** = replacement: Replace the given word with the replacement if the locationFilter and the cssFilter matches. By setting the attribute, instead of the text itself an attribute of the parent DOM element is replaced (e.g. `src`)
+- **!replaceAttribute(word, attribute, locationFilter, cssFilter)** = replacement: An alias for the replace command, that takes the attribute as second parameter. Use this if locationFilter and cssFilter are not required.
 - **!/search/modifier = replacement**: Provide a regular expression to run your replacements.
 - **!protect(word)**: Make sure that the given word is not affected by any replacement.
 - **!style(word, property) = replacement**: Change the css property of a node containing word
@@ -92,14 +95,19 @@ Commands specific to a certain web application are provided via a namespace. Cur
 - **!hideRemoteService(label)**: Hide the given remote service in the list view
 - **!replaceFlowmapConnection(label1, label2, force) = replacement**: Replace the color between two elements on the flowmap. Possible values for **replacement** are Warning, Critical, Unknown, Normal, Async and Hide. Set the force option to replace the label even if no baseline is shown.
 - **!hideFlowmapConnection(label1, label2)**: Hide the connection between two elements on the flowmap.
-- **!replaceMobileScreenshot(view) = replacement**: Replace a screenshot taken during a mobile session for the given view.
+- **!replaceMobileScreenshot() = replacement**: Replace a screenshot taken during a mobile session.
 - **!replaceNodeCount(nodeName) = replacement**: Replace the node count on the flowmap for the node with name nodeName
 - **!recolorDashboard(oldColor, dashboardId) = newColor**: Replace the oldColor with newColor on a dashboard. If provided, only if dashboardId matches.
 - **!setDashboardBackground(dasboardID) = background**: Change the background of a dasbhoard. You can provide an image url or a color. If provided, the background is only replaced if the dasbhoardId matches.
 - **!replaceApplication(app) = replacement**: If replacement is empty, this behaves like !hideApplication, otherwise app is replaced with replacement.
-- **!replaceBusinessTransaction(bt) = replacement**: If replacement is empty, this behaves like !hideBusinessTransaction, otherwise bt is replaced with replacement.
 - **!replaceBusinessTransactionHealth(bt) = status**: Set the health status of a business transaction.
 - **!replaceInnerNodeHealth(label) = status**: Set the inner health status of a node on the flowmap.
+- **!replaceOuterNodeHealth(label, level) = status**: Set the outer health status of a node on the flowmap. By default the currently normal section is replaced. Give a level to replace warning or critical.
+- **!replaceBusinessTransactionOriginalName(label) = replacement**: Replace the original name of a business transaction.
+- **!replaceBusinessTransactionHealth(label) = replacement**: Replace the health of a business transaction.
+- **!replaceBusinessTransaction(bt) = newName,newOriginalName,newHealth**: If replacement is empty, this behaves like !hideBusinessTransaction, otherwise bt is replaced with newName, the original name is set to newOriginalName and the health is set to newHealth
+- **!replaceFlowmapNode(label) = newName,newCount,newInnerHealth,newOuterHealth**: This command groups the renaming of a node, the node cound and the node health in a single command.
+- **!replaceIOTNumericWidget(label) = replacement**: Change the value of an IOT widget based on the widget label
 
 
 ## Variables

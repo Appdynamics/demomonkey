@@ -56,6 +56,15 @@ import {Store} from 'react-chrome-redux';
       }
     }
 
+    // frames don't need an independent url manager
+    if (!isTopFrame()) {
+      urlManager = {
+        add: (url) => {},
+        remove: (id) => {},
+        clear: () => {}
+      }
+    }
+
     var $DEMO_MONKEY = new Monkey(store.getState().configurations, scope, settings.isFeatureEnabled('undo'), settings.monkeyInterval, settings.isFeatureEnabled('experimantal_withTemplateEngine'), urlManager, settings.isDebugEnabled(), settings.isFeatureEnabled('debugBox'), settings.isLiveModeEnabled(), settings.isFeatureEnabled('withEvalCommand'))
     updateBadge($DEMO_MONKEY.start())
 
