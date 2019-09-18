@@ -1,4 +1,5 @@
 import SearchAndReplace from './SearchAndReplace'
+import Protect from './Protect'
 import Style from './Style'
 import Hide from './Hide'
 import Group from './Group'
@@ -258,7 +259,7 @@ class CommandBuilder {
     }
 
     if (command === 'protect') {
-      return new SearchAndReplace(parameters[0], parameters[0].split('').join(String.fromCharCode(0x200B)), parameters[1], parameters[2], parameters[3], location)
+      return new Protect(parameters[0], parameters[1], parameters[2], location)
     }
 
     if (command === 'replaceNeighbor') {

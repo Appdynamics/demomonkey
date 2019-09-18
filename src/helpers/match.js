@@ -6,6 +6,11 @@ function match(original, search, replace) {
     return false
   }
 
+  const regex = search.match(/^!\/(.+)\/([gimp]+)?$/)
+  if (regex) {
+    return (new RegExp(regex[1], regex[2])).test(original)
+  }
+
   const startsWithNot = search.charAt(0) === '!'
   const startsWithStar = search.charAt(0) === '*'
   const endsWithStar = search.slice(-1) === '*'

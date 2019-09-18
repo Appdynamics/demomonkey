@@ -29,4 +29,9 @@ describe('#match', function () {
   it('should return false if original equals replacement', function () {
     assert.equal(match('test', 'test', 'test'), false)
   })
+  it('should a match a regex for !/regex/modifiers', function () {
+    assert.equal(match('a', '!/[a-z]/'), true)
+    assert.equal(match('aAaA', '!/[A]*/i'), true)
+    assert.equal(match('1a7', '!/\\d\\w7/i'), true)
+  })
 })
