@@ -11,8 +11,6 @@ import match from './helpers/match.js'
 (function (scope) {
   'use strict'
 
-  var selectedTabId = -1
-  var counts = []
   var enabledHotkeyGroup = -1
 
   const badge = new Badge(scope.chrome.browserAction)
@@ -25,25 +23,19 @@ import match from './helpers/match.js'
     })
   }
 
-  function updateBadge() {
-    const count = counts[selectedTabId] ? counts[selectedTabId] : 0
-    badge.updateDemoCounter(count, selectedTabId)
-  }
-
   var liveModeInterval = -1
 
   function doLiveMode(liveMode) {
     if (liveMode && liveModeInterval < 0) {
       var time = 0
-      badge.updateTimer(time, selectedTabId)
+      badge.updateTimer(time)
       liveModeInterval = setInterval(() => {
-        console.log('live')
         time++
-        badge.updateTimer(time, selectedTabId)
+        badge.updateTimer(time)
       }, 60000)
     } else if (!liveMode) {
       clearInterval(liveModeInterval)
-      badge.clearTimer(selectedTabId)
+      badge.clearTimer()
       liveModeInterval = -1
     }
   }
@@ -135,16 +127,23 @@ import match from './helpers/match.js'
     }
   }
 
+  // New tab created, initialize badge for given tab
+  scope.chrome.tabs.onCreated.addListener(function (tab) {
+    // Initialize new tab
+    badge.updateDemoCounter(0, tab.id)
+  })
+
+  scope.chrome.tabs.onRemoved.addListener(function (tabId) {
+    badge.removeTab(tabId)
+  })
+
   scope.chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     if (request.receiver && request.receiver === 'background') {
       if (typeof request.count === 'number' && typeof sender.tab === 'object' && typeof sender.tab.id === 'number') {
-        counts[sender.tab.id] = request.count
-        updateBadge()
+        badge.updateDemoCounter(request.count, sender.tab.id)
       }
       if (request.task && request.task === 'addUrl' && typeof request.url === 'object') {
-        console.log(request.url)
         hookedUrls[request.url.id] = request.url
-        console.log(hookedUrls)
       }
       if (request.task && request.task === 'removeUrl' && typeof request.id === 'string') {
         delete hookedUrls[request.id]
@@ -153,30 +152,6 @@ import match from './helpers/match.js'
         console.log('Clearing hooked URLs')
         hookedUrls = {}
       }
-    }
-  })
-
-  scope.chrome.tabs.onUpdated.addListener(function (tabId, props, tab) {
-    if (props.status === 'loading') {
-      scope.chrome.tabs.sendMessage(tabId, {
-        receiver: 'monkey',
-        task: 'restart'
-      })
-    }
-    if (props.status === 'complete' && tabId === selectedTabId) {
-      updateBadge()
-    }
-  })
-
-  scope.chrome.tabs.onSelectionChanged.addListener(function (tabId, props) {
-    selectedTabId = tabId
-    updateBadge()
-  })
-
-  scope.chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
-    if (tabs.length > 0) {
-      selectedTabId = tabs[0].id
-      updateBadge()
     }
   })
 
@@ -253,8 +228,6 @@ import match from './helpers/match.js'
     store.subscribe(function () {
       const lastAction = store.getState().lastAction
 
-      console.log(lastAction)
-
       // updating the current view does not require any updates
       if (lastAction.type === 'SET_CURRENT_VIEW') {
         return
@@ -324,18 +297,6 @@ import match from './helpers/match.js'
       contexts: ['browser_action'],
       onclick: function () {
         store.dispatch({ 'type': 'TOGGLE_DEBUG_MODE' })
-      }
-    })
-
-    scope.chrome.contextMenus.create({
-      'title': 'Create Replacement',
-      'contexts': ['selection'],
-      'onclick': function (info, tab) {
-        var replacement = window.prompt('Replacement for "' + info.selectionText + '": ')
-        var configs = (store.getState().configurations.filter(config => config.enabled))
-        var config = configs.length > 0 ? configs[0] : store.getState().configurations[0]
-        config.content += '\n' + info.selectionText + ' = ' + replacement
-        store.dispatch({ 'type': 'SAVE_CONFIGURATION', 'id': config.id, config })
       }
     })
   }

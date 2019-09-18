@@ -2,6 +2,11 @@ class Badge {
   constructor(browserAction, timer = -1) {
     this.timer = timer
     this.browserAction = browserAction
+    this.tabs = []
+  }
+
+  removeTab(tabId) {
+    this.tabs = this.tabs.filter(id => id !== tabId)
   }
 
   _updateBadgeText(tabId) {
@@ -19,8 +24,13 @@ class Badge {
   }
 
   updateDemoCounter(count, tabId) {
-    this.browserAction.getBadgeText({ tabId }, (text) => {
-      text = this._updateText(text, count + '', undefined)
+    if (!this.tabs.includes(tabId)) {
+      this.tabs.push(tabId)
+    }
+
+    this.browserAction.getBadgeText({ tabId }, (oldText) => {
+      // oldText can be undefined for a new tab, set it to ''
+      const text = this._updateText(typeof oldText === 'undefined' ? '' : oldText, count + '')
       const color = count > 0 ? '#952613' : '#5c832f'
       this.browserAction.setBadgeText({ text, tabId })
       this.browserAction.setBadgeBackgroundColor({
@@ -32,12 +42,12 @@ class Badge {
 
   clearTimer(tabId) {
     this.timer = -1
-    this._updateBadgeText(tabId)
+    this.tabs.forEach(tabId => this._updateBadgeText(tabId))
   }
 
   updateTimer(timer, tabId) {
-    this.timer = timer
-    this._updateBadgeText(tabId)
+    this.timer = timer > 99 ? 99 : timer
+    this.tabs.forEach(tabId => this._updateBadgeText(tabId))
   }
 }
 

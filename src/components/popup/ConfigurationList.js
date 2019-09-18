@@ -16,7 +16,6 @@ class ConfigurationList extends React.Component {
   constructor(props) {
     super(props)
     this.currentDirectory = ''
-    console.log(props.settings)
     this.state = {
       search: '',
       onlyShowActivated: false,

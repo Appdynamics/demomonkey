@@ -95,7 +95,12 @@ class Configuration {
         return carry
       }
 
-      var undo = command.apply(node, key)
+      try {
+        var undo = command.apply(node, key)
+      } catch (e) {
+        console.log(e)
+        return carry
+      }
 
       if (undo === false) {
         return carry

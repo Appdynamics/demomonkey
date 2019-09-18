@@ -1,5 +1,7 @@
 import Monkey from './models/Monkey'
+import ModeManager from './models/ModeManager'
 import Settings from './models/Settings'
+import Manifest from './models/Manifest'
 import {Store} from 'react-chrome-redux';
 
 (function (scope) {
@@ -65,17 +67,20 @@ import {Store} from 'react-chrome-redux';
       }
     }
 
-    var $DEMO_MONKEY = new Monkey(store.getState().configurations, scope, settings.isFeatureEnabled('undo'), settings.monkeyInterval, settings.isFeatureEnabled('experimantal_withTemplateEngine'), urlManager, settings.isDebugEnabled(), settings.isFeatureEnabled('debugBox'), settings.isLiveModeEnabled(), settings.isFeatureEnabled('withEvalCommand'))
+    var $DEMO_MONKEY = new Monkey(store.getState().configurations, scope, settings.isFeatureEnabled('undo'), settings.monkeyInterval, settings.isFeatureEnabled('experimantal_withTemplateEngine'), urlManager, settings.isFeatureEnabled('withEvalCommand'))
     updateBadge($DEMO_MONKEY.start())
+
+    var modeManager = new ModeManager(scope, $DEMO_MONKEY, new Manifest(scope.chrome), settings.isDebugEnabled(), settings.isFeatureEnabled('debugBox'), settings.isLiveModeEnabled())
 
     function restart() {
       console.log('Restart DemoMonkey')
       // Update settings
       var settings = new Settings(store.getState().settings)
-      var newMonkey = new Monkey(store.getState().configurations, scope, settings.isFeatureEnabled('undo'), settings.monkeyInterval, settings.isFeatureEnabled('experimantal_withTemplateEngine'), urlManager, settings.isDebugEnabled(), settings.isFeatureEnabled('debugBox'), settings.isLiveModeEnabled(), settings.isFeatureEnabled('withEvalCommand'))
+      var newMonkey = new Monkey(store.getState().configurations, scope, settings.isFeatureEnabled('undo'), settings.monkeyInterval, settings.isFeatureEnabled('experimantal_withTemplateEngine'), urlManager, settings.isFeatureEnabled('withEvalCommand'))
       $DEMO_MONKEY.stop()
       updateBadge(newMonkey.start())
       $DEMO_MONKEY = newMonkey
+      modeManager.reload($DEMO_MONKEY, settings.isDebugEnabled(), settings.isFeatureEnabled('debugBox'), settings.isLiveModeEnabled())
     }
 
     store.subscribe(function () {
@@ -89,11 +94,22 @@ import {Store} from 'react-chrome-redux';
       }
     })
 
-    scope.chrome.runtime.onMessage.addListener(function (request) {
-      if (request.receiver === 'monkey' && request.task === 'restart') {
-        // Currently this leads to a flickering user experience, so it is disabled
-        // restart()
+    scope.document.addEventListener('DOMContentLoaded', function (e) {
+      modeManager.start()
+    })
+
+    scope.document.addEventListener('demomonkey-inline-editing', function (e) {
+      let { search, replacement, command } = JSON.parse(e.detail)
+      console.log('received', search, replacement)
+      console.log(store.getState().currentView)
+      let configs = (store.getState().configurations.filter(config => config.enabled))
+      let configuration = configs.length > 0 ? configs[0] : store.getState().configurations[0]
+      if (command) {
+        search = `!${command}(${search})`
       }
+      configuration.content += '\n' + search + ' = ' + replacement
+      console.log(configuration)
+      store.dispatch({ 'type': 'SAVE_CONFIGURATION', 'id': configuration.id, configuration })
     })
   })
 })(window)

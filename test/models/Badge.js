@@ -51,21 +51,24 @@ describe('Badge', function () {
     it('sets the timer text to 0', function () {
       let tabs = [ { text: '', color: '' } ]
       let badge = new Badge(new BrowserAction(tabs))
-      badge.updateTimer(0, 0)
-      assert.equal(tabs[0].text, '/0')
+      badge.updateDemoCounter(0, 0)
+      badge.updateTimer(0)
+      assert.equal(tabs[0].text, '0/0')
     })
 
     it('sets the timer text to 5 and does not change the counter value', function () {
-      let tabs = [ { text: '0', color: '' } ]
+      let tabs = [ { text: '', color: '' } ]
       let badge = new Badge(new BrowserAction(tabs))
-      badge.updateTimer(5, 0)
+      badge.updateDemoCounter(0, 0)
+      badge.updateTimer(5)
       assert.equal(tabs[0].text, '0/5')
     })
 
     it('sets the timer text to 5 and updates all tabs on opening', function () {
       let tabs = [ { text: '0', color: '' }, { text: '4', color: '' }, { text: '8/8', color: '' } ]
       let badge = new Badge(new BrowserAction(tabs))
-      badge.updateTimer(5, 0)
+      tabs.forEach((tab, id) => badge.updateDemoCounter(0, id))
+      badge.updateTimer(5)
       assert.equal(tabs[0].text, '0/5')
       // fake open new tab: DemoCounter will be updated
       badge.updateDemoCounter(4, 1)
@@ -88,20 +91,6 @@ describe('Badge', function () {
       let badge = new Badge(new BrowserAction(tabs))
       badge.clearTimer(0)
       assert.equal(tabs[0].text, '13')
-    })
-
-    it('clears a timer value', function () {
-      let tabs = [ { text: '/85', color: '' } ]
-      let badge = new Badge(new BrowserAction(tabs), 85)
-      badge.clearTimer(0)
-      assert.equal(tabs[0].text, '')
-    })
-
-    it('clears a timer value and does not change the counter', function () {
-      let tabs = [ { text: '2/85', color: '' } ]
-      let badge = new Badge(new BrowserAction(tabs), 85)
-      badge.clearTimer(0)
-      assert.equal(tabs[0].text, '2')
     })
 
     it('clears the timer and updates all tabs on opening', function () {

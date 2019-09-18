@@ -1,21 +1,15 @@
 import Configuration from './Configuration'
 import Repository from './Repository'
 import UndoElement from '../commands/UndoElement'
-import Manifest from './Manifest'
 
 class Monkey {
-  constructor(rawConfigurations, scope, withUndo = true, intervalTime = 100, withTemplateEngine = false, urlManager = false, withDebug = false, withDebugBox = false, withLiveMode = false, withEvalCommand = false) {
+  constructor(rawConfigurations, scope, withUndo = true, intervalTime = 100, withTemplateEngine = false, urlManager = false, withEvalCommand = false) {
     this.scope = scope
     this.undo = []
     this.repository = new Repository({})
     this.withUndo = withUndo
-    this.withDebug = withDebug
-    this.withDebugBox = withDebugBox
-    this.withLiveMode = withLiveMode
     this.withEvalCommand = withEvalCommand
-    this.avgRunTime = 0
-    this.maxRunTime = 0
-    this.runCount = 0
+
     this.intervalTime = intervalTime
     if (typeof this.intervalTime !== 'number' || this.intervalTime < 100) {
       console.log('Interval time is not well-defined: ' + this.intervalTime)
@@ -34,7 +28,15 @@ class Monkey {
       return [rawConfig.name, config]
     })
     this.urlManager = urlManager === false ? {add: () => {}, remove: () => {}, clear: () => {}} : urlManager
-    this.manifest = new Manifest(scope.chrome)
+    this.observers = []
+  }
+
+  addObserver(observer) {
+    this.observers.push(observer)
+  }
+
+  notifyObservers(event) {
+    this.observers.forEach(observer => observer.update(event))
   }
 
   getUndoLength() {
@@ -45,119 +47,23 @@ class Monkey {
     return this.intervals.length
   }
 
-  injectMonkeyHead() {
-    if (this.scope.document.head) {
-      this.scope.document.head.dataset.demoMonkeyVersion = this.manifest.version()
-      this.scope.document.head.dataset.demoMonkeyMode = this.withDebug ? 'debug' : (this.withLiveMode ? 'live' : 'unknown')
-    }
+  isRunning() {
+    return this.intervals.length > 0
   }
 
-  injectDebugHelper() {
-    if (this.scope.document.getElementById('demo-monkey-debug-helper-style') === null) {
-      this.scope.document.head.insertAdjacentHTML('beforeend', `<style id="demo-monkey-debug-helper-style">
-      [data-demo-monkey-debug] { background-color: rgba(255, 255, 0, 0.5); }
-      svg [data-demo-monkey-debug] { filter: url(#dm-debug-filter-visible) }
-      [data-demo-monkey-debug-display] { display: var(--data-demo-monkey-debug-display) !important; background-color: rgba(255, 0, 0, 0.5); }
-      [data-demo-monkey-debug-display] * { display: var(--data-demo-monkey-debug-display) !important; background-color: rgba(255, 0, 0, 0.5); }
-      svg [data-demo-monkey-debug-display] { display: var(--data-demo-monkey-debug-display) !important; filter: url(#dm-debug-filter-hidden) }
-      #demo-monkey-debug-box { position: fixed; top: 25px; right: 25px; border: 1px solid black; background: rgb(255,255,255,0.8); z-index: 9999; padding: 15px; pointer-events: none;}
-      </style>`)
-    }
-
-    /*
-    f = (e) => { document.body.insertAdjacentHTML('beforeend', '<div style="width: 50px; height: 50px; position: fixed; top: '+(e.target.getClientRects()[0].y-20)+'px; left: '+(e.target.getClientRects()[0].x+e.target.getClientRects()[0].width/2)+'px">123</div>'); console.log(e); }
-    document.querySelectorAll("[data-demo-monkey-debug]").forEach(elem => elem.addEventListener('mouseover', (e) => f(e)))
-    */
-
-    if (this.scope.document.body && this.scope.document.getElementById('demo-monkey-debug-helper-svg') === null) {
-      this.scope.document.body.insertAdjacentHTML('beforeend', `<svg id="demo-monkey-debug-helper-svg">
-        <defs>
-          <filter x="0" y="0" width="1" height="1" id="dm-debug-filter-visible">
-            <feFlood flood-color="yellow" flood-opacity="0.5" />
-            <feComposite in="SourceGraphic" />
-          </filter>
-          <filter x="0" y="0" width="1" height="1" id="dm-debug-filter-hidden">
-            <feFlood flood-color="red" flood-opacity="0.5" />
-            <feComposite in="SourceGraphic" />
-          </filter>
-        </defs>
-      </svg>`)
-    }
-
-    if (this.withDebugBox && this.scope.document.body && this.scope.document.getElementById('demo-monkey-debug-box') === null) {
-      this.scope.document.body.insertAdjacentHTML('beforeend', `<div id="demo-monkey-debug-box">
-      Demo Monkey - Debug Box
-        <div>Runtime: <span id="demo-monkey-last-runtime"></span></div>
-        <div>Inspected Elements: <span id="demo-monkey-elements-count"></span></div>
-        <div>Undo Length: <span id="demo-monkey-undo-length"></span></div>
-      </div>`)
-    }
-  }
-
-  updateDebugBox(lastTime, sum) {
-    if (this.withDebugBox) {
-      var e1 = this.scope.document.getElementById('demo-monkey-last-runtime')
-      if (e1) {
-        this.runCount++
-        this.avgRunTime += (lastTime - this.avgRunTime) / this.runCount
-        this.maxRunTime = Math.max(lastTime, this.maxRunTime)
-        if (this.runCount % 10 === 0) {
-          e1.innerHTML = lastTime + ' (avg: ' + this.avgRunTime + ', max: ' + this.maxRunTime + ', count: ' + this.runCount + ')'
-        }
-      }
-      var e2 = this.scope.document.getElementById('demo-monkey-undo-length')
-      if (e2) {
-        e2.innerHTML = this.undo.length
-      }
-      var e3 = this.scope.document.getElementById('demo-monkey-elements-count')
-      if (e3) {
-        e3.innerHTML = Object.keys(sum).reduce((acc, key) => {
-          return acc.concat(`${key}: ${sum[key]}`)
-        }, []).join(', ')
-      }
-    }
-  }
-
-  addDebugAttribute(element, isHidden) {
-    // UndoElement(node, 'display.style', original, 'none')
-    element.dataset.demoMonkeyDebug = true
-    if (isHidden !== false) {
-      element.dataset.demoMonkeyDebugDisplay = isHidden === '' ? 'initial' : isHidden
-      element.style.setProperty('--data-demo-monkey-debug-display', isHidden === '' ? 'initial' : isHidden)
-    }
-  }
-
-  addUndo(arr) {
+  addUndo(elements) {
     if (this.withUndo) {
       // Simple protection against loops that fill up the undo array.
       if (this.undo.length > 100000) {
         console.log('Too many undo elements, disabling undo feature.')
         this.withUndo = false
       }
-      this.undo = this.undo.concat(arr)
+      this.undo = this.undo.concat(elements)
     }
-    this.injectMonkeyHead()
-    if (this.withDebug) {
-      arr.forEach((undoElement) => {
-        if (!undoElement.target) {
-          return
-        }
-        const isHidden = undoElement.key === 'style.display' && undoElement.replacement === 'none' ? undoElement.original : false
-        switch (undoElement.target.nodeType) {
-          case 1:
-            if (undoElement.target && undoElement.target.dataset) {
-              this.addDebugAttribute(undoElement.target, isHidden)
-            }
-            break
-          case 3:
-            if (undoElement.target && undoElement.target.parentElement && undoElement.target.parentElement.dataset) {
-              this.addDebugAttribute(undoElement.target.parentElement, isHidden)
-            }
-            break
-        }
-      })
-      this.injectDebugHelper()
-    }
+    this.notifyObservers({
+      type: 'addUndo',
+      elements
+    })
   }
 
   applyOnce(configuration) {
@@ -187,13 +93,16 @@ class Monkey {
 
     // Finally we can apply document commands on the document itself.
     this.addUndo(configuration.apply(this.scope.document, 'documentElement', 'document'))
-    if (this.withDebug) {
-      const rt = this.scope.performance.now() - t0
-      this.updateDebugBox(rt, sum)
-      if (rt > this.intervalTime) {
-        console.log(`Run took longer than ${this.intervalTime}: ${rt}`)
+
+    this.notifyObservers({
+      type: 'applied',
+      stats: {
+        sum,
+        runtime: this.scope.performance.now() - t0,
+        intervalTime: this.intervalTime,
+        undoLength: this.undo.length
       }
-    }
+    })
   }
 
   _applyOnXpathGroup(configuration, xpath, groupName, key) {
@@ -325,18 +234,6 @@ class Monkey {
     }
 
     this.urlManager.clear()
-
-    if (this.withDebug) {
-      this.scope.document.querySelectorAll('[data-demo-monkey-debug]').forEach((element) => {
-        delete element.dataset.demoMonkeyDebug
-        delete element.dataset.demoMonkeyDebugDisplay
-        element.style.removeProperty('--data-demo-monkey-debug-display')
-      })
-      var elem = document.querySelector('#demo-monkey-debug-box')
-      if (elem) {
-        elem.parentNode.removeChild(elem)
-      }
-    }
   }
 
   runAll() {

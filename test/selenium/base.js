@@ -4,7 +4,7 @@ import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 
 // const extensionID = 'hgegamnnggfbjfpjjalciinpfoghjcnj'
-const extensionID = 'hejmbilhiaajmlpneekhcmfijejiikdg'
+const extensionID = 'jppkhbnbdfkchpfplppanilmladmdfbf'
 
 const expect = chai.expect
 chai.use(chaiAsPromised)
