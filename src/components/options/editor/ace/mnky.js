@@ -60,7 +60,7 @@ ace.define("ace/mode/mnky_highlight_rules", ["require", "exports", "module", "ac
         regex: "'",
         push: [{
           token: 'punctuation.definition.string.end.mnky',
-          regex: "'",
+          regex: "$|'",
           next: 'pop'
         }, {
           token: "constant.language.escape",
@@ -76,7 +76,7 @@ ace.define("ace/mode/mnky_highlight_rules", ["require", "exports", "module", "ac
           regex: escapeRe
         }, {
           token: 'punctuation.definition.string.end.mnky',
-          regex: '"',
+          regex: '$|"',
           next: 'pop'
         }, {
           defaultToken: 'string.quoted.double.mnky'
