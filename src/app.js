@@ -5,6 +5,7 @@ import { Provider } from 'react-redux'
 import { Store } from 'react-chrome-redux'
 import OptionsPageApp from './components/options/OptionsPageApp'
 import PopupPageApp from './components/popup/PopupPageApp'
+import Manifest from './models/Manifest'
 
 function renderOptionsPageApp(root, store) {
   chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
@@ -86,8 +87,9 @@ store.ready().then(() => {
       renderOptionsPageApp(root, store)
       break
     case 'DevToolsPageApp':
+      const manifest = new Manifest(chrome)
       if (window.store.state.settings.optionalFeatures.inDevTools === true) {
-        chrome.devtools.panels.create('DemoMonkey',
+        chrome.devtools.panels.create(`DemoMonkey ${manifest.version()}`,
           'icons/monkey_16.png',
           'options.html',
           function (panel) {

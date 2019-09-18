@@ -42,7 +42,8 @@ class Editor extends React.Component {
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    if (nextProps.currentConfiguration.id !== prevState.currentConfiguration.id) {
+    console.log(prevState, nextProps)
+    if (nextProps.currentConfiguration.id !== prevState.currentConfiguration.id || nextProps.currentConfiguration.updated_at > prevState.currentConfiguration.updated_at) {
       return {
         currentConfiguration: nextProps.currentConfiguration,
         unsavedChanges: false
