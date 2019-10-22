@@ -67,7 +67,6 @@ class CommandBuilder {
           ? this._buildCustomCommand(namespace, 'hideApplication', parameters, value)
           : new SearchAndReplace(parameters[0], value)
       }
-
       if (command === 'hideApplication') {
         return new Group([
           new Hide(parameters[0], 4, 'ads-application-card', '', 'APPS_ALL_DASHBOARD', location),
@@ -133,6 +132,9 @@ class CommandBuilder {
       }
       if (command === 'hideFlowmapConnection') {
         return new ReplaceFlowmapConnection(parameters[0], parameters[1], 'Hide')
+      }
+      if (command === 'hideBrowserPage') {
+        return new Hide(parameters[0], 4, 'x-grid-row', '', 'EUM_PAGES_LIST', location)
       }
       if (command === 'replaceMobileScreenshot') {
         const thumbnailHtml = '<img src="' + value + '" height="152" width="84">'
