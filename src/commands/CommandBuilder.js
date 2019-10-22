@@ -285,7 +285,7 @@ class CommandBuilder {
     }
 
     if (command === 'replaceImage') {
-      return new ReplaceImage(parameters[0], value)
+      return new ReplaceImage(parameters[0], value, parameters[1])
     }
 
     if (command === 'recolorImage' || command === 'recolourImage') {

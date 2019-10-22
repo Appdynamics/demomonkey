@@ -2,10 +2,11 @@ import Command from './Command'
 import UndoElement from './UndoElement'
 
 class ReplaceImage extends Command {
-  constructor(search, replace) {
+  constructor(search, replace, withRatio = true) {
     super()
     this.search = search
     this.replace = replace
+    this.withRatio = withRatio !== '0' && withRatio !== 'false'
   }
 
   isApplicableForGroup(group) {
@@ -13,9 +14,9 @@ class ReplaceImage extends Command {
   }
 
   apply(target, key = 'value') {
-    var original = target[key]
+    const original = target[key]
 
-    var search = this._lookupImage(this.search)
+    const search = this._lookupImage(this.search)
 
     // An empty replacement seems to break the image, so we ignore it.
     if (this.replace === '') {
@@ -23,8 +24,31 @@ class ReplaceImage extends Command {
     }
 
     if (this._match(original, search, this.replace)) {
+      let result = []
+      if (this.withRatio && typeof target.width === 'number' && typeof target.height === 'number') {
+        const oldWidth = target.width
+        const oldHeight = target.height
+        let undoPlaceholder = new UndoElement()
+        const el = function (e) {
+          const widthFactor = this.naturalWidth / oldWidth
+          const heightFactor = this.naturalHeight / oldHeight
+          if (this.naturalWidth > this.naturalHeight) {
+            const originalHeight = this.style.height
+            this.style.height = (oldHeight * heightFactor / widthFactor) + 'px'
+            undoPlaceholder.update(this, 'style.height', originalHeight, this.style.height)
+          } else {
+            const originalWidth = this.style.width
+            this.style.width = (oldWidth * widthFactor / heightFactor) + 'px'
+            undoPlaceholder.update(this, 'style.height', originalWidth, this.style.width)
+          }
+          this.removeEventListener('load', el)
+        }
+        target.addEventListener('load', el)
+        result.push(undoPlaceholder)
+      }
       target[key] = this.replace
-      return new UndoElement(target, key, original, this.replace)
+      result.push(new UndoElement(target, key, original, this.replace))
+      return result
     }
     return false
   }

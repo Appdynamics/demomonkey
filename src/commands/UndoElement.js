@@ -6,7 +6,18 @@ class UndoElement {
     this.replacement = replacement
   }
 
+  update(target, key, original, replacement) {
+    this.target = target
+    this.key = key
+    this.original = original
+    this.replacement = replacement
+  }
+
   apply() {
+    if (typeof this.target === 'undefined') {
+      return false
+    }
+
     var target = this.target
     if (typeof target === 'string' && target.startsWith('dmid-')) {
       target = document.querySelector(`[data-demo-monkey-id=${target}]`)
