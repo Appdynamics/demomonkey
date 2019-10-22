@@ -24,6 +24,11 @@ class ModeManager {
   }
 
   reload(monkey, debugMode = false, debugBox = false, liveMode = false) {
+    if (this.demoMonkeyPicker) {
+      this.demoMonkeyPicker.close()
+      delete this.demoMonkeyPicker
+    }
+
     this.clearDebugAttributes()
 
     this.monkey = monkey
@@ -91,6 +96,11 @@ class ModeManager {
     this.clearDebugAttributes()
   }
 
+  removeEditor() {
+    const oldEditor = this.scope.document.getElementById('demo-monkey-editor')
+    if (oldEditor) { oldEditor.remove() }
+  }
+
   toggleDebugMode() {
     if (this.debugMode) {
       if (this.scope.document.getElementById('demo-monkey-debug-helper-style') === null) {
@@ -129,8 +139,7 @@ class ModeManager {
         this.demoMonkeyPicker = false
         this.scope.document.getElementById('demo-monkey-editor-toggle').addEventListener('click', (e) => {
           const callback = (target, clickEvent, mouseEvent) => {
-            const oldEditor = this.scope.document.getElementById('demo-monkey-editor')
-            if (oldEditor) { oldEditor.remove() }
+            this.removeEditor()
 
             // console.log(target, clickEvent, mouseEvent)
 
