@@ -185,9 +185,22 @@ class CommandBuilder {
             })
           ])
         }
+        if (typeof value === 'string' && value.includes(',')) {
+          const [tierCount, nodeCount] = value.split(',')
+          console.log(tierCount, nodeCount, value, value.split(','))
+          return new Group([
+            new ReplaceNeighbor(parameters[0], tierCount, 2, 'g.adsApplicationNode text.adsNodeCountText:nth-of-type(1)', '', '', location),
+            new ReplaceNeighbor(parameters[0], parseInt(tierCount) === 1 ? 'TIER' : 'TIERS', 2, 'g.adsApplicationNode text.adsNodeCountTextSmall:nth-of-type(2)', '', '', location),
+            new ReplaceNeighbor(parameters[0], nodeCount, 2, 'g.adsApplicationNode text.adsNodeCountText:nth-of-type(3)', '', '', location),
+            new ReplaceNeighbor(parameters[0], parseInt(nodeCount) === 1 ? 'NODE' : 'NODES', 2, 'g.adsApplicationNode text.adsNodeCountTextSmall:nth-of-type(4)', '', '', location)
+          ])
+        }
+        console.log(value, 'value')
         return new Group([
-          new ReplaceNeighbor(parameters[0], value, 2, 'text.adsNodeCountText', '', '', location),
-          new ReplaceNeighbor(parameters[0], parseInt(value) === 1 ? 'Node' : 'Nodes', 2, 'text.adsNodeCountTextSmall', '', '', location)
+          new ReplaceNeighbor(parameters[0], value, 2, 'g.adsTierNode text.adsNodeCountText', '', '', location),
+          new ReplaceNeighbor(parameters[0], parseInt(value) === 1 ? 'Node' : 'Nodes', 2, 'g.adsTierNode text.adsNodeCountTextSmall', '', '', location),
+          new ReplaceNeighbor(parameters[0], value, 2, 'g.adsApplicationNode text.adsNodeCountText:nth-of-type(3)', '', '', location),
+          new ReplaceNeighbor(parameters[0], parseInt(value) === 1 ? 'NODE' : 'NODES', 2, 'g.adsApplicationNode text.adsNodeCountTextSmall:nth-of-type(4)', '', '', location)
         ])
       }
       if (command === 'replaceInnerNodeHealth') {
