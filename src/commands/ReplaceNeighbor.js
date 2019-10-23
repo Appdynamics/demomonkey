@@ -48,6 +48,12 @@ class ReplaceNeighbor extends Command {
               neighbor.src = this.replace
               return new UndoElement(neighbor, 'src', original, neighbor.src)
             }
+          } else if (this.property === 'href.baseVal') {
+            let original = neighbor.href.baseVal
+            if (original !== this.replace && !original.endsWith(this.replace)) {
+              neighbor.href.baseVal = this.replace
+              return new UndoElement(neighbor, 'href.baseVal', original, neighbor.href)
+            }
           } else if (this.property !== '') {
             let original = neighbor.style[this.property]
             if (original !== this.replace) {

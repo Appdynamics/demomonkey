@@ -187,7 +187,6 @@ class CommandBuilder {
         }
         if (typeof value === 'string' && value.includes(',')) {
           const [tierCount, nodeCount] = value.split(',')
-          console.log(tierCount, nodeCount, value, value.split(','))
           return new Group([
             new ReplaceNeighbor(parameters[0], tierCount, 2, 'g.adsApplicationNode text.adsNodeCountText:nth-of-type(1)', '', '', location),
             new ReplaceNeighbor(parameters[0], parseInt(tierCount) === 1 ? 'TIER' : 'TIERS', 2, 'g.adsApplicationNode text.adsNodeCountTextSmall:nth-of-type(2)', '', '', location),
@@ -262,6 +261,10 @@ class CommandBuilder {
       }
       if (command === 'replaceIOTNumericWidget') {
         return new ReplaceNeighbor(parameters[0], value, 10, '.number-label', 'EUM_IOT_DEVICE_DASHBOARD', '', location)
+      }
+      if (command === 'replaceDrillDownHealth' || command === 'replaceDrilldownHealth') {
+        const icon = (typeof value === 'string' && ['normal', 'warning', 'critical', 'unknown'].includes(value.toLowerCase())) ? 'images/health/' + value + '.svg' : 'images/health/unknown.svg'
+        return new ReplaceNeighbor(parameters[0], icon, 2, '.ads-drill-down image', 'APP_SNAPSHOT_VIEW', 'href.baseVal', location)
       }
     }
 
