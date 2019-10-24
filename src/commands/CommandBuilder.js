@@ -14,6 +14,7 @@ import ReplaceFlowmapConnection from './appdynamics/ReplaceFlowmapConnection'
 import RecolorDashboard from './appdynamics/RecolorDashboard'
 import SetDashboardBackground from './appdynamics/SetDashboardBackground'
 import DelayLink from './appdynamics/DelayLink'
+import ReplaceGeoStatus from './appdynamics/ReplaceGeoStatus'
 import BlockUrl from './BlockUrl'
 import DelayUrl from './DelayUrl'
 import ReplaceUrl from './ReplaceUrl'
@@ -265,6 +266,9 @@ class CommandBuilder {
       if (command === 'replaceDrillDownHealth' || command === 'replaceDrilldownHealth') {
         const icon = (typeof value === 'string' && ['normal', 'warning', 'critical', 'unknown'].includes(value.toLowerCase())) ? 'images/health/' + value + '.svg' : 'images/health/unknown.svg'
         return new ReplaceNeighbor(parameters[0], icon, 2, '.ads-drill-down image', 'APP_SNAPSHOT_VIEW', 'href.baseVal', location)
+      }
+      if (command === 'replaceGeoStatus') {
+        return new ReplaceGeoStatus(parameters[0], value)
       }
     }
 
