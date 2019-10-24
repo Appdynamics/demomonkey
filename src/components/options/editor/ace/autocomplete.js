@@ -39,7 +39,7 @@ function autocomplete(getRepository) {
       {caption: '!hideBusinessJourney', snippet: '!hideBusinessJourney(${1})'},
       {caption: '!hideAnalyticsSearch', snippet: '!hideAnalyticsSearch(${1})'},
       {caption: '!hideRemoteService', snippet: '!hideRemoteService(${1})'},
-      {caption: '!hideBrowserPage', snippet: '!hideRemoteService(${1})'},
+      {caption: '!hideBrowserPage', snippet: '!hideBrowserPage(${1})'},
       {caption: '!replaceFlowmapConnection', snippet: '!replaceFlowmapConnection(${1}, ${2}, ${3:false}) = ${4}'},
       {caption: '!hideFlowmapConnection', snippet: '!hideFlowmapConnection(${1}, ${2})'},
       {caption: '!replaceMobileScreenshot', snippet: '!replaceMobileScreenshot(${1}) = ${2}'},
@@ -175,8 +175,13 @@ function autocomplete(getRepository) {
             'ad-pink',
             'ad-red'
           ]).sort().map(value => { return {value, meta: 'color'} }))
+        } else if (fullLine.match(/^!(?:appdynamics.)?replaceDrillDownHealth\(.*\)\s*=\s*/)) {
+          callback(null, [
+            'normal',
+            'warning',
+            'critical'
+          ].map(value => { return {value, meta: 'status'} }))
         }
-        // console.log('OUT')
       }
     }
   }])
