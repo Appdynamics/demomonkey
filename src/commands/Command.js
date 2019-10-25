@@ -94,6 +94,15 @@ class Command {
     }
     return false
   }
+
+  setSource(key, value) {
+    this.sourceString = `${key} = ${value}`
+  }
+
+  toString() {
+    // We need to apply "protection" so demo monkey does not run over this itself ;-)
+    return this.sourceString ? this.sourceString.split('').join(String.fromCharCode(0x200B)) : ''
+  }
 }
 
 export default Command

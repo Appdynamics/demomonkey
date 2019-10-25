@@ -72,10 +72,6 @@ class SearchAndReplace extends Command {
     }
     return false
   }
-
-  toString() {
-    return this.search.toString() + '/' + this.replace.toString()
-  }
 }
 
 export default SearchAndReplace

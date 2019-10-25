@@ -1,9 +1,14 @@
 class UndoElement {
-  constructor(target, key, original, replacement) {
+  constructor(target, key, original, replacement, source = {}) {
     this.target = target
     this.key = key
     this.original = original
     this.replacement = replacement
+    this.source = source
+  }
+
+  setSource(source) {
+    this.source = source
   }
 
   update(target, key, original, replacement) {

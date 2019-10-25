@@ -195,7 +195,6 @@ class CommandBuilder {
             new ReplaceNeighbor(parameters[0], parseInt(nodeCount) === 1 ? 'NODE' : 'NODES', 2, 'g.adsApplicationNode text.adsNodeCountTextSmall:nth-of-type(4)', '', '', location)
           ])
         }
-        console.log(value, 'value')
         return new Group([
           new ReplaceNeighbor(parameters[0], value, 2, 'g.adsTierNode text.adsNodeCountText', '', '', location),
           new ReplaceNeighbor(parameters[0], parseInt(value) === 1 ? 'Node' : 'Nodes', 2, 'g.adsTierNode text.adsNodeCountTextSmall', '', '', location),
@@ -412,7 +411,7 @@ class CommandBuilder {
     return new Command()
   }
 
-  build(key, value) {
+  _innerBuild(key, value) {
     // Reverse of the replacement of \= defined in Ini.js
     if (typeof value === 'string') {
       value = value.replace('\u2260', '=')
@@ -430,6 +429,14 @@ class CommandBuilder {
     }
 
     return new SearchAndReplace(key, value)
+  }
+
+  build(key, value) {
+    let cmd = this._innerBuild(key, value)
+
+    cmd.setSource(key, value)
+
+    return cmd
   }
 }
 

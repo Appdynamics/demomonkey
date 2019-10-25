@@ -1,5 +1,6 @@
 import Ini from './Ini'
 import CommandBuilder from '../commands/CommandBuilder'
+import UndoElement from '../commands/UndoElement'
 import Variable from './Variable'
 import MatchRule from './MatchRule'
 
@@ -107,9 +108,17 @@ class Configuration {
       }
 
       if (Array.isArray(undo)) {
+        undo.forEach(e => {
+          if (e instanceof UndoElement) {
+            e.setSource(command)
+          }
+        })
         return carry.concat(undo)
       }
 
+      if (undo instanceof UndoElement) {
+        undo.setSource(command)
+      }
       carry.push(undo)
       return carry
     }, [])

@@ -113,7 +113,7 @@ describe('Configuration', function () {
   describe('#_getConfiguration', function () {
     it('should apply variables on commands', function () {
       const config = configurationWithCommand._getConfiguration()
-      assert.deepEqual(config, [{search: 'a', replace: 'b', locationFilter: '', cssFilter: '', property: '', location: ''}, {search: 'y', 'replace': 'w', location: '', cssFilter: '', property: '', locationFilter: ''}])
+      assert.deepEqual(config, [{search: 'a', replace: 'b', locationFilter: '', cssFilter: '', property: '', location: '', sourceString: '!replace(a) = b'}, {search: 'y', 'replace': 'w', location: '', cssFilter: '', property: '', locationFilter: '', sourceString: '!replace(y) = w'}])
     })
     it('should apply variables on imports', function () {
       /* eslint no-template-curly-in-string: "off" */
@@ -130,7 +130,8 @@ describe('Configuration', function () {
           locationFilter: '',
           property: '',
           search: 'xb',
-          replace: 'reassigned'
+          replace: 'reassigned',
+          sourceString: 'xb = reassigned'
         },
         {
           cssFilter: '',
@@ -138,7 +139,8 @@ describe('Configuration', function () {
           locationFilter: '',
           property: '',
           search: 'ztop',
-          replace: 'reassignedvalue'
+          replace: 'reassignedvalue',
+          sourceString: 'ztop = reassignedvalue'
         },
         {
           cssFilter: '',
@@ -146,7 +148,8 @@ describe('Configuration', function () {
           locationFilter: '',
           property: '',
           search: 'yb',
-          replace: 'reassigned'
+          replace: 'reassigned',
+          sourceString: 'yb = reassigned'
         }
       ])
     })

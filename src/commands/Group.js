@@ -14,8 +14,12 @@ class Group extends Command {
 
   apply(node, key) {
     return this.helpers.reduce((acc, cmd) => {
-      return acc || cmd.apply(node, key)
-    }, false)
+      const r = cmd.apply(node, key)
+      if (r === false) {
+        return acc
+      }
+      return acc.concat(r)
+    }, [])
   }
 }
 
