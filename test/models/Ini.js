@@ -15,13 +15,5 @@ describe('Ini', function () {
       assert.deepEqual(new Ini('a = b = c').parse(), { a: 'b = c' })
       assert.deepEqual(new Ini('a \\= b = c').parse(), { 'a ≠ b': 'c' })
     })
-
-    it('parses an ini file with nunjuck templates', function () {
-      assert.deepEqual(new Ini('{{ "a" | title }} = b').parse({enabled: true}), { A: 'b' })
-
-      assert.deepEqual(new Ini('{{ "a" | title }} = b').parse({enabled: false}), { '{{ "a" | title }}': 'b' })
-
-      assert.deepEqual(new Ini('{{ a }} = b').parse({enabled: true, variables: {a: 'b'}}), { b: 'b' })
-    })
   })
 })

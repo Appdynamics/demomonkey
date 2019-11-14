@@ -177,8 +177,8 @@ class App extends React.Component {
           return <Editor getRepository={() => this.getRepository()} currentConfiguration={configuration}
             autoSave={this.props.settings.optionalFeatures.autoSave}
             saveOnClose={this.props.settings.optionalFeatures.saveOnClose}
-            withTemplateEngine={this.props.settings.optionalFeatures.experimental_withTemplateEngine}
             editorAutocomplete={this.props.settings.optionalFeatures.editorAutocomplete}
+            keyboardHandler={this.props.settings.optionalFeatures.keyboardHandlerVim ? 'vim' : null}
             onDownload={(configuration, _) => this.downloadConfiguration(configuration)}
             onSave={(_, configuration) => this.saveConfiguration(configuration)}
             onCopy={(configuration, _) => this.copyConfiguration(configuration)}

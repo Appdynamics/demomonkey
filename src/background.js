@@ -1,5 +1,5 @@
 import { createStore } from 'redux'
-import { wrapStore } from 'react-chrome-redux'
+import { wrapStore } from 'webext-redux'
 import reducers from './reducers'
 import uuidV4 from 'uuid/v4'
 import Configuration from './models/Configuration'
@@ -171,7 +171,7 @@ import match from './helpers/match.js'
     withEvalCommand: false,
     // This is only a soft toggle, since the user can turn it on and off directly in the popup
     onlyShowAvailableConfigurations: true,
-    experimental_withTemplateEngine: false
+    keyboardHandlerVim: false
   }
 
   const persistentStates = {

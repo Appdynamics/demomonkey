@@ -184,6 +184,9 @@ class Settings extends React.Component {
           <div className="toggle-group" id="toggle-debugBox">
             <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('debugBox')} value={this.props.settings.optionalFeatures.debugBox}/><label><b>Debug Box.</b> Turn this feature on, to show a debug box with statistics when running demo monkey in <i>debug mode</i> </label>
           </div>
+          <div className="toggle-group" id="toggle-keyboardHandlerVim">
+            <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('keyboardHandlerVim')} value={this.props.settings.optionalFeatures.keyboardHandlerVim}/><label><b>VIM Keyboard Handler.</b> Turn this feature on, to use the vim keyboard handler for the editor.</label>
+          </div>
           <div className="toggle-group" id="toggle-withEvalCommand">
             <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('withEvalCommand')} value={this.props.settings.optionalFeatures.withEvalCommand}/><label><b>Allow !eval.</b> By turning on this flag, you can use the command !eval which allows you to write arbitrary javascript code. Use with caution!</label>
           </div>

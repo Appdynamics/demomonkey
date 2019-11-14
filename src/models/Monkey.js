@@ -3,7 +3,7 @@ import Repository from './Repository'
 import UndoElement from '../commands/UndoElement'
 
 class Monkey {
-  constructor(rawConfigurations, scope, withUndo = true, intervalTime = 100, withTemplateEngine = false, urlManager = false, withEvalCommand = false) {
+  constructor(rawConfigurations, scope, withUndo = true, intervalTime = 100, urlManager = false, withEvalCommand = false) {
     this.scope = scope
     this.undo = []
     this.repository = new Repository({})
@@ -16,14 +16,9 @@ class Monkey {
       this.intervalTime = 100
     }
     this.intervals = []
-    var templateEngineProperties = {
-      enabled: withTemplateEngine,
-      variables: {
-        location: scope.location ? scope.location : {}
-      }
-    }
+
     this.configurations = rawConfigurations.map((rawConfig) => {
-      var config = new Configuration(rawConfig.content, this.repository, rawConfig.enabled === true, rawConfig.values, templateEngineProperties, withEvalCommand)
+      var config = new Configuration(rawConfig.content, this.repository, rawConfig.enabled === true, rawConfig.values, withEvalCommand)
       this.repository.addConfiguration(rawConfig.name, config)
       return [rawConfig.name, config]
     })

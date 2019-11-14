@@ -5,10 +5,10 @@ import Variable from './Variable'
 import MatchRule from './MatchRule'
 
 class Configuration {
-  constructor(iniFile, repository, enabled = true, values = {}, templateEngineProperties = {}, withEvalCommand = false) {
+  constructor(iniFile, repository, enabled = true, values = {}, withEvalCommand = false) {
     this.repository = repository
     this.rawContent = iniFile
-    this.content = iniFile ? (new Ini(iniFile, repository)).parse(templateEngineProperties) : []
+    this.content = iniFile ? (new Ini(iniFile, repository)).parse() : []
     this.patterns = false
     this.options = false
     this.enabled = enabled

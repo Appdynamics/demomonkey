@@ -1,5 +1,4 @@
 var gulp = require('gulp')
-var gutil = require('gulp-util')
 var clean = require('gulp-clean')
 var imageResize = require('gulp-image-resize')
 var less = require('gulp-less')
@@ -7,6 +6,7 @@ var rename = require('gulp-rename')
 var replace = require('gulp-replace')
 var sourcemaps = require('gulp-sourcemaps')
 var zip = require('gulp-zip')
+var log = require('fancy-log')
 
 var babel = require('babelify')
 var browserify = require('browserify')
@@ -35,16 +35,23 @@ function compile(file, withWatchify = false) {
   bundler = bundler.transform(babel)
 
   var b = function () {
-    return bundler.bundle().on('error', function (err) {
-      console.error(err)
+    var bundleStream = bundler.bundle().on('error', function (err) {
+      log(err.message)
       this.emit('end')
-    }).pipe(source(file + '.js')).pipe(buffer()).pipe(sourcemaps.init({
-      loadMaps: true
-    })).pipe(sourcemaps.write('./')).pipe(gulp.dest('./build/js'))
+    })
+
+    return bundleStream
+      .pipe(source(file + '.js'))
+      .pipe(buffer())
+      .pipe(sourcemaps.init({
+        loadMaps: true
+      }))
+      .pipe(sourcemaps.write('./'))
+      .pipe(gulp.dest('./build/js'))
   }
 
   bundler.on('update', b) // on any dep update, runs the bundler
-  bundler.on('log', gutil.log) // output build logs to terminal
+  bundler.on('log', log) // output build logs to terminal
 
   return b
 }

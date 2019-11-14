@@ -8,12 +8,16 @@ import 'brace/ext/language_tools'
 import 'brace/ext/searchbox'
 import 'brace/theme/xcode'
 
+import vim from './ace/vim'
 import './ace/mnky'
 
 class CodeEditor extends React.Component {
   constructor(props) {
     super(props)
     this.bound = false
+    vim(() => {
+      props.onVimWrite()
+    })
     autocomplete(props.getRepository)
   }
 
@@ -22,9 +26,11 @@ class CodeEditor extends React.Component {
     getRepository: PropTypes.func.isRequired,
     onChange: PropTypes.func.isRequired,
     onAutoSave: PropTypes.func.isRequired,
+    onVimWrite: PropTypes.func.isRequired,
     readOnly: PropTypes.bool,
     editorAutocomplete: PropTypes.bool.isRequired,
-    annotations: PropTypes.func.isRequired
+    annotations: PropTypes.func.isRequired,
+    keyboardHandler: PropTypes.string
   }
 
   handleChange(content, event) {
@@ -50,6 +56,8 @@ class CodeEditor extends React.Component {
       onChange={(content) => this.handleChange(content)}
       onLoad={(editor) => {
         this.editor = editor
+        window.editor = editor
+        console.log(editor)
         this._updateAnnotations()
       }}
       width="100%"
@@ -61,6 +69,7 @@ class CodeEditor extends React.Component {
       enableBasicAutocompletion={true}
       enableLiveAutocompletion={this.props.editorAutocomplete}
       enableSnippets={false}
+      keyboardHandler={this.props.keyboardHandler}
       editorProps={{$blockScrolling: 'Infinity'}}
       name="contentarea"
       commands={[

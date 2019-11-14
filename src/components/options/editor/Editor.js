@@ -20,9 +20,9 @@ class Editor extends React.Component {
     onDelete: PropTypes.func.isRequired,
     autoSave: PropTypes.bool.isRequired,
     saveOnClose: PropTypes.bool.isRequired,
-    withTemplateEngine: PropTypes.bool.isRequired,
     editorAutocomplete: PropTypes.bool.isRequired,
-    toggleConfiguration: PropTypes.func.isRequired
+    toggleConfiguration: PropTypes.func.isRequired,
+    keyboardHandler: PropTypes.string
   }
 
   constructor(props) {
@@ -105,7 +105,9 @@ class Editor extends React.Component {
   }
 
   handleClick(event, action) {
-    event.preventDefault()
+    if (event !== null) {
+      event.preventDefault()
+    }
     if (action === 'save') {
       this.setState({ unsavedChanges: false })
     }
@@ -204,7 +206,9 @@ class Editor extends React.Component {
               onChange={(content) => this.handleUpdate('content', content)}
               readOnly={current.readOnly === true}
               annotations={(content) => this._buildAnnotations(content)}
+              onVimWrite={() => this.handleClick(null, 'save')}
               onAutoSave={(event) => autosave ? this.handleClick(event, 'save') : event.preventDefault() }
+              keyboardHandler={this.props.keyboardHandler}
               editorAutocomplete={this.props.editorAutocomplete}/>
           </Pane>
           <Pane label="Variables">
