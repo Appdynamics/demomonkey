@@ -20,6 +20,7 @@ class RemoveFlowmapNode extends Command {
       }
       return response
     }, { search: this.search })
+    return false
   }
 }
 
