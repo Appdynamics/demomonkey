@@ -145,7 +145,7 @@ class ModeManager {
         [data-demo-monkey-debug-display] { display: var(--data-demo-monkey-debug-display) !important; background-color: rgba(255, 0, 0, 0.5); }
         [data-demo-monkey-debug-display] * { display: var(--data-demo-monkey-debug-display) !important; background-color: rgba(255, 0, 0, 0.5); }
         svg [data-demo-monkey-debug-display] { display: var(--data-demo-monkey-debug-display) !important; filter: url(#dm-debug-filter-hidden) }
-        #demo-monkey-debug-box { position: fixed; bottom: 0px; right: 0px; border: 1px solid  rgb(168, 201, 135); background: rgb(168, 201, 135, 0.8); z-index: 99999; pointer-events: none; display: flex; flex-wrap: nowrap; justify-content: flex-end; border-radius: 6px 0px 0px 0px; font-family: Robot, arial, sans-serif; font-size: 10pt;  box-shadow: 0 0 2px 2px #ccc;}
+        #demo-monkey-debug-box { position: fixed; bottom: 0px; right: 0px; border: 1px solid rgb(168, 201, 135); backdrop-filter:blur(4px); background: rgb(168, 201, 135, 0.8); z-index: 99999; pointer-events: none; display: flex; flex-wrap: nowrap; justify-content: flex-end; border-radius: 6px 0px 0px 0px; font-family: Robot, arial, sans-serif; font-size: 10pt;  box-shadow: 0 0 2px 2px #ccc;}
         #demo-monkey-debug-box div { border-right: 1px solid  rgb(168, 201, 135); padding: 4px 16px 0px 16px; }
         #demo-monkey-debug-box button { pointer-events: auto; }
         div#demo-monkey-logo { pointer-events: auto; cursor: pointer; padding: 2px; border-right: 0 }
@@ -199,30 +199,38 @@ class ModeManager {
           </defs>
         </svg>`)
       }
-      if (this.debugBox && this.scope.document.getElementById('demo-monkey-debug-box') === null) {
-        this.scope.document.body.insertAdjacentHTML('beforeend', `<div id="demo-monkey-debug-box">
-        <div id="demo-monkey-logo" title="Click to minimize/maxime Demo Monkey Bar">
-        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="16px" height="16px" viewBox="0 0 469.4 469.4" style="enable-background:new 0 0 469.4 469.4;" xml:space="preserve"><g><path d="M469.4,218.45c0-33.8-27.5-61.4-61.4-61.4c-3.3,0-6.5,0.3-9.6,0.8c-12.3-86.8-81-153.2-163.9-153.2 c-82.9,0-151.6,66.4-163.9,153.2c-3-0.5-6.1-0.7-9.2-0.7c-33.8,0-61.4,27.5-61.4,61.4c0,33,26.2,60.1,59,61.3 c-2.4,10.2-3.7,20.601-3.7,31.2c0,21.199,4.9,41.8,14.7,61.1c9.3,18.4,22.4,34.8,39.1,48.8c33.6,28.2,78.2,43.801,125.3,43.801 c47.1,0,91.8-15.601,125.5-43.9c16.7-14,29.899-30.4,39.1-48.8c9.7-19.301,14.7-39.9,14.7-61.1c0-10.601-1.2-21-3.7-31.201 C442.9,278.75,469.4,251.65,469.4,218.45z M392.7,310.951c0,4.399-0.3,8.699-0.8,13h-50.4h-214H77.1c-0.5-4.301-0.8-8.601-0.8-13 c0-12,1.9-23.601,5.4-34.601c1.2-3.601,2.5-7.101,4-10.601c8-18.5,20.8-35.1,37-48.699c1.8-1.5,3.7-3,5.6-4.5 c-2.8-4.6-5.4-9.4-7.7-14.4c-19.3-43.1-8.1-85.1,25-93.8c4.1-1.1,8.4-1.6,12.7-1.6c27.3,0,57.8,20.7,76.1,51.8 c18.3-31.2,48.8-51.8,76.1-51.8c4.3,0,8.601,0.5,12.7,1.6c33.1,8.7,44.3,50.7,25,93.8c-2.3,5-4.8,9.9-7.7,14.4c2,1.6,4,3.2,6,4.8 c16.101,13.6,28.7,30,36.7,48.399c1.5,3.4,2.8,6.9,3.9,10.5C390.8,287.35,392.7,298.951,392.7,310.951z M155.5,344.951h158.101 H387.5c-17.899,56.8-79.6,98.699-153,98.699c-73.4,0-135.1-41.899-153-98.699H155.5L155.5,344.951z M61.4,258.85 c-22.3,0-40.4-18.101-40.4-40.4c0-22.3,18.1-40.4,40.4-40.4c2.5,0,5,0.2,7.4,0.7c-0.1,2.3-0.1,4.6-0.1,7c0,6,0.3,11.8,0.8,17.6 c-4.3-2.9-9.4-5.2-15.3-6.6c-5.6-1.3-11.3,2.2-12.6,7.8c-1.3,5.6,2.2,11.3,7.8,12.6c17.3,4.1,23,24.1,23.1,24.5 c0.2,0.801,0.5,1.5,0.8,2.2c-0.5,0.8-0.9,1.601-1.4,2.399c-2.2,4.101-4.2,8.201-5.9,12.301C64.5,258.75,63,258.85,61.4,258.85z M408,258.85c-1.7,0-3.3-0.101-5-0.3c-1.8-4.1-3.7-8.2-5.899-12.301c-0.7-1.299-1.5-2.6-2.2-4c0.1-0.199,0.1-0.399,0.2-0.6 c0.1-0.199,5.699-20.5,23.1-24.5c5.6-1.3,9.1-7,7.8-12.6c-1.3-5.6-7-9.1-12.6-7.8c-5.2,1.2-9.8,3.2-13.8,5.6 c0.5-5.5,0.699-11,0.699-16.6c0-2.3-0.1-4.6-0.1-6.9c2.5-0.5,5.1-0.8,7.8-0.8c22.3,0,40.4,18.1,40.4,40.4 C448.4,240.75,430.3,258.85,408,258.85z"/><path d="M214.5,263.35c-4.7-5.5-13-6.101-18.5-1.399c-5.5,4.699-6.1,13-1.4,18.5l12.1,14.1c2.6,3,6.3,4.6,10,4.6c3,0,6-1,8.5-3.1c5.5-4.7,6.1-13,1.4-18.5L214.5,263.35z"/><path d="M273,261.85c-5.5-4.7-13.8-4.101-18.5,1.399l-12.1,14.101c-4.7,5.5-4.1,13.8,1.4,18.5c2.5,2.101,5.5,3.101,8.5,3.101c3.699,0,7.399-1.601,10-4.601l12.1-14.101C279.2,274.85,278.5,266.55,273,261.85z"/><circle cx="191.2" cy="199.25" r="21.3"/><circle cx="277.801" cy="199.25" r="21.3"/></g></svg>
-        </div>
-          <div>Runtime: <span id="demo-monkey-last-runtime"></span></div>
-          <div>Inspected Elements: <span id="demo-monkey-elements-count"></span></div>
-          <div>Undo Length: <span id="demo-monkey-undo-length"></span></div>
-          <button id="demo-monkey-editor-toggle">Toggle Editor</button>
+      if (this.scope.document.getElementById('demo-monkey-debug-box') === null) {
+        this.scope.document.body.insertAdjacentHTML('beforeend', `
+        <div id="demo-monkey-debug-box">
+          <div id="demo-monkey-logo" title="Click to minimize/maxime Demo Monkey Bar">
+            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="16px" height="16px" viewBox="0 0 469.4 469.4" style="enable-background:new 0 0 469.4 469.4;" xml:space="preserve"><g><path d="M469.4,218.45c0-33.8-27.5-61.4-61.4-61.4c-3.3,0-6.5,0.3-9.6,0.8c-12.3-86.8-81-153.2-163.9-153.2 c-82.9,0-151.6,66.4-163.9,153.2c-3-0.5-6.1-0.7-9.2-0.7c-33.8,0-61.4,27.5-61.4,61.4c0,33,26.2,60.1,59,61.3 c-2.4,10.2-3.7,20.601-3.7,31.2c0,21.199,4.9,41.8,14.7,61.1c9.3,18.4,22.4,34.8,39.1,48.8c33.6,28.2,78.2,43.801,125.3,43.801 c47.1,0,91.8-15.601,125.5-43.9c16.7-14,29.899-30.4,39.1-48.8c9.7-19.301,14.7-39.9,14.7-61.1c0-10.601-1.2-21-3.7-31.201 C442.9,278.75,469.4,251.65,469.4,218.45z M392.7,310.951c0,4.399-0.3,8.699-0.8,13h-50.4h-214H77.1c-0.5-4.301-0.8-8.601-0.8-13 c0-12,1.9-23.601,5.4-34.601c1.2-3.601,2.5-7.101,4-10.601c8-18.5,20.8-35.1,37-48.699c1.8-1.5,3.7-3,5.6-4.5 c-2.8-4.6-5.4-9.4-7.7-14.4c-19.3-43.1-8.1-85.1,25-93.8c4.1-1.1,8.4-1.6,12.7-1.6c27.3,0,57.8,20.7,76.1,51.8 c18.3-31.2,48.8-51.8,76.1-51.8c4.3,0,8.601,0.5,12.7,1.6c33.1,8.7,44.3,50.7,25,93.8c-2.3,5-4.8,9.9-7.7,14.4c2,1.6,4,3.2,6,4.8 c16.101,13.6,28.7,30,36.7,48.399c1.5,3.4,2.8,6.9,3.9,10.5C390.8,287.35,392.7,298.951,392.7,310.951z M155.5,344.951h158.101 H387.5c-17.899,56.8-79.6,98.699-153,98.699c-73.4,0-135.1-41.899-153-98.699H155.5L155.5,344.951z M61.4,258.85 c-22.3,0-40.4-18.101-40.4-40.4c0-22.3,18.1-40.4,40.4-40.4c2.5,0,5,0.2,7.4,0.7c-0.1,2.3-0.1,4.6-0.1,7c0,6,0.3,11.8,0.8,17.6 c-4.3-2.9-9.4-5.2-15.3-6.6c-5.6-1.3-11.3,2.2-12.6,7.8c-1.3,5.6,2.2,11.3,7.8,12.6c17.3,4.1,23,24.1,23.1,24.5 c0.2,0.801,0.5,1.5,0.8,2.2c-0.5,0.8-0.9,1.601-1.4,2.399c-2.2,4.101-4.2,8.201-5.9,12.301C64.5,258.75,63,258.85,61.4,258.85z M408,258.85c-1.7,0-3.3-0.101-5-0.3c-1.8-4.1-3.7-8.2-5.899-12.301c-0.7-1.299-1.5-2.6-2.2-4c0.1-0.199,0.1-0.399,0.2-0.6 c0.1-0.199,5.699-20.5,23.1-24.5c5.6-1.3,9.1-7,7.8-12.6c-1.3-5.6-7-9.1-12.6-7.8c-5.2,1.2-9.8,3.2-13.8,5.6 c0.5-5.5,0.699-11,0.699-16.6c0-2.3-0.1-4.6-0.1-6.9c2.5-0.5,5.1-0.8,7.8-0.8c22.3,0,40.4,18.1,40.4,40.4 C448.4,240.75,430.3,258.85,408,258.85z"/><path d="M214.5,263.35c-4.7-5.5-13-6.101-18.5-1.399c-5.5,4.699-6.1,13-1.4,18.5l12.1,14.1c2.6,3,6.3,4.6,10,4.6c3,0,6-1,8.5-3.1c5.5-4.7,6.1-13,1.4-18.5L214.5,263.35z"/><path d="M273,261.85c-5.5-4.7-13.8-4.101-18.5,1.399l-12.1,14.101c-4.7,5.5-4.1,13.8,1.4,18.5c2.5,2.101,5.5,3.101,8.5,3.101c3.699,0,7.399-1.601,10-4.601l12.1-14.101C279.2,274.85,278.5,266.55,273,261.85z"/><circle cx="191.2" cy="199.25" r="21.3"/><circle cx="277.801" cy="199.25" r="21.3"/></g></svg>
+          </div>
+          <div class="demo-monkey-debug-box-inner">Runtime (ms): <span id="demo-monkey-last-runtime"></span></div>
+          <div class="demo-monkey-debug-box-inner">Inspected: <span id="demo-monkey-elements-count"></span></div>
+          <div class="demo-monkey-debug-box-inner">Undo Length: <span id="demo-monkey-undo-length"></span></div>
+          <button class="demo-monkey-debug-box-inner" id="demo-monkey-editor-toggle">Toggle Editor</button>
         </div>
         <div id="demo-monkey-debug-tooltip"></div>`)
         this.debugTooltip = this.scope.document.getElementById('demo-monkey-debug-tooltip')
         this.demoMonkeyPicker = false
         this.boxVisible = true
         const logo = this.scope.document.getElementById('demo-monkey-logo')
-        logo.addEventListener('click', (event) => {
-          const box = document.getElementById('demo-monkey-debug-box')
+        const inner = Array.from(this.scope.document.getElementsByClassName('demo-monkey-debug-box-inner'))
+        const toggleBox = () => {
+          // const box = document.getElementById('demo-monkey-debug-box')
           if (this.boxVisible) {
-            box.style.right = (-box.clientWidth + logo.clientWidth) + 'px'
+            // box.style.right = (-box.clientWidth + logo.clientWidth) + 'px'
+            inner.forEach(e => { e.style.display = 'none' })
           } else {
-            box.style.right = '0px'
+            // box.style.right = '0px'
+            inner.forEach(e => { e.style.display = 'block' })
           }
           this.boxVisible = !this.boxVisible
-        })
+        }
+        if (!this.debugBox) {
+          toggleBox()
+        }
+        logo.addEventListener('click', toggleBox)
         this.scope.document.getElementById('demo-monkey-editor-toggle').addEventListener('click', (e) => {
           const callback = (target, clickEvent, mouseEvent) => {
             this.removeEditor()
@@ -334,26 +342,24 @@ class ModeManager {
   }
 
   updateDebugBox(lastTime, sum, undoLength) {
-    if (this.debugBox) {
-      var e1 = this.scope.document.getElementById('demo-monkey-last-runtime')
-      if (e1) {
-        this.runCount++
-        this.avgRunTime += (lastTime - this.avgRunTime) / this.runCount
-        this.maxRunTime = Math.max(lastTime, this.maxRunTime)
-        if (this.runCount % 10 === 0) {
-          e1.innerHTML = lastTime.toFixed(2) + ' (avg: ' + this.avgRunTime.toFixed(2) + ', max: ' + this.maxRunTime.toFixed(2) + ', count: ' + this.runCount + ')'
-        }
+    var e1 = this.scope.document.getElementById('demo-monkey-last-runtime')
+    if (e1) {
+      this.runCount++
+      this.avgRunTime += (lastTime - this.avgRunTime) / this.runCount
+      this.maxRunTime = Math.max(lastTime, this.maxRunTime)
+      if (this.runCount % 10 === 0) {
+        e1.innerHTML = lastTime.toFixed(2) + ' (avg: ' + this.avgRunTime.toFixed(2) + ', max: ' + this.maxRunTime.toFixed(2) + ')'
       }
-      var e2 = this.scope.document.getElementById('demo-monkey-undo-length')
-      if (e2) {
-        e2.innerHTML = undoLength
-      }
-      var e3 = this.scope.document.getElementById('demo-monkey-elements-count')
-      if (e3) {
-        e3.innerHTML = Object.keys(sum).reduce((acc, key) => {
-          return acc.concat(`${key}: ${sum[key]}`)
-        }, []).join(', ')
-      }
+    }
+    var e2 = this.scope.document.getElementById('demo-monkey-undo-length')
+    if (e2) {
+      e2.innerHTML = undoLength
+    }
+    var e3 = this.scope.document.getElementById('demo-monkey-elements-count')
+    if (e3) {
+      e3.innerHTML = Object.keys(sum).reduce((acc, key) => {
+        return acc.concat(`${key}: ${sum[key]}`)
+      }, []).join(', ')
     }
   }
 }

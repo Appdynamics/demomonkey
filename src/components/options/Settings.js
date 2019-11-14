@@ -182,13 +182,16 @@ class Settings extends React.Component {
             <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('webRequestHook')} value={this.props.settings.optionalFeatures.webRequestHook}/><label><b>Hook into Web Requests.</b> Turn this feature on, if you want to use the commands !delayUrl, !blockUrl and !redirectUrl. This will allow DemoMonkey to hook into web requests.</label>
           </div>
           <div className="toggle-group" id="toggle-debugBox">
-            <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('debugBox')} value={this.props.settings.optionalFeatures.debugBox}/><label><b>Debug Box.</b> Turn this feature on, to show a debug box with statistics when running demo monkey in <i>debug mode</i> </label>
+            <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('debugBox')} value={this.props.settings.optionalFeatures.debugBox}/><label><b>Expand Debug Box</b> Turn this feature on, to show the debug box with statistics in full length when running demo monkey in <i>debug mode</i> </label>
           </div>
           <div className="toggle-group" id="toggle-keyboardHandlerVim">
             <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('keyboardHandlerVim')} value={this.props.settings.optionalFeatures.keyboardHandlerVim}/><label><b>VIM Keyboard Handler.</b> Turn this feature on, to use the vim keyboard handler for the editor.</label>
           </div>
           <div className="toggle-group" id="toggle-withEvalCommand">
             <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('withEvalCommand')} value={this.props.settings.optionalFeatures.withEvalCommand}/><label><b>Allow !eval.</b> By turning on this flag, you can use the command !eval which allows you to write arbitrary javascript code. Use with caution!</label>
+          </div>
+          <div className="toggle-group" id="toggle-hookIntoAjax">
+            <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('hookIntoAjax')} value={this.props.settings.optionalFeatures.hookIntoAjax}/><label><b>Hook into Ajax.</b> Turn this feature on, if you want to use commands !removeFlowmapNode, !addFlowmapNode, etc. Those commands are implemented by hooking into ajax calls, use with caution!</label>
           </div>
           <div className="toggle-group" id="toggle-beta_configSync" style={{ display: window.location.href.includes('?beta') ? 'flex' : 'none' }}>
             <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('beta_configSync')} value={this.props.settings.optionalFeatures.beta_configSync}/><label><b>Config Sync Beta.</b> Turn on the option for config sync beta. </label>

@@ -2,7 +2,7 @@ import Monkey from './models/Monkey'
 import ModeManager from './models/ModeManager'
 import Settings from './models/Settings'
 import Manifest from './models/Manifest'
-import {Store} from 'react-chrome-redux';
+import {Store} from 'webext-redux'
 
 (function (scope) {
   'use strict'
@@ -29,6 +29,7 @@ import {Store} from 'react-chrome-redux';
   }
 
   store.ready().then(() => {
+
     var settings = new Settings(store.getState().settings)
     console.log('DemoMonkey enabled. Tampering the content.')
     console.log('Interval: ', settings.monkeyInterval)
@@ -58,6 +59,44 @@ import {Store} from 'react-chrome-redux';
       }
     }
 
+    let ajaxManager = false
+
+    if (settings.isFeatureEnabled('hookIntoAjax')) {
+      ajaxManager = {
+        functions: [],
+        add: function (f, c) {
+          this.functions.push('[' + f.toString() + ',' + JSON.stringify(c) + ']')
+        },
+        run: function () {
+          const intercept = (fs, url, response) => {
+            return fs.reduce((r, e) => {
+              return e[0](url, r, e[1])
+            }, response)
+          }
+          const script = `
+          const fs = [${this.functions}]
+          const openPrototype = XMLHttpRequest.prototype.open
+          ${intercept.toString()}
+          XMLHttpRequest.prototype.open = function () {
+            const url = arguments[1]
+            this.addEventListener('readystatechange', function (event) {
+              if (this.readyState === 4) {
+                var response = intercept(fs, url, event.target.responseText)
+                Object.defineProperty(this, 'response', {writable: true})
+                Object.defineProperty(this, 'responseText', {writable: true})
+                this.response = this.responseText = response
+              }
+            })
+            return openPrototype.apply(this, arguments)
+          };`
+          const s = scope.document.createElement('script')
+          s.innerHTML = script
+
+          scope.document.head.append(s)
+        }
+      }
+    }
+
     // frames don't need an independent url manager
     if (!isTopFrame()) {
       urlManager = {
@@ -67,7 +106,7 @@ import {Store} from 'react-chrome-redux';
       }
     }
 
-    var $DEMO_MONKEY = new Monkey(store.getState().configurations, scope, settings.isFeatureEnabled('undo'), settings.monkeyInterval, urlManager, settings.isFeatureEnabled('withEvalCommand'))
+    var $DEMO_MONKEY = new Monkey(store.getState().configurations, scope, settings.isFeatureEnabled('undo'), settings.monkeyInterval, urlManager, ajaxManager, settings.isFeatureEnabled('withEvalCommand'))
     updateBadge($DEMO_MONKEY.start())
 
     var modeManager = new ModeManager(scope, $DEMO_MONKEY, new Manifest(scope.chrome), settings.isDebugEnabled(), settings.isFeatureEnabled('debugBox'), settings.isLiveModeEnabled())
@@ -76,7 +115,7 @@ import {Store} from 'react-chrome-redux';
       console.log('Restart DemoMonkey')
       // Update settings
       var settings = new Settings(store.getState().settings)
-      var newMonkey = new Monkey(store.getState().configurations, scope, settings.isFeatureEnabled('undo'), settings.monkeyInterval, urlManager, settings.isFeatureEnabled('withEvalCommand'))
+      var newMonkey = new Monkey(store.getState().configurations, scope, settings.isFeatureEnabled('undo'), settings.monkeyInterval, urlManager, ajaxManager, settings.isFeatureEnabled('withEvalCommand'))
       $DEMO_MONKEY.stop()
       updateBadge(newMonkey.start())
       $DEMO_MONKEY = newMonkey

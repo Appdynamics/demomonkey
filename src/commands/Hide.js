@@ -22,8 +22,10 @@ class Hide extends Command {
   _checkCss(node, className) {
     return node !== false &&
       node.style.display !== 'none' &&
-      typeof node.className.includes === 'function' &&
-      node.className.includes(className)
+        (
+          (typeof node.className.includes === 'function' && node.className.includes(className)) ||
+          (node.className.baseVal && typeof node.className.baseVal.includes === 'function' && node.className.baseVal.includes(className))
+        )
   }
 
   _checkLocation() {

@@ -3,7 +3,7 @@ import Repository from './Repository'
 import UndoElement from '../commands/UndoElement'
 
 class Monkey {
-  constructor(rawConfigurations, scope, withUndo = true, intervalTime = 100, urlManager = false, withEvalCommand = false) {
+  constructor(rawConfigurations, scope, withUndo = true, intervalTime = 100, urlManager = false, ajaxManager = false, withEvalCommand = false) {
     this.scope = scope
     this.undo = []
     this.repository = new Repository({})
@@ -23,6 +23,7 @@ class Monkey {
       return [rawConfig.name, config]
     })
     this.urlManager = urlManager === false ? {add: () => {}, remove: () => {}, clear: () => {}} : urlManager
+    this.ajaxManager = ajaxManager === false ? {add: () => {}, run: () => {}} : ajaxManager
     this.observers = []
   }
 
@@ -64,6 +65,8 @@ class Monkey {
   applyOnce(configuration) {
     // Execute the commands for webRequest hooks only once
     this.addUndo(configuration.apply(this.urlManager, 'value', 'url'))
+    this.addUndo(configuration.apply(this.ajaxManager, 'value', 'ajax'))
+    this.ajaxManager.run()
   }
 
   apply(configuration) {

@@ -171,7 +171,8 @@ import match from './helpers/match.js'
     withEvalCommand: false,
     // This is only a soft toggle, since the user can turn it on and off directly in the popup
     onlyShowAvailableConfigurations: true,
-    keyboardHandlerVim: false
+    keyboardHandlerVim: false,
+    hookIntoAjax: false
   }
 
   const persistentStates = {

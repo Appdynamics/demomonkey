@@ -15,6 +15,8 @@ import RecolorDashboard from './appdynamics/RecolorDashboard'
 import SetDashboardBackground from './appdynamics/SetDashboardBackground'
 import DelayLink from './appdynamics/DelayLink'
 import ReplaceGeoStatus from './appdynamics/ReplaceGeoStatus'
+import RemoveFlowmapNode from './appdynamics/RemoveFlowmapNode'
+import AddFlowmapNode from './appdynamics/AddFlowmapNode'
 import BlockUrl from './BlockUrl'
 import DelayUrl from './DelayUrl'
 import ReplaceUrl from './ReplaceUrl'
@@ -268,6 +270,12 @@ class CommandBuilder {
       }
       if (command === 'replaceGeoStatus') {
         return new ReplaceGeoStatus(parameters[0], value)
+      }
+      if (command === 'removeFlowmapNode') {
+        return new RemoveFlowmapNode(parameters[0])
+      }
+      if (command === 'addFlowmapNode') {
+        return new AddFlowmapNode(parameters[0], parameters[1])
       }
     }
 
