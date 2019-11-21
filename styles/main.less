@@ -9,9 +9,88 @@
 @import 'table';
 @import '../node_modules/react-select/less/default'; // TODO: Find out how to style
 
+
+:root {
+  --mode-color: #ffffff;
+  --mode-text-color: #111111;
+  --base-color: @base;
+  --base-link-color: @base;
+  --hover-link-color: lighten(@base, 20%);
+  --lighter-base-color: lighten(@base, 75%);
+  --darker-base-color: darken(@base, 20%);
+  --highlight-background-color: #eeeeee;
+  --input-background-color: #fefefe;
+  --navigation-background: desaturate(lighten(@base, 79%), 40%);
+  --navigation-read-only: lighten(@base, 20%);
+  --navigation-item-color: rgb(241, 247, 236);
+  --navigation-active-color: #a8c987;
+  --navigation-text-color: #284907;
+
+  --help-text-color: #666666;
+
+  --success-color: @success;
+  --danger-color: @danger;
+  --warning-color: @warning;
+
+  --warning-background-color: lighten(@warning, 37%);
+
+  --editor-title-background: #ffffff;
+
+  --editor-comment-color: #aa5500;
+  --editor-group-color: #aa0000;
+  --editor-option-color: #ff5500;
+  --editor-search-color: #0000ff;
+  --editor-function-color: #770088;
+  --editor-import-color: #31b404;
+  --editor-variable-color: #bf00ff;
+  --editor-disabled-color: #f3f3f3;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --mode-color: #000000;
+    --mode-text-color: #eeeeee;
+    --base-color: @darkBase;
+    --base-link-color: #eeeeee;
+    --hover-link-color: #aaaaaa;
+    --lighter-base-color: lighten(@darkBase, 75%);
+    --darker-base-color: lighten(@darkBase, 20%);
+    --highlight-background-color: #444444;
+    --input-background-color: #222222;
+    --navigation-background: desaturate(lighten(@darkBase, 21%), 40%);
+    --navigation-read-only: lighten(@darkBase, 20%);
+    --navigation-item-color: #222222;
+    --navigation-active-color: #444444;
+    --navigation-text-color: #eeeeee;
+
+    --help-text-color: #aaaaaa;
+
+
+    --warning-color: @warning;
+
+    --warning-background-color: darken(@warning, 37%);
+
+    --success-color: lighten(@success, 20%);
+
+    --editor-title-background: #030303;
+
+
+    --editor-comment-color: spin(#aa5500, 180);
+    --editor-group-color: spin(#aa0000, 180);
+    --editor-option-color: spin(#ff5500, 180);
+    --editor-search-color: spin(#0000ff, 180);
+    --editor-function-color: spin(#770088, 180);
+    --editor-import-color: spin(#31b404, 180);
+    --editor-variable-color: spin(#bf00ff, 180);
+    --editor-disabled-color: spin(#f3f3f3, 180);
+  }
+}
+
 body,
 html,
 .app-container {
+  background-color: var(--mode-color);
+  color: var(--mode-text-color);
   /* height: 100vh !important; */
   margin: 0px;
   /* min-height: 100vh !important; */
@@ -47,16 +126,16 @@ html,
   }
 
   .latest-configurations {
-    background-color: lighten(@base, 75%);
-    border-bottom: 1px solid @base;
-    border-top: 1px solid @base;
+    background-color: var(--lighter-base-color);
+    border-bottom: 1px solid var(--base-color);
+    border-top: 1px solid var(--base-color);
     margin-top: 10px;
 
     .latest-title {
       font-size: 80%;
       margin-top: -10px;
       margin-left: 10px;
-      background: linear-gradient(180deg, white 50%, lighten(@base, 75%) 50%);
+      background: linear-gradient(180deg, white 50%, var(--lighter-base-color) 50%);
       width: 40px;
       text-align: center;
     }
@@ -64,15 +143,20 @@ html,
 }
 
 a {
-  color: @base;
+  color: var(--base-link-color);
 
   &:hover {
-    color: lighten(@base, 20%);
+    color: var(--hover-link-color);
   }
 }
 
 textarea {
   border: 1px solid desaturate(lighten(@base, 40%), 30%);
+}
+
+input {
+  background: var(--input-background-color);
+  color: var(--mode-text-color);
 }
 
 .main-grid {
@@ -82,7 +166,7 @@ textarea {
 }
 
 .current-view {
-  background: #ffffff;
+  background: var(--mode-color);
   display: flex;
   flex-direction: column;
   flex-grow: 1;
@@ -108,21 +192,19 @@ label {
   vertical-align: middle;
 }
 
-.CodeMirror {
-  border: 1px solid #cccccc;
+/*.CodeMirror {
+  //border: 1px solid #cccccc;
   height: 100%;
 }
 
 .moustrap-auto-save-area {
   height: 100%;
-}
-
-
+}*/
 
 .no-variables {
-  background: lighten(#ffd24d, 25%);
-  border: 1px solid darken(#ffd24d, 25%);
-  color: darken(#ffd24d, 25%);
+  background: var(--warning-background-color);
+  border: 1px solid var(--warning-color);
+  color: var(--warning-color);
   margin: 1em;
   padding: 1em;
 
@@ -179,7 +261,7 @@ label {
   margin-bottom: 1em;
 
   & label {
-    color: @success;
+    color: var(--success-color);
     display: block;
     font-size: 110%;
     font-weight: bold;
@@ -188,7 +270,7 @@ label {
 
   }
 
-  & input {
+  /*& input {
     border: 1px solid desaturate(lighten(@base, 40%), 30%);
     border-radius: 4px;
     display: block;
@@ -198,17 +280,17 @@ label {
     min-width: 300px;
     padding: 4px;
     width: 50%;
-  }
+  }*/
 
   & .help {
-    color: #666666;
+    color: var(--help-text-color);
   }
 }
 
 .warning-box {
-  background: lighten(@warning, 37%);
-  border: 1px solid @warning;
-  color: @warning;
+  background: var(--warning-background-color);
+  border: 1px solid var(--warning-color);
+  color: var(--warning-color);
   margin: 8px;
   margin-bottom: 0px;
   padding: 4px;

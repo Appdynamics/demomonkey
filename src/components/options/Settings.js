@@ -6,9 +6,11 @@ import AceEditor from 'react-ace'
 import Popup from 'react-popup'
 import axios from 'axios'
 
-import 'brace/theme/textmate'
-import 'brace/mode/ini'
+import 'brace/theme/xcode'
+import 'brace/theme/merbivore'
 import 'brace/ext/searchbox'
+
+import './editor/ace/mnky'
 
 class Settings extends React.Component {
   static propTypes = {
@@ -18,7 +20,8 @@ class Settings extends React.Component {
     onSetBaseTemplate: PropTypes.func.isRequired,
     onSetMonkeyInterval: PropTypes.func.isRequired,
     onSetDemoMonkeyServer: PropTypes.func.isRequired,
-    onToggleOptionalFeature: PropTypes.func.isRequired
+    onToggleOptionalFeature: PropTypes.func.isRequired,
+    isDarkMode: PropTypes.bool.isRequired
   }
 
   constructor(props) {
@@ -144,7 +147,7 @@ class Settings extends React.Component {
             <label htmlFor="template">New configuration template (will auto-save):</label>
             <AceEditor height="200px" width="100%"
               minLines={20}
-              theme="textmate"
+              theme={ this.props.isDarkMode ? 'merbivore' : 'xcode' }
               mode="mnky"
               value={this.props.settings.baseTemplate}
               name="template"

@@ -7,6 +7,7 @@ import autocomplete from './ace/autocomplete.js'
 import 'brace/ext/language_tools'
 import 'brace/ext/searchbox'
 import 'brace/theme/xcode'
+import 'brace/theme/merbivore'
 
 import vim from './ace/vim'
 import './ace/mnky'
@@ -30,7 +31,8 @@ class CodeEditor extends React.Component {
     readOnly: PropTypes.bool,
     editorAutocomplete: PropTypes.bool.isRequired,
     annotations: PropTypes.func.isRequired,
-    keyboardHandler: PropTypes.string
+    keyboardHandler: PropTypes.string,
+    isDarkMode: PropTypes.bool.isRequired
   }
 
   handleChange(content, event) {
@@ -62,7 +64,7 @@ class CodeEditor extends React.Component {
       }}
       width="100%"
       height="calc(100% - 40px)"
-      theme="xcode"
+      theme={ this.props.isDarkMode ? 'merbivore' : 'xcode' }
       mode="mnky"
       readOnly = {this.props.readOnly === true}
       className = {this.props.readOnly === true ? 'disabled' : ''}
@@ -70,17 +72,17 @@ class CodeEditor extends React.Component {
       enableLiveAutocompletion={this.props.editorAutocomplete}
       enableSnippets={false}
       keyboardHandler={this.props.keyboardHandler}
-      editorProps={{$blockScrolling: 'Infinity'}}
+      editorProps={{ $blockScrolling: 'Infinity' }}
       name="contentarea"
       commands={[
         {
           name: 'Toggle Comment',
-          bindKey: {win: 'Ctrl-Shift-7', mac: 'Cmd-Shift-7'},
+          bindKey: { win: 'Ctrl-Shift-7', mac: 'Cmd-Shift-7' },
           exec: 'togglecomment'
         },
         {
           name: 'Save On Enter',
-          bindKey: {win: 'Enter', mac: 'Enter'},
+          bindKey: { win: 'Enter', mac: 'Enter' },
           exec: (editor) => {
             editor.insert('\n')
             this.props.onAutoSave(event)

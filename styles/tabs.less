@@ -17,7 +17,7 @@
 
 .tabs__labels li a {
   border-bottom: 2px solid #f5f5f5;
-  color: #444444;
+  color: var(--mode-text-color);
   display: block;
   outline: none;
   padding: 8px 12px;
@@ -25,11 +25,15 @@
 }
 
 .tabs__labels li .active {
-  border-bottom-color: @base;
+  border-bottom-color: var(--success-color);
 }
 
 .tabs__labels li .link {
-  color: @base;
+  color: var(--base-link-color);
+
+  &:hover {
+    color: var(--hover-link-color);
+  }
 }
 
 .tabs__labels li .link:before {

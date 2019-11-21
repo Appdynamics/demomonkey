@@ -1,8 +1,8 @@
 @import 'colors';
 
 .navigation {
-  background: desaturate(lighten(@base, 79%), 40%);
-  border-right: 1px solid @base;
+  background: var(--navigation-background);
+  border-right: 1px solid var(--base-color);
   flex-basis: 250px;
   height: 100%;
   margin: 0px;
@@ -21,7 +21,7 @@
     font-style: italic;
 
     a {
-      color: lighten(@base, 20%);
+      color: --var(--navigation-read-only)
     }
   }
 
@@ -79,7 +79,7 @@
 
   .actions {
 
-    background-color: @base;
+    background-color: var(--base-color);
 
     a {
       color: #f0f0f0;
@@ -89,7 +89,7 @@
 
       &:hover {
         background: #f0f0f0;
-        color: @base;
+        color: var(--base-color);
         text-decoration: underline;
       }
     }
@@ -115,11 +115,13 @@
   }
 
   .searchBox {
-    border-bottom: 1px solid @base;
+    border-bottom: 1px solid var(--base-color);
     border-left: 0px;
-    border-right: 1px solid @base;
-    border-top: 1px solid @base;
+    border-right: 1px solid var(--base-color);
+    border-top: 1px solid var(--base-color);
     height: 24px;
+    background: var(--input-background-color);
+    color: var(--mode-text-color);
     padding-left: 4px;
     width: 250px;
   }

@@ -3,13 +3,15 @@ import VariableModle from '../../../models/Variable'
 import PropTypes from 'prop-types'
 import AceEditor from 'react-ace'
 
-import 'brace/theme/textmate'
+import 'brace/theme/xcode'
+import 'brace/theme/merbivore'
 import 'brace/mode/html'
 
 class Variable extends React.Component {
   static propTypes = {
     onValueUpdate: PropTypes.func.isRequired,
-    variable: PropTypes.instanceOf(VariableModle)
+    variable: PropTypes.instanceOf(VariableModle),
+    isDarkMode: PropTypes.bool.isRequired
   }
 
   updateVariable(value) {
@@ -31,7 +33,7 @@ class Variable extends React.Component {
       <AceEditor height="4.5em" width="700px"
         name={this.props.variable.id}
         minLines={1}
-        theme="textmate"
+        theme={ this.props.isDarkMode ? 'merbivore' : 'xcode' }
         mode="html"
         highlightActiveLine={false}
         showGutter={false}

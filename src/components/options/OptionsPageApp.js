@@ -21,6 +21,27 @@ class App extends React.Component {
     settings: PropTypes.object.isRequired
   }
 
+  constructor(props) {
+    super(props)
+    this.state = {
+      isDarkMode: window.matchMedia('(prefers-color-scheme: dark)').matches
+    }
+  }
+
+  componentDidMount() {
+    this.mql = window.matchMedia('(prefers-color-scheme: dark)')
+    this.darkModeUpdated = (e) => {
+      console.log(e)
+      this.setState({ isDarkMode: e.matches })
+    }
+    this.mql.addListener(this.darkModeUpdated)
+  }
+
+  componentWillUnmount() {
+    this.mql.removeListener(this.darkModeUpdated)
+    delete this.mql
+  }
+
   navigateTo(target) {
     this.props.actions.setCurrentView(target)
   }
@@ -167,7 +188,8 @@ class App extends React.Component {
             onToggleOptionalFeature={(feature) => this.toggleOptionalFeature(feature)}
             onSetBaseTemplate={(baseTemplate) => this.setBaseTemplate(baseTemplate)}
             onSetMonkeyInterval={(event) => this.setMonkeyInterval(event.target.value)}
-            onSetDemoMonkeyServer={(value) => this.setDemoMonkeyServer(value)}/>
+            onSetDemoMonkeyServer={(value) => this.setDemoMonkeyServer(value)}
+            isDarkMode={this.state.isDarkMode}/>
         case 'configuration':
           var configuration = this.getConfiguration(segments[1])
           // If an unknown ID is selected, we throw an error.
@@ -184,6 +206,7 @@ class App extends React.Component {
             onCopy={(configuration, _) => this.copyConfiguration(configuration)}
             onDelete={(configuration, _) => this.deleteConfiguration(configuration)}
             toggleConfiguration={() => this.props.actions.toggleConfiguration(configuration.id)}
+            isDarkMode={this.state.isDarkMode}
           />
         default:
           return <Welcome />

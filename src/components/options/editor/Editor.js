@@ -22,7 +22,8 @@ class Editor extends React.Component {
     saveOnClose: PropTypes.bool.isRequired,
     editorAutocomplete: PropTypes.bool.isRequired,
     toggleConfiguration: PropTypes.func.isRequired,
-    keyboardHandler: PropTypes.string
+    keyboardHandler: PropTypes.string,
+    isDarkMode: PropTypes.bool.isRequired
   }
 
   constructor(props) {
@@ -209,7 +210,9 @@ class Editor extends React.Component {
               onVimWrite={() => this.handleClick(null, 'save')}
               onAutoSave={(event) => autosave ? this.handleClick(event, 'save') : event.preventDefault() }
               keyboardHandler={this.props.keyboardHandler}
-              editorAutocomplete={this.props.editorAutocomplete}/>
+              editorAutocomplete={this.props.editorAutocomplete}
+              isDarkMode={this.props.isDarkMode}
+            />
           </Pane>
           <Pane label="Variables">
             <div>
@@ -220,7 +223,7 @@ class Editor extends React.Component {
             <div className="scrolling-pane">
               {variables.length > 0 ? '' : <div className="no-variables">No variables defined</div>}
               {variables.map((variable, index) => {
-                return <Variable key={variable.id} onValueUpdate={(id, value) => this.updateVariable(id, value)} variable={variable}/>
+                return <Variable key={variable.id} onValueUpdate={(id, value) => this.updateVariable(id, value)} variable={variable} isDarkMode={this.props.isDarkMode} />
               })}
             </div>
           </Pane>

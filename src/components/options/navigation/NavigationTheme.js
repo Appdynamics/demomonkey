@@ -2,7 +2,7 @@ export default {
   tree: {
     base: {
       listStyle: 'none',
-      backgroundColor: 'rgb(241, 247, 236)',
+      backgroundColor: 'var(--navigation-item-color)',
       margin: 0,
       padding: 0,
       color: '#284907'
@@ -17,10 +17,10 @@ export default {
         padding: '4px',
         width: '100%',
         display: 'block',
-        borderBottom: '1px solid #a8c987'
+        borderBottom: '1px solid var(--navigation-active-color)'
       },
       activeLink: {
-        background: '#a8c987'
+        background: 'var(--navigation-active-color)'
       },
       toggle: {
         base: {
@@ -49,13 +49,13 @@ export default {
         folder: {
           display: 'inline-block',
           verticalAlign: 'top',
-          color: '#284907',
+          color: 'var(--navigation-text-color)',
           width: 'calc(100% - 24px)'
         },
         item: {
           display: 'inline-block',
           verticalAlign: 'top',
-          color: '#284907',
+          color: 'var(--navigation-text-color)',
           width: '100%'
         },
         connector: {
