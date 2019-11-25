@@ -208,7 +208,7 @@ class ModeManager {
           <div class="demo-monkey-debug-box-inner">Runtime (ms): <span id="demo-monkey-last-runtime"></span></div>
           <div class="demo-monkey-debug-box-inner">Inspected: <span id="demo-monkey-elements-count"></span></div>
           <div class="demo-monkey-debug-box-inner">Undo Length: <span id="demo-monkey-undo-length"></span></div>
-          <button class="demo-monkey-debug-box-inner" id="demo-monkey-editor-toggle">Toggle Editor</button>
+          <button class="demo-monkey-debug-box-inner" id="demo-monkey-editor-toggle">Toggle <i>Right-Click</i> Editor</button>
         </div>
         <div id="demo-monkey-debug-tooltip"></div>`)
         this.debugTooltip = this.scope.document.getElementById('demo-monkey-debug-tooltip')
