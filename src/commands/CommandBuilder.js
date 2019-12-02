@@ -60,6 +60,16 @@ class CommandBuilder {
   _buildCustomCommand(namespace, command, parameters, value) {
     var location = typeof window === 'undefined' ? '' : window.location
 
+    if (namespace === 'cwom' || this.namespaces.includes('cwom') || namespace === 'turbonomics' || this.namespaces.includes('turbonomics')) {
+      if (command === 'hideListItem') {
+        return new Hide(parameters[0], 17, 'list-group-item', '', '', location)
+      }
+
+      if (command === 'replaceSeverity') {
+        // !replaceNeighbor(moseytestdb, 9, ".severity-bar", , backgroundColor) = "#f5e35d"
+      }
+    }
+
     if (namespace === 'appdynamics' || this.namespaces.includes('appdynamics')) {
       if (command === 'replaceFlowmapIcon') {
         return new ReplaceFlowmapIcon(parameters[0], value)
@@ -206,16 +216,16 @@ class CommandBuilder {
       }
       if (command === 'replaceInnerNodeHealth') {
         if (value && ['normal', 'warning', 'critical'].includes(value.toLowerCase())) {
-          value = {'normal': 'rgb(0, 209, 128)', 'warning': 'rgb(255, 211, 1)', 'critical': 'rgb(255, 32, 46)'}[value.toLowerCase()]
+          value = { normal: 'rgb(0, 209, 128)', warning: 'rgb(255, 211, 1)', critical: 'rgb(255, 32, 46)' }[value.toLowerCase()]
         }
         return new ReplaceNeighbor(parameters[0], value, 2, '.adsNodeCountBackground', '', 'fill', location)
       }
       if (command === 'replaceOuterNodeHealth') {
         if (value && ['normal', 'warning', 'critical'].includes(value.toLowerCase())) {
-          value = {'normal': 'rgb(0, 209, 128)', 'warning': 'rgb(255, 211, 1)', 'critical': 'rgb(255, 32, 46)'}[value.toLowerCase()]
+          value = { normal: 'rgb(0, 209, 128)', warning: 'rgb(255, 211, 1)', critical: 'rgb(255, 32, 46)' }[value.toLowerCase()]
         }
         if (parameters[1] && ['normal', 'warning', 'critical'].includes(parameters[1].toLowerCase())) {
-          parameters[1] = {'normal': '.adsNormalNodeColor', 'warning': '.adsWarningNodeColor', 'critical': '.adsCriticalNodeColor'}[parameters[1].toLowerCase()]
+          parameters[1] = { normal: '.adsNormalNodeColor', warning: '.adsWarningNodeColor', critical: '.adsCriticalNodeColor' }[parameters[1].toLowerCase()]
         } else {
           parameters[1] = '.adsNormalNodeColor'
         }
@@ -225,13 +235,13 @@ class CommandBuilder {
       if (command === 'replaceBusinessTransactionHealth' || command === 'replaceBTHealth') {
         // !appdynamics.replaceNeighbor(Homepage, 3, img.adsSvgIconSmall, ,src) = images/health/critical.svg
         if (value && ['normal', 'warning', 'critical'].includes(value.toLowerCase())) {
-          value = {'normal': 'images/health/normal.svg', 'warning': 'images/health/warning.svg', 'critical': 'images/health/critical.svg'}[value.toLowerCase()]
+          value = { normal: 'images/health/normal.svg', warning: 'images/health/warning.svg', critical: 'images/health/critical.svg' }[value.toLowerCase()]
         }
         return new ReplaceNeighbor(parameters[0], value, 3, 'img.adsSvgIconSmall', '', 'src', location)
       }
       if (command === 'replaceFlowmapNode') {
         value = typeof value === 'string' ? this._extractParameters(value) : []
-        let commands = [
+        const commands = [
           new ReplaceFlowmapIcon(parameters[0], value[1]),
           this._buildCustomCommand(namespace, 'replaceNodeCount', [parameters[0]], value[2]),
           this._buildCustomCommand(namespace, 'replaceInnerNodeHealth', [parameters[0]], value[3]),
@@ -252,7 +262,7 @@ class CommandBuilder {
           return this._buildCustomCommand(namespace, 'hideBusinessTransaction', parameters, value)
         }
         value = this._extractParameters(value)
-        let commands = [new SearchAndReplace(parameters[0], value[0])]
+        const commands = [new SearchAndReplace(parameters[0], value[0])]
         if (typeof value[1] === 'string' && value[1] !== '') {
           commands.unshift(this._buildCustomCommand(namespace, 'replaceBusinessTransactionOriginalName', [parameters[0]], value[1]))
         }
@@ -357,7 +367,7 @@ class CommandBuilder {
   }
 
   _extractParameters(params) {
-    let parameters = []
+    const parameters = []
     // parameters = command.slice(command.indexOf('(') + 1, -1).split(/\s*,\s*/).filter(elem => elem !== '')
     let index = 0
     parameters.push('')
@@ -381,7 +391,7 @@ class CommandBuilder {
 
   _extractForCustomCommand(command) {
     if (typeof command !== 'string' || command === '') {
-      return {extracted: false}
+      return { extracted: false }
     }
 
     var namespace = ''
@@ -389,7 +399,7 @@ class CommandBuilder {
 
     if (command.indexOf('(') !== -1) {
       if (command.substr(-1) !== ')') {
-        return {extracted: false}
+        return { extracted: false }
       }
       parameters = this._extractParameters(command.slice(command.indexOf('(') + 1, -1))
 
@@ -401,7 +411,7 @@ class CommandBuilder {
       command = command.slice(command.lastIndexOf('.') + 1)
     }
 
-    return {extracted: true, command: command, namespace: namespace, parameters: parameters}
+    return { extracted: true, command: command, namespace: namespace, parameters: parameters }
   }
 
   _buildCommand(key, value) {
@@ -440,7 +450,7 @@ class CommandBuilder {
   }
 
   build(key, value) {
-    let cmd = this._innerBuild(key, value)
+    const cmd = this._innerBuild(key, value)
 
     cmd.setSource(key, value)
 

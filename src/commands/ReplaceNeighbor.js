@@ -42,27 +42,27 @@ class ReplaceNeighbor extends Command {
           if (typeof this.cb === 'function') {
             return this.cb(this.search, this.replace, neighbor)
           } else if (this.property === 'src') {
-            let original = neighbor.src
+            const original = neighbor.src
             // Make sure that also relative paths are matched
             if (original !== this.replace && !original.endsWith(this.replace)) {
               neighbor.src = this.replace
               return new UndoElement(neighbor, 'src', original, neighbor.src)
             }
           } else if (this.property === 'href.baseVal') {
-            let original = neighbor.href.baseVal
+            const original = neighbor.href.baseVal
             if (original !== this.replace && !original.endsWith(this.replace)) {
               neighbor.href.baseVal = this.replace
               return new UndoElement(neighbor, 'href.baseVal', original, neighbor.href)
             }
           } else if (this.property !== '') {
-            let original = neighbor.style[this.property]
+            const original = neighbor.style[this.property]
             if (original !== this.replace) {
               neighbor.style[this.property] = this.replace
               return new UndoElement(neighbor, 'style.' + this.property, original, neighbor.style[this.property])
             }
           } else if (neighbor.childNodes && neighbor.childNodes.length > 0) {
-            let neighborText = Array.from(neighbor.childNodes).filter(node => node.nodeType === 3)[0]
-            let original = neighborText.data
+            const neighborText = Array.from(neighbor.childNodes).filter(node => node.nodeType === 3)[0]
+            const original = neighborText.data
             if (original !== this.replace) {
               neighborText.data = this.replace
               return new UndoElement(neighborText, 'data', original, this.replace)
