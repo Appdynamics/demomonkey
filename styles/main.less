@@ -11,15 +11,15 @@
 
 
 :root {
-  --mode-color: #ffffff;
-  --mode-text-color: #111111;
   --base-color: @base;
   --base-link-color: @base;
-  --hover-link-color: lighten(@base, 20%);
-  --lighter-base-color: lighten(@base, 75%);
   --darker-base-color: darken(@base, 20%);
   --highlight-background-color: #eeeeee;
+  --hover-link-color: lighten(@base, 20%);
   --input-background-color: #fefefe;
+  --lighter-base-color: lighten(@base, 75%);
+  --mode-color: #ffffff;
+  --mode-text-color: #111111;
   --navigation-background: desaturate(lighten(@base, 79%), 40%);
   --navigation-read-only: lighten(@base, 20%);
   --navigation-item-color: rgb(241, 247, 236);
@@ -64,7 +64,6 @@
     --navigation-text-color: #eeeeee;
 
     --help-text-color: #aaaaaa;
-
 
     --warning-color: @warning;
 
@@ -344,4 +343,13 @@ label {
 .ace_editor {
   border: 1px solid #cccccc;
   height: calc(100%-50px);
+}
+
+.connection-status-failed {
+  color: var(--danger-color);
+  font-weight: bold;
+}
+
+.connection-status-connected {
+  color: var(--success-color);
 }

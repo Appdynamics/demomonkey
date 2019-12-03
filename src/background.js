@@ -79,7 +79,7 @@ import match from './helpers/match.js'
       console.log('Hooking into web requests')
       scope.chrome.webRequest.onBeforeRequest.addListener(
         webRequestHook,
-        {urls: ['<all_urls>']},
+        { urls: ['<all_urls>'] },
         ['blocking']
       )
       hookedIntoWebRequests = true
@@ -111,13 +111,13 @@ import match from './helpers/match.js'
         scope.chrome.storage,
         {
           saveConfiguration: (id, configuration) => {
-            store.dispatch({ 'type': 'SAVE_CONFIGURATION', id, configuration, sync: true })
+            store.dispatch({ type: 'SAVE_CONFIGURATION', id, configuration, sync: true })
           },
           addConfiguration: (configuration) => {
-            store.dispatch({ 'type': 'ADD_CONFIGURATION', configuration, sync: true })
+            store.dispatch({ type: 'ADD_CONFIGURATION', configuration, sync: true })
           },
           setState: (connectionState) => {
-            store.dispatch({ 'type': 'SET_CONNECTION_STATE', connectionState })
+            store.dispatch({ type: 'SET_CONNECTION_STATE', connectionState })
           }
         },
         server,
@@ -220,7 +220,7 @@ import match from './helpers/match.js'
     wrapStore(store, { portName: 'DEMO_MONKEY_STORE' })
 
     // Persist monkey ID. Shouldn't change after first start.
-    scope.chrome.storage.local.set({monkeyID: store.getState().monkeyID})
+    scope.chrome.storage.local.set({ monkeyID: store.getState().monkeyID })
 
     hookIntoWebRequests(store.getState().settings.optionalFeatures.webRequestHook, store.getState().configurations.filter(c => c.enabled).length > 0)
 
@@ -264,9 +264,9 @@ import match from './helpers/match.js'
         }
 
         if (Array.isArray(c.hotkeys) && c.hotkeys.includes(group)) {
-          store.dispatch({ 'type': 'TOGGLE_CONFIGURATION', id: c.id, enabled: toggle })
+          store.dispatch({ type: 'TOGGLE_CONFIGURATION', id: c.id, enabled: toggle })
         } else if (c.enabled) {
-          store.dispatch({ 'type': 'TOGGLE_CONFIGURATION', id: c.id })
+          store.dispatch({ type: 'TOGGLE_CONFIGURATION', id: c.id })
         }
       })
     }
@@ -278,10 +278,10 @@ import match from './helpers/match.js'
         toggleHotkeyGroup(group)
       }
       if (command === 'live-mode') {
-        store.dispatch({ 'type': 'TOGGLE_LIVE_MODE' })
+        store.dispatch({ type: 'TOGGLE_LIVE_MODE' })
       }
       if (command === 'debug-mode') {
-        store.dispatch({ 'type': 'TOGGLE_DEBUG_MODE' })
+        store.dispatch({ type: 'TOGGLE_DEBUG_MODE' })
       }
     })
 
@@ -289,7 +289,7 @@ import match from './helpers/match.js'
       title: 'Toggle Live Mode',
       contexts: ['browser_action'],
       onclick: function () {
-        store.dispatch({ 'type': 'TOGGLE_LIVE_MODE' })
+        store.dispatch({ type: 'TOGGLE_LIVE_MODE' })
       }
     })
 
@@ -297,7 +297,7 @@ import match from './helpers/match.js'
       title: 'Toggle Debug Mode',
       contexts: ['browser_action'],
       onclick: function () {
-        store.dispatch({ 'type': 'TOGGLE_DEBUG_MODE' })
+        store.dispatch({ type: 'TOGGLE_DEBUG_MODE' })
       }
     })
   }

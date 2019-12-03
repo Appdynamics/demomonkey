@@ -246,37 +246,37 @@ const OptionsPageApp = connect(
   dispatch => ({
     actions: {
       setCurrentView: (key) => {
-        dispatch({ 'type': 'SET_CURRENT_VIEW', view: key })
+        dispatch({ type: 'SET_CURRENT_VIEW', view: key })
       },
       setMonkeyInterval: (monkeyInterval) => {
-        dispatch({ 'type': 'SET_MONKEY_INTERVAL', monkeyInterval })
+        dispatch({ type: 'SET_MONKEY_INTERVAL', monkeyInterval })
       },
       setDemoMonkeyServer: (demoMonkeyServer) => {
-        dispatch({ 'type': 'SET_DEMO_MONKEY_SERVER', demoMonkeyServer })
+        dispatch({ type: 'SET_DEMO_MONKEY_SERVER', demoMonkeyServer })
       },
       toggleConfiguration: (id) => {
-        dispatch({ 'type': 'TOGGLE_CONFIGURATION', id: id })
+        dispatch({ type: 'TOGGLE_CONFIGURATION', id: id })
       },
       saveConfiguration: (id, configuration) => {
-        dispatch({ 'type': 'SAVE_CONFIGURATION', id, configuration })
+        dispatch({ type: 'SAVE_CONFIGURATION', id, configuration })
       },
       deleteConfiguration: (id) => {
-        dispatch({ 'type': 'DELETE_CONFIGURATION', id })
+        dispatch({ type: 'DELETE_CONFIGURATION', id })
       },
       deleteConfigurationByPrefix: (prefix) => {
-        dispatch({ 'type': 'DELETE_CONFIGURATION_BY_PREFIX', prefix })
+        dispatch({ type: 'DELETE_CONFIGURATION_BY_PREFIX', prefix })
       },
       batchAddConfiguration: (configurations) => {
-        return dispatch({ 'type': 'BATCH_ADD_CONFIGURATION', configurations })
+        return dispatch({ type: 'BATCH_ADD_CONFIGURATION', configurations })
       },
       addConfiguration: (configuration) => {
-        return dispatch({ 'type': 'ADD_CONFIGURATION', configuration })
+        return dispatch({ type: 'ADD_CONFIGURATION', configuration })
       },
       setBaseTemplate: (baseTemplate) => {
-        dispatch({ 'type': 'SET_BASE_TEMPLATE', baseTemplate })
+        dispatch({ type: 'SET_BASE_TEMPLATE', baseTemplate })
       },
       toggleOptionalFeature: (optionalFeature) => {
-        dispatch({ 'type': 'TOGGLE_OPTIONAL_FEATURE', optionalFeature })
+        dispatch({ type: 'TOGGLE_OPTIONAL_FEATURE', optionalFeature })
       }
     }
   }))(App)

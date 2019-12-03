@@ -41,6 +41,11 @@ class Settings extends React.Component {
     })
   }
 
+  reconnectRemoteLocation() {
+    this.props.onSetDemoMonkeyServer('')
+    this.props.onSetDemoMonkeyServer(this.state.remoteLocation)
+  }
+
   clearRemoteLocation() {
     this.setState({
       remoteLocation: '',
@@ -129,8 +134,9 @@ class Settings extends React.Component {
       <input type="text" onChange={(e) => this.changeRemoteLocation(e.target.value)} value={this.state.remoteLocation} />
       <button className="save-button" onClick={() => this.saveRemoteLocation()}>Update</button>
       <button className="save-button" onClick={() => this.clearRemoteLocation()}>Clear</button>
-      (Connection: {this.props.connectionState})
-      <div style={{color: 'red'}}>{ this.state.remoteLocationError !== null ? this.state.remoteLocationError : ''}</div>
+      <button className="delete-button" onClick={() => this.reconnectRemoteLocation()}>Reconnect</button>
+      (Connection: <span className={`connection-status-${this.props.connectionState.toLowerCase()}`}>{this.props.connectionState}</span>)
+      <div style={{ color: 'red' }}>{ this.state.remoteLocationError !== null ? this.state.remoteLocationError : ''}</div>
       { this.state.remoteLocation === '' ? ''
         : <p>Demo Monkey Server keeps backups of your configurations. You can find them at <a href={backupLocation} target="_blank" rel="noopener noreferrer">{backupLocation}</a></p>
       }
@@ -151,7 +157,7 @@ class Settings extends React.Component {
               mode="mnky"
               value={this.props.settings.baseTemplate}
               name="template"
-              editorProps={{$blockScrolling: true}}
+              editorProps={{ $blockScrolling: true }}
               onChange={this.props.onSetBaseTemplate} />
           </div>
           <h2>{'Monkey\'s Behavior'}</h2>

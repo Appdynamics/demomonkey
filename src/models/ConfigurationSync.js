@@ -112,8 +112,8 @@ class ConfigurationSync {
     axios({
       url: `${this.remoteUrl}/configuration`,
       method: 'POST',
-      data: localUpdates}
-    ).then(response => {
+      data: localUpdates
+    }).then(response => {
       console.log(response)
     }).catch(error => {
       console.log(error)

@@ -16,7 +16,7 @@ const connections = function (state, action) {
       if (action.connection.key === false) {
         return [
           ...state,
-          Object.assign(action.connection, {key: uuidV4()})
+          Object.assign(action.connection, { key: uuidV4() })
         ]
       }
       return state.map(c => {
