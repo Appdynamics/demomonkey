@@ -28,6 +28,12 @@ class NavigationHeader extends React.Component {
       <li>
         <a href='#settings' onClick={(event) => this.handleClick(event, 'settings')} >Settings</a>
       </li>
+      <li>
+        <a href='#settings' onClick={(event) => this.handleClick(event, 'settings')} >Gallery</a>
+      </li>
+      <li>
+        <a href='#settings' onClick={(event) => this.handleClick(event, 'settings')} >Logs</a>
+      </li>
     </ul>
   }
 }

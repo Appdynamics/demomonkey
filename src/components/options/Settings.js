@@ -137,7 +137,7 @@ class Settings extends React.Component {
       <button className="delete-button" onClick={() => this.reconnectRemoteLocation()}>Reconnect</button>
       (Connection: <span className={`connection-status-${this.props.connectionState.toLowerCase()}`}>{this.props.connectionState}</span>)
       <div style={{ color: 'red' }}>{ this.state.remoteLocationError !== null ? this.state.remoteLocationError : ''}</div>
-      { this.state.remoteLocation === '' ? ''
+      { !backupLocation.startsWith('http') ? ''
         : <p>Demo Monkey Server keeps backups of your configurations. You can find them at <a href={backupLocation} target="_blank" rel="noopener noreferrer">{backupLocation}</a></p>
       }
     </div>
