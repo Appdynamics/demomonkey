@@ -118,8 +118,8 @@ gulp.task('git-get-commit', function (cb) {
     if (err) {
       cb(err)
     } else {
-      log(stdout)
-      log.error(stderr)
+      // log(stdout)
+      // log.error(stderr)
       fs.writeFile('./build/.git-commit', stdout, cb)
     }
   })
@@ -131,7 +131,8 @@ const tasks = [
   'styles',
   'app',
   'monkey',
-  'background'
+  'background',
+  'git-get-commit'
 ]
 
 gulp.task('build', gulp.parallel(tasks))
@@ -139,7 +140,7 @@ gulp.task('build', gulp.parallel(tasks))
 gulp.task('pack', function () {
   const [commit, changes] = fs.readFileSync('./build/.git-commit').toString().split('#')
   if (parseInt(changes, 10) > 0) {
-    throw new Error('Please commit all changes before packing a release!')
+    throw new Error('Please commit all changes and re-run "gulp build" before packing a release!')
   }
   log(`\`- from commit ${commit}`)
   const json = JSON.parse(fs.readFileSync('./manifest.json'))
