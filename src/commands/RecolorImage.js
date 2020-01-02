@@ -26,7 +26,7 @@ class RecolorImage extends Command {
       // Note: For some reason it does not work to add the SVG first and apply the filter second.
       target.style.filter += `url(#${colorId})`
       target.dataset.demoMonkeyId = `dmid-${uuidV4()}`
-      var [ red, green, blue ] = this.replace.rgb().color.map(v => v / 255)
+      var [red, green, blue] = this.replace.rgb().color.map(v => v / 255)
       var alpha = this.replace.rgb().valpha
       target.parentElement.innerHTML += `<svg height="0px" width="0px"><defs><filter id="${colorId}"><feColorMatrix type="matrix" values="0 0 0 0 ${red} 0 0 0 0 ${green} 0 0 0 0 ${blue} 0 0 0 ${alpha} 0"/></filter></defs></svg>`
       return new UndoElement(target.dataset.demoMonkeyId, 'style.filter', original, target.style.filter)

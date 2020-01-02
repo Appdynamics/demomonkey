@@ -49,7 +49,7 @@ describe('Integration', function () {
         expect(driver.findElement(By.id('later')).getText()).to.eventually.include('Köln'),
         expect(driver.findElement(By.id('ajax')).getText()).to.eventually.include('Command Line Tool'),
         expect(driver.findElement(By.css('#APPLICATION_COMPONENT108_3f47 image.adsFlowNodeTypeIcon')).getAttribute('xlink:href')).to.eventually.include('images/icon_nodetype_php_100x100.png'),
-        expect(driver.findElement(By.css('#APPLICATION_COMPONENT108_3f47 > g.adsFlowMapTextContainer > text > tspan.adsFlowMapTextFace')).getText()).to.eventually.include('Selenium'),
+        expect(driver.findElement(By.css('#APPLICATION_COMPONENT108_3f47 > g.adsFlowMapTextContainer > text > tspan.adsFlowMapTextFace')).getText()).to.eventually.include('Selenium')
         // expect(driver.findElement(By.css('[data-label]')).getAttribute('data-label')).to.eventually.include('Berlin')
       ])
     })

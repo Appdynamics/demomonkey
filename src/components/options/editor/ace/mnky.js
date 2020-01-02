@@ -1,9 +1,11 @@
-ace.define("ace/mode/mnky_highlight_rules", ["require", "exports", "module", "ace/lib/oop",
-  "ace/mode/text_highlight_rules"
+/* eslint-disable */
+/* global ace */
+ace.define('ace/mode/mnky_highlight_rules', ['require', 'exports', 'module', 'ace/lib/oop',
+  'ace/mode/text_highlight_rules'
 ], function (acequire, exports, module) {
-  "use strict";
+  'use strict'
 
-  var oop = acequire("../lib/oop");
+  var oop = acequire('../lib/oop')
   var TextHighlightRules = acequire("./text_highlight_rules").TextHighlightRules;
 
   var escapeRe = "\\\\(?:[\\\\0abtrn;#=:]|x[a-fA-F\\d]{4})";

@@ -76,9 +76,11 @@ class ElementPicker {
     }
     document.addEventListener('mousemove', this._detectMouseMove)
   }
+
   get container() {
     return this._container
   }
+
   set container(value) {
     if (value instanceof HTMLElement) {
       this._container = value
@@ -87,49 +89,61 @@ class ElementPicker {
       throw new Error('Please specify an HTMLElement as container!')
     }
   }
+
   get background() {
     return this._background
   }
+
   set background(value) {
     this._background = value
 
     this.hoverBox.style.background = this.background
   }
+
   get transition() {
     return this._transition
   }
+
   set transition(value) {
     this._transition = value
 
     this.hoverBox.style.transition = this.transition
   }
+
   get borderWidth() {
     return this._borderWidth
   }
+
   set borderWidth(value) {
     this._borderWidth = value
 
     this._redetectMouseMove()
   }
+
   get selectors() {
     return this._selectors
   }
+
   set selectors(value) {
     this._selectors = value
 
     this._redetectMouseMove()
   }
+
   get ignoreElements() {
     return this._ignoreElements
   }
+
   set ignoreElements(value) {
     this._ignoreElements = value
 
     this._redetectMouseMove()
   }
+
   get action() {
     return this._action
   }
+
   set action(value) {
     if (value instanceof Object) {
       if (typeof value.trigger === 'string' &&
@@ -153,6 +167,7 @@ class ElementPicker {
       throw new Error('action must be an object!')
     }
   }
+
   _redetectMouseMove() {
     if (this._detectMouseMove && this._previousEvent) {
       this._detectMouseMove(this._previousEvent)

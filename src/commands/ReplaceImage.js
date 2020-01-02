@@ -24,11 +24,11 @@ class ReplaceImage extends Command {
     }
 
     if (this._match(original, search, this.replace)) {
-      let result = []
+      const result = []
       if (this.withRatio && typeof target.width === 'number' && typeof target.height === 'number') {
         const oldWidth = target.width
         const oldHeight = target.height
-        let undoPlaceholder = new UndoElement()
+        const undoPlaceholder = new UndoElement()
         const el = function (e) {
           const widthFactor = this.naturalWidth / oldWidth
           const heightFactor = this.naturalHeight / oldHeight

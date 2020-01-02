@@ -20,7 +20,7 @@ const fs = require('fs')
 
 const series = gulp.series
 
-const exec = require('child_process').exec;
+const exec = require('child_process').exec
 
 function compile(file, withWatchify = false) {
   let bundler = browserify('./src/' + file + '.js', watchify.args

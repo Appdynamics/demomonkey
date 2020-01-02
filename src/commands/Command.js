@@ -62,7 +62,7 @@ class Command {
       'ad-pink': Color('#e38ead'),
       'ad-red': Color('#ff3333')
     }
-    if (magicColors.hasOwnProperty(value.toLowerCase())) {
+    if (Object.prototype.hasOwnProperty.call(magicColors, value.toLowerCase())) {
       return magicColors[value.toLowerCase()]
     }
 

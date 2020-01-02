@@ -3,13 +3,13 @@ import UndoElement from '../UndoElement'
 
 class ReplaceGeoStatus extends Command {
   static images = {
-    'normal': 'max_load_circle_green.svg',
-    'warning': 'max_load_circle_orange.svg',
-    'critical': 'max_load_circle_red.svg',
-    'green': 'max_load_circle_green.svg',
-    'orange': 'max_load_circle_orange.svg',
-    'yellow': 'max_load_circle_orange.svg',
-    'red': 'max_load_circle_red.svg'
+    normal: 'max_load_circle_green.svg',
+    warning: 'max_load_circle_orange.svg',
+    critical: 'max_load_circle_red.svg',
+    green: 'max_load_circle_green.svg',
+    orange: 'max_load_circle_orange.svg',
+    yellow: 'max_load_circle_orange.svg',
+    red: 'max_load_circle_red.svg'
   }
 
   static status = {
@@ -40,13 +40,13 @@ class ReplaceGeoStatus extends Command {
 
     if (country && typeof country.getBBox === 'function' && circles.length > 0) {
       const b = country.getBBox()
-      const image = circles.filter(image => { const {x, y} = image.getBBox(); return (b.x < x && x < b.x + b.width && b.y < y && y < b.y + b.height) })[0]
+      const image = circles.filter(image => { const { x, y } = image.getBBox(); return (b.x < x && x < b.x + b.width && b.y < y && y < b.y + b.height) })[0]
 
       if (typeof image !== 'undefined') {
         var original = image.href.baseVal
         image.href.baseVal = this.replace
         if (original !== this.replace) {
-          let result = []
+          const result = []
           result.push(new UndoElement(image, 'href.baseVal', original, this.newIcon))
           return result
         }

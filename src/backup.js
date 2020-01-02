@@ -1,3 +1,4 @@
+/* eslint-disable */
 /* Dedicated Javascript for backup. This is a fallback if a version of
    DemoMonkey is broken and user want to extract their scripts.
 

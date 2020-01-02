@@ -6,3 +6,4 @@ build-dev
 *.crx
 DemoMonkey-*.zip
 package-lock.json
+.nyc_output

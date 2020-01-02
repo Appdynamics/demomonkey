@@ -51,7 +51,7 @@ class DelayLink extends Command {
         favicon.setAttribute('rel', 'icon')
         document.getElementsByTagName('head')[0].appendChild(favicon)
         var updateFavicon = function () {
-          favicon.href = icons[ (++counter) % (icons.length) ]
+          favicon.href = icons[(++counter) % (icons.length)]
           setTimeout(updateFavicon, 75)
         }
         updateFavicon()
