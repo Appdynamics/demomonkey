@@ -172,7 +172,9 @@ import match from './helpers/match.js'
     // This is only a soft toggle, since the user can turn it on and off directly in the popup
     onlyShowAvailableConfigurations: true,
     keyboardHandlerVim: false,
-    hookIntoAjax: false
+    hookIntoAjax: false,
+    syncDarkMode: true,
+    preferDarkMode: false
   }
 
   const persistentStates = {
@@ -211,6 +213,9 @@ import match from './helpers/match.js'
 
     state.settings.liveMode = false
 
+    // We start with an empty log. Maybe in a later release persistance could be an idea..
+    state.log = []
+
     run(state)
   })
 
@@ -229,8 +234,8 @@ import match from './helpers/match.js'
     store.subscribe(function () {
       const lastAction = store.getState().lastAction
 
-      // updating the current view does not require any updates
-      if (lastAction.type === 'SET_CURRENT_VIEW') {
+      // updating the current view or appending to the log does not require any updates
+      if (['SET_CURRENT_VIEW', 'APPEND_LOG_ENTRIES'].includes(lastAction.type)) {
         return
       }
 

@@ -10,6 +10,14 @@ class RemoveFlowmapNode extends Command {
     return group === 'ajax' || group === '*'
   }
 
+  isAvailable(featureFlags) {
+    return featureFlags.hookIntoAjax === true
+  }
+
+  getRequiredFlags() {
+    return 'Hook into Ajax'
+  }
+
   apply(target, key) {
     target.add(function (url, response, context) {
       if (url.match(/applicationFlowMapUiService/i)) {

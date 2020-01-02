@@ -3,8 +3,20 @@ import Color from 'color'
 import match from '../helpers/match.js'
 
 class Command {
+  constructor() {
+    this.errorCounter = 0
+  }
+
   apply() {
     return false
+  }
+
+  updateErrorCounter() {
+    this.errorCounter++
+  }
+
+  isFaulty() {
+    return this.errorCounter > 100
   }
 
   isApplicableForGroup(group) {
@@ -21,6 +33,18 @@ class Command {
     }
 
     return false
+  }
+
+  isAvailable(featureFlags) {
+    return true
+  }
+
+  validate() {
+    return []
+  }
+
+  getRequiredFlags() {
+    return ''
   }
 
   static _getColorFromValue(value) {

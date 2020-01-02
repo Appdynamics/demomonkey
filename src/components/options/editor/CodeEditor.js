@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import AceEditor from 'react-ace'
 
 import autocomplete from './ace/autocomplete.js'
+import { logger } from '../../../helpers/logger'
 
 import 'brace/ext/language_tools'
 import 'brace/ext/searchbox'
@@ -19,7 +20,12 @@ class CodeEditor extends React.Component {
     vim(() => {
       props.onVimWrite()
     })
-    autocomplete(props.getRepository)
+    // Make sure that an error in auto completion does not break the whole editor.
+    try {
+      autocomplete(props.getRepository)
+    } catch (e) {
+      logger('error', e).write()
+    }
   }
 
   static propTypes = {
@@ -59,7 +65,6 @@ class CodeEditor extends React.Component {
       onLoad={(editor) => {
         this.editor = editor
         window.editor = editor
-        console.log(editor)
         this._updateAnnotations()
       }}
       width="100%"

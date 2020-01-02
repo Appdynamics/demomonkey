@@ -8,6 +8,7 @@ import PropTypes from 'prop-types'
 import Mousetrap from 'mousetrap'
 import Select from 'react-select'
 import CommandBuilder from '../../../commands/CommandBuilder'
+import ErrorCommand from '../../../commands/ErrorCommand'
 import ToggleButton from 'react-toggle-button'
 
 class Editor extends React.Component {
@@ -23,7 +24,8 @@ class Editor extends React.Component {
     editorAutocomplete: PropTypes.bool.isRequired,
     toggleConfiguration: PropTypes.func.isRequired,
     keyboardHandler: PropTypes.string,
-    isDarkMode: PropTypes.bool.isRequired
+    isDarkMode: PropTypes.bool.isRequired,
+    featureFlags: PropTypes.objectOf(PropTypes.bool).isRequired
   }
 
   constructor(props) {
@@ -43,7 +45,6 @@ class Editor extends React.Component {
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    console.log(prevState, nextProps)
     if (nextProps.currentConfiguration.id !== prevState.currentConfiguration.id || nextProps.currentConfiguration.updated_at > prevState.currentConfiguration.updated_at) {
       return {
         currentConfiguration: nextProps.currentConfiguration,
@@ -133,39 +134,44 @@ class Editor extends React.Component {
       namespaces.push(match[1])
     }
 
-    const cb = new CommandBuilder(namespaces, [], [], true)
+    const cb = new CommandBuilder(namespaces, [], [], this.props.featureFlags)
 
     lines.forEach((line, rowIdx) => {
       // Process each line and add infos, warnings, errors
       // Multiple = signs can lead to issues, add an info
       if ((line.match(/(?:^=)|(?:[^\\]=)/g) || []).length > 1) {
-        result.push({row: rowIdx, column: 0, text: 'Your line contains multiple equals signs (=)!\nThe first will be used to seperate search and replacement.\nQuote the equal signs that are part of your patterns.', type: 'warning'})
+        result.push({ row: rowIdx, column: 0, text: 'Your line contains multiple equals signs (=)!\nThe first will be used to seperate search and replacement.\nQuote the equal signs that are part of your patterns.', type: 'warning' })
       }
 
       // Check if an imported configuration is available
       if (line.startsWith('+') && line.length > 1 && !this.props.getRepository().hasByName(line.substring(1))) {
-        result.push({row: rowIdx, column: 0, text: `There is no configuration called "${line.substring(1)}", this line will be ignored.`, type: 'warning'})
+        result.push({ row: rowIdx, column: 0, text: `There is no configuration called "${line.substring(1)}", this line will be ignored.`, type: 'warning' })
       }
 
       if (line.startsWith('!') && line.length > 1) {
-        var command = line.split('=')[0].trim()
-        var cmd = cb.build(command, null).constructor.name
-        if (cmd === 'Command') {
-          result.push({row: rowIdx, column: 0, text: `Command "${command}" not found.\nPlease check the spelling and\nif all required namespaces are loaded.`, type: 'error'})
+        const [lhs, rhs] = line.split('=')
+        const cmd = cb.build(lhs.trim(), typeof rhs === 'string' ? rhs.trim() : '')
+        if (cmd instanceof ErrorCommand) {
+          // `Command "${command}" not found.\nPlease check the spelling and\nif all required namespaces are loaded.`
+          result.push({ row: rowIdx, column: 0, text: cmd.reason, type: cmd.type })
+        } else {
+          cmd.validate().forEach(ve => {
+            result.push({ row: rowIdx, column: 0, text: ve.rule.name, type: 'warning' })
+          })
         }
-        if (cmd === 'Eval') {
-          result.push({row: rowIdx, column: 0, text: `!eval allows you to inject arbitrary javascript code in a page, please use with caution!`, type: 'warning'})
-        }
+        /* if (cmd === 'Eval') {
+          result.push({ row: rowIdx, column: 0, text: '!eval allows you to inject arbitrary javascript code in a page, please use with caution!', type: 'warning' })
+        } */
       }
 
       if ((!line.startsWith(';') && line.includes(';')) || (!line.startsWith('#') && line.includes('#'))) {
-        result.push({row: rowIdx, column: 0, text: 'Semi-colon (;) and hash (#) are interpreted as inline comments.\nMake sure to quote your patterns to use them properly.', type: 'info'})
+        result.push({ row: rowIdx, column: 0, text: 'Semi-colon (;) and hash (#) are interpreted as inline comments.\nMake sure to quote your patterns to use them properly.', type: 'info' })
       }
 
       if (line.includes('=') && !['!', '@', '+', ';', '#', '[', '$'].includes(line.charAt(0))) {
-        const [ lhs, rhs ] = line.split(/=(.+)/, 2).map(e => e.trim())
+        const [lhs, rhs] = line.split(/=(.+)/, 2).map(e => e.trim())
         if (rhs && rhs.includes(lhs)) {
-          result.push({row: rowIdx, column: 0, text: 'Your replacement includes the search pattern, which will lead to a replacement loop.', type: 'warning'})
+          result.push({ row: rowIdx, column: 0, text: 'Your replacement includes the search pattern, which will lead to a replacement loop.', type: 'warning' })
         }
       }
     })
@@ -188,7 +194,7 @@ class Editor extends React.Component {
     return (
       <div className="editor">
         <div className="title">
-          <ToggleButton colors={{active: {base: '#5c832f', hover: '#90c256'}}} value={this.props.currentConfiguration.enabled} onToggle={() => { this.toggle() }} />
+          <ToggleButton colors={{ active: { base: '#5c832f', hover: '#90c256' } }} value={this.props.currentConfiguration.enabled} onToggle={() => { this.toggle() }} />
           <b>Name</b>
           <input type="text" className="text-input" id="configuration-title" placeholder="Please provide a name. You can use slahes (/) in it to create folders." value={current.name} onChange={(event) => this.handleUpdate('name', event.target.value, event)}/>
           <Select placeholder="Shortcut Groups..." value={current.hotkeys} multi onChange={(options) => this.handleUpdate('hotkeys', options.map(o => o.value), null)} options={hotkeyOptions}/>

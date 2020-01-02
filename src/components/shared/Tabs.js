@@ -31,7 +31,7 @@ class Tabs extends React.Component {
       if (child.props.link) {
         return <li key={index}><a className="link" href="#" onClick={child.props.link}>{child.props.label}</a></li>
       } else {
-        let activeClass = (this.state.selected === index ? 'active' : '')
+        const activeClass = (this.state.selected === index ? 'active' : '')
         return (
           <li key={index} id={child.props.id}>
             <a href="#" className={activeClass} onClick={this.handleClick.bind(this, index)}>

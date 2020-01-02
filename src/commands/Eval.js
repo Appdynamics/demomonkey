@@ -15,6 +15,14 @@ class Eval extends Command {
     return this.group === '*' || group === this.group
   }
 
+  isAvailable(featureFlags) {
+    return featureFlags.withEvalCommand === true
+  }
+
+  getRequiredFlags() {
+    return 'Allow !eval'
+  }
+
   apply(target, key = 'value') {
     const r = this.func(target, key, this.parameters, UndoElement)
     if (r instanceof UndoElement) {

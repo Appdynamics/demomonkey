@@ -20,16 +20,16 @@ class ConfigurationUpload extends React.Component {
 
   showUploadDialog(event) {
     event.preventDefault()
-    var upload = document.getElementById(this.props.id)
-    var uploadForm = document.getElementById(this.props.id + 'Form')
+    const upload = document.getElementById(this.props.id)
+    const uploadForm = document.getElementById(this.props.id + 'Form')
 
     upload.addEventListener('change', (event) => {
-      var files = event.target.files
-      var reader = new window.FileReader()
-      for (var i = 0; i < files.length; i++) {
-        var file = files.item(i)
+      const files = event.target.files
+      const reader = new window.FileReader()
+      for (let i = 0; i < files.length; i++) {
+        const file = files.item(i)
 
-        var extension = file.name.split('.').pop()
+        const extension = file.name.split('.').pop()
         if (extension === 'mnky' || extension === 'ini' || extension === 'json') {
           reader.onloadend = () => {
             this.props.onUpload({
@@ -43,7 +43,7 @@ class ConfigurationUpload extends React.Component {
           reader.readAsText(file)
         } else if (extension === 'zip') {
           JSZip.loadAsync(file).then((zip) => {
-            let zipPromises = []
+            const zipPromises = []
             zip.forEach((relativePath, zipEntry) => {
               const extension = zipEntry.name.split('.').pop()
               if (extension === 'mnky' || extension === 'ini' || extension === 'json') {

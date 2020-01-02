@@ -3,9 +3,10 @@ import CommandBuilder from '../commands/CommandBuilder'
 import UndoElement from '../commands/UndoElement'
 import Variable from './Variable'
 import MatchRule from './MatchRule'
+import { logger } from '../helpers/logger'
 
 class Configuration {
-  constructor(iniFile, repository, enabled = true, values = {}, withEvalCommand = false) {
+  constructor(iniFile, repository, enabled = true, values = {}, featureFlags = {}) {
     this.repository = repository
     this.rawContent = iniFile
     this.content = iniFile ? (new Ini(iniFile, repository)).parse() : []
@@ -13,7 +14,7 @@ class Configuration {
     this.options = false
     this.enabled = enabled
     this.values = values
-    this.withEvalCommand = withEvalCommand
+    this.featureFlags = featureFlags
   }
 
   isTemplate() {
@@ -51,7 +52,7 @@ class Configuration {
   }
 
   getTextAttributes() {
-    let ta = this.getOptions().textAttributes
+    const ta = this.getOptions().textAttributes
     const d = ['placeholder']
     // the chain after ta makes sure that lists are split by comma and spaces are removed.
     const result = !Array.isArray(ta) ? d : ta.map(e => e.split(',')).flat().map(e => e.trim()).filter(e => e !== '').concat(d)
@@ -96,10 +97,20 @@ class Configuration {
         return carry
       }
 
+      // Break an error loop early.
+      if (command.isFaulty()) {
+        return carry
+      }
+
       try {
         var undo = command.apply(node, key)
       } catch (e) {
         console.log(e)
+        logger('error', e).write()
+        command.updateErrorCounter()
+        if (command.isFaulty()) {
+          logger('warn', 'Command is marked as faulty and will be disabled', command.toString()).write()
+        }
         return carry
       }
 
@@ -140,7 +151,7 @@ class Configuration {
             const option = key.substring(1)
 
             if (content[key] !== true || option === 'template' || option === 'deprecated') {
-              if (result.hasOwnProperty(option) && Array.isArray(result[option])) {
+              if (Object.prototype.hasOwnProperty.call(result, option) && Array.isArray(result[option])) {
                 result[option] = result[option].concat(value)
               } else {
                 result[option] = value
@@ -178,14 +189,14 @@ class Configuration {
   }
 
   getValue(owner, name) {
-    if (this.values[name]) {
+    if (typeof this.values[name] !== 'undefined') {
       return this.values[name]
     }
     return this.values[owner + '::' + name]
   }
 
   getVariables(owner = '', bindValues = true) {
-    let localNames = []
+    const localNames = []
 
     const filterVariable = (content) => {
       return (result, key) => {
@@ -193,7 +204,7 @@ class Configuration {
         if (key.charAt(0) === '$' && key.length > 1) {
           // By default ini.parse sets "true" as the value
           const t = content[key] === true ? ['', ''] : ((value) => {
-            let ar = value.split(/([^:])\/\//)
+            const ar = value.split(/([^:])\/\//)
             if (ar.length > 1) {
               const comment = ar.pop()
               return [ar.join(''), comment]
@@ -249,7 +260,8 @@ class Configuration {
         Array.isArray(options.namespace) ? options.namespace : [],
         Array.isArray(options.include) ? options.include : [],
         Array.isArray(options.exclude) ? options.exclude : [],
-        this.withEvalCommand
+        this.featureFlags,
+        logger
       )
 
       const filterConfiguration = (content) => {

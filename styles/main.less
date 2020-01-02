@@ -9,8 +9,7 @@
 @import 'table';
 @import '../node_modules/react-select/less/default'; // TODO: Find out how to style
 
-
-:root {
+.light-mode {
   --base-color: @base;
   --base-link-color: @base;
   --darker-base-color: darken(@base, 20%);
@@ -44,44 +43,59 @@
   --editor-import-color: #31b404;
   --editor-variable-color: #bf00ff;
   --editor-disabled-color: #f3f3f3;
+
+  --table-header-color: #cccccc;
+  --table-2n-color: #f0f0f0;
+}
+
+.dark-mode {
+  --mode-color: #000000;
+  --mode-text-color: #eeeeee;
+  --base-color: @darkBase;
+  --base-link-color: #eeeeee;
+  --hover-link-color: #aaaaaa;
+  --lighter-base-color: lighten(@darkBase, 75%);
+  --darker-base-color: lighten(@darkBase, 20%);
+  --highlight-background-color: #444444;
+  --input-background-color: #444444;
+  --navigation-background: desaturate(lighten(@darkBase, 21%), 40%);
+  --navigation-read-only: lighten(@darkBase, 20%);
+  --navigation-item-color: #222222;
+  --navigation-active-color: #444444;
+  --navigation-text-color: #eeeeee;
+
+  --help-text-color: #aaaaaa;
+
+  --warning-color: @warning;
+  --danger-color: lighten(@danger, 20%);
+
+  --warning-background-color: darken(@warning, 37%);
+
+  --success-color: lighten(@success, 20%);
+
+  --editor-title-background: #030303;
+
+
+  --editor-comment-color: spin(#aa5500, 180);
+  --editor-group-color: spin(#aa0000, 180);
+  --editor-option-color: spin(#ff5500, 180);
+  --editor-search-color: spin(#0000ff, 180);
+  --editor-function-color: spin(#770088, 180);
+  --editor-import-color: spin(#31b404, 180);
+  --editor-variable-color: spin(#bf00ff, 180);
+  --editor-disabled-color: spin(#f3f3f3, 180);
+
+  --table-header-color: #666666;
+  --table-2n-color: #333333;
+}
+
+html {
+  .light-mode();
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --mode-color: #000000;
-    --mode-text-color: #eeeeee;
-    --base-color: @darkBase;
-    --base-link-color: #eeeeee;
-    --hover-link-color: #aaaaaa;
-    --lighter-base-color: lighten(@darkBase, 75%);
-    --darker-base-color: lighten(@darkBase, 20%);
-    --highlight-background-color: #444444;
-    --input-background-color: #222222;
-    --navigation-background: desaturate(lighten(@darkBase, 21%), 40%);
-    --navigation-read-only: lighten(@darkBase, 20%);
-    --navigation-item-color: #222222;
-    --navigation-active-color: #444444;
-    --navigation-text-color: #eeeeee;
-
-    --help-text-color: #aaaaaa;
-
-    --warning-color: @warning;
-
-    --warning-background-color: darken(@warning, 37%);
-
-    --success-color: lighten(@success, 20%);
-
-    --editor-title-background: #030303;
-
-
-    --editor-comment-color: spin(#aa5500, 180);
-    --editor-group-color: spin(#aa0000, 180);
-    --editor-option-color: spin(#ff5500, 180);
-    --editor-search-color: spin(#0000ff, 180);
-    --editor-function-color: spin(#770088, 180);
-    --editor-import-color: spin(#31b404, 180);
-    --editor-variable-color: spin(#bf00ff, 180);
-    --editor-disabled-color: spin(#f3f3f3, 180);
+  html {
+    .dark-mode();
   }
 }
 
@@ -134,7 +148,7 @@ html,
       font-size: 80%;
       margin-top: -10px;
       margin-left: 10px;
-      background: linear-gradient(180deg, white 50%, var(--lighter-base-color) 50%);
+      background: linear-gradient(180deg, var(--mode-color) 50%, var(--lighter-base-color) 50%);
       width: 40px;
       text-align: center;
     }
@@ -225,8 +239,12 @@ label {
 }
 
 .settings {
-  margin-left: 24px;
   max-width: 800px;
+}
+
+.settings,
+.logs {
+  margin-left: 24px;
 
   h1,
   h2,

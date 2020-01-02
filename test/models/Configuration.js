@@ -1,5 +1,7 @@
 import Configuration from '../../src/models/Configuration'
 import Repository from '../../src/models/Repository'
+import Variable from '../../src/models/Variable'
+import CommandBuilder from '../../src/commands/CommandBuilder'
 import assert from 'assert'
 import fs from 'fs'
 
@@ -30,127 +32,66 @@ var configurationWithCommand = new Configuration('[Section]\r!replace(a) = b\r$x
 describe('Configuration', function () {
   describe('#getVariables', function () {
     it('should return empty array when an empty ini was provided', function () {
-      assert.deepEqual(emptyConfiguration.getVariables(), [])
+      assert.deepStrictEqual(emptyConfiguration.getVariables(), [])
     })
     it('should return empty object when no variable is defined', function () {
-      assert.deepEqual(simpleConfiguration.getVariables(), [])
+      assert.deepStrictEqual(simpleConfiguration.getVariables(), [])
     })
     it('ini $a = default should return array with one variable set', function () {
-      assert.deepEqual(configurationWithVariable.getVariables(), [{
-        name: 'a',
-        value: 'v',
-        description: '',
-        owner: '',
-        id: 'a'
-      }])
+      assert.deepStrictEqual(configurationWithVariable.getVariables(), [
+        new Variable('a', 'v', '')
+      ])
     })
     it('should return the variables from imported configurations', function () {
-      var repository = new Repository({ 'other': configurationWithVariable })
-      assert.deepEqual((new Configuration('+other', repository)).getVariables(), [{
-        name: 'a',
-        value: 'default',
-        description: '',
-        owner: 'other',
-        id: 'other::a'
-      }])
+      var repository = new Repository({ other: configurationWithVariable })
+      assert.deepStrictEqual((new Configuration('+other', repository)).getVariables(), [
+        new Variable('a', 'default', '', 'other')
+      ])
     })
     it('should return variables with reassigned value', function () {
-      var repository = new Repository({ 'other': configurationWithVariable })
-      assert.deepEqual((new Configuration('+other\r$a = reassigned', repository)).getVariables(), [{
-        name: 'a',
-        value: 'reassigned',
-        description: '',
-        owner: '',
-        id: 'a'
-      }])
+      var repository = new Repository({ other: configurationWithVariable })
+      assert.deepStrictEqual((new Configuration('+other\r$a = reassigned', repository)).getVariables(), [
+        new Variable('a', 'reassigned', '')
+      ])
     })
     it('complex ini should return multiple variables', function () {
-      assert.deepEqual(complexConfiguration.getVariables(), [{
-        name: 'url2',
-        value: 'https://demomonkey',
-        description: 'another url with https://',
-        owner: '',
-        id: 'url2'
-      },
-      {
-        name: 'url',
-        value: 'https://demomonkey',
-        description: '',
-        owner: '',
-        id: 'url'
-      },
-      {
-        name: 'x',
-        value: '1',
-        description: '',
-        owner: '',
-        id: 'x'
-      }, {
-        name: 'y',
-        value: '2',
-        description: 'Set y',
-        owner: '',
-        id: 'y'
-      }])
+      assert.deepStrictEqual(complexConfiguration.getVariables(), [
+        new Variable('url2', 'https://demomonkey', 'another url with https://'),
+        new Variable('url', 'https://demomonkey', ''),
+        new Variable('x', '1', ''),
+        new Variable('y', '2', 'Set y')
+      ])
     })
     it('configuration with commands should return object 2 variables', function () {
-      assert.deepEqual(configurationWithCommand.getVariables(), [{
-        name: 'x',
-        value: 'y',
-        description: '',
-        owner: '',
-        id: 'x'
-      }, {
-        name: 'z',
-        value: 'w',
-        description: '',
-        owner: '',
-        id: 'z'
-      }])
+      assert.deepStrictEqual(configurationWithCommand.getVariables(), [
+        new Variable('x', 'y', ''),
+        new Variable('z', 'w', '')
+      ])
     })
   })
 
   describe('#_getConfiguration', function () {
     it('should apply variables on commands', function () {
       const config = configurationWithCommand._getConfiguration()
-      assert.deepEqual(config, [{search: 'a', replace: 'b', locationFilter: '', cssFilter: '', property: '', location: '', sourceString: '!replace(a) = b'}, {search: 'y', 'replace': 'w', location: '', cssFilter: '', property: '', locationFilter: '', sourceString: '!replace(y) = w'}])
+      const cb = new CommandBuilder()
+      assert.deepStrictEqual(config, [
+        cb.build('!replace(a)', 'b'),
+        cb.build('!replace(y)', 'w')
+      ])
     })
     it('should apply variables on imports', function () {
       /* eslint no-template-curly-in-string: "off" */
+      const cb = new CommandBuilder()
       const repository = new Repository({
-        'other1': new Configuration('$a = default\r$b = default\rx${b} = $a', null, true, { a: 'v' }),
-        'other2': new Configuration('+other3\r$a = default\r$b = default\ry${b} = $a\r$c = reassigned\r$d = middle', new Repository(
-          {'other3': new Configuration('$c = default\r$d = bottom\r$e = default\rz${d} = ${c}${e}', null, true, { c: 'u' })}
+        other1: new Configuration('$a = default\r$b = default\rx${b} = $a', null, true, { a: 'v' }),
+        other2: new Configuration('+other3\r$a = default\r$b = default\ry${b} = $a\r$c = reassigned\r$d = middle', new Repository(
+          { other3: new Configuration('$c = default\r$d = bottom\r$e = default\rz${d} = ${c}${e}', null, true, { c: 'u' }) }
         ), true, { a: 'w' })
       })
-      assert.deepEqual((new Configuration('+other1\r+other2\r$a = reassigned\r$b = b\r$d = top', repository, true, { e: 'value' }))._getConfiguration(), [
-        {
-          cssFilter: '',
-          location: {},
-          locationFilter: '',
-          property: '',
-          search: 'xb',
-          replace: 'reassigned',
-          sourceString: 'xb = reassigned'
-        },
-        {
-          cssFilter: '',
-          location: {},
-          locationFilter: '',
-          property: '',
-          search: 'ztop',
-          replace: 'reassignedvalue',
-          sourceString: 'ztop = reassignedvalue'
-        },
-        {
-          cssFilter: '',
-          location: {},
-          locationFilter: '',
-          property: '',
-          search: 'yb',
-          replace: 'reassigned',
-          sourceString: 'yb = reassigned'
-        }
+      assert.deepStrictEqual((new Configuration('+other1\r+other2\r$a = reassigned\r$b = b\r$d = top', repository, true, { e: 'value' }))._getConfiguration(), [
+        cb.build('xb', 'reassigned'),
+        cb.build('ztop', 'reassignedvalue'),
+        cb.build('yb', 'reassigned')
       ])
     })
   })
@@ -161,7 +102,7 @@ describe('Configuration', function () {
         value: 'a'
       }
       emptyConfiguration.apply(node)
-      assert.equal(node.value, 'a')
+      assert.strictEqual(node.value, 'a')
     })
 
     it("configuration with pattern ['a', 'b'] should replace node.value from a to b", function () {
@@ -169,7 +110,7 @@ describe('Configuration', function () {
         value: 'a'
       }
       simpleConfiguration.apply(node)
-      assert.equal(node.value, 'b')
+      assert.strictEqual(node.value, 'b')
     })
 
     it('configuration with no matching pattern should return untouched node', function () {
@@ -177,7 +118,7 @@ describe('Configuration', function () {
         value: 'x'
       }
       simpleConfiguration.apply(node)
-      assert.equal(node.value, 'x')
+      assert.strictEqual(node.value, 'x')
     })
 
     it('should apply patterns with set variables', function () {
@@ -185,13 +126,13 @@ describe('Configuration', function () {
         value: 'x'
       }
       configurationWithVariable.apply(node)
-      assert.equal(node.value, 'v')
+      assert.strictEqual(node.value, 'v')
 
       configurationWithUnsetVariable.apply(node)
-      assert.equal(node.value, 'default')
+      assert.strictEqual(node.value, 'default')
 
       configurationWithSharedPrefixVariable.apply(node)
-      assert.equal(node.value, 'v2')
+      assert.strictEqual(node.value, 'v2')
     })
 
     it('should apply patterns from imported configurations', function () {
@@ -202,7 +143,7 @@ describe('Configuration', function () {
       var configuration = new Configuration('+other', new Repository({ other: simpleConfiguration }))
 
       configuration.apply(node)
-      assert.equal(node.value, 'b')
+      assert.strictEqual(node.value, 'b')
     })
 
     it('should apply variables from imported configurations', function () {
@@ -210,55 +151,55 @@ describe('Configuration', function () {
         value: 'x'
       }
 
-      var repository = new Repository({ 'other': configurationWithVariable })
-      var configuration = new Configuration('+other', repository, true, { 'a': 'b' })
+      var repository = new Repository({ other: configurationWithVariable })
+      var configuration = new Configuration('+other', repository, true, { a: 'b' })
 
       configuration.apply(node)
-      assert.equal(node.value, 'b')
+      assert.strictEqual(node.value, 'b')
     })
   })
 
   describe('#isEnabledForUrl', function () {
     it('should return false for empty rules', function () {
-      assert.equal(simpleConfiguration.isEnabledForUrl('http://www.example.com'), false)
+      assert.strictEqual(simpleConfiguration.isEnabledForUrl('http://www.example.com'), false)
     })
   })
 
   describe('#isEnabledForUrl', function () {
     it('should return true for matching include and false for mismatch', function () {
-      assert.deepEqual(configurationWithInclude.getOptions(), { include: ['/www/'] })
-      assert.equal(configurationWithInclude.isEnabledForUrl('http://www.example.com'), true)
-      assert.equal(configurationWithInclude.isEnabledForUrl('http://example.com'), false)
+      assert.deepStrictEqual(configurationWithInclude.getOptions(), { include: ['/www/'] })
+      assert.strictEqual(configurationWithInclude.isEnabledForUrl('http://www.example.com'), true)
+      assert.strictEqual(configurationWithInclude.isEnabledForUrl('http://example.com'), false)
     })
   })
 
   describe('#getImports', function () {
     it('should return empty array when an empty ini was provided', function () {
-      assert.deepEqual(emptyConfiguration.getImports(), [])
+      assert.deepStrictEqual(emptyConfiguration.getImports(), [])
     })
     it('should return empty array when no import is set', function () {
-      assert.deepEqual(simpleConfiguration.getImports(), [])
+      assert.deepStrictEqual(simpleConfiguration.getImports(), [])
     })
     it('ini +Cities should return array with one import', function () {
-      assert.deepEqual(configurationWithImport.getImports(), ['Cities'])
+      assert.deepStrictEqual(configurationWithImport.getImports(), ['Cities'])
     })
     it('complex ini should return object with one import', function () {
-      assert.deepEqual(complexConfiguration.getImports(), ['A'])
+      assert.deepStrictEqual(complexConfiguration.getImports(), ['A'])
     })
   })
 
   describe('#getOptions', function () {
     it('should return empty object when an empty ini was provided', function () {
-      assert.deepEqual(emptyConfiguration.getOptions(), {})
+      assert.deepStrictEqual(emptyConfiguration.getOptions(), {})
     })
     it('should return empty object when no option is set', function () {
-      assert.deepEqual(simpleConfiguration.getOptions(), {})
+      assert.deepStrictEqual(simpleConfiguration.getOptions(), {})
     })
     it('ini @a = b should return object with one option set', function () {
-      assert.deepEqual(configurationWithOption.getOptions(), { a: ['b'] })
+      assert.deepStrictEqual(configurationWithOption.getOptions(), { a: ['b'] })
     })
     it('complex ini should return object with include and exclude rules', function () {
-      assert.deepEqual(complexConfiguration.getOptions(), {
+      assert.deepStrictEqual(complexConfiguration.getOptions(), {
         exclude: ['c'],
         include: ['a', 'b']
       })
@@ -274,8 +215,8 @@ describe('Configuration', function () {
           nodeName: 'DIV'
         }
       }
-      assert.equal(configurationWithBlacklist.isTagBlacklisted(node), true)
-      assert.equal(configurationWithBlacklist.isTagBlacklisted(node.parentNode), true)
+      assert.strictEqual(configurationWithBlacklist.isTagBlacklisted(node), true)
+      assert.strictEqual(configurationWithBlacklist.isTagBlacklisted(node.parentNode), true)
     })
     it('should return true if tagname is script', function () {
       var node = {
@@ -285,8 +226,8 @@ describe('Configuration', function () {
           nodeName: 'SCRIPT'
         }
       }
-      assert.equal(configurationWithBlacklist.isTagBlacklisted(node), true)
-      assert.equal(configurationWithBlacklist.isTagBlacklisted(node.parentNode), true)
+      assert.strictEqual(configurationWithBlacklist.isTagBlacklisted(node), true)
+      assert.strictEqual(configurationWithBlacklist.isTagBlacklisted(node.parentNode), true)
     })
     it('should return true if tagname is style', function () {
       var node = {
@@ -296,8 +237,8 @@ describe('Configuration', function () {
           nodeName: 'STYLE'
         }
       }
-      assert.equal(configurationWithBlacklist.isTagBlacklisted(node), true)
-      assert.equal(configurationWithBlacklist.isTagBlacklisted(node.parentNode), true)
+      assert.strictEqual(configurationWithBlacklist.isTagBlacklisted(node), true)
+      assert.strictEqual(configurationWithBlacklist.isTagBlacklisted(node.parentNode), true)
     })
     it('should return false if tagname is style and style is whitelisted', function () {
       var node = {
@@ -307,8 +248,8 @@ describe('Configuration', function () {
           nodeName: 'STYLE'
         }
       }
-      assert.equal(configurationWithWhitelist.isTagBlacklisted(node), false)
-      assert.equal(configurationWithWhitelist.isTagBlacklisted(node.parentNode), false)
+      assert.strictEqual(configurationWithWhitelist.isTagBlacklisted(node), false)
+      assert.strictEqual(configurationWithWhitelist.isTagBlacklisted(node.parentNode), false)
     })
     it('should return false if tagname is not blacklisted', function () {
       var node = {
@@ -318,8 +259,8 @@ describe('Configuration', function () {
           nodeName: 'INPUT'
         }
       }
-      assert.equal(configurationWithBlacklist.isTagBlacklisted(node), false)
-      assert.equal(configurationWithBlacklist.isTagBlacklisted(node.parentNode), false)
+      assert.strictEqual(configurationWithBlacklist.isTagBlacklisted(node), false)
+      assert.strictEqual(configurationWithBlacklist.isTagBlacklisted(node.parentNode), false)
     })
     it('should return false if node type is not TEXT or ELEMENT', function () {
       var node = {
@@ -328,7 +269,7 @@ describe('Configuration', function () {
           nodeName: 'DIV'
         }
       }
-      assert.equal(configurationWithBlacklist.isTagBlacklisted(node), false)
+      assert.strictEqual(configurationWithBlacklist.isTagBlacklisted(node), false)
     })
   })
 })

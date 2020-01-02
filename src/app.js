@@ -6,6 +6,7 @@ import { Store } from 'webext-redux'
 import OptionsPageApp from './components/options/OptionsPageApp'
 import PopupPageApp from './components/popup/PopupPageApp'
 import Manifest from './models/Manifest'
+import { logger, connectLogger } from './helpers/logger'
 
 function renderOptionsPageApp(root, store) {
   chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
@@ -26,16 +27,16 @@ function renderOptionsPageApp(root, store) {
   })
 
   if (window.location.hash.substring(1) !== '') {
-    console.log('Updating current view', window.location.hash.substring(1))
+    logger('debug', 'Updating current view', window.location.hash.substring(1)).write()
     store.dispatch({
-      'type': 'SET_CURRENT_VIEW',
+      type: 'SET_CURRENT_VIEW',
       view: window.location.hash.substring(1)
     })
   }
 
   window.addEventListener('hashchange', function () {
     store.dispatch({
-      'type': 'SET_CURRENT_VIEW',
+      type: 'SET_CURRENT_VIEW',
       view: window.location.hash.substring(1)
     })
   })
@@ -45,8 +46,8 @@ function renderOptionsPageApp(root, store) {
 }
 
 function renderPopupPageApp(root, store) {
-  chrome.tabs.query({ 'active': true, 'lastFocusedWindow': true }, function (tabs) {
-    let currentUrl = tabs.length > 0 ? tabs[0].url : ''
+  chrome.tabs.query({ active: true, lastFocusedWindow: true }, function (tabs) {
+    const currentUrl = tabs.length > 0 ? tabs[0].url : ''
     ReactDOM.render(
       <Provider store={store}><PopupPageApp currentUrl={currentUrl}/></Provider>, root)
     // The following is required to fix https://bugs.chromium.org/p/chromium/issues/detail?id=428044
@@ -58,7 +59,7 @@ function renderPopupPageApp(root, store) {
 
 function updateCurrentPage() {
   if (window.location.hash !== '#' + store.getState().currentView) {
-    console.log('Setting hash by subscribe: #' + store.getState().currentView)
+    logger('debug', 'Setting hash by subscribe: #' + store.getState().currentView).write()
     var cv = typeof store.getState().currentView === 'undefined' ? '' : store.getState().currentView
     window.history.pushState(null, null, '#' + cv)
   }
@@ -76,18 +77,25 @@ store.ready().then(() => {
 
   window.store = store
 
+  const app = root.getAttribute('data-app')
+
+  connectLogger(store, { source: app })
+
   if (window.store.state.settings.optionalFeatures.adrumTracking === false) {
     window['adrum-disable'] = true
   }
 
   updateCurrentPage()
 
-  switch (root.getAttribute('data-app')) {
+  const manifest = new Manifest(chrome)
+
+  logger('debug', `DemoMonkey ${manifest.version()}`).write()
+
+  switch (app) {
     case 'OptionsPageApp':
       renderOptionsPageApp(root, store)
       break
     case 'DevToolsPageApp':
-      const manifest = new Manifest(chrome)
       if (window.store.state.settings.optionalFeatures.inDevTools === true) {
         chrome.devtools.panels.create(`DemoMonkey ${manifest.version()}`,
           'icons/monkey_16.png',

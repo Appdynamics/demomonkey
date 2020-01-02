@@ -40,8 +40,8 @@ class Variable extends React.Component {
         autoScrollEditorIntoView={true}
         value={this.props.variable.value}
         ref={(c) => { this.editor = c }}
-        onChange={(event) => this.updateVariable(event)}
-        editorProps={{$blockScrolling: 'Infinity'}}
+        onChange={(v) => this.updateVariable(v)}
+        editorProps={{ $blockScrolling: 'Infinity' }}
       />
       <div className="help">{this.props.variable.description}</div>
     </div>

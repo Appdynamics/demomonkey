@@ -15,6 +15,14 @@ class DelayUrl extends Command {
     return group === 'url' || group === '*'
   }
 
+  isAvailable(featureFlags) {
+    return featureFlags.webRequestHook === true
+  }
+
+  getRequiredFlags() {
+    return 'Hook into Web Requests'
+  }
+
   apply(target, key = 'value') {
     target.add({
       id: this.id,

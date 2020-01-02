@@ -27,7 +27,8 @@ class Navigation extends React.Component {
     onNavigate: PropTypes.func.isRequired,
     active: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]).isRequired,
     onUpload: PropTypes.func.isRequired,
-    onDelete: PropTypes.func.isRequired
+    onDelete: PropTypes.func.isRequired,
+    onDownloadAll: PropTypes.func.isRequired
   }
 
   // This implementation is not very performant
@@ -134,7 +135,7 @@ class Navigation extends React.Component {
     return (
       <div>
         <div className="navigation-header">
-          <NavigationHeader onUpload={this.props.onUpload} onNavigate={this.props.onNavigate} />
+          <NavigationHeader onUpload={this.props.onUpload} onDownloadAll={this.props.onDownloadAll} onNavigate={this.props.onNavigate} />
           <input type="text" onChange={(event) => this.handleSearchUpdate(event)} value={this.state.search} placeholder="Search..." className="searchBox" />
         </div>
         <div className="tree items">

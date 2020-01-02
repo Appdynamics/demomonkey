@@ -2,6 +2,7 @@
 import React from 'react'
 import Tabs from '../shared/Tabs'
 import Pane from '../shared/Pane'
+import Page from '../shared/Page'
 import Manifest from '../../models/Manifest'
 import { connect } from 'react-redux'
 import ConfigurationList from './ConfigurationList'
@@ -29,7 +30,7 @@ class App extends React.Component {
 
   render() {
     var configurations = this.props.configurations.filter((config) => typeof config.deleted_at === 'undefined' && typeof config._deleted === 'undefined')
-    return <div>
+    return <Page preferDarkMode={this.props.settings.optionalFeatures.preferDarkMode} syncDarkMode={this.props.settings.optionalFeatures.syncDarkMode}>
       <Tabs>
         <Pane label="Apply">
           <ConfigurationList currentUrl={this.props.currentUrl} configurations={configurations} settings={this.props.settings} actions={this.props.actions}/>
@@ -56,7 +57,7 @@ class App extends React.Component {
           chrome.runtime.openOptionsPage()
         }} label="Dashboard"/>
       </Tabs>
-    </div>
+    </Page>
   }
 }
 
@@ -69,16 +70,16 @@ const PopupPageApp = connect(
   dispatch => ({
     actions: {
       setCurrentView: (key) => {
-        dispatch({ 'type': 'SET_CURRENT_VIEW', view: key })
+        dispatch({ type: 'SET_CURRENT_VIEW', view: key })
       },
       toggleConfiguration: (id) => {
-        dispatch({ 'type': 'TOGGLE_CONFIGURATION', id: id })
+        dispatch({ type: 'TOGGLE_CONFIGURATION', id: id })
       },
       toggleDebugMode: () => {
-        dispatch({ 'type': 'TOGGLE_DEBUG_MODE' })
+        dispatch({ type: 'TOGGLE_DEBUG_MODE' })
       },
       toggleLiveMode: () => {
-        dispatch({ 'type': 'TOGGLE_LIVE_MODE' })
+        dispatch({ type: 'TOGGLE_LIVE_MODE' })
       }
     }
   }))(App)

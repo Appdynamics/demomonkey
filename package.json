@@ -12,6 +12,7 @@
     "axios": "^0.19.0",
     "color": "^3.1.2",
     "color-string": "^1.5.3",
+    "deep-is": "^0.1.3",
     "deepmerge": "^4.2.2",
     "ini": "^1.3.5",
     "js-base64": "^2.5.1",
@@ -22,7 +23,6 @@
     "prop-types": "^15.7.2",
     "react": "^16.11.0",
     "react-ace": "^7.0.5",
-    "webext-redux": "^2.1.4",
     "react-dom": "^16.11.0",
     "react-popup": "^0.10.0",
     "react-redux": "^7.1.3",
@@ -32,7 +32,9 @@
     "react-treebeard": "^2.1.0",
     "redux": "^4.0.4",
     "showdown": "^1.9.1",
-    "uuid": "^3.3.3"
+    "uuid": "^3.3.3",
+    "v8n": "^1.3.3",
+    "webext-redux": "^2.1.4"
   },
   "devDependencies": {
     "@babel/core": "^7.7.2",
@@ -48,7 +50,7 @@
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
     "chai-webdriver": "^1.2.0",
-    "chromedriver": "^78.0.1",
+    "chromedriver": "^79.0.0",
     "csscomb": "^4.3.0",
     "eslint": "^6.6.0",
     "eslint-config-standard": "^14.1.0",

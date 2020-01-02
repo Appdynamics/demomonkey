@@ -1,10 +1,10 @@
 import React from 'react'
 import ToggleButton from 'react-toggle-button'
 import PropTypes from 'prop-types'
-import JSZip from 'jszip'
 import AceEditor from 'react-ace'
 import Popup from 'react-popup'
 import axios from 'axios'
+import { logger } from '../../helpers/logger'
 
 import 'brace/theme/xcode'
 import 'brace/theme/merbivore'
@@ -21,6 +21,7 @@ class Settings extends React.Component {
     onSetMonkeyInterval: PropTypes.func.isRequired,
     onSetDemoMonkeyServer: PropTypes.func.isRequired,
     onToggleOptionalFeature: PropTypes.func.isRequired,
+    onDownloadAll: PropTypes.func.isRequired,
     isDarkMode: PropTypes.bool.isRequired
   }
 
@@ -34,7 +35,6 @@ class Settings extends React.Component {
   }
 
   changeRemoteLocation(value) {
-    console.log(value)
     this.setState({
       remoteLocation: value,
       remoteLocationError: null
@@ -62,7 +62,6 @@ class Settings extends React.Component {
         if (response.data.loggedIn === true) {
           this.props.onSetDemoMonkeyServer(this.state.remoteLocation)
         } else {
-          console.log('Authenticate')
           const authUrl = `${this.state.remoteLocation}/auth/google`
           Popup.create({
             title: 'Please authenticate',
@@ -84,7 +83,7 @@ class Settings extends React.Component {
           })
         }
       }).catch(error => {
-        console.log(error)
+        logger('error', error).write()
         this.setState({
           remoteLocationError: error.toString()
         })
@@ -94,23 +93,6 @@ class Settings extends React.Component {
         remoteLocationError: `${this.state.remoteLocation} is not a valid URL.`
       })
     }
-  }
-
-  downloadAll() {
-    event.preventDefault()
-    var zip = new JSZip()
-
-    this.props.configurations.forEach((configuration) => {
-      zip.file(configuration.name + '.mnky', configuration.content)
-    })
-
-    zip.generateAsync({ type: 'base64' })
-      .then(function (content) {
-        window.chrome.downloads.download({
-          url: 'data:application/zip;base64,' + content,
-          filename: 'demomonkey-' + (new Date()).toISOString().split('T')[0] + '.zip' // Optional
-        })
-      })
   }
 
   renderSyncToggle() {
@@ -202,6 +184,12 @@ class Settings extends React.Component {
           <div className="toggle-group" id="toggle-hookIntoAjax">
             <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('hookIntoAjax')} value={this.props.settings.optionalFeatures.hookIntoAjax}/><label><b>Hook into Ajax.</b> Turn this feature on, if you want to use commands !removeFlowmapNode, !addFlowmapNode, etc. Those commands are implemented by hooking into ajax calls, use with caution!</label>
           </div>
+          <div className="toggle-group" id="toggle-syncDarkMode">
+            <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('syncDarkMode')} value={this.props.settings.optionalFeatures.syncDarkMode}/><label><b>Sync Dark/Light mode with OS setting.</b> Automatically switch between dark and light mode.</label>
+          </div>
+          <div className="toggle-group" id="toggle-preferDarkMode" style={{ display: this.props.settings.optionalFeatures.syncDarkMode ? 'none' : 'flex' }}>
+            <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('preferDarkMode')} value={this.props.settings.optionalFeatures.preferDarkMode}/><label><b>Use dark mode.</b> Use this toggle to set <i>dark mode</i> as your prefered theme.</label>
+          </div>
           <div className="toggle-group" id="toggle-beta_configSync" style={{ display: window.location.href.includes('?beta') ? 'flex' : 'none' }}>
             <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('beta_configSync')} value={this.props.settings.optionalFeatures.beta_configSync}/><label><b>Config Sync Beta.</b> Turn on the option for config sync beta. </label>
           </div>
@@ -209,7 +197,7 @@ class Settings extends React.Component {
           { this.renderSync() }
           <h2>Backup</h2>
           You can always open the <a href="backup.html">backup page</a> to download your files or manipulate your settings. Please use with caution!
-          <button className="save-button" onClick={(event) => this.downloadAll(event)}>Download all configurations</button>
+          <button className="save-button" onClick={(event) => this.props.onDownloadAll(event)}>Download all configurations</button>
         </div>
       </div>
     )

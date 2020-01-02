@@ -2,14 +2,14 @@ import Command from '../Command'
 
 class AddFlowmapNode extends Command {
   static types = {
-    'java': ['APP_AGENT', 'Application Server'],
-    'nodejs': ['NODEJS_APP_AGENT', 'Node.JS Server'],
-    'php': ['PHP_APP_AGENT', 'PHP Application Server'],
-    'python': ['PYTHON_APP_AGENT', 'Python Server'],
-    'native': ['NATIVE_SDK', 'C/C++ SDK'],
-    'dotnet': ['DOT_NET_APP_AGENT', '.NET Application Server'],
-    'go': ['GOLANG_SDK', 'Golang SDK'],
-    'wmb': ['WMB_AGENT', 'WMB Agent']
+    java: ['APP_AGENT', 'Application Server'],
+    nodejs: ['NODEJS_APP_AGENT', 'Node.JS Server'],
+    php: ['PHP_APP_AGENT', 'PHP Application Server'],
+    python: ['PYTHON_APP_AGENT', 'Python Server'],
+    native: ['NATIVE_SDK', 'C/C++ SDK'],
+    dotnet: ['DOT_NET_APP_AGENT', '.NET Application Server'],
+    go: ['GOLANG_SDK', 'Golang SDK'],
+    wmb: ['WMB_AGENT', 'WMB Agent']
   }
 
   constructor(name, type = 'java') {
@@ -20,6 +20,14 @@ class AddFlowmapNode extends Command {
 
   isApplicableForGroup(group) {
     return group === 'ajax' || group === '*'
+  }
+
+  isAvailable(featureFlags) {
+    return featureFlags.hookIntoAjax === true
+  }
+
+  getRequiredFlags() {
+    return 'Hook into Ajax'
   }
 
   apply(target, key) {

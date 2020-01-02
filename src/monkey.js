@@ -2,7 +2,8 @@ import Monkey from './models/Monkey'
 import ModeManager from './models/ModeManager'
 import Settings from './models/Settings'
 import Manifest from './models/Manifest'
-import {Store} from 'webext-redux'
+import { Store } from 'webext-redux'
+import { logger, connectLogger } from './helpers/logger'
 
 (function (scope) {
   'use strict'
@@ -29,10 +30,9 @@ import {Store} from 'webext-redux'
   }
 
   store.ready().then(() => {
+    connectLogger(store, { source: 'monkey.js' })
 
-    var settings = new Settings(store.getState().settings)
-    console.log('DemoMonkey enabled. Tampering the content.')
-    console.log('Interval: ', settings.monkeyInterval)
+    const settings = new Settings(store.getState().settings)
 
     // We don't use the redux store, since below we restart demo monkey
     // every time the store is updated, which would lead to a loop.
@@ -106,16 +106,25 @@ import {Store} from 'webext-redux'
       }
     }
 
-    var $DEMO_MONKEY = new Monkey(store.getState().configurations, scope, settings.isFeatureEnabled('undo'), settings.monkeyInterval, urlManager, ajaxManager, settings.isFeatureEnabled('withEvalCommand'))
+    var $DEMO_MONKEY = new Monkey(store.getState().configurations, scope, settings.isFeatureEnabled('undo'), settings.monkeyInterval, urlManager, ajaxManager, {
+      withEvalCommand: settings.isFeatureEnabled('withEvalCommand'),
+      hookIntoAjax: settings.isFeatureEnabled('hookIntoAjax'),
+      webRequestHook: settings.isFeatureEnabled('webRequestHook')
+    })
     updateBadge($DEMO_MONKEY.start())
+    logger('debug', 'DemoMonkey enabled. Tampering the content. Interval: ', settings.monkeyInterval).write()
 
     var modeManager = new ModeManager(scope, $DEMO_MONKEY, new Manifest(scope.chrome), settings.isDebugEnabled(), settings.isFeatureEnabled('debugBox'), settings.isLiveModeEnabled())
 
     function restart() {
-      console.log('Restart DemoMonkey')
+      logger('debug', 'Restart DemoMonkey').write()
       // Update settings
       var settings = new Settings(store.getState().settings)
-      var newMonkey = new Monkey(store.getState().configurations, scope, settings.isFeatureEnabled('undo'), settings.monkeyInterval, urlManager, ajaxManager, settings.isFeatureEnabled('withEvalCommand'))
+      var newMonkey = new Monkey(store.getState().configurations, scope, settings.isFeatureEnabled('undo'), settings.monkeyInterval, urlManager, ajaxManager, {
+        withEvalCommand: settings.isFeatureEnabled('withEvalCommand'),
+        hookIntoAjax: settings.isFeatureEnabled('hookIntoAjax'),
+        webRequestHook: settings.isFeatureEnabled('webRequestHook')
+      })
       $DEMO_MONKEY.stop()
       updateBadge(newMonkey.start())
       $DEMO_MONKEY = newMonkey
@@ -125,7 +134,7 @@ import {Store} from 'webext-redux'
     store.subscribe(function () {
       const lastAction = store.getState().lastAction
       // updating the current view does not require any updates
-      if (lastAction.type === 'SET_CURRENT_VIEW') {
+      if (['SET_CURRENT_VIEW', 'APPEND_LOG_ENTRIES'].includes(lastAction.type)) {
         return
       }
       if (settings.isFeatureEnabled('autoReplace')) {
@@ -139,16 +148,13 @@ import {Store} from 'webext-redux'
 
     scope.document.addEventListener('demomonkey-inline-editing', function (e) {
       let { search, replacement, command } = JSON.parse(e.detail)
-      console.log('received', search, replacement)
-      console.log(store.getState().currentView)
-      let configs = (store.getState().configurations.filter(config => config.enabled))
-      let configuration = configs.length > 0 ? configs[0] : store.getState().configurations[0]
+      const configs = (store.getState().configurations.filter(config => config.enabled))
+      const configuration = configs.length > 0 ? configs[0] : store.getState().configurations[0]
       if (command) {
         search = `!${command}(${search})`
       }
       configuration.content += '\n' + search + ' = ' + replacement
-      console.log(configuration)
-      store.dispatch({ 'type': 'SAVE_CONFIGURATION', 'id': configuration.id, configuration })
+      store.dispatch({ type: 'SAVE_CONFIGURATION', id: configuration.id, configuration })
     })
   })
 })(window)

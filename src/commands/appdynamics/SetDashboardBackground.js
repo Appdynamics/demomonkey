@@ -6,7 +6,7 @@ class SetDashboardBackground extends Command {
   constructor(dashboardId = '', opacity = 0, value, location) {
     super()
     this.dashboardId = dashboardId
-    const [ newValue, isImage ] = typeof value === 'string' ? SetDashboardBackground._getValue(value) : [false, false]
+    const [newValue, isImage] = typeof value === 'string' ? SetDashboardBackground._getValue(value) : [false, false]
     this.opacity = opacity
     this.value = newValue
     this.isImage = isImage

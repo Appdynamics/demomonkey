@@ -6,7 +6,8 @@ import ConfigurationUpload from '../../shared/ConfigurationUpload'
 class NavigationHeader extends React.Component {
   static propTypes = {
     onUpload: PropTypes.func.isRequired,
-    onNavigate: PropTypes.func.isRequired
+    onNavigate: PropTypes.func.isRequired,
+    onDownloadAll: PropTypes.func.isRequired
   }
 
   handleClick(event, target) {
@@ -29,10 +30,10 @@ class NavigationHeader extends React.Component {
         <a href='#settings' onClick={(event) => this.handleClick(event, 'settings')} >Settings</a>
       </li>
       <li>
-        <a href='#settings' onClick={(event) => this.handleClick(event, 'settings')} >Gallery</a>
+        <a href='#settings' onClick={this.props.onDownloadAll} >Backup</a>
       </li>
       <li>
-        <a href='#settings' onClick={(event) => this.handleClick(event, 'settings')} >Logs</a>
+        <a href='#settings' onClick={(event) => this.handleClick(event, 'logs')} >Logs</a>
       </li>
     </ul>
   }

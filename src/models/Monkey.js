@@ -1,29 +1,30 @@
 import Configuration from './Configuration'
 import Repository from './Repository'
 import UndoElement from '../commands/UndoElement'
+import { logger } from '../helpers/logger'
 
 class Monkey {
-  constructor(rawConfigurations, scope, withUndo = true, intervalTime = 100, urlManager = false, ajaxManager = false, withEvalCommand = false) {
+  constructor(rawConfigurations, scope, withUndo = true, intervalTime = 100, urlManager = false, ajaxManager = false, featureFlags = {}) {
     this.scope = scope
     this.undo = []
     this.repository = new Repository({})
     this.withUndo = withUndo
-    this.withEvalCommand = withEvalCommand
+    this.featureFlags = featureFlags
 
     this.intervalTime = intervalTime
     if (typeof this.intervalTime !== 'number' || this.intervalTime < 100) {
-      console.log('Interval time is not well-defined: ' + this.intervalTime)
+      logger('warn', 'Interval time is not well-defined: ', this.intervalTime).write()
       this.intervalTime = 100
     }
     this.intervals = []
 
     this.configurations = rawConfigurations.map((rawConfig) => {
-      var config = new Configuration(rawConfig.content, this.repository, rawConfig.enabled === true, rawConfig.values, withEvalCommand)
+      var config = new Configuration(rawConfig.content, this.repository, rawConfig.enabled === true, rawConfig.values, featureFlags)
       this.repository.addConfiguration(rawConfig.name, config)
       return [rawConfig.name, config]
     })
-    this.urlManager = urlManager === false ? {add: () => {}, remove: () => {}, clear: () => {}} : urlManager
-    this.ajaxManager = ajaxManager === false ? {add: () => {}, run: () => {}} : ajaxManager
+    this.urlManager = urlManager === false ? { add: () => {}, remove: () => {}, clear: () => {} } : urlManager
+    this.ajaxManager = ajaxManager === false ? { add: () => {}, run: () => {} } : ajaxManager
     this.observers = []
   }
 
@@ -51,7 +52,7 @@ class Monkey {
     if (this.withUndo) {
       // Simple protection against loops that fill up the undo array.
       if (this.undo.length > 100000) {
-        console.log('Too many undo elements, disabling undo feature.')
+        logger('warn', 'Too many undo elements, disabling undo feature. Your configuration might have a replacement loop.').write()
         this.withUndo = false
       }
       this.undo = this.undo.concat(elements)
@@ -119,8 +120,8 @@ class Monkey {
     this.scope.document.querySelectorAll('svg .adsFlowMapNode > title').forEach(title => {
       title.parentElement.querySelectorAll('.adsFlowMapTextContainer tspan').forEach(tspan => {
         if (tspan.textContent.includes('...')) {
-          let pseudoNode = {
-            'value': title.textContent
+          const pseudoNode = {
+            value: title.textContent
           }
           configuration.apply(pseudoNode, 'value', 'text')
           const replacement = pseudoNode.value.length > 32 ? pseudoNode.value.substr(0, 15) + '...' + pseudoNode.value.substr(-15) : pseudoNode.value
@@ -146,7 +147,7 @@ class Monkey {
         var counter = content.length
 
         var pseudoNode = {
-          'value': content.join(' ')
+          value: content.join(' ')
         }
 
         configuration.apply(pseudoNode, 'value', 'text')
@@ -175,7 +176,7 @@ class Monkey {
         var [short, long] = title.parentElement.textContent.split('...')
         if (long.startsWith(short)) {
           var pseudoNode = {
-            'value': long
+            value: long
           }
 
           configuration.apply(pseudoNode, 'value', 'text')
@@ -195,7 +196,7 @@ class Monkey {
     // The full name is kept as "name" of the tspan
     this.scope.document.querySelectorAll('svg > g text > tspan[name]').forEach(tspan => {
       var pseudoNode = {
-        'value': tspan.attributes.name.value
+        value: tspan.attributes.name.value
       }
       configuration.apply(pseudoNode, 'value', 'text')
 

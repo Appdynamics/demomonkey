@@ -8,9 +8,22 @@ td {
 }
 
 tr:nth-child(2n) {
-  background-color: #f0f0f0;
+  background-color: var(--table-2n-color);
 }
 
 th {
-  background-color: #cccccc;
+  background-color: var(--table-header-color);
+}
+
+/*.row-debug {
+  display: none;
+}*/
+
+
+.row-error {
+  color: var(--danger-color);
+}
+
+.row-warn {
+  color: var(--warning-color);
 }

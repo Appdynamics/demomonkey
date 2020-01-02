@@ -4,12 +4,16 @@ import { connect } from 'react-redux'
 import Popup from 'react-popup'
 import Welcome from './Welcome'
 import Settings from './Settings'
+import Logs from './Logs'
 import Editor from './editor/Editor'
 import Configuration from '../../models/Configuration'
 import PropTypes from 'prop-types'
 import Repository from '../../models/Repository'
 import { Base64 } from 'js-base64'
 import ErrorBox from '../shared/ErrorBox'
+import Page from '../shared/Page'
+import JSZip from 'jszip'
+import { logger } from '../../helpers/logger'
 
 /* The OptionsPageApp will be defined below */
 class App extends React.Component {
@@ -18,20 +22,32 @@ class App extends React.Component {
     configurations: PropTypes.arrayOf(PropTypes.object).isRequired,
     currentView: PropTypes.string.isRequired,
     connectionState: PropTypes.string.isRequired,
-    settings: PropTypes.object.isRequired
+    settings: PropTypes.object.isRequired,
+    log: PropTypes.arrayOf(PropTypes.object).isRequired
+  }
+
+  static getDerivedStateFromError(e) {
+    return { withError: e }
   }
 
   constructor(props) {
     super(props)
     this.state = {
-      isDarkMode: window.matchMedia('(prefers-color-scheme: dark)').matches
+      isDarkMode: window.matchMedia('(prefers-color-scheme: dark)').matches,
+      withError: false
     }
+  }
+
+  _getDarkMode() {
+    if (this.props.settings.optionalFeatures.syncDarkMode) {
+      return this.state.isDarkMode
+    }
+    return this.props.settings.optionalFeatures.preferDarkMode
   }
 
   componentDidMount() {
     this.mql = window.matchMedia('(prefers-color-scheme: dark)')
     this.darkModeUpdated = (e) => {
-      console.log(e)
       this.setState({ isDarkMode: e.matches })
     }
     this.mql.addListener(this.darkModeUpdated)
@@ -44,6 +60,23 @@ class App extends React.Component {
 
   navigateTo(target) {
     this.props.actions.setCurrentView(target)
+  }
+
+  downloadAll() {
+    event.preventDefault()
+    var zip = new JSZip()
+
+    this.props.configurations.forEach((configuration) => {
+      zip.file(configuration.name + '.mnky', configuration.content)
+    })
+
+    zip.generateAsync({ type: 'base64' })
+      .then(function (content) {
+        window.chrome.downloads.download({
+          url: 'data:application/zip;base64,' + content,
+          filename: 'demomonkey-' + (new Date()).toISOString().split('T')[0] + '.zip' // Optional
+        })
+      })
   }
 
   saveConfiguration(configuration) {
@@ -118,6 +151,7 @@ class App extends React.Component {
             Popup.close()
             this.props.actions.setCurrentView('welcome')
             // Delete all configurations within it if a directory is given
+            logger('info', `Deleting ${configuration.name} (${configuration.nodeType})`).write()
             if (configuration.nodeType === 'directory') {
               this.props.actions.deleteConfigurationByPrefix(configuration.id.split('/').reverse().join('/'))
             } else {
@@ -175,6 +209,10 @@ class App extends React.Component {
   }
 
   getCurrentView() {
+    if (this.state.withError) {
+      return <ErrorBox error={this.state.withError} />
+    }
+
     try {
       var segments = this.props.currentView.split('/')
 
@@ -189,7 +227,8 @@ class App extends React.Component {
             onSetBaseTemplate={(baseTemplate) => this.setBaseTemplate(baseTemplate)}
             onSetMonkeyInterval={(event) => this.setMonkeyInterval(event.target.value)}
             onSetDemoMonkeyServer={(value) => this.setDemoMonkeyServer(value)}
-            isDarkMode={this.state.isDarkMode}/>
+            onDownloadAll={(event) => this.downloadAll(event)}
+            isDarkMode={this._getDarkMode()}/>
         case 'configuration':
           var configuration = this.getConfiguration(segments[1])
           // If an unknown ID is selected, we throw an error.
@@ -206,8 +245,15 @@ class App extends React.Component {
             onCopy={(configuration, _) => this.copyConfiguration(configuration)}
             onDelete={(configuration, _) => this.deleteConfiguration(configuration)}
             toggleConfiguration={() => this.props.actions.toggleConfiguration(configuration.id)}
-            isDarkMode={this.state.isDarkMode}
+            featureFlags={{
+              withEvalCommand: this.props.settings.optionalFeatures.withEvalCommand,
+              hookIntoAjax: this.props.settings.optionalFeatures.hookIntoAjax,
+              webRequestHook: this.props.settings.optionalFeatures.webRequestHook
+            }}
+            isDarkMode={this._getDarkMode()}
           />
+        case 'logs':
+          return <Logs entries={this.props.log} />
         default:
           return <Welcome />
       }
@@ -221,26 +267,27 @@ class App extends React.Component {
 
     var configurations = this.getConfigurations()
 
-    return <div className="main-grid">
+    return <Page className="main-grid" preferDarkMode={this.props.settings.optionalFeatures.preferDarkMode} syncDarkMode={this.props.settings.optionalFeatures.syncDarkMode}>
       <Popup className="popup" btnClass="popup__btn" />
       <div className="navigation">
         <Navigation onNavigate={(target) => this.navigateTo(target)}
           onUpload={(upload) => this.uploadConfiguration(upload)}
           onDelete={(configuration) => this.deleteConfiguration(configuration)}
           items={configurations}
+          onDownloadAll={(event) => this.downloadAll(event)}
           active={activeItem} />
       </div>
       <div className="current-view">
         {this.getCurrentView()}
       </div>
-    </div>
+    </Page>
   }
 }
 
 const OptionsPageApp = connect(
   // map state to props
   state => {
-    return { configurations: state.configurations, currentView: state.currentView, connectionState: state.connectionState, settings: state.settings }
+    return { configurations: state.configurations, currentView: state.currentView, connectionState: state.connectionState, settings: state.settings, log: state.log }
   },
   // map dispatch to props
   dispatch => ({
