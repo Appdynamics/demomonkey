@@ -25,9 +25,6 @@ import Eval from './Eval'
 import UndoElement from './UndoElement'
 import extractParameters from '../helpers/extractParameters'
 
-/* Note that functions will be bound to an instance of 'CommandBuilder',
- * so all methods and properties of this instance will be accessible via this
- */
 export default [
   {
     name: 'replace',
@@ -164,12 +161,11 @@ export default [
     aliases: [],
     signature: '(${1}) = ${2}',
     command: function (value, parameters, location, includeRules, excludeRules, cmdBuilder) {
-      // this.withEvalCommand &&
       return new Eval(parameters.shift(), parameters, value)
     }
   },
   {
-    name: 'cwom',
+    name: 'turbonomic',
     registry: [{
       name: 'hideListItem',
       signature: '(${1})',

@@ -7,6 +7,7 @@ import MatchRule from './models/MatchRule'
 import Badge from './models/Badge'
 import ConfigurationSync from './models/ConfigurationSync'
 import match from './helpers/match.js'
+import { logger, connectLogger } from './helpers/logger'
 
 (function (scope) {
   'use strict'
@@ -58,7 +59,7 @@ import match from './helpers/match.js'
       return {}
     },
     replace: (options) => {
-      console.log('Redirecting to ', options.replace)
+      logger('info', `Redirecting to ${options.replace}`).write()
       return { redirectUrl: options.replace }
     }
   }
@@ -68,6 +69,7 @@ import match from './helpers/match.js'
       const { url, type, action, options, includeRules, excludeRules } = hookedUrls[id]
       // "main_frame", "sub_frame", "stylesheet", "script", "image", "font", "object", "xmlhttprequest", "ping", "csp_report", "media", "websocket", or "other"
       if (new MatchRule(includeRules, excludeRules).test(details.url) && match(details.url, url) && (type === '*' || type.split(',').map(e => e.trim()).includes(details.type))) {
+        logger('info', `Applying hook ${action} on ${details.url} [${details.type}] (matching ${url})`).write()
         return Object.assign(acc, hooks[action](options))
       }
       return acc
@@ -149,7 +151,6 @@ import match from './helpers/match.js'
         delete hookedUrls[request.id]
       }
       if (request.task && request.task === 'clearUrls') {
-        console.log('Clearing hooked URLs')
         hookedUrls = {}
       }
     }
@@ -223,6 +224,8 @@ import match from './helpers/match.js'
     console.log('Background Script started')
     var store = createStore(reducers, state)
     wrapStore(store, { portName: 'DEMO_MONKEY_STORE' })
+
+    connectLogger(store, { source: 'monkey.js' })
 
     // Persist monkey ID. Shouldn't change after first start.
     scope.chrome.storage.local.set({ monkeyID: store.getState().monkeyID })

@@ -18,7 +18,6 @@ function equal(entry1, entry2) {
       return false
     }
   }
-  console.log(entry1, entry2)
   return true
 }
 
@@ -27,7 +26,6 @@ const log = function (state = '', action) {
   switch (action.type) {
     case 'APPEND_LOG_ENTRIES':
       return state.concat(action.entries.map(e => Object.assign({}, { tabId, repeated: 0 }, e))).reduce((c, e) => {
-        console.log('Looking into', e)
         const p = c[c.length - 1]
         if (!equal(e, p)) {
           c.push(e)

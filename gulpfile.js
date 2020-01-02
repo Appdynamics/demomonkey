@@ -1,27 +1,29 @@
-var gulp = require('gulp')
-var clean = require('gulp-clean')
-var imageResize = require('gulp-image-resize')
-var less = require('gulp-less')
-var rename = require('gulp-rename')
-var replace = require('gulp-replace')
-var sourcemaps = require('gulp-sourcemaps')
-var zip = require('gulp-zip')
-var log = require('fancy-log')
+const gulp = require('gulp')
+const clean = require('gulp-clean')
+const imageResize = require('gulp-image-resize')
+const less = require('gulp-less')
+const rename = require('gulp-rename')
+const replace = require('gulp-replace')
+const sourcemaps = require('gulp-sourcemaps')
+const zip = require('gulp-zip')
+const log = require('fancy-log')
 
-var babel = require('babelify')
-var browserify = require('browserify')
-var stringify = require('stringify')
-var watchify = require('watchify')
+const babel = require('babelify')
+const browserify = require('browserify')
+const stringify = require('stringify')
+const watchify = require('watchify')
 
-var source = require('vinyl-source-stream')
-var buffer = require('vinyl-buffer')
-var path = require('path')
-var fs = require('fs')
+const source = require('vinyl-source-stream')
+const buffer = require('vinyl-buffer')
+const path = require('path')
+const fs = require('fs')
 
-var series = gulp.series
+const series = gulp.series
+
+const exec = require('child_process').exec;
 
 function compile(file, withWatchify = false) {
-  var bundler = browserify('./src/' + file + '.js', watchify.args
+  let bundler = browserify('./src/' + file + '.js', watchify.args
   ).transform(stringify, {
     appliesTo: {
       includeExtensions: ['.mnky', '.md', '.snippets']
@@ -34,8 +36,8 @@ function compile(file, withWatchify = false) {
 
   bundler = bundler.transform(babel)
 
-  var b = function () {
-    var bundleStream = bundler.bundle().on('error', function (err) {
+  const b = function () {
+    const bundleStream = bundler.bundle().on('error', function (err) {
       log(err.message)
       this.emit('end')
     })
@@ -111,7 +113,19 @@ gulp.task('styles', function () {
   })).pipe(gulp.dest('./build/css'))
 })
 
-var tasks = [
+gulp.task('git-get-commit', function (cb) {
+  exec('echo $(git rev-parse HEAD) \\#$(git status --porcelain | wc -l)', function (err, stdout, stderr) {
+    if (err) {
+      cb(err)
+    } else {
+      log(stdout)
+      log.error(stderr)
+      fs.writeFile('./build/.git-commit', stdout, cb)
+    }
+  })
+})
+
+const tasks = [
   'copy',
   'icons',
   'styles',
@@ -123,7 +137,12 @@ var tasks = [
 gulp.task('build', gulp.parallel(tasks))
 
 gulp.task('pack', function () {
-  var json = JSON.parse(fs.readFileSync('./manifest.json'))
+  const [commit, changes] = fs.readFileSync('./build/.git-commit').toString().split('#')
+  if (parseInt(changes, 10) > 0) {
+    throw new Error('Please commit all changes before packing a release!')
+  }
+  log(`\`- from commit ${commit}`)
+  const json = JSON.parse(fs.readFileSync('./manifest.json'))
   return gulp.src('build/**').pipe(zip('DemoMonkey-' + json.version + '.zip')).pipe(gulp.dest('.'))
 })
 
@@ -140,7 +159,7 @@ gulp.task('dev:manifest', series('dev:copy', function () {
 }))
 
 gulp.task('dev:pack', series('dev:manifest', function () {
-  var json = JSON.parse(fs.readFileSync('./manifest.json'))
+  const json = JSON.parse(fs.readFileSync('./manifest.json'))
   return gulp.src('build-dev/**').pipe(zip('DemoMonkey-' + json.version + '-dev.zip')).pipe(gulp.dest('.'))
 }))
 
