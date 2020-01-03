@@ -175,7 +175,8 @@ import { logger, connectLogger } from './helpers/logger'
     keyboardHandlerVim: false,
     hookIntoAjax: false,
     syncDarkMode: true,
-    preferDarkMode: false
+    preferDarkMode: false,
+    noWarningForMissingPermissions: false
   }
 
   const persistentStates = {

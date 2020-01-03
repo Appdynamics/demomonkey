@@ -1,3 +1,4 @@
+/* global chrome */
 import React from 'react'
 import Navigation from './navigation/Navigation'
 import { connect } from 'react-redux'
@@ -11,6 +12,7 @@ import PropTypes from 'prop-types'
 import Repository from '../../models/Repository'
 import { Base64 } from 'js-base64'
 import ErrorBox from '../shared/ErrorBox'
+import WarningBox from '../shared/WarningBox'
 import Page from '../shared/Page'
 import JSZip from 'jszip'
 import { logger } from '../../helpers/logger'
@@ -23,7 +25,8 @@ class App extends React.Component {
     currentView: PropTypes.string.isRequired,
     connectionState: PropTypes.string.isRequired,
     settings: PropTypes.object.isRequired,
-    log: PropTypes.arrayOf(PropTypes.object).isRequired
+    log: PropTypes.arrayOf(PropTypes.object).isRequired,
+    permissions: PropTypes.object.isRequired
   }
 
   static getDerivedStateFromError(e) {
@@ -34,7 +37,8 @@ class App extends React.Component {
     super(props)
     this.state = {
       isDarkMode: window.matchMedia('(prefers-color-scheme: dark)').matches,
-      withError: false
+      withError: false,
+      permissions: this.props.permissions
     }
   }
 
@@ -51,10 +55,26 @@ class App extends React.Component {
       this.setState({ isDarkMode: e.matches })
     }
     this.mql.addListener(this.darkModeUpdated)
+
+    this.permissionsUpdated = () => {
+      chrome.permissions.getAll((permissions) => {
+        logger('info', 'Permissions updated:', permissions).write()
+        this.setState({ permissions })
+      })
+    }
+
+    if (chrome.permissions.onAdded) {
+      chrome.permissions.onAdded.addListener(this.permissionsUpdated)
+      chrome.permissions.onRemoved.addListener(this.permissionsUpdated)
+    }
   }
 
   componentWillUnmount() {
     this.mql.removeListener(this.darkModeUpdated)
+    if (chrome.permissions.onAdded) {
+      chrome.permissions.onAdded.removeListener(this.permissionsUpdated)
+      chrome.permissions.onRemoved.removeListener(this.permissionsUpdated)
+    }
     delete this.mql
   }
 
@@ -228,6 +248,8 @@ class App extends React.Component {
             onSetMonkeyInterval={(event) => this.setMonkeyInterval(event.target.value)}
             onSetDemoMonkeyServer={(value) => this.setDemoMonkeyServer(value)}
             onDownloadAll={(event) => this.downloadAll(event)}
+            onRequestExtendedPermissions={(revoke) => this.requestExtendedPermissions(revoke)}
+            hasExtendedPermissions={this.hasExtendedPermissions()}
             isDarkMode={this._getDarkMode()}/>
         case 'configuration':
           var configuration = this.getConfiguration(segments[1])
@@ -262,13 +284,53 @@ class App extends React.Component {
     }
   }
 
+  hasExtendedPermissions() {
+    const permissions = this.state.permissions
+    if (Array.isArray(permissions.origins) && permissions.origins.length > 0) {
+      return permissions.origins.includes('http://*/*') && permissions.origins.includes('https://*/*')
+    }
+    return false
+  }
+
+  requestExtendedPermissions(revoke = false) {
+    console.log(revoke)
+    if (revoke) {
+      chrome.permissions.remove({
+        origins: ['http://*/*', 'https://*/*']
+      }, function (removed) {
+        if (removed) {
+          logger('info', 'Additional permissions removed')
+        } else {
+          logger('warn', 'Additional permissions not removed')
+        }
+      })
+    } else {
+      chrome.permissions.request({
+        origins: ['http://*/*', 'https://*/*']
+      }, function (granted) {
+        if (granted) {
+          logger('info', 'Additional permissions granted')
+        } else {
+          logger('warn', 'Additional permissions not granted')
+        }
+      })
+    }
+  }
+
   render() {
     var activeItem = this.props.currentView.indexOf('configuration/') === -1 ? false : this.props.currentView.split('/').pop()
 
     var configurations = this.getConfigurations()
 
-    return <Page className="main-grid" preferDarkMode={this.props.settings.optionalFeatures.preferDarkMode} syncDarkMode={this.props.settings.optionalFeatures.syncDarkMode}>
+    var withWarning = (!this.hasExtendedPermissions() && !this.props.settings.optionalFeatures.noWarningForMissingPermissions) ? ' with-warning' : ''
+
+    return <Page className={`main-grid${withWarning}`} preferDarkMode={this.props.settings.optionalFeatures.preferDarkMode} syncDarkMode={this.props.settings.optionalFeatures.syncDarkMode}>
       <Popup className="popup" btnClass="popup__btn" />
+      { withWarning !== ''
+        ? <WarningBox onDismiss={() => this.toggleOptionalFeature('noWarningForMissingPermissions')}
+          onRequestExtendedPermissions={() => this.requestExtendedPermissions()}
+        />
+        : '' }
       <div className="navigation">
         <Navigation onNavigate={(target) => this.navigateTo(target)}
           onUpload={(upload) => this.uploadConfiguration(upload)}

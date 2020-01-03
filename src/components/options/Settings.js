@@ -22,7 +22,9 @@ class Settings extends React.Component {
     onSetDemoMonkeyServer: PropTypes.func.isRequired,
     onToggleOptionalFeature: PropTypes.func.isRequired,
     onDownloadAll: PropTypes.func.isRequired,
-    isDarkMode: PropTypes.bool.isRequired
+    isDarkMode: PropTypes.bool.isRequired,
+    hasExtendedPermissions: PropTypes.bool.isRequired,
+    onRequestExtendedPermissions: PropTypes.func.isRequired
   }
 
   constructor(props) {
@@ -126,6 +128,7 @@ class Settings extends React.Component {
   }
 
   render() {
+    console.log(this.props.hasExtendedPermissions)
     return (
       <div className="content">
         <div className="settings">
@@ -190,11 +193,20 @@ class Settings extends React.Component {
           <div className="toggle-group" id="toggle-preferDarkMode" style={{ display: this.props.settings.optionalFeatures.syncDarkMode ? 'none' : 'flex' }}>
             <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('preferDarkMode')} value={this.props.settings.optionalFeatures.preferDarkMode}/><label><b>Use dark mode.</b> Use this toggle to set <i>dark mode</i> as your prefered theme.</label>
           </div>
+          <div className="toggle-group" id="toggle-noWarningForMissingPermissions" style={{ display: this.props.hasExtendedPermissions ? 'none' : 'flex' }}>
+            <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('noWarningForMissingPermissions')} value={this.props.settings.optionalFeatures.noWarningForMissingPermissions}/><label><b>No warning for missing permissions.</b> To work best, DemoMonkey requires permissions to interact with all sites, and will warn you if you don&apos;t provide those permissions. Turn this feature on to remove this warning.</label>
+          </div>
           <div className="toggle-group" id="toggle-beta_configSync" style={{ display: window.location.href.includes('?beta') ? 'flex' : 'none' }}>
             <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('beta_configSync')} value={this.props.settings.optionalFeatures.beta_configSync}/><label><b>Config Sync Beta.</b> Turn on the option for config sync beta. </label>
           </div>
           { this.renderSyncToggle() }
           { this.renderSync() }
+          <h2>Permissions</h2>
+          For DemoMonkey to work optimal you have to grant permissions to access all websites.
+          <div className="toggle-group" id="toggle-beta_configSync">
+            <ToggleButton onToggle={() => this.props.onRequestExtendedPermissions(this.props.hasExtendedPermissions)} value={this.props.hasExtendedPermissions}/><label><b>Allow access on all sites.</b> Allow DemoMonkey to read and change data on all sites you visit.</label>
+          </div>
+          You can not revoke permissions from here. Go to the extensions page, choose Demo Monkey, click on <i>Details</i> and there set <i>Site Access</i> to <i>On click</i>
           <h2>Backup</h2>
           You can always open the <a href="backup.html">backup page</a> to download your files or manipulate your settings. Please use with caution!
           <button className="save-button" onClick={(event) => this.props.onDownloadAll(event)}>Download all configurations</button>

@@ -24,14 +24,20 @@
     "page": "background.html"
   },
   "devtools_page": "devtools.html",
-  "options_page": "options.html",
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": true
+  },
   "browser_action": {
     "default_icon": "icons/monkey_16.png",
     "default_title": "DemoMonkey",
     "default_popup": "popup.html"
   },
   "permissions": [
-    "storage", "unlimitedStorage", "tabs", "activeTab", "<all_urls>", "downloads", "contextMenus", "identity", "webRequest", "webRequestBlocking"
+    "storage", "unlimitedStorage", "tabs", "activeTab", "downloads", "contextMenus", "identity", "webRequest", "webRequestBlocking"
+  ],
+  "optional_permissions": [
+    "<all_urls>"
   ],
   "commands": {
     "live-mode": {

@@ -11,6 +11,9 @@ class Logs extends React.Component {
     if (typeof m === 'object' && m.fromError === true) {
       return <span title={m.stack}><b>{m.name}:</b> {m.message}</span>
     }
+    if (typeof m === 'object') {
+      return JSON.stringify(m)
+    }
     return m
   }
 

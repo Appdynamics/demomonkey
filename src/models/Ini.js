@@ -9,9 +9,9 @@ class Ini {
     var content = this.content
 
     // The replace allows quoting for =. The reverse happens in the CommandBuilder.
-    var r = content ? ini.parse(content.replace('\\=', '\u2260')) : []
+    content = content.replace('\\=', '\u2260').replace(/{%(.*)%}/g, '[$1]')
 
-    return r
+    return content ? ini.parse(content) : []
   }
 }
 

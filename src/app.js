@@ -9,6 +9,19 @@ import Manifest from './models/Manifest'
 import { logger, connectLogger } from './helpers/logger'
 
 function renderOptionsPageApp(root, store) {
+  if (window.location.hash.substring(1) !== '') {
+    logger('debug', 'Updating current view', window.location.hash.substring(1)).write()
+    store.dispatch({
+      type: 'SET_CURRENT_VIEW',
+      view: window.location.hash.substring(1)
+    })
+  }
+
+  chrome.permissions.getAll(function (permissions) {
+    ReactDOM.render(
+      <Provider store={store}><OptionsPageApp permissions={permissions}/></Provider>, root)
+  })
+
   chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     if (request.receiver && request.receiver === 'dashboard' && typeof request.logMessage !== 'undefined') {
       console.log('Message received', request.logMessage)
@@ -26,23 +39,12 @@ function renderOptionsPageApp(root, store) {
     }
   })
 
-  if (window.location.hash.substring(1) !== '') {
-    logger('debug', 'Updating current view', window.location.hash.substring(1)).write()
-    store.dispatch({
-      type: 'SET_CURRENT_VIEW',
-      view: window.location.hash.substring(1)
-    })
-  }
-
   window.addEventListener('hashchange', function () {
     store.dispatch({
       type: 'SET_CURRENT_VIEW',
       view: window.location.hash.substring(1)
     })
   })
-
-  ReactDOM.render(
-    <Provider store={store}><OptionsPageApp/></Provider>, root)
 }
 
 function renderPopupPageApp(root, store) {

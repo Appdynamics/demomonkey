@@ -58,6 +58,11 @@ ace.define('ace/mode/mnky_highlight_rules', ['require', 'exports', 'module', 'ac
         ],
         regex: '^(\\[)(.*?)(\\])'
       }, {
+        token: ['punctuation.definition.entity.mnky', 'constant.section.group-title.mnky',
+          'punctuation.definition.entity.mnky'
+        ],
+        regex: '^(\\{%)(.*?)(\\%})'
+      }, {
         token: 'punctuation.definition.string.begin.mnky',
         regex: "'",
         push: [{
