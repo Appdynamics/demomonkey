@@ -212,8 +212,22 @@ class App extends React.Component {
     return this.props.configurations.find((item) => item.id === id)
   }
 
+  registerProtocolHandler() {
+    const url = chrome.runtime.getURL('/options.html?s=%s')
+    const method = this.props.settings.optionalFeatures.registerProtocolHandler ? 'registerProtocolHandler' : 'unregisterProtocolHandler'
+    console.log(method)
+    window.navigator[method](
+      'web+mnky',
+      url,
+      'Demo Monkey Handler')
+  }
+
   toggleOptionalFeature(feature) {
-    this.props.actions.toggleOptionalFeature(feature)
+    this.props.actions.toggleOptionalFeature(feature).then(() => {
+      if (feature === 'registerProtocolHandler') {
+        this.registerProtocolHandler()
+      }
+    })
   }
 
   setBaseTemplate(baseTemplate) {
@@ -385,7 +399,7 @@ const OptionsPageApp = connect(
         dispatch({ type: 'SET_BASE_TEMPLATE', baseTemplate })
       },
       toggleOptionalFeature: (optionalFeature) => {
-        dispatch({ type: 'TOGGLE_OPTIONAL_FEATURE', optionalFeature })
+        return dispatch({ type: 'TOGGLE_OPTIONAL_FEATURE', optionalFeature })
       }
     }
   }))(App)

@@ -196,6 +196,9 @@ class Settings extends React.Component {
           <div className="toggle-group" id="toggle-noWarningForMissingPermissions" style={{ display: this.props.hasExtendedPermissions ? 'none' : 'flex' }}>
             <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('noWarningForMissingPermissions')} value={this.props.settings.optionalFeatures.noWarningForMissingPermissions}/><label><b>No warning for missing permissions.</b> To work best, DemoMonkey requires permissions to interact with all sites, and will warn you if you don&apos;t provide those permissions. Turn this feature on to remove this warning.</label>
           </div>
+          <div className="toggle-group" id="toggle-registerProtocolHandler">
+            <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('registerProtocolHandler')} value={this.props.settings.optionalFeatures.registerProtocolHandler}/><label><b>Register Protocol Handler.</b> Turn this feature on to register web+mnky to be handled by demomonkey.</label>
+          </div>
           <div className="toggle-group" id="toggle-beta_configSync" style={{ display: window.location.href.includes('?beta') ? 'flex' : 'none' }}>
             <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('beta_configSync')} value={this.props.settings.optionalFeatures.beta_configSync}/><label><b>Config Sync Beta.</b> Turn on the option for config sync beta. </label>
           </div>

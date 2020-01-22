@@ -176,7 +176,8 @@ import { logger, connectLogger } from './helpers/logger'
     hookIntoAjax: false,
     syncDarkMode: true,
     preferDarkMode: false,
-    noWarningForMissingPermissions: false
+    noWarningForMissingPermissions: false,
+    registerProtocolHandler: false
   }
 
   const persistentStates = {

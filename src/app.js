@@ -7,44 +7,94 @@ import OptionsPageApp from './components/options/OptionsPageApp'
 import PopupPageApp from './components/popup/PopupPageApp'
 import Manifest from './models/Manifest'
 import { logger, connectLogger } from './helpers/logger'
+import axios from 'axios'
 
 function renderOptionsPageApp(root, store) {
-  if (window.location.hash.substring(1) !== '') {
-    logger('debug', 'Updating current view', window.location.hash.substring(1)).write()
-    store.dispatch({
-      type: 'SET_CURRENT_VIEW',
-      view: window.location.hash.substring(1)
+  const s = new URLSearchParams(window.location.search).get('s')
+
+  if (typeof s === 'string') {
+    const id = s.split('://')[1]
+    console.log(id)
+    let url = false
+    if (id.length === 32) {
+      url = `https://gist.github.com/${id}/`
+    }
+    if (url === false) {
+      window.location.href = window.location.href.split('?')[0]
+    }
+    axios({
+      url
+    }).then(response => {
+      if (response.status === 200) {
+        const url = response.request.responseURL + '/raw'
+        axios({
+          url
+        }).then(response => {
+          const configurations = store.getState().configurations
+          let name = `Shared/${id}`
+          if (response.data.includes('@author')) {
+            const match = response.data.match(/@author(?:\[\])?\s*=\s*([^<\r\n]*)/)
+            if (match[1]) {
+              name = `Shared/from ${match[1]}`
+            }
+          }
+          const configuration = {
+            name,
+            id: 'new',
+            enabled: false,
+            content: response.data
+          }
+          store.dispatch({ type: 'ADD_CONFIGURATION', configuration }).then(() => {
+            const latest = configurations[configurations.length - 1]
+            store.dispatch({ type: 'SET_CURRENT_VIEW', view: `configuration/${latest.id}` })
+            window.location.href = window.location.href.split('?')[0]
+          })
+        }).catch(error => {
+          logger('error', error).write()
+          window.location.href = window.location.href.split('?')[0]
+        })
+      }
+    }).catch(error => {
+      logger('error', error).write()
+      window.location.href = window.location.href.split('?')[0]
+    })
+  } else {
+    if (window.location.hash.substring(1) !== '') {
+      logger('debug', 'Updating current view', window.location.hash.substring(1)).write()
+      store.dispatch({
+        type: 'SET_CURRENT_VIEW',
+        view: window.location.hash.substring(1)
+      })
+    }
+    chrome.permissions.getAll(function (permissions) {
+      ReactDOM.render(
+        <Provider store={store}><OptionsPageApp permissions={permissions}/></Provider>, root)
+    })
+
+    chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+      if (request.receiver && request.receiver === 'dashboard' && typeof request.logMessage !== 'undefined') {
+        console.log('Message received', request.logMessage)
+        var msg = typeof request.logMessage === 'string' ? request.logMessage : JSON.stringify(request.logMessage)
+        var mbox = document.getElementById('message-box')
+        mbox.className = 'fade-to-visible'
+        mbox.innerHTML = '(' + new Date().toLocaleTimeString() + ') ' + msg
+        var timeoutid = setTimeout(function () {
+          console.log(timeoutid, mbox.dataset.timeoutid)
+          if (parseInt(mbox.dataset.timeoutid) === timeoutid) {
+            mbox.className = 'fade-to-hidden'
+          }
+        }, 3000)
+        mbox.dataset.timeoutid = timeoutid
+      }
+    })
+
+    window.addEventListener('hashchange', function () {
+      store.dispatch({
+        type: 'SET_CURRENT_VIEW',
+        view: window.location.hash.substring(1)
+      })
     })
   }
-
-  chrome.permissions.getAll(function (permissions) {
-    ReactDOM.render(
-      <Provider store={store}><OptionsPageApp permissions={permissions}/></Provider>, root)
-  })
-
-  chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-    if (request.receiver && request.receiver === 'dashboard' && typeof request.logMessage !== 'undefined') {
-      console.log('Message received', request.logMessage)
-      var msg = typeof request.logMessage === 'string' ? request.logMessage : JSON.stringify(request.logMessage)
-      var mbox = document.getElementById('message-box')
-      mbox.className = 'fade-to-visible'
-      mbox.innerHTML = '(' + new Date().toLocaleTimeString() + ') ' + msg
-      var timeoutid = setTimeout(function () {
-        console.log(timeoutid, mbox.dataset.timeoutid)
-        if (parseInt(mbox.dataset.timeoutid) === timeoutid) {
-          mbox.className = 'fade-to-hidden'
-        }
-      }, 3000)
-      mbox.dataset.timeoutid = timeoutid
-    }
-  })
-
-  window.addEventListener('hashchange', function () {
-    store.dispatch({
-      type: 'SET_CURRENT_VIEW',
-      view: window.location.hash.substring(1)
-    })
-  })
 }
 
 function renderPopupPageApp(root, store) {
@@ -72,6 +122,7 @@ const store = new Store({
 })
 
 store.ready().then(() => {
+
   document.getElementById('backup-message').remove()
   const root = document.getElementById('app')
   // Synchronize current view on subscription update
