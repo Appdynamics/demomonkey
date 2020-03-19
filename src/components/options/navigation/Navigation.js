@@ -28,7 +28,9 @@ class Navigation extends React.Component {
     active: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]).isRequired,
     onUpload: PropTypes.func.isRequired,
     onDelete: PropTypes.func.isRequired,
-    onDownloadAll: PropTypes.func.isRequired
+    onDownloadAll: PropTypes.func.isRequired,
+    connectionState: PropTypes.string.isRequired,
+    remoteLocation: PropTypes.string.isRequired
   }
 
   // This implementation is not very performant
@@ -86,8 +88,14 @@ class Navigation extends React.Component {
     return { data: tree, cursor: cursor }
   }
 
-  handleClick(id) {
-    this.props.onNavigate('configuration/' + id)
+  handleClick(id, isDirectory = false) {
+    console.log(id)
+    if (isDirectory) {
+      id = id.split('/').reverse().join('/')
+      this.props.onNavigate('accessControl/' + id)
+    } else {
+      this.props.onNavigate('configuration/' + id)
+    }
   }
 
   handleSearchUpdate(event) {
@@ -129,13 +137,19 @@ class Navigation extends React.Component {
 
   render() {
     decorators.Header = (props) => {
-      return <ItemHeader style={props.style} node={props.node} onDelete={(event, node) => this.onDelete(event, node)} />
+      return <ItemHeader
+        style={props.style}
+        node={props.node}
+        editableDirectories={this.props.connectionState === 'Connected'}
+        onEdit={(id, isDirectory) => this.handleClick(id, isDirectory)}
+        onDelete={(event, node) => this.onDelete(event, node)}
+      />
     }
 
     return (
       <div>
         <div className="navigation-header">
-          <NavigationHeader onUpload={this.props.onUpload} onDownloadAll={this.props.onDownloadAll} onNavigate={this.props.onNavigate} />
+          <NavigationHeader remoteLocation={this.props.remoteLocation} connectionState={this.props.connectionState} onUpload={this.props.onUpload} onDownloadAll={this.props.onDownloadAll} onNavigate={this.props.onNavigate} />
           <input type="text" onChange={(event) => this.handleSearchUpdate(event)} value={this.state.search} placeholder="Search..." className="searchBox" />
         </div>
         <div className="tree items">

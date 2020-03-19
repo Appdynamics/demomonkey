@@ -1,4 +1,9 @@
 const uuidV4 = require('uuid/v4')
+const omit = require('lodash.omit')
+
+function blacklist(object) {
+  return omit(object, ['__v', 'owner', '_id'])
+}
 
 const configuration = (state, action) => {
   if (state && action.type === 'DELETE_CONFIGURATION_BY_PREFIX' && state.name.startsWith(action.prefix)) {
@@ -26,11 +31,11 @@ const configuration = (state, action) => {
       if (action.configuration.id === 'new') {
         delete action.configuration.id
       }
-      return Object.assign({ id: uuidV4(), created_at: Date.now(), updated_at: Date.now() }, action.configuration, { enabled: false })
+      return Object.assign({ id: uuidV4(), created_at: Date.now(), updated_at: Date.now() }, blacklist(action.configuration), { enabled: false })
     case 'SAVE_CONFIGURATION':
       // the last array is a hot fix for issue #16
       // saving the configuration should currently not include overwriting the enabled state
-      return Object.assign({}, state, action.configuration, { enabled: state.enabled, updated_at: action.sync === true ? action.configuration.updated_at : Date.now() })
+      return Object.assign({}, state, blacklist(action.configuration), { enabled: state.enabled, updated_at: action.sync === true ? action.configuration.updated_at : Date.now() })
     case 'DELETE_CONFIGURATION':
       return {
         ...state,

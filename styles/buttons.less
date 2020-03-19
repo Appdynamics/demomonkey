@@ -5,7 +5,6 @@ button {
   border: 1px solid #cccccc;
   margin: 8px 1px;
 
-
   &:focus,
   &:hover {
     box-shadow: 0px 0px 10px lighten(@base, 20%);
@@ -21,10 +20,22 @@ button {
   }
 }
 
-
-.sync-button {
+.sync-button,
+.share-button {
   background-color: lighten(@success, 5%);
   color: #ffffff;
+
+  &.left {
+    margin-right:0;
+    border-right:0;
+    height: 36px;
+  }
+
+  &.right {
+    margin-left:0;
+    border-left: 1px solid white;
+    height: 36px;
+  }
 
   &:hover {
     background-color: lighten(@success, 10%);
@@ -72,4 +83,31 @@ button.disabled {
     background-color: lighten(#333333, 5%);
     box-shadow: none;
   }
+}
+
+
+.drop-down-menu {
+  list-style-type: none;
+      position: absolute;
+     margin: 0;
+     padding: 0;
+     top:43px;
+     right:0px;
+     background-color: white;
+     font-weight:bold;
+
+     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+     z-index: 9999999;
+
+     & button {
+       margin-top: 0;
+       margin-bottom: 0;
+       padding: 8px;
+     }
+
+     & li {
+       margin:0;
+       padding:0;
+       background: green;
+     }
 }

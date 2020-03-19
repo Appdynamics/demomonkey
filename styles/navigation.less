@@ -34,34 +34,40 @@
 
     a {
       text-decoration: none;
-
     }
 
     &:hover {
       text-decoration: underline;
     }
 
-    .configuration-hover-delete {
+    .configuration-options {
       position: absolute;
       right: 12px;
       top: 4px;
 
-      &:focus button,
-      &:hover button {
-          box-shadow: none;
-          visibility: visible;
-      }
-
       & button {
         background: transparent;
         border: 0px;
-        color: red;
         cursor: pointer;
         font-size: 140%;
         font-weight: bold;
         margin: 0px;
+        margin-right: 4px;
         padding: 0px;
-        visibility: hidden;
+
+        &:focus,
+        &:hover {
+            box-shadow: none !important;
+        }
+
+        &.delete-configuration {
+          color: red;
+        }
+
+        &.edit-configuration {
+          color: blue;
+        }
+
       }
     }
 
@@ -86,10 +92,35 @@
     max-height: 90px;
   }
 
+  .context-menu {
+    position: fixed;
+    border: 1px solid var(--mode-text-color);
+    color: var(--mode-text-color);
+    margin: 4px;
+    padding: 0px;
+    background: var(--mode-color);
+    z-index: 999999;
+    min-width: 100px;
+
+    li {
+      list-style-type: none;
+      padding: 4px;
+      border-bottom: 1px solid var(--mode-text-color);
+
+      &:last-of-type {
+        border: 0px;
+      }
+
+      &:hover {
+        text-decoration: underline;
+        background: var(--highlight-background-color)
+      }
+    }
+  }
+
   .actions {
 
     background-color: var(--base-color);
-
 
     a {
       color: #f0f0f0;

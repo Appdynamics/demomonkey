@@ -6,6 +6,7 @@ import Popup from 'react-popup'
 import Welcome from './Welcome'
 import Settings from './Settings'
 import Logs from './Logs'
+import AccessControl from './AccessControl'
 import Editor from './editor/Editor'
 import Configuration from '../../models/Configuration'
 import PropTypes from 'prop-types'
@@ -132,6 +133,12 @@ class App extends React.Component {
     })
   }
 
+  shareConfiguration(configuration) {
+    // if shared is a string we have an id, so we can check for that.
+    configuration.shared = !(typeof configuration.shared === 'string')
+    this.saveConfiguration(configuration)
+  }
+
   copyConfiguration(configuration) {
     var path = configuration.name.split('/')
     var name = 'Copy of ' + path.pop()
@@ -199,7 +206,7 @@ class App extends React.Component {
   }
 
   getConfiguration(id) {
-    if (id === 'create') {
+    if (id === 'create' || id === 'new') {
       return {
         name: '',
         content: this.props.settings.baseTemplate,
@@ -264,7 +271,10 @@ class App extends React.Component {
             onDownloadAll={(event) => this.downloadAll(event)}
             onRequestExtendedPermissions={(revoke) => this.requestExtendedPermissions(revoke)}
             hasExtendedPermissions={this.hasExtendedPermissions()}
-            isDarkMode={this._getDarkMode()}/>
+            isDarkMode={this._getDarkMode()}
+            activeTab={segments[1]}
+            onNavigate={(target) => this.navigateTo('settings/' + target)}
+          />
         case 'configuration':
           var configuration = this.getConfiguration(segments[1])
           // If an unknown ID is selected, we throw an error.
@@ -278,6 +288,7 @@ class App extends React.Component {
             keyboardHandler={this.props.settings.optionalFeatures.keyboardHandlerVim ? 'vim' : null}
             onDownload={(configuration, _) => this.downloadConfiguration(configuration)}
             onSave={(_, configuration) => this.saveConfiguration(configuration)}
+            onShare={(_, configuration) => this.shareConfiguration(configuration)}
             onCopy={(configuration, _) => this.copyConfiguration(configuration)}
             onDelete={(configuration, _) => this.deleteConfiguration(configuration)}
             toggleConfiguration={() => this.props.actions.toggleConfiguration(configuration.id)}
@@ -287,7 +298,11 @@ class App extends React.Component {
               webRequestHook: this.props.settings.optionalFeatures.webRequestHook
             }}
             isDarkMode={this._getDarkMode()}
+            activeTab={segments[2]}
+            onNavigate={(target) => this.navigateTo('configuration/' + configuration.id + '/' + target)}
           />
+        case 'accessControl':
+          return <AccessControl for={segments[1]} />
         case 'logs':
           return <Logs entries={this.props.log} />
         default:
@@ -351,6 +366,8 @@ class App extends React.Component {
           onDelete={(configuration) => this.deleteConfiguration(configuration)}
           items={configurations}
           onDownloadAll={(event) => this.downloadAll(event)}
+          connectionState={this.props.connectionState}
+          remoteLocation={this.props.settings.demoMonkeyServer}
           active={activeItem} />
       </div>
       <div className="current-view">
@@ -363,7 +380,13 @@ class App extends React.Component {
 const OptionsPageApp = connect(
   // map state to props
   state => {
-    return { configurations: state.configurations, currentView: state.currentView, connectionState: state.connectionState, settings: state.settings, log: state.log }
+    return {
+      configurations: state.configurations,
+      currentView: state.currentView,
+      connectionState: state.connectionState,
+      settings: state.settings,
+      log: state.log
+    }
   },
   // map dispatch to props
   dispatch => ({

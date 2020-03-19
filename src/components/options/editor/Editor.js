@@ -1,6 +1,7 @@
 import React from 'react'
 import Tabs from '../../shared/Tabs'
 import Pane from '../../shared/Pane'
+import AccessControl from '../AccessControl'
 import Variable from './Variable'
 import CodeEditor from './CodeEditor'
 import Configuration from '../../../models/Configuration'
@@ -16,6 +17,7 @@ class Editor extends React.Component {
     currentConfiguration: PropTypes.object.isRequired,
     getRepository: PropTypes.func.isRequired,
     onSave: PropTypes.func.isRequired,
+    onShare: PropTypes.func.isRequired,
     onCopy: PropTypes.func.isRequired,
     onDownload: PropTypes.func.isRequired,
     onDelete: PropTypes.func.isRequired,
@@ -25,7 +27,9 @@ class Editor extends React.Component {
     toggleConfiguration: PropTypes.func.isRequired,
     keyboardHandler: PropTypes.string,
     isDarkMode: PropTypes.bool.isRequired,
-    featureFlags: PropTypes.objectOf(PropTypes.bool).isRequired
+    featureFlags: PropTypes.objectOf(PropTypes.bool).isRequired,
+    activeTab: PropTypes.string,
+    onNavigate: PropTypes.func.isRequired
   }
 
   constructor(props) {
@@ -180,16 +184,27 @@ class Editor extends React.Component {
   }
 
   render() {
-    var current = this.state.currentConfiguration
-    var hiddenIfNew = current.id === 'new' ? { display: 'none' } : {}
-    var tmpConfig = (new Configuration(current.content, this.props.getRepository(), false, current.values))
-    var variables = tmpConfig.getVariables()
+    console.log(this.state.currentConfiguration)
+    return this.renderConfiguration()
+  }
 
-    var showTemplateWarning = tmpConfig.isTemplate() || tmpConfig.isRestricted() ? 'no-warning-box' : 'warning-box'
+  renderConfiguration() {
+    const current = this.state.currentConfiguration
+    const hiddenIfNew = current.id === 'new' ? { display: 'none' } : {}
+    const tmpConfig = (new Configuration(current.content, this.props.getRepository(), false, current.values))
+    const variables = tmpConfig.getVariables()
 
-    var hotkeyOptions = Array.from(Array(9).keys()).map(x => ({ value: x + 1, label: '#' + (x + 1) }))
+    const showTemplateWarning = tmpConfig.isTemplate() || tmpConfig.isRestricted() ? 'no-warning-box' : 'warning-box'
 
-    var autosave = current.id === 'new' ? false : this.props.autoSave
+    const hotkeyOptions = Array.from(Array(9).keys()).map(x => ({ value: x + 1, label: '#' + (x + 1) }))
+
+    const autosave = current.id === 'new' ? false : this.props.autoSave
+
+    const shared = (typeof current.shared === 'string')
+
+    const shareLabel = shared ? 'Unshare' : 'Share'
+
+    const sharedUrl = `web+mnky://s/${current.shared}`
 
     return (
       <div className="editor">
@@ -199,6 +214,18 @@ class Editor extends React.Component {
           <input type="text" className="text-input" id="configuration-title" placeholder="Please provide a name. You can use slahes (/) in it to create folders." value={current.name} onChange={(event) => this.handleUpdate('name', event.target.value, event)}/>
           <Select placeholder="Shortcut Groups..." value={current.hotkeys} multi onChange={(options) => this.handleUpdate('hotkeys', options.map(o => o.value), null)} options={hotkeyOptions}/>
           <button className={'save-button ' + (this.state.unsavedChanges ? '' : 'disabled')} onClick={(event) => this.handleClick(event, 'save')}>Save</button>
+          <button className="share-button" style={hiddenIfNew} onClick={(event) => this.handleClick(event, 'share')}>{shareLabel}</button>
+          {
+            /*
+            <div style={{ position: 'relative', margin: 0, padding: 0, display: 'inline-block' }}>
+            <button className="share-button left" style={hiddenIfNew} onClick={(event) => this.handleClick(event, 'share')}>{shareLabel}</button>
+            <DropDownMenu buttonClassName="share-button right" menuClassName="drop-down-menu" label="▼">
+              <button className="share-button">Share with Team A</button>
+              <button className="share-button">Share with Mike</button>
+            </DropDownMenu>
+          </div>
+          */
+          }
           <button className="copy-button" style={hiddenIfNew} onClick={(event) => this.handleClick(event, 'copy')}>Duplicate</button>
           <button className="download-button" style={hiddenIfNew} onClick={(event) => this.handleClick(event, 'download')}>Download</button>
           <button className="delete-button" style={hiddenIfNew} onClick={(event) => this.handleClick(event, 'delete')}>Delete</button>
@@ -207,8 +234,8 @@ class Editor extends React.Component {
           <b>Warning:</b> Without <b>@include</b> or <b>@exclude</b> defined, your configuration can not be enabled.
          You can only import it as template into another configuration. If this is intended, add <b>@template</b> to remove this warning.
         </div>
-        <Tabs selected={0}>
-          <Pane label="Configuration" id="current-configuration-editor">
+        <Tabs activeTab={this.props.activeTab} onNavigate={this.props.onNavigate}>
+          <Pane label="Configuration" name="configuration" id="current-configuration-editor">
             <CodeEditor value={current.content} getRepository={this.props.getRepository}
               onChange={(content) => this.handleUpdate('content', content)}
               readOnly={current.readOnly === true}
@@ -220,7 +247,7 @@ class Editor extends React.Component {
               isDarkMode={this.props.isDarkMode}
             />
           </Pane>
-          <Pane label="Variables">
+          <Pane label="Variables" name="variables">
             <div>
               Introduce variables in your configuration with a line <code>$variableName = variableValue//description</code>. You can quickly update the values of variables here.
               Note, that you also can see the variables of imported configurations and set their value accordingly. If you define a variable with the same name here and in the important,
@@ -233,10 +260,17 @@ class Editor extends React.Component {
               })}
             </div>
           </Pane>
+          <Pane label="Access Control" name="acl">
+            <AccessControl for={current} />
+          </Pane>
           <Pane link={(e) => {
             e.preventDefault()
             window.open('https://github.com/Appdynamics/demomonkey/blob/master/SHORTCUTS.md')
           }} label="Shortcuts"/>
+          <Pane style={{ float: 'right' }} visible={ shared } link={(e) => {
+            e.preventDefault()
+            navigator.clipboard.writeText(sharedUrl)
+          }} label={ `Copy share link (${sharedUrl}) to clipboard` }/>
         </Tabs>
       </div>
     )

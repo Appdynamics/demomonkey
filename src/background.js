@@ -25,16 +25,24 @@ import { logger, connectLogger } from './helpers/logger'
   }
 
   var liveModeInterval = -1
+  var liveModeStartTime = -1
 
   function doLiveMode(liveMode) {
     if (liveMode && liveModeInterval < 0) {
-      var time = 0
-      badge.updateTimer(time)
+      logger('info', 'Live Mode started').write()
+      liveModeStartTime = Date.now()
+      badge.updateTimer('0')
       liveModeInterval = setInterval(() => {
-        time++
-        badge.updateTimer(time)
-      }, 60000)
-    } else if (!liveMode) {
+        const minutes = Math.floor((Date.now() - liveModeStartTime) / 60000)
+        console.log(minutes)
+        badge.updateTimer(minutes)
+      }, 6000)
+    } else if (!liveMode && liveModeInterval > 0) {
+      const time = (Date.now() - liveModeStartTime)
+      const hours = ('' + Math.floor(time / (3600000))).padStart(2, '0')
+      const minutes = ('' + Math.floor((time % 3600000) / 60000)).padStart(2, '0')
+      const seconds = ('' + Math.floor((time % 60000) / 1000)).padStart(2, '0')
+      logger('info', `Live mode ended after ${hours}:${minutes}:${seconds}`).write()
       clearInterval(liveModeInterval)
       badge.clearTimer()
       liveModeInterval = -1
@@ -139,6 +147,12 @@ import { logger, connectLogger } from './helpers/logger'
     badge.removeTab(tabId)
   })
 
+  console.log('???')
+  scope.chrome.tabs.onActivated.addListener(function (tab) {
+    console.log(tab, 'Active')
+    scope.chrome.tabs.sendMessage(tab.tabId, { active: tab.tabId })
+  })
+
   scope.chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     if (request.receiver && request.receiver === 'background') {
       if (typeof request.count === 'number' && typeof sender.tab === 'object' && typeof sender.tab.id === 'number') {
@@ -167,8 +181,6 @@ import { logger, connectLogger } from './helpers/logger'
     webRequestHook: false,
     remoteSync: false,
     debugBox: false,
-    beta_configSync: false,
-    configSync: false,
     withEvalCommand: false,
     // This is only a soft toggle, since the user can turn it on and off directly in the popup
     onlyShowAvailableConfigurations: true,

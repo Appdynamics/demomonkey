@@ -22,6 +22,7 @@ import BlockUrl from './BlockUrl'
 import DelayUrl from './DelayUrl'
 import ReplaceUrl from './ReplaceUrl'
 import Eval from './Eval'
+import Stage from './Stage'
 import UndoElement from './UndoElement'
 import extractParameters from '../helpers/extractParameters'
 
@@ -162,6 +163,14 @@ export default [
     signature: '(${1}) = ${2}',
     command: function (value, parameters, location, includeRules, excludeRules, cmdBuilder) {
       return new Eval(parameters.shift(), parameters, value)
+    }
+  },
+  {
+    name: 'stage',
+    aliases: [],
+    signature: '(${1}) = ${2}',
+    command: function (value, parameters, location, includeRules, excludeRules, cmdBuilder) {
+      return new Stage(parameters, value)
     }
   },
   {

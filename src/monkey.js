@@ -16,6 +16,10 @@ try {
       scope.chrome = chrome
     }
 
+    scope.chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+      scope['demomonkey-active-tab'] = true
+    })
+
     const store = new Store({
       portName: 'DEMO_MONKEY_STORE' // communication port name
     })

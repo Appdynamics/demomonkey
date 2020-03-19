@@ -32,6 +32,21 @@ class ConfigurationSync {
     }
   }
 
+  backupNow() {
+    this.logger('Trying to backup...')
+    this.storage.local.get('configurations', (data) => {
+      axios({
+        url: `${this.remoteUrl}/backup`,
+        method: 'POST',
+        data: data.configurations
+      }).then(response => {
+        this.logger(`Remote backup saved at ${this.remoteUrl}`)
+      }).catch(error => {
+        this.logger(`Backup failed: ${error.toString()}`)
+      })
+    })
+  }
+
   backup() {
     axios({
       url: `${this.remoteUrl}/latestBackup`
@@ -40,18 +55,7 @@ class ConfigurationSync {
         console.log('No backup necessary.')
         return
       }
-      this.logger('Trying to backup...')
-      this.storage.local.get('configurations', (data) => {
-        axios({
-          url: `${this.remoteUrl}/backup`,
-          method: 'POST',
-          data: data.configurations
-        }).then(response => {
-          this.logger(`Remote backup saved at ${this.remoteUrl}`)
-        }).catch(error => {
-          this.logger(`Backup failed: ${error.toString()}`)
-        })
-      })
+      this.backupNow()
     }).catch(error => {
       this.logger(`Backup failed: ${error.toString()}`)
     })
