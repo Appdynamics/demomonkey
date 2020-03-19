@@ -69,9 +69,9 @@ gulp.task('watch-background', compile('background', true))
 gulp.task('watch', function () {
   gulp.watch(['styles/**/*.less'], gulp.series('styles'))
   gulp.watch(['src/**/*.js', 'src/**/*.snippets'], gulp.parallel('watch-app', 'watch-monkey', 'watch-background'))
-  compile('app', true)
-  compile('monkey', true)
-  compile('background', true)
+  //compile('app', true)
+  //compile('monkey', true)
+  //compile('background', true)
   gulp.watch([
     'icons/**/*.png', 'manifest.json', 'pages/**/*.html', 'README.md', 'USAGE.md', 'LICENSE', 'src/test.js', 'src/backup.js',
     'scripts/**/*.js'
@@ -86,7 +86,7 @@ gulp.task('mrproper', series('clean', function () {
   return gulp.src('node_modules').pipe(clean())
 }))
 
-gulp.task('copy', function () {
+gulp.task('copy', async function () {
   return gulp.src(['README.md', 'USAGE.md', 'LICENSE', 'manifest.json', 'pages/options.html', 'pages/devtools.html', 'pages/popup.html',
     'pages/background.html', 'pages/test.html', 'src/test.js', 'pages/backup.html', 'src/backup.js',
     'scripts/**/*.js'
@@ -107,13 +107,13 @@ gulp.task('icons', function () {
   })
 })
 
-gulp.task('styles', function () {
+gulp.task('styles', async function () {
   return gulp.src('./styles/main.less').pipe(less({
     paths: [path.join(__dirname, 'less', 'includes')]
   })).pipe(gulp.dest('./build/css'))
 })
 
-gulp.task('git-get-commit', function (cb) {
+gulp.task('git-get-commit', async function (cb) {
   exec('echo $(git rev-parse HEAD) \\#$(git status --porcelain | wc -l)', function (err, stdout, stderr) {
     if (err) {
       cb(err)
@@ -170,4 +170,5 @@ gulp.task('dev:clean', series('dev:pack', function () {
 
 gulp.task('pack-dev', series('dev:clean'))
 
-gulp.task('default', gulp.series(gulp.parallel(tasks), 'watch'))
+//gulp.task('default',  gulp.series(gulp.parallel(tasks), 'watch'))
+gulp.task('default',  gulp.series(gulp.parallel(tasks), 'copy'))
