@@ -26,7 +26,32 @@ class Settings extends React.Component {
     hasExtendedPermissions: PropTypes.bool.isRequired,
     onRequestExtendedPermissions: PropTypes.func.isRequired,
     activeTab: PropTypes.string,
-    onNavigate: PropTypes.func.isRequired
+    onNavigate: PropTypes.func.isRequired,
+    onArchive: PropTypes.func.isRequired
+  }
+
+  constructor(props) {
+    super(props)
+    this.state = {
+      monkeyInterval: this.props.settings.monkeyInterval,
+      archiveValue: 30
+    }
+  }
+
+  updateMonkeyInterval(e) {
+    this.setState({
+      monkeyInterval: e.target.value
+    })
+  }
+
+  updateArchiveValue(e) {
+    this.setState({
+      archiveValue: e.target.value
+    })
+  }
+
+  saveMonkeyInterval() {
+    this.props.onSetMonkeyInterval(this.state.monkeyInterval)
   }
 
   render() {
@@ -117,13 +142,20 @@ class Settings extends React.Component {
             </Pane>
             <Pane label="More" name="more">
               <h2>{'Monkey\'s Behavior'}</h2>
-              <b>Update interval:</b> <input type="text" value={this.props.settings.monkeyInterval} onChange={this.props.onSetMonkeyInterval} />
+              <label>Change this value if you experience performance issues with DemoMonkey. A higher value means less frequent updates. Default is 100.</label>
+              <b>Update interval: </b>
+              <input type="number" min="50" max="1000" value={this.state.monkeyInterval} onChange={(e) => this.updateMonkeyInterval(e)} />
+              <button className="save-button" onClick={(e) => this.saveMonkeyInterval(e)}>save</button>
               <h2>Permissions</h2>
               For DemoMonkey to work optimal you have to grant permissions to access all websites.
               <div className="toggle-group" id="toggle-beta_configSync">
                 <ToggleButton onToggle={() => this.props.onRequestExtendedPermissions(this.props.hasExtendedPermissions)} value={this.props.hasExtendedPermissions}/><label><b>Allow access on all sites.</b> Allow DemoMonkey to read and change data on all sites you visit.</label>
               </div>
               You can not revoke permissions from here. Go to the extensions page, choose Demo Monkey, click on <i>Details</i> and there set <i>Site Access</i> to <i>On click</i>
+              <h2>Archive</h2>
+              <label>You can archive your old configurations by moving them into the <i>Archive</i> folder. Automate this process by setting a age in days and clicking the <i>Archive</i> button.</label>
+              <input type="number" min="1" value={this.state.archiveValue} onChange={(e) => this.updateArchiveValue(e)} />
+              <button className="delete-button" onClick={() => this.props.onArchive(this.state.archiveValue)} >Archive</button>
               <h2>Backup</h2>
               You can always open the <a href="backup.html">backup page</a> to download your files or manipulate your settings. Please use with caution!
               <button className="save-button" onClick={(event) => this.props.onDownloadAll(event)}>Download all configurations</button>

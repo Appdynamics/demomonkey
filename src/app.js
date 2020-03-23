@@ -9,17 +9,24 @@ import Manifest from './models/Manifest'
 import ProtocolHandler from './models/ProtocolHandler'
 import { logger, connectLogger } from './helpers/logger'
 
-function renderOptionsPageApp(root, store) {
-  if (window.location.hash.substring(1) !== '') {
-    logger('debug', 'Updating current view', window.location.hash.substring(1)).write()
-    store.dispatch({
-      type: 'SET_CURRENT_VIEW',
-      view: window.location.hash.substring(1)
-    })
+function updateCurrentView(v) {
+  if (window.location.hash !== '#' + v) {
+    var cv = typeof v === 'undefined' ? '' : v
+    window.history.pushState(null, null, '#' + cv)
+    window.dispatchEvent(new Event('viewchange'))
   }
+}
+
+function renderOptionsPageApp(root, store) {
   chrome.permissions.getAll(function (permissions) {
     ReactDOM.render(
-      <Provider store={store}><OptionsPageApp permissions={permissions}/></Provider>, root)
+      <Provider store={store}>
+        <OptionsPageApp
+          initialView={window.location.hash.substring(1)}
+          onCurrentViewChange={(v) => updateCurrentView(v)}
+          permissions={permissions}
+        />
+      </Provider>, root)
   })
 
   chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
@@ -38,13 +45,6 @@ function renderOptionsPageApp(root, store) {
       mbox.dataset.timeoutid = timeoutid
     }
   })
-
-  window.addEventListener('hashchange', function () {
-    store.dispatch({
-      type: 'SET_CURRENT_VIEW',
-      view: window.location.hash.substring(1)
-    })
-  })
 }
 
 function renderPopupPageApp(root, store) {
@@ -59,14 +59,6 @@ function renderPopupPageApp(root, store) {
   })
 }
 
-function updateCurrentPage() {
-  if (window.location.hash !== '#' + store.getState().currentView) {
-    logger('debug', 'Setting hash by subscribe: #' + store.getState().currentView).write()
-    var cv = typeof store.getState().currentView === 'undefined' ? '' : store.getState().currentView
-    window.history.pushState(null, null, '#' + cv)
-  }
-}
-
 const store = new Store({
   portName: 'DEMO_MONKEY_STORE' // communication port name
 })
@@ -74,8 +66,6 @@ const store = new Store({
 store.ready().then(() => {
   document.getElementById('backup-message').remove()
   const root = document.getElementById('app')
-  // Synchronize current view on subscription update
-  store.subscribe(updateCurrentPage)
 
   window.store = store
 
@@ -87,7 +77,7 @@ store.ready().then(() => {
     window['adrum-disable'] = true
   }
 
-  updateCurrentPage()
+  // updateCurrentPage()
 
   const manifest = new Manifest(chrome)
 

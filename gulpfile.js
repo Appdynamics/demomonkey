@@ -170,5 +170,5 @@ gulp.task('dev:clean', series('dev:pack', function () {
 
 gulp.task('pack-dev', series('dev:clean'))
 
-//gulp.task('default',  gulp.series(gulp.parallel(tasks), 'watch'))
-gulp.task('default',  gulp.series(gulp.parallel(tasks), 'copy'))
+gulp.task('default', gulp.series(gulp.parallel(tasks), 'watch'))
+// gulp.task('default',  gulp.series(gulp.parallel(tasks), 'copy'))

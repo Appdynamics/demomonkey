@@ -13,7 +13,7 @@ const manifest = new Manifest(chrome)
 /* The PopupPageApp will be defined below */
 class App extends React.Component {
   static propTypes = {
-    currentUrl: PropTypes.string.isRequired,
+    currentUrl: PropTypes.string,
     actions: PropTypes.objectOf(PropTypes.func).isRequired,
     configurations: PropTypes.arrayOf(PropTypes.object).isRequired,
     settings: PropTypes.object.isRequired
@@ -22,20 +22,27 @@ class App extends React.Component {
   constructor(props) {
     super(props)
     this.vPageView = null
+    this.state = {
+      activeTab: 'apply'
+    }
   }
 
   toggleLiveMode() {
     this.props.actions.toggleLiveMode()
   }
 
+  updateActiveTab(activeTab) {
+    this.setState({ activeTab })
+  }
+
   render() {
     var configurations = this.props.configurations.filter((config) => typeof config.deleted_at === 'undefined' && typeof config._deleted === 'undefined')
     return <Page preferDarkMode={this.props.settings.optionalFeatures.preferDarkMode} syncDarkMode={this.props.settings.optionalFeatures.syncDarkMode}>
-      <Tabs>
-        <Pane label="Apply">
+      <Tabs activeTab={this.state.activeTab} onNavigate={(e) => this.updateActiveTab(e)}>
+        <Pane label="Apply" name="apply">
           <ConfigurationList currentUrl={this.props.currentUrl} configurations={configurations} settings={this.props.settings} actions={this.props.actions}/>
         </Pane>
-        <Pane label="Help">
+        <Pane label="Help" name="help">
           <div>
             <b>Author:&nbsp;
             </b>

@@ -23,8 +23,9 @@ class App extends React.Component {
   static propTypes = {
     actions: PropTypes.objectOf(PropTypes.func).isRequired,
     configurations: PropTypes.arrayOf(PropTypes.object).isRequired,
-    currentView: PropTypes.string.isRequired,
+    initialView: PropTypes.string.isRequired,
     connectionState: PropTypes.string.isRequired,
+    onCurrentViewChange: PropTypes.func.isRequired,
     settings: PropTypes.object.isRequired,
     log: PropTypes.arrayOf(PropTypes.object).isRequired,
     permissions: PropTypes.object.isRequired
@@ -39,7 +40,8 @@ class App extends React.Component {
     this.state = {
       isDarkMode: window.matchMedia('(prefers-color-scheme: dark)').matches,
       withError: false,
-      permissions: this.props.permissions
+      permissions: this.props.permissions,
+      currentView: this.props.initialView
     }
   }
 
@@ -76,11 +78,15 @@ class App extends React.Component {
       chrome.permissions.onAdded.removeListener(this.permissionsUpdated)
       chrome.permissions.onRemoved.removeListener(this.permissionsUpdated)
     }
+    window.removeListener('onpopstate', this.ops)
     delete this.mql
+    delete this.permissionsUpdated
   }
 
   navigateTo(target) {
-    this.props.actions.setCurrentView(target)
+    this.setState({ currentView: target }, () => {
+      this.props.onCurrentViewChange(target)
+    })
   }
 
   downloadAll() {
@@ -190,6 +196,14 @@ class App extends React.Component {
     })
   }
 
+  archiveConfigurations(value) {
+    this.props.configurations.forEach(configuration => {
+      if ((Date.now() - configuration.created_at) / (1000 * 3600 * 24) > value && !configuration.name.startsWith('zzz_Archive/')) {
+        console.log(configuration.name)
+      }
+    })
+  }
+
   getRepository() {
     return this._repo
   }
@@ -255,7 +269,7 @@ class App extends React.Component {
     }
 
     try {
-      var segments = this.props.currentView.split('/')
+      var segments = this.state.currentView.split('/')
 
       this.updateRepository()
 
@@ -266,7 +280,7 @@ class App extends React.Component {
             connectionState={this.props.connectionState}
             onToggleOptionalFeature={(feature) => this.toggleOptionalFeature(feature)}
             onSetBaseTemplate={(baseTemplate) => this.setBaseTemplate(baseTemplate)}
-            onSetMonkeyInterval={(event) => this.setMonkeyInterval(event.target.value)}
+            onSetMonkeyInterval={(value) => this.setMonkeyInterval(value)}
             onSetDemoMonkeyServer={(value) => this.setDemoMonkeyServer(value)}
             onDownloadAll={(event) => this.downloadAll(event)}
             onRequestExtendedPermissions={(revoke) => this.requestExtendedPermissions(revoke)}
@@ -274,6 +288,7 @@ class App extends React.Component {
             isDarkMode={this._getDarkMode()}
             activeTab={segments[1]}
             onNavigate={(target) => this.navigateTo('settings/' + target)}
+            onArchive={(value) => this.archiveConfigurations(value)}
           />
         case 'configuration':
           var configuration = this.getConfiguration(segments[1])
@@ -347,7 +362,7 @@ class App extends React.Component {
   }
 
   render() {
-    var activeItem = this.props.currentView.indexOf('configuration/') === -1 ? false : this.props.currentView.split('/').pop()
+    var activeItem = this.state.currentView.indexOf('configuration/') === -1 ? false : this.state.currentView.split('/').pop()
 
     var configurations = this.getConfigurations()
 
@@ -382,7 +397,7 @@ const OptionsPageApp = connect(
   state => {
     return {
       configurations: state.configurations,
-      currentView: state.currentView,
+      // currentView: state.currentView,
       connectionState: state.connectionState,
       settings: state.settings,
       log: state.log
@@ -391,9 +406,9 @@ const OptionsPageApp = connect(
   // map dispatch to props
   dispatch => ({
     actions: {
-      setCurrentView: (key) => {
+      /* setCurrentView: (key) => {
         dispatch({ type: 'SET_CURRENT_VIEW', view: key })
-      },
+      }, */
       setMonkeyInterval: (monkeyInterval) => {
         dispatch({ type: 'SET_MONKEY_INTERVAL', monkeyInterval })
       },

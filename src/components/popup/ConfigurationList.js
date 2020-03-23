@@ -8,7 +8,7 @@ import ErrorBox from '../shared/ErrorBox'
 class ConfigurationList extends React.Component {
   static propTypes = {
     settings: PropTypes.object.isRequired,
-    currentUrl: PropTypes.string.isRequired,
+    currentUrl: PropTypes.string,
     configurations: PropTypes.arrayOf(PropTypes.object).isRequired,
     actions: PropTypes.objectOf(PropTypes.func).isRequired
   }

@@ -1,7 +1,7 @@
 import { createStore } from 'redux'
 import { wrapStore } from 'webext-redux'
 import reducers from './reducers'
-import uuidV4 from 'uuid/v4'
+import { v4 as uuidV4 } from 'uuid'
 import Configuration from './models/Configuration'
 import MatchRule from './models/MatchRule'
 import Badge from './models/Badge'
@@ -147,9 +147,7 @@ import { logger, connectLogger } from './helpers/logger'
     badge.removeTab(tabId)
   })
 
-  console.log('???')
   scope.chrome.tabs.onActivated.addListener(function (tab) {
-    console.log(tab, 'Active')
     scope.chrome.tabs.sendMessage(tab.tabId, { active: tab.tabId })
   })
 
@@ -234,6 +232,23 @@ import { logger, connectLogger } from './helpers/logger'
     run(state)
   })
 
+  function updateStorage(store) {
+    const configurations = store.getState().configurations
+
+    const settings = store.getState().settings
+
+    // Sync data back into chrome.storage
+    scope.chrome.storage.local.set({
+      configurations,
+      settings,
+      monkeyID: store.getState().monkeyID
+    })
+
+    syncConfigs(settings.optionalFeatures.configSync, settings.demoMonkeyServer, store)
+
+    hookIntoWebRequests(settings.optionalFeatures.webRequestHook, configurations.filter(c => c.enabled).length > 0)
+  }
+
   function run(state, revisions = {}) {
     console.log('Background Script started')
     var store = createStore(reducers, state)
@@ -250,28 +265,17 @@ import { logger, connectLogger } from './helpers/logger'
 
     store.subscribe(function () {
       const lastAction = store.getState().lastAction
-
-      // updating the current view or appending to the log does not require any updates
-      if (['SET_CURRENT_VIEW', 'APPEND_LOG_ENTRIES'].includes(lastAction.type)) {
-        return
+      const settings = store.getState().settings
+      console.log(lastAction.type)
+      switch (lastAction.type) {
+        case 'APPEND_LOG_ENTRIES':
+          return
+        case 'TOGGLE_LIVE_MODE':
+          doLiveMode(settings.liveMode)
+          break
+        default:
+          updateStorage(store)
       }
-
-      var configurations = store.getState().configurations
-
-      var settings = store.getState().settings
-
-      // Sync data back into chrome.storage
-      scope.chrome.storage.local.set({
-        configurations,
-        settings,
-        monkeyID: store.getState().monkeyID
-      })
-
-      doLiveMode(settings.liveMode)
-
-      syncConfigs(settings.optionalFeatures.configSync, settings.demoMonkeyServer, store)
-
-      hookIntoWebRequests(settings.optionalFeatures.webRequestHook, configurations.filter(c => c.enabled).length > 0)
     })
 
     function toggleHotkeyGroup(group) {
