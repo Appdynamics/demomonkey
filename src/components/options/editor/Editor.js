@@ -10,7 +10,7 @@ import Mousetrap from 'mousetrap'
 import Select from 'react-select'
 import CommandBuilder from '../../../commands/CommandBuilder'
 import ErrorCommand from '../../../commands/ErrorCommand'
-import ToggleButton from 'react-toggle-button'
+import Switch from 'react-switch'
 
 class Editor extends React.Component {
   static propTypes = {
@@ -70,6 +70,10 @@ class Editor extends React.Component {
         this.setState({ unsavedChanges: false })
       }
     })
+  }
+
+  handleHotkeysChange(options) {
+    this.handleUpdate('hotkeys', options === null ? [] : options.map(o => o.value), null)
   }
 
   updateVariable(id, value) {
@@ -198,6 +202,8 @@ class Editor extends React.Component {
 
     const hotkeyOptions = Array.from(Array(9).keys()).map(x => ({ value: x + 1, label: '#' + (x + 1) }))
 
+    const currentHotkeys = current.hotkeys.map(value => ({ value, label: '#' + value }))
+
     const autosave = current.id === 'new' ? false : this.props.autoSave
 
     const shared = (typeof current.shared === 'string')
@@ -206,26 +212,32 @@ class Editor extends React.Component {
 
     const sharedUrl = `web+mnky://s/${current.shared}`
 
+    console.log(hotkeyOptions, current.hotkeys)
+
     return (
       <div className="editor">
         <div className="title">
-          <ToggleButton colors={{ active: { base: '#5c832f', hover: '#90c256' } }} value={this.props.currentConfiguration.enabled} onToggle={() => { this.toggle() }} />
+          <div className="toggle-configuration">
+            <Switch
+              checked={this.props.currentConfiguration.enabled}
+              onChange={() => { this.toggle() }}
+              height={20}
+              width={48}
+            />
+          </div>
           <b>Name</b>
           <input type="text" className="text-input" id="configuration-title" placeholder="Please provide a name. You can use slahes (/) in it to create folders." value={current.name} onChange={(event) => this.handleUpdate('name', event.target.value, event)}/>
-          <Select placeholder="Shortcut Groups..." value={current.hotkeys} multi onChange={(options) => this.handleUpdate('hotkeys', options.map(o => o.value), null)} options={hotkeyOptions}/>
+          <div className="select-hotkeys">
+            <Select
+              placeholder="Shortcut Groups..."
+              value={currentHotkeys}
+              isMulti={true}
+              onChange={(options) => this.handleHotkeysChange(options)}
+              options={hotkeyOptions}
+            />
+          </div>
           <button className={'save-button ' + (this.state.unsavedChanges ? '' : 'disabled')} onClick={(event) => this.handleClick(event, 'save')}>Save</button>
           <button className="share-button" style={hiddenIfNew} onClick={(event) => this.handleClick(event, 'share')}>{shareLabel}</button>
-          {
-            /*
-            <div style={{ position: 'relative', margin: 0, padding: 0, display: 'inline-block' }}>
-            <button className="share-button left" style={hiddenIfNew} onClick={(event) => this.handleClick(event, 'share')}>{shareLabel}</button>
-            <DropDownMenu buttonClassName="share-button right" menuClassName="drop-down-menu" label="▼">
-              <button className="share-button">Share with Team A</button>
-              <button className="share-button">Share with Mike</button>
-            </DropDownMenu>
-          </div>
-          */
-          }
           <button className="copy-button" style={hiddenIfNew} onClick={(event) => this.handleClick(event, 'copy')}>Duplicate</button>
           <button className="download-button" style={hiddenIfNew} onClick={(event) => this.handleClick(event, 'download')}>Download</button>
           <button className="delete-button" style={hiddenIfNew} onClick={(event) => this.handleClick(event, 'delete')}>Delete</button>

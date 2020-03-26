@@ -135,7 +135,8 @@ class App extends React.Component {
   addConfiguration(configuration) {
     this.props.actions.addConfiguration(configuration).then(() => {
       const latest = this.props.configurations[this.props.configurations.length - 1]
-      this.props.actions.setCurrentView('configuration/' + latest.id)
+      console.log(latest)
+      this.navigateTo('configuration/' + latest.id)
     })
   }
 
@@ -182,7 +183,7 @@ class App extends React.Component {
           className: 'danger',
           action: () => {
             Popup.close()
-            this.props.actions.setCurrentView('welcome')
+            this.navigateTo('welcome')
             // Delete all configurations within it if a directory is given
             logger('info', `Deleting ${configuration.name} (${configuration.nodeType})`).write()
             if (configuration.nodeType === 'directory') {
@@ -383,7 +384,9 @@ class App extends React.Component {
           onDownloadAll={(event) => this.downloadAll(event)}
           connectionState={this.props.connectionState}
           remoteLocation={this.props.settings.demoMonkeyServer}
-          active={activeItem} />
+          active={activeItem}
+          showLogs={this.props.settings.optionalFeatures.writeLogs === true}
+        />
       </div>
       <div className="current-view">
         {this.getCurrentView()}
@@ -406,9 +409,6 @@ const OptionsPageApp = connect(
   // map dispatch to props
   dispatch => ({
     actions: {
-      /* setCurrentView: (key) => {
-        dispatch({ type: 'SET_CURRENT_VIEW', view: key })
-      }, */
       setMonkeyInterval: (monkeyInterval) => {
         dispatch({ type: 'SET_MONKEY_INTERVAL', monkeyInterval })
       },

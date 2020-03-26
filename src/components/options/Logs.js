@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import TimeAgo from 'react-timeago'
+import moment from 'moment'
 
 class Logs extends React.Component {
   static propTypes = {
@@ -46,8 +46,13 @@ class Logs extends React.Component {
             </thead>
             <tbody>
               { this.props.entries.slice().reverse().map(({ timestamp, source, level, message, tabId, repeated }, index) => {
+                const time = moment(timestamp)
                 return <tr key={index} className={`row-${level}`}>
-                  <td><TimeAgo date={timestamp} minPeriod="60" /></td>
+                  <td>
+                    <time dateTime={time.format()} title={time.format()}>
+                      {time.fromNow(true)}
+                    </time>
+                  </td>
                   <td>{source} {this.renderTabButton(tabId)}</td>
                   <td>{level}</td>
                   <td>

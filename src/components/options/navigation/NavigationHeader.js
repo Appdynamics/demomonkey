@@ -9,7 +9,8 @@ class NavigationHeader extends React.Component {
     onNavigate: PropTypes.func.isRequired,
     onDownloadAll: PropTypes.func.isRequired,
     connectionState: PropTypes.string.isRequired,
-    remoteLocation: PropTypes.string.isRequired
+    remoteLocation: PropTypes.string.isRequired,
+    showLogs: PropTypes.bool.isRequired
   }
 
   handleClick(event, target) {
@@ -33,12 +34,15 @@ class NavigationHeader extends React.Component {
       </li>
       <li>
         { this.props.connectionState === 'unknown'
-          ? <a href='#settings' onClick={this.props.onDownloadAll} >Backup</a>
+          ? <a href='#backup' onClick={this.props.onDownloadAll} >Backup</a>
           : <a href={this.props.remoteLocation.replace(/\/*$/, '') + '/backup'} rel="noopener noreferrer" target="_blank">Backups</a>
         }
       </li>
       <li>
-        <a href='#settings' onClick={(event) => this.handleClick(event, 'logs')} >Logs</a>
+        { this.props.showLogs
+          ? <a href='#logs' onClick={(event) => this.handleClick(event, 'logs')} >Logs</a>
+          : ''
+        }
       </li>
     </ul>
   }

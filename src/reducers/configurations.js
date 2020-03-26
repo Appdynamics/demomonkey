@@ -1,5 +1,5 @@
-const uuidV4 = require('uuid/v4')
-const omit = require('lodash.omit')
+import { v4 as uuidV4 } from 'uuid'
+import omit from 'lodash.omit'
 
 function blacklist(object) {
   return omit(object, ['__v', 'owner', '_id'])

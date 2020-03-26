@@ -55,7 +55,7 @@ const Base = {
   },
   createConfig: function (title = 'Selenium Test', content = 'demomonkey = testape') {
     driver.get(this.dashboardUrl)
-    driver.findElement(By.css("a[href='#configuration/create']")).click()
+    driver.findElement(By.css("a[href='#configuration/new']")).click()
     driver.findElement(By.id('configuration-title')).sendKeys(title)
     driver.findElement(By.css('li#current-configuration-editor a')).click()
     driver.findElement(By.css('#contentarea > textarea')).clear()

@@ -1,6 +1,6 @@
 import Command from './Command'
 import UndoElement from './UndoElement'
-import uuidV4 from 'uuid/v4'
+import { v4 as uuidV4 } from 'uuid'
 
 class RecolorImage extends Command {
   constructor(search, replace) {

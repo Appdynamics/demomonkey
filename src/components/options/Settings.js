@@ -55,7 +55,99 @@ class Settings extends React.Component {
   }
 
   render() {
-    console.log(this.props.hasExtendedPermissions)
+    const optionalFeatures = [
+      {
+        id: 'undo',
+        label: 'Undo replacements',
+        description: 'when configuration is disabled'
+      },
+      {
+        id: 'autoReplace',
+        label: 'Automatically apply replacements',
+        description: <span>when configuration is saved. <i>(This will also disable undo)</i></span>
+      },
+      {
+        id: 'autoSave',
+        label: 'Save configuration on line break'
+      },
+      {
+        id: 'saveOnClose',
+        label: 'Save configuration when it is closed'
+      },
+      {
+        id: 'adrumTracking',
+        label: 'Allow browser monitoring.',
+        description: 'DemoMonkey uses AppDynamics End-User Monitoring to analyze user behavior. You need to reload your browser window after changing this value!'
+      },
+      {
+        id: 'editorAutocomplete',
+        label: 'Autocomplete.',
+        description: 'The editor for configurations will display an auto completion for commands, options & imports.'
+      },
+      {
+        id: 'onlyShowAvailableConfigurations',
+        label: 'Only show available configurations.',
+        description: 'Set the default value for the popup toggle, which hides configurations that are not available for the current url.'
+      },
+      {
+        id: 'inDevTools',
+        label: 'Integrate with Chrome Dev Tools.',
+        description: 'Turn this option on to see the DemoMonkey dashboard within the Chrome Developer Toolbar.'
+      },
+      {
+        id: 'webRequestHook',
+        label: 'Hook into Web Requests.',
+        description: 'Turn this feature on, if you want to use the commands !delayUrl, !blockUrl and !redirectUrl. This will allow DemoMonkey to hook into web requests.'
+      },
+      {
+        id: 'debugBox',
+        label: 'Expand Debug Box',
+        description: <span>Turn this feature on, to show the debug box with statistics in full length when running demo monkey in <i>debug mode</i></span>
+      },
+      {
+        id: 'keyboardHandlerVim',
+        label: 'VIM Keyboard Handler.',
+        description: 'Turn this feature on, to use the vim keyboard handler for the editor.'
+      },
+      {
+        id: 'withEvalCommand',
+        label: 'Allow !eval.',
+        description: 'By turning on this flag, you can use the command !eval which allows you to write arbitrary javascript code. Use with caution!'
+      },
+      {
+        id: 'hookIntoAjax',
+        label: 'Hook into Ajax.',
+        description: 'Turn this feature on, if you want to use commands !removeFlowmapNode, !addFlowmapNode, etc. Those commands are implemented by hooking into ajax calls, use with caution!'
+      },
+      {
+        id: 'syncDarkMode',
+        label: 'Sync Dark/Light mode with OS setting.',
+        description: 'Automatically switch between dark and light mode.'
+      },
+      {
+        id: 'preferDarkMode',
+        style: { display: this.props.settings.optionalFeatures.syncDarkMode ? 'none' : 'flex' },
+        label: 'Use dark mode.',
+        description: <span>Use this toggle to set <i>dark mode</i> as your prefered theme.</span>
+      },
+      {
+        id: 'noWarningForMissingPermissions',
+        style: { display: this.props.hasExtendedPermissions ? 'none' : 'flex' },
+        label: 'No warning for missing permissions.',
+        description: 'To work best, DemoMonkey requires permissions to interact with all sites, and will warn you if you don\'t provide those permissions. Turn this feature on to remove this warning.'
+      },
+      {
+        id: 'registerProtocolHandler',
+        label: 'Register Protocol Handler.',
+        description: 'Turn this feature on to register web+mnky to be handled by demomonkey.'
+      },
+      {
+        id: 'writeLogs',
+        label: 'Write Logs.',
+        description: <span>Turn this feature on to have a DemoMonkey logs accessible via the <b>Logs</b> navigation item.</span>
+      }
+    ]
+
     return (
       <div className="content">
         <div className="settings">
@@ -65,57 +157,19 @@ class Settings extends React.Component {
               <label>
                 Optional features can be toggled on or off to influence the behaviour of DemoMonkey.
               </label>
-              <div className="toggle-group" id="toggle-undo">
-                <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('undo')} value={this.props.settings.optionalFeatures.undo}/><label><b>Undo replacements</b> when configuration is disabled</label>
-              </div>
-              <div className="toggle-group" id="toggle-autoReplace">
-                <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('autoReplace')} value={this.props.settings.optionalFeatures.autoReplace}/><label><b>Automatically apply replacements</b> when configuration is saved. <i>(This will also disable undo)</i></label>
-              </div>
-              <div className="toggle-group" id="toggle-autoSave">
-                <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('autoSave')} value={this.props.settings.optionalFeatures.autoSave}/><label><b>Save configuration on line break</b></label>
-              </div>
-              <div className="toggle-group" id="toggle-saveOnClose">
-                <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('saveOnClose')} value={this.props.settings.optionalFeatures.saveOnClose}/><label><b>Save configuration when it is closed</b></label>
-              </div>
-              <div className="toggle-group" id="toggle-adrumTracking">
-                <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('adrumTracking')} value={this.props.settings.optionalFeatures.adrumTracking}/><label><b>Allow browser monitoring.</b> DemoMonkey uses AppDynamics End-User Monitoring to analyze user behavior. You need to reload your browser window after changing this value!</label>
-              </div>
-              <div className="toggle-group" id="toggle-editorAutocomplete">
-                <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('editorAutocomplete')} value={this.props.settings.optionalFeatures.editorAutocomplete}/><label><b>Autocomplete.</b> The editor for configurations will display an auto completion for commands, options & imports.</label>
-              </div>
-              <div className="toggle-group" id="toggle-onlyShowAvailableConfigurations">
-                <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('onlyShowAvailableConfigurations')} value={this.props.settings.optionalFeatures.onlyShowAvailableConfigurations}/><label><b>Only show available configurations.</b> Set the default value for the popup toggle, which hides configurations that are not available for the current url.</label>
-              </div>
-              <div className="toggle-group" id="toggle-inDevTools">
-                <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('inDevTools')} value={this.props.settings.optionalFeatures.inDevTools}/><label><b>Integrate with Chrome Dev Tools.</b> Turn this option on to see the DemoMonkey dashboard within the Chrome Developer Toolbar.</label>
-              </div>
-              <div className="toggle-group" id="toggle-webRequestHook">
-                <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('webRequestHook')} value={this.props.settings.optionalFeatures.webRequestHook}/><label><b>Hook into Web Requests.</b> Turn this feature on, if you want to use the commands !delayUrl, !blockUrl and !redirectUrl. This will allow DemoMonkey to hook into web requests.</label>
-              </div>
-              <div className="toggle-group" id="toggle-debugBox">
-                <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('debugBox')} value={this.props.settings.optionalFeatures.debugBox}/><label><b>Expand Debug Box</b> Turn this feature on, to show the debug box with statistics in full length when running demo monkey in <i>debug mode</i> </label>
-              </div>
-              <div className="toggle-group" id="toggle-keyboardHandlerVim">
-                <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('keyboardHandlerVim')} value={this.props.settings.optionalFeatures.keyboardHandlerVim}/><label><b>VIM Keyboard Handler.</b> Turn this feature on, to use the vim keyboard handler for the editor.</label>
-              </div>
-              <div className="toggle-group" id="toggle-withEvalCommand">
-                <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('withEvalCommand')} value={this.props.settings.optionalFeatures.withEvalCommand}/><label><b>Allow !eval.</b> By turning on this flag, you can use the command !eval which allows you to write arbitrary javascript code. Use with caution!</label>
-              </div>
-              <div className="toggle-group" id="toggle-hookIntoAjax">
-                <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('hookIntoAjax')} value={this.props.settings.optionalFeatures.hookIntoAjax}/><label><b>Hook into Ajax.</b> Turn this feature on, if you want to use commands !removeFlowmapNode, !addFlowmapNode, etc. Those commands are implemented by hooking into ajax calls, use with caution!</label>
-              </div>
-              <div className="toggle-group" id="toggle-syncDarkMode">
-                <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('syncDarkMode')} value={this.props.settings.optionalFeatures.syncDarkMode}/><label><b>Sync Dark/Light mode with OS setting.</b> Automatically switch between dark and light mode.</label>
-              </div>
-              <div className="toggle-group" id="toggle-preferDarkMode" style={{ display: this.props.settings.optionalFeatures.syncDarkMode ? 'none' : 'flex' }}>
-                <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('preferDarkMode')} value={this.props.settings.optionalFeatures.preferDarkMode}/><label><b>Use dark mode.</b> Use this toggle to set <i>dark mode</i> as your prefered theme.</label>
-              </div>
-              <div className="toggle-group" id="toggle-noWarningForMissingPermissions" style={{ display: this.props.hasExtendedPermissions ? 'none' : 'flex' }}>
-                <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('noWarningForMissingPermissions')} value={this.props.settings.optionalFeatures.noWarningForMissingPermissions}/><label><b>No warning for missing permissions.</b> To work best, DemoMonkey requires permissions to interact with all sites, and will warn you if you don&apos;t provide those permissions. Turn this feature on to remove this warning.</label>
-              </div>
-              <div className="toggle-group" id="toggle-registerProtocolHandler">
-                <ToggleButton onToggle={() => this.props.onToggleOptionalFeature('registerProtocolHandler')} value={this.props.settings.optionalFeatures.registerProtocolHandler}/><label><b>Register Protocol Handler.</b> Turn this feature on to register web+mnky to be handled by demomonkey.</label>
-              </div>
+              {
+                optionalFeatures.map((feature, index) => {
+                  return <div key={index} className="toggle-group" id={`toggle-${feature.id}`} style={feature.style ? feature.style : {}}>
+                    <ToggleButton
+                      onToggle={() => this.props.onToggleOptionalFeature(feature.id)}
+                      value={this.props.settings.optionalFeatures[feature.id]}
+                    />
+                    <label>
+                      <b>{feature.label}</b> {feature.description}
+                    </label>
+                  </div>
+                })
+              }
             </Pane>
             <Pane label="Base Template" name="baseTemplate">
               <div className="template-box">

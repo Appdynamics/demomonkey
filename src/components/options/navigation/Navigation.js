@@ -30,7 +30,8 @@ class Navigation extends React.Component {
     onDelete: PropTypes.func.isRequired,
     onDownloadAll: PropTypes.func.isRequired,
     connectionState: PropTypes.string.isRequired,
-    remoteLocation: PropTypes.string.isRequired
+    remoteLocation: PropTypes.string.isRequired,
+    showLogs: PropTypes.bool.isRequired
   }
 
   // This implementation is not very performant
@@ -149,7 +150,14 @@ class Navigation extends React.Component {
     return (
       <div>
         <div className="navigation-header">
-          <NavigationHeader remoteLocation={this.props.remoteLocation} connectionState={this.props.connectionState} onUpload={this.props.onUpload} onDownloadAll={this.props.onDownloadAll} onNavigate={this.props.onNavigate} />
+          <NavigationHeader
+            remoteLocation={this.props.remoteLocation}
+            connectionState={this.props.connectionState}
+            onUpload={this.props.onUpload}
+            onDownloadAll={this.props.onDownloadAll}
+            onNavigate={this.props.onNavigate}
+            showLogs={this.props.showLogs}
+          />
           <input type="text" onChange={(event) => this.handleSearchUpdate(event)} value={this.state.search} placeholder="Search..." className="searchBox" />
         </div>
         <div className="tree items">

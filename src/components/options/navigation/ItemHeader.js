@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import TimeAgo from 'react-timeago'
+import moment from 'moment'
 
 class ItemHeader extends React.Component {
   static propTypes = {
@@ -33,11 +33,6 @@ class ItemHeader extends React.Component {
     }
   }
 
-  formatTime(value, unit, suffix, date, defaultFormatter) {
-    var r = defaultFormatter()
-    return r.substr(0, r.length - 4)
-  }
-
   handleMenu(e) {
     this.setState({
       contextMenuVisible: true,
@@ -65,6 +60,8 @@ class ItemHeader extends React.Component {
 
     const base = isDirectory ? style.folder : style.item
 
+    const updatedAt = moment(this.props.node.updated_at)
+
     return (
       <div style={base} onMouseEnter={(e) => this.handleHover(true)} onMouseLeave={(e) => this.handleHover(false)} onContextMenu={(e) => this.handleMenu(e)} className={this.props.node.readOnly === true ? 'navigation-item read-only-item' : 'navigation-item'} ref={node => { this.node = node }}>
         <div style={style.title}>
@@ -73,7 +70,9 @@ class ItemHeader extends React.Component {
         </div>
         <div className="configuration-updated-at" style={style.timestamp}>
           { this.props.node.updated_at
-            ? <TimeAgo formatter={(value, unit, suffix, date, defaultFormatter) => this.formatTime(value, unit, suffix, date, defaultFormatter)} date={this.props.node.updated_at} minPeriod="60" />
+            ? <time dateTime={updatedAt.format()} title={updatedAt.format()}>
+              {updatedAt.fromNow(true)}
+            </time>
             : ''
           }
         </div>

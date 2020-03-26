@@ -23,7 +23,7 @@ describe('Integration (Simple)', function () {
     this.timeout(10000)
     this.retries(4)
     it('allows to create new configurations', function () {
-      return base.createConfig('testape', 'demomonkey = testape\n@include = /.*/')
+      return base.createConfig('testape', 'demomonkey = testape\n@include = /.*/\n')
     })
     it('has toggle buttons on the popup menu', function () {
       return base.enableConfig('testape')

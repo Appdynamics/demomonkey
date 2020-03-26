@@ -187,7 +187,8 @@ import { logger, connectLogger } from './helpers/logger'
     syncDarkMode: true,
     preferDarkMode: false,
     noWarningForMissingPermissions: false,
-    registerProtocolHandler: false
+    registerProtocolHandler: false,
+    writeLogs: true
   }
 
   const persistentStates = {
@@ -220,7 +221,7 @@ import { logger, connectLogger } from './helpers/logger'
   scope.chrome.storage.local.get(persistentStates, function (state) {
     // currentView is not persistent but should be defined to avoid
     // issues rendering the UI.
-    state.currentView = 'welcome'
+    // state.currentView = 'welcome'
 
     state.connectionState = 'unknown'
 
@@ -254,14 +255,18 @@ import { logger, connectLogger } from './helpers/logger'
     var store = createStore(reducers, state)
     wrapStore(store, { portName: 'DEMO_MONKEY_STORE' })
 
-    connectLogger(store, { source: 'monkey.js' })
+    const settings = store.getState().settings
+
+    if (settings.optionalFeatures.writeLogs) {
+      connectLogger(store, { source: 'monkey.js' })
+    }
 
     // Persist monkey ID. Shouldn't change after first start.
     scope.chrome.storage.local.set({ monkeyID: store.getState().monkeyID })
 
-    hookIntoWebRequests(store.getState().settings.optionalFeatures.webRequestHook, store.getState().configurations.filter(c => c.enabled).length > 0)
+    hookIntoWebRequests(settings.optionalFeatures.webRequestHook, store.getState().configurations.filter(c => c.enabled).length > 0)
 
-    syncConfigs(store.getState().settings.optionalFeatures.configSync, store.getState().settings.demoMonkeyServer, store)
+    syncConfigs(settings.optionalFeatures.configSync, settings.demoMonkeyServer, store)
 
     store.subscribe(function () {
       const lastAction = store.getState().lastAction

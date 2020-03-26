@@ -71,7 +71,9 @@ store.ready().then(() => {
 
   const app = root.getAttribute('data-app')
 
-  connectLogger(store, { source: app })
+  if (store.getState().settings.optionalFeatures.writeLogs) {
+    connectLogger(store, { source: 'monkey.js' })
+  }
 
   if (window.store.state.settings.optionalFeatures.adrumTracking === false) {
     window['adrum-disable'] = true

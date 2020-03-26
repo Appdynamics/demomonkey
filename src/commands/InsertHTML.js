@@ -1,6 +1,6 @@
 import Command from './Command'
 import UndoElement from './UndoElement'
-import uuidV4 from 'uuid/v4'
+import { v4 as uuidV4 } from 'uuid'
 
 class InsertHTML extends Command {
   // Using '' as locationFilter and location as {} works with _checkLocation

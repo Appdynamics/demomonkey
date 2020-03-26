@@ -43,7 +43,9 @@ try {
     }
 
     store.ready().then(() => {
-      connectLogger(store, { source: 'monkey.js' })
+      if (store.getState().settings.optionalFeatures.writeLogs) {
+        connectLogger(store, { source: 'monkey.js' })
+      }
 
       const settings = new Settings(store.getState().settings)
 
