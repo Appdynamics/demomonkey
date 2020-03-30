@@ -3,12 +3,12 @@ import PropTypes from 'prop-types'
 import Popup from 'react-popup'
 import axios from 'axios'
 import moment from 'moment'
-import { logger } from '../../helpers/logger'
+import { logger } from '../../../helpers/logger'
+import DemoMonkeyServer from '../../../models/DemoMonkeyServer'
 
 class ServerSettings extends React.Component {
   static propTypes = {
-    connectionState: PropTypes.string.isRequired,
-    demoMonkeyServer: PropTypes.string.isRequired,
+    demoMonkeyServer: PropTypes.instanceOf(DemoMonkeyServer).isRequired,
     onDownloadAll: PropTypes.func.isRequired,
     onSetDemoMonkeyServer: PropTypes.func.isRequired
   }
@@ -16,90 +16,39 @@ class ServerSettings extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      remoteLocation: props.demoMonkeyServer || '',
+      remoteLocation: props.demoMonkeyServer.url || '',
       remoteLocationError: null,
       backups: null,
       groups: null,
       newGroupName: '',
-      remoteAlias: null
+      remoteAlias: ''
     }
   }
 
-  _getBackupUrl() {
-    return this.state.remoteLocation.replace(/\/*$/, '') + '/backup'
-  }
-
-  _getGroupUrl() {
-    return this.state.remoteLocation.replace(/\/*$/, '') + '/group'
-  }
-
-  _loadGroups() {
-    if (this.props.connectionState.toLowerCase() === 'connected') {
-      const url = this._getGroupUrl()
-      axios({
-        url,
-        headers: {
-          accept: 'text/json'
-        }
-      }).then(response => {
-        if (response.status === 200 && Array.isArray(response.data)) {
-          this.setState({
-            groups: response.data
-          })
-        }
-      }).catch(() => {
-        this.setState({
-          groups: null
-        })
-      })
-    } else {
+  _load() {
+    this.setState({
+      backups: null,
+      groups: null
+    })
+    this.props.demoMonkeyServer.load(['backup', 'group', 'user']).then(result => {
       this.setState({
-        groups: null
+        backups: result[0],
+        groups: result[1],
+        remoteAlias: result[2].alias
       })
-    }
-  }
-
-  _loadRemoteAlias() {
-  }
-
-  _loadBackups() {
-    if (this.props.connectionState.toLowerCase() === 'connected') {
-      const url = this._getBackupUrl()
-      axios({
-        url,
-        headers: {
-          accept: 'text/json'
-        }
-      }).then(response => {
-        if (response.status === 200 && Array.isArray(response.data)) {
-          this.setState({
-            backups: response.data
-          })
-        }
-      }).catch(() => {
-        this.setState({
-          backups: null
-        })
-      })
-    } else {
-      this.setState({
-        backups: null
-      })
-    }
+    }).catch(error => {
+      console.log(error)
+    })
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.demoMonkeyServer !== this.props.demoMonkeyServer || prevProps.connectionState !== this.props.connectionState) {
-      this._loadBackups()
-      this._loadGroups()
-      this._loadRemoteAlias()
+    if (prevProps.demoMonkeyServer !== this.props.demoMonkeyServer || prevProps.demoMonkeyServer.isConnected() !== this.props.demoMonkeyServer.isConnected()) {
+      this._load()
     }
   }
 
   componentDidMount() {
-    this._loadBackups()
-    this._loadGroups()
-    this._loadRemoteAlias()
+    this._load()
   }
 
   changeRemoteLocation(value) {
@@ -171,25 +120,41 @@ class ServerSettings extends React.Component {
   }
 
   _renderBackupList() {
-    if (this.connectionState === 'unknown' || this.state.backups === null) {
+    if (this.state.backups === null) {
       return ''
     }
 
+    const url = this.props.demoMonkeyServer.urlFor('backup')
+
     return <div>
       <h2>Backups</h2>
+      <label>
+        When connected DemoMonkey will send a backup to the server on a daily basis. <a href="#backupnow" onClick={(e) => this.backupNow(e)}>Backup now.</a>
+      </label>
       <ul>
         {
-          this.state.backups.slice(0, 5).map((backup, index) => {
+          this.state.backups.map((backup, index) => {
             return (<li key={index}>
-              <a href={`${this._getBackupUrl()}/${backup._id}.zip`}>{moment(backup.created_at).format('Y-MM-DD HH:mm:ss')}</a>
+              <a href={`${url}/${backup._id}.zip`}>{moment(backup.created_at).format('Y-MM-DD HH:mm:ss')}</a>
             </li>)
           })
         }
         <li>
-          <a href={this._getBackupUrl()}>more...</a>
+          <a href={url}>more...</a>
         </li>
       </ul>
     </div>
+  }
+
+  backupNow(e) {
+    this.props.demoMonkeyServer.backupNow().then((backup) => {
+      this.setState({
+        backups: [backup].concat(this.state.backups)
+      })
+    }).catch(error => {
+      console.log(error)
+    })
+    e.preventDefault()
   }
 
   handleGroupNameChange(event) {
@@ -198,30 +163,42 @@ class ServerSettings extends React.Component {
     })
   }
 
-  addNewGroup(event) {
-    if (this.state.newGroupName !== '') {
-      const url = this._getGroupUrl()
-      axios({
-        url,
-        method: 'POST',
-        data: {
-          name: this.state.newGroupName
-        }
-      }).then(response => {
-        if (response.status === 200) {
-          this._loadGroups()
-        }
-      }).catch((error) => {
-        console.log(error)
+  saveAlias(event) {
+    this.props.demoMonkeyServer.saveAlias(this.state.remoteAlias).then((data) => {
+      this.setState({
+        remoteAlias: data.alias
       })
-    }
-    event.preventDefault()
+    }).catch(error => {
+      console.log(error)
+    })
+  }
+
+  addNewGroup(event) {
+    this.props.demoMonkeyServer.addGroup(this.state.newGroupName).then((data) => {
+      this.setState({
+        groups: this.state.groups.concat([data])
+      })
+    }).catch(error => {
+      console.log(error)
+    })
+  }
+
+  deleteGroup(gid) {
+    this.props.demoMonkeyServer.deleteGroup(gid).then((data) => {
+      this.setState({
+        groups: this.state.groups.filter(group => group.gid !== data.gid)
+      })
+    }).catch(error => {
+      console.log(error)
+    })
   }
 
   _renderGroupList() {
-    if (this.connectionState === 'unknown' || this.state.groups === null) {
+    if (this.state.groups === null) {
       return ''
     }
+
+    const url = this.props.demoMonkeyServer.urlFor('j')
 
     return <div>
       <h2>Groups</h2>
@@ -229,7 +206,8 @@ class ServerSettings extends React.Component {
         {
           this.state.groups.map((group, index) => {
             return (<li key={index}>
-              <a href={`${this._getGroupUrl()}/${group.gid}`} target="_blank" rel="noreferrer noopener">{group.name}</a> ({group.members.length})
+              <a href={`${url}/${group.gid}`} target="_blank" rel="noreferrer noopener">{group.name}</a> ({group.members.length})
+              <button onClick={() => this.deleteGroup(group.gid)} className="delete-button">Delete</button>
             </li>)
           })
         }
@@ -242,22 +220,26 @@ class ServerSettings extends React.Component {
   }
 
   render() {
+    const connectionState = this.props.demoMonkeyServer.connectionState
+
     return <div>
+      <h2>Connection Details</h2>
       <label>
         Connect to a demo monkey server to sync your configurations across devices and backup your settings to the server.
-        This is a beta feature. Before turning this feature on,
-        <a href="#" onClick={(event) => this.props.onDownloadAll(event)}>backup all your configurations locally</a>.
+        This is a beta feature. Before turning this feature
+        on, <a href="#" onClick={(event) => this.props.onDownloadAll(event)}>backup all your configurations locally</a>.
       </label>
-      <h2>Connection Details</h2>
       <b>Remote Location: </b>
       <input size="55" type="text" onChange={(e) => this.changeRemoteLocation(e.target.value)} value={this.state.remoteLocation} />
       <button className="save-button" onClick={() => this.saveRemoteLocation()}>Save</button>
       <button className="copy-button" onClick={() => this.clearRemoteLocation()}>Clear</button>
       <button className="delete-button" onClick={() => this.reconnectRemoteLocation()}>Reconnect</button>
-      (Connection: <span className={`connection-status-${this.props.connectionState.toLowerCase()}`}>{this.props.connectionState}</span>)
+      (Connection: <span className={`connection-status-${connectionState.toLowerCase()}`}>{connectionState}</span>)
       <div style={{ color: 'red' }}>{ this.state.remoteLocationError !== null ? this.state.remoteLocationError : ''}</div>
       <h2>User Details</h2>
+      <label>Provide an alias name that will be displayed to other users when they search the gallery or are in the same group as you are:</label>
       <div>
+        <b>Alias: </b>
         <input size="55" type="text" onChange={(e) => this.changeAlias(e.target.value)} value={this.state.remoteAlias} />
         <button className="save-button" onClick={() => this.saveAlias()}>Save</button>
       </div>

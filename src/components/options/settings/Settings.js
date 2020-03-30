@@ -2,22 +2,23 @@ import React from 'react'
 import ToggleButton from 'react-toggle-button'
 import PropTypes from 'prop-types'
 import AceEditor from 'react-ace'
-import Tabs from '../shared/Tabs'
-import Pane from '../shared/Pane'
+import Tabs from '../../shared/Tabs'
+import Pane from '../../shared/Pane'
 import ServerSettings from './ServerSettings'
+import DemoMonkeyServer from '../../../models/DemoMonkeyServer'
 
 import 'brace/theme/xcode'
 import 'brace/theme/merbivore'
 import 'brace/ext/searchbox'
 
-import './editor/ace/mnky'
+import '../editor/ace/mnky'
 
 class Settings extends React.Component {
   static propTypes = {
     settings: PropTypes.object.isRequired,
     configurations: PropTypes.arrayOf(PropTypes.object).isRequired,
-    connectionState: PropTypes.string.isRequired,
     onSetBaseTemplate: PropTypes.func.isRequired,
+    demoMonkeyServer: PropTypes.instanceOf(DemoMonkeyServer).isRequired,
     onSetMonkeyInterval: PropTypes.func.isRequired,
     onSetDemoMonkeyServer: PropTypes.func.isRequired,
     onToggleOptionalFeature: PropTypes.func.isRequired,
@@ -188,8 +189,7 @@ class Settings extends React.Component {
             </Pane>
             <Pane label="Demo Monkey Server (beta)" name="demoMonkeyServer">
               <ServerSettings
-                connectionState={this.props.connectionState}
-                demoMonkeyServer={this.props.settings.demoMonkeyServer}
+                demoMonkeyServer={this.props.demoMonkeyServer}
                 onSetDemoMonkeyServer={this.props.onSetDemoMonkeyServer}
                 onDownloadAll={this.props.onDownloadAll}
               />

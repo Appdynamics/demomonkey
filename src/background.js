@@ -105,6 +105,7 @@ import { logger, connectLogger } from './helpers/logger'
   var previousIsEnabled = false
 
   function syncConfigs(isEnabled, server, store) {
+    console.log(isEnabled, server, store)
     if (server === previousServer && previousIsEnabled === isEnabled) {
       return
     }
@@ -134,6 +135,8 @@ import { logger, connectLogger } from './helpers/logger'
         logMessage
       )
       configSync.start()
+    } else {
+      console.log(`Not syncing to "${server}"`)
     }
   }
 
@@ -254,6 +257,9 @@ import { logger, connectLogger } from './helpers/logger'
     console.log('Background Script started')
     var store = createStore(reducers, state)
     wrapStore(store, { portName: 'DEMO_MONKEY_STORE' })
+
+    // Make the store accessible from dev console.
+    scope.store = store
 
     const settings = store.getState().settings
 

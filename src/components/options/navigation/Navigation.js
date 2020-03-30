@@ -3,23 +3,11 @@ import PropTypes from 'prop-types'
 import NavigationHeader from './NavigationHeader'
 import navigationTheme from './NavigationTheme'
 import ItemHeader from './ItemHeader'
-import merge from 'deepmerge'
 import ErrorBox from '../../shared/ErrorBox'
-
-// import NavigationItem from './NavigationItem'
+import DemoMonkeyServer from '../../../models/DemoMonkeyServer'
+import merge from 'deepmerge'
+import arrayMerge from '../../../helpers/arrayMerge'
 import { Treebeard, decorators } from 'react-treebeard'
-
-function arrayMerge(dst, src, opt) {
-  var i = dst.findIndex((e) => e.name === src[0].name && e.nodeType === src[0].nodeType && e.nodeType === 'directory')
-  if (i !== -1) {
-    dst[i] = merge(dst[i], src[0], { arrayMerge: arrayMerge })
-  } else {
-    dst = dst.concat(src)
-  }
-  return dst.sort((a, b) => {
-    return (a.name.toLowerCase() < b.name.toLowerCase()) ? -1 : 1
-  })
-}
 
 class Navigation extends React.Component {
   static propTypes = {
@@ -29,7 +17,7 @@ class Navigation extends React.Component {
     onUpload: PropTypes.func.isRequired,
     onDelete: PropTypes.func.isRequired,
     onDownloadAll: PropTypes.func.isRequired,
-    connectionState: PropTypes.string.isRequired,
+    demoMonkeyServer: PropTypes.instanceOf(DemoMonkeyServer).isRequired,
     remoteLocation: PropTypes.string.isRequired,
     showLogs: PropTypes.bool.isRequired
   }
@@ -141,7 +129,7 @@ class Navigation extends React.Component {
       return <ItemHeader
         style={props.style}
         node={props.node}
-        editableDirectories={this.props.connectionState === 'Connected'}
+        editableDirectories={this.props.demoMonkeyServer.isConnected()}
         onEdit={(id, isDirectory) => this.handleClick(id, isDirectory)}
         onDelete={(event, node) => this.onDelete(event, node)}
       />
@@ -151,8 +139,7 @@ class Navigation extends React.Component {
       <div>
         <div className="navigation-header">
           <NavigationHeader
-            remoteLocation={this.props.remoteLocation}
-            connectionState={this.props.connectionState}
+            enableGallery={this.props.demoMonkeyServer.isConnected()}
             onUpload={this.props.onUpload}
             onDownloadAll={this.props.onDownloadAll}
             onNavigate={this.props.onNavigate}

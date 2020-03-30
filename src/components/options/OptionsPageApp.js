@@ -4,11 +4,13 @@ import Navigation from './navigation/Navigation'
 import { connect } from 'react-redux'
 import Popup from 'react-popup'
 import Welcome from './Welcome'
-import Settings from './Settings'
+import Settings from './settings/Settings'
 import Logs from './Logs'
+import Gallery from './Gallery'
 import AccessControl from './AccessControl'
 import Editor from './editor/Editor'
 import Configuration from '../../models/Configuration'
+import DemoMonkeyServer from '../../models/DemoMonkeyServer'
 import PropTypes from 'prop-types'
 import Repository from '../../models/Repository'
 import { Base64 } from 'js-base64'
@@ -24,7 +26,7 @@ class App extends React.Component {
     actions: PropTypes.objectOf(PropTypes.func).isRequired,
     configurations: PropTypes.arrayOf(PropTypes.object).isRequired,
     initialView: PropTypes.string.isRequired,
-    connectionState: PropTypes.string.isRequired,
+    demoMonkeyServer: PropTypes.instanceOf(DemoMonkeyServer).isRequired,
     onCurrentViewChange: PropTypes.func.isRequired,
     settings: PropTypes.object.isRequired,
     log: PropTypes.arrayOf(PropTypes.object).isRequired,
@@ -278,7 +280,7 @@ class App extends React.Component {
         case 'settings':
           return <Settings settings={this.props.settings}
             configurations={this.props.configurations}
-            connectionState={this.props.connectionState}
+            demoMonkeyServer={this.props.demoMonkeyServer}
             onToggleOptionalFeature={(feature) => this.toggleOptionalFeature(feature)}
             onSetBaseTemplate={(baseTemplate) => this.setBaseTemplate(baseTemplate)}
             onSetMonkeyInterval={(value) => this.setMonkeyInterval(value)}
@@ -321,6 +323,8 @@ class App extends React.Component {
           return <AccessControl for={segments[1]} />
         case 'logs':
           return <Logs entries={this.props.log} />
+        case 'gallery':
+          return <Gallery />
         default:
           return <Welcome />
       }
@@ -382,7 +386,7 @@ class App extends React.Component {
           onDelete={(configuration) => this.deleteConfiguration(configuration)}
           items={configurations}
           onDownloadAll={(event) => this.downloadAll(event)}
-          connectionState={this.props.connectionState}
+          demoMonkeyServer={this.props.demoMonkeyServer}
           remoteLocation={this.props.settings.demoMonkeyServer}
           active={activeItem}
           showLogs={this.props.settings.optionalFeatures.writeLogs === true}
@@ -401,7 +405,7 @@ const OptionsPageApp = connect(
     return {
       configurations: state.configurations,
       // currentView: state.currentView,
-      connectionState: state.connectionState,
+      demoMonkeyServer: new DemoMonkeyServer(state.settings.demoMonkeyServer, state.connectionState),
       settings: state.settings,
       log: state.log
     }

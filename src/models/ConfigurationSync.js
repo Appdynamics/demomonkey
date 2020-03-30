@@ -4,7 +4,7 @@ class ConfigurationSync {
   constructor(storage, actions, remoteUrl, logger = console.log) {
     this.storage = storage
     this.actions = actions
-    this.remoteUrl = remoteUrl
+    this.remoteUrl = remoteUrl.replace(/\/*$/, '')
     this.started = false
     this.connected = false
     this.logger = logger
