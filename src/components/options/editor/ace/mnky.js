@@ -24,6 +24,16 @@ ace.define('ace/mode/mnky_highlight_rules', ['require', 'exports', 'module', 'ac
         }]
       }, {
         token: 'punctuation.definition.comment.mnky',
+        regex: '//.*',
+        push_: [{
+          token: 'comment.line.double-slash.mnky',
+          regex: '$|^',
+          next: 'pop'
+        }, {
+          defaultToken: 'comment.line.double-slash.mnky'
+        }]
+      }, {
+        token: 'punctuation.definition.comment.mnky',
         regex: ';.*',
         push_: [{
           token: 'comment.line.semicolon.mnky',
