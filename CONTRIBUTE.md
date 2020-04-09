@@ -6,7 +6,7 @@ The following document explains, how you can setup a development environment, so
 
 ## Setup Environment
 
-Before you start, make sure you have *nodejs*, *gulp* and *mocha* installed.
+Before you start, make sure you have *nodejs*, *gulp* and *mocha* installed, as well as *imagemagick* and *graphicsmagick*
 
 To get started, you need to checkout the latest development version via git:
 
