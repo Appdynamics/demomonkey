@@ -22,6 +22,19 @@ ace.define('ace/mode/mnky_highlight_rules', ['require', 'exports', 'module', 'ac
         }, {
           defaultToken: 'comment.line.number-sign.mnky'
         }]
+      }, {  /* @-something = regex*/
+        token: ['constant.library.mnky', 'text', 'punctuation.separator.key-value.mnky', 'text','entity.name.function.mnky'],
+        regex: '^(@[^=]+)(\\s*)(=)?(\\s*)(/.*/)$'
+      }, {  /* URL match expression taken from  the ace source */
+        token: 'punctuation.definition.string.url.mnky',
+        regex: '\\w[-\\w_]*\\:(\\/\\/)(\\w[-\\w._]*(:\\d+)?)?',
+        push_: [{
+          token: 'string.url.mnky',
+          regex: '$|^',
+          next: 'pop'
+        }, {
+          defaultToken: 'string.url.mnky'
+        }]
       }, {
         token: 'punctuation.definition.comment.mnky',
         regex: '//.*',
