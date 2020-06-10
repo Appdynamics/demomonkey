@@ -20,7 +20,7 @@ class NavigationHeader extends React.Component {
   render() {
     return <ul className='actions'>
       <li>
-        <a href='#welcome' onClick={(event) => this.handleClick(event, 'welcome')} >Home</a>
+        <a href='#help' onClick={(event) => this.handleClick(event, 'help')} >Help</a>
       </li>
       <li>
         <a href={'#' + 'configuration/new'} onClick={(event) => this.handleClick(event, 'configuration/new')} >Create</a>

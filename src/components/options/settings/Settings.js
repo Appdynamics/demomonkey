@@ -27,8 +27,7 @@ class Settings extends React.Component {
     hasExtendedPermissions: PropTypes.bool.isRequired,
     onRequestExtendedPermissions: PropTypes.func.isRequired,
     activeTab: PropTypes.string,
-    onNavigate: PropTypes.func.isRequired,
-    onArchive: PropTypes.func.isRequired
+    onNavigate: PropTypes.func.isRequired
   }
 
   constructor(props) {
@@ -206,10 +205,6 @@ class Settings extends React.Component {
                 <ToggleButton onToggle={() => this.props.onRequestExtendedPermissions(this.props.hasExtendedPermissions)} value={this.props.hasExtendedPermissions}/><label><b>Allow access on all sites.</b> Allow DemoMonkey to read and change data on all sites you visit.</label>
               </div>
               You can not revoke permissions from here. Go to the extensions page, choose Demo Monkey, click on <i>Details</i> and there set <i>Site Access</i> to <i>On click</i>
-              <h2>Archive</h2>
-              <label>You can archive your old configurations by moving them into the <i>Archive</i> folder. Automate this process by setting a age in days and clicking the <i>Archive</i> button.</label>
-              <input type="number" min="1" value={this.state.archiveValue} onChange={(e) => this.updateArchiveValue(e)} />
-              <button className="delete-button" onClick={() => this.props.onArchive(this.state.archiveValue)} >Archive</button>
               <h2>Backup</h2>
               You can always open the <a href="backup.html">backup page</a> to download your files or manipulate your settings. Please use with caution!
               <button className="save-button" onClick={(event) => this.props.onDownloadAll(event)}>Download all configurations</button>

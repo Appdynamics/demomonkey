@@ -125,10 +125,6 @@ class Editor extends React.Component {
     this.props[action](this.props.currentConfiguration, this.state.currentConfiguration)
   }
 
-  _buildRemoteLocation(connector, location) {
-    return `https://github.com/${location.user}/${location.repository}/blob/master/${location.path}`
-  }
-
   _buildAnnotations(content) {
     var result = []
 
@@ -188,7 +184,6 @@ class Editor extends React.Component {
   }
 
   render() {
-    console.log(this.state.currentConfiguration)
     return this.renderConfiguration()
   }
 
@@ -211,8 +206,6 @@ class Editor extends React.Component {
     const shareLabel = shared ? 'Unshare' : 'Share'
 
     const sharedUrl = `web+mnky://s/${current.shared}`
-
-    console.log(hotkeyOptions, current.hotkeys)
 
     return (
       <div className="editor">

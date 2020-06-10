@@ -3,7 +3,7 @@ import React from 'react'
 import Navigation from './navigation/Navigation'
 import { connect } from 'react-redux'
 import Popup from 'react-popup'
-import Welcome from './Welcome'
+import Help from './Help'
 import Settings from './settings/Settings'
 import Logs from './Logs'
 import Gallery from './Gallery'
@@ -185,7 +185,7 @@ class App extends React.Component {
           className: 'danger',
           action: () => {
             Popup.close()
-            this.navigateTo('welcome')
+            this.navigateTo('help')
             // Delete all configurations within it if a directory is given
             logger('info', `Deleting ${configuration.name} (${configuration.nodeType})`).write()
             if (configuration.nodeType === 'directory') {
@@ -195,14 +195,6 @@ class App extends React.Component {
             }
           }
         }]
-      }
-    })
-  }
-
-  archiveConfigurations(value) {
-    this.props.configurations.forEach(configuration => {
-      if ((Date.now() - configuration.created_at) / (1000 * 3600 * 24) > value && !configuration.name.startsWith('zzz_Archive/')) {
-        console.log(configuration.name)
       }
     })
   }
@@ -227,7 +219,8 @@ class App extends React.Component {
       return {
         name: '',
         content: this.props.settings.baseTemplate,
-        id: 'new'
+        id: 'new',
+        hotkeys: []
       }
     }
     if (id === 'latest') {
@@ -291,7 +284,6 @@ class App extends React.Component {
             isDarkMode={this._getDarkMode()}
             activeTab={segments[1]}
             onNavigate={(target) => this.navigateTo('settings/' + target)}
-            onArchive={(value) => this.archiveConfigurations(value)}
           />
         case 'configuration':
           var configuration = this.getConfiguration(segments[1])
@@ -326,7 +318,7 @@ class App extends React.Component {
         case 'gallery':
           return <Gallery />
         default:
-          return <Welcome />
+          return <Help />
       }
     } catch (e) {
       return <ErrorBox error={e} />

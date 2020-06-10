@@ -27,11 +27,11 @@ Additionally you can use options, commands, imports and variables to achieve eve
 ```
 ; The configuration only works if the url matches the following regex:
 @include[] = /^https?://.*demo.*\.myapp\.com(:[0-9]+)?/.*$/
-// You can use $customer in replacements as variable
+; You can use $customer in replacements as variable
 $customer = My Customer//Set The customer className
-// Import another configuration called "Cities"
+; Import another configuration called "Cities"
 +Cities
-// Replace Order with Flight case insensitive
+; Replace Order with Flight case insensitive
 !/Order/i = Flight
 ```
 

@@ -62,11 +62,13 @@ class ItemHeader extends React.Component {
 
     const updatedAt = moment(this.props.node.updated_at)
 
+    const label = this.props.node.name === '%' ? (<i>Snippets</i>) : this.props.node.name
+
     return (
       <div style={base} onMouseEnter={(e) => this.handleHover(true)} onMouseLeave={(e) => this.handleHover(false)} onContextMenu={(e) => this.handleMenu(e)} className={this.props.node.readOnly === true ? 'navigation-item read-only-item' : 'navigation-item'} ref={node => { this.node = node }}>
         <div style={style.title}>
           {/* the onclick event is disabled since the interaction is managed by the navigation */}
-          <a href={'#configuration/' + this.props.node.id} onClick={(event) => event.preventDefault()}>{this.props.node.name}</a>
+          <a href={'#configuration/' + this.props.node.id} onClick={(event) => event.preventDefault()}>{label}</a>
         </div>
         <div className="configuration-updated-at" style={style.timestamp}>
           { this.props.node.updated_at

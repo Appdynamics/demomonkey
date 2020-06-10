@@ -1,7 +1,7 @@
 import React from 'react'
 import showdown from 'showdown'
 
-class Welcome extends React.Component {
+class Help extends React.Component {
   render() {
     var readme = require('../../../USAGE.md')
     var converter = new showdown.Converter({
@@ -20,4 +20,4 @@ class Welcome extends React.Component {
   }
 }
 
-export default Welcome
+export default Help
