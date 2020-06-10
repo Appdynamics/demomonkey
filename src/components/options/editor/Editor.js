@@ -168,8 +168,17 @@ class Editor extends React.Component {
         } */
       }
 
-      if ((!line.startsWith(';') && line.includes(';')) || (!line.startsWith('#') && line.includes('#'))) {
-        result.push({ row: rowIdx, column: 0, text: 'Semi-colon (;) and hash (#) are interpreted as inline comments.\nMake sure to quote your patterns to use them properly.', type: 'info' })
+     if(line.includes('=')) {
+        const [lhs, rhs] = line.split(/=(.+)/, 2).map(e => e.trim())
+        if(rhs.startsWith('/') && rhs.endsWith('/')) {
+          result.push({ row: rowIdx, column: 0, text: 'expression = regex', type: 'info' })
+        }
+     }
+
+      if ((!line.startsWith(';') && line.includes(';')) ||
+          (!line.startsWith('#') && line.includes('#')) ||
+          (!line.startsWith('//') && line.includes('[^:]//'))) { /* the ^: is so that URL's are not interpreted as comments */
+        result.push({ row: rowIdx, column: 0, text: 'Semi-colon (;), double slash (//), and hash (#) are interpreted as inline comments.\nMake sure to quote your patterns to use them properly.', type: 'info' })
       }
 
       if (line.includes('=') && !['!', '@', '+', ';', '#', '[', '$'].includes(line.charAt(0))) {
