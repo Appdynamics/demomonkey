@@ -6,7 +6,7 @@ class ReplaceImage extends Command {
     super()
     this.search = search
     this.replace = replace
-    this.withRatio = withRatio !== '0' && withRatio !== 'false'
+    this.withRatio = withRatio === '1' || withRatio === 'true'
   }
 
   isApplicableForGroup(group) {
@@ -14,7 +14,7 @@ class ReplaceImage extends Command {
   }
 
   apply(target, key = 'value') {
-    const original = target[key]
+    const original = key === 'style.backgroundImage' ? target.style.backgroundImage : target[key]
 
     const search = this._lookupImage(this.search)
 
@@ -46,8 +46,16 @@ class ReplaceImage extends Command {
         target.addEventListener('load', el)
         result.push(undoPlaceholder)
       }
-      target[key] = this.replace
-      result.push(new UndoElement(target, key, original, this.replace))
+
+      if (key === 'style.backgroundImage') {
+        target.style.backgroundImage = `url("${this.replace}")`
+        console.log(new UndoElement(target, key, original, `url("${this.replace}")`))
+        result.push(new UndoElement(target, key, original, `url("${this.replace}")`))
+      } else {
+        target[key] = this.replace
+        result.push(new UndoElement(target, key, original, this.replace))
+      }
+
       return result
     }
     return false
