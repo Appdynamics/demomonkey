@@ -168,6 +168,13 @@ class App extends React.Component {
     window.chrome.downloads.download({
       url: 'data:text/octet-stream;base64,' + Base64.encode(configuration.content),
       filename: configuration.name.split('/').pop() + '.mnky'
+    }, () => {
+      if (chrome.runtime.lastError && chrome.runtime.lastError.message === 'Invalid filename') {
+        window.chrome.downloads.download({
+          url: 'data:text/octet-stream;base64,' + Base64.encode(configuration.content),
+          saveAs: true
+        })
+      }
     })
   }
 
