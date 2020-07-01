@@ -1,7 +1,6 @@
 import React from 'react'
 import Tabs from '../../shared/Tabs'
 import Pane from '../../shared/Pane'
-import AccessControl from '../AccessControl'
 import Variable from './Variable'
 import CodeEditor from './CodeEditor'
 import Configuration from '../../../models/Configuration'
@@ -15,6 +14,7 @@ import Switch from 'react-switch'
 class Editor extends React.Component {
   static propTypes = {
     currentConfiguration: PropTypes.object.isRequired,
+    globalVariables: PropTypes.array.isRequired,
     getRepository: PropTypes.func.isRequired,
     onSave: PropTypes.func.isRequired,
     onShare: PropTypes.func.isRequired,
@@ -168,12 +168,12 @@ class Editor extends React.Component {
         } */
       }
 
-     if(line.includes('=')) {
+      if (line.includes('=')) {
         const [lhs, rhs] = line.split(/=(.+)/, 2).map(e => e.trim())
-        if(rhs.startsWith('/') && rhs.endsWith('/')) {
+        if (typeof rhs === 'string' && rhs.startsWith('/') && rhs.endsWith('/')) {
           result.push({ row: rowIdx, column: 0, text: 'expression = regex', type: 'info' })
         }
-     }
+      }
 
       if ((!line.startsWith(';') && line.includes(';')) ||
           (!line.startsWith('#') && line.includes('#')) ||
@@ -199,14 +199,14 @@ class Editor extends React.Component {
   renderConfiguration() {
     const current = this.state.currentConfiguration
     const hiddenIfNew = current.id === 'new' ? { display: 'none' } : {}
-    const tmpConfig = (new Configuration(current.content, this.props.getRepository(), false, current.values))
+    const tmpConfig = new Configuration(current.content, this.props.getRepository(), false, current.values, {}, this.props.globalVariables)
     const variables = tmpConfig.getVariables()
 
     const showTemplateWarning = tmpConfig.isTemplate() || tmpConfig.isRestricted() ? 'no-warning-box' : 'warning-box'
 
     const hotkeyOptions = Array.from(Array(9).keys()).map(x => ({ value: x + 1, label: '#' + (x + 1) }))
 
-    const currentHotkeys = current.hotkeys.map(value => ({ value, label: '#' + value }))
+    const currentHotkeys = current.hotkeys ? current.hotkeys.map(value => ({ value, label: '#' + value })) : []
 
     const autosave = current.id === 'new' ? false : this.props.autoSave
 
@@ -239,7 +239,7 @@ class Editor extends React.Component {
             />
           </div>
           <button className={'save-button ' + (this.state.unsavedChanges ? '' : 'disabled')} onClick={(event) => this.handleClick(event, 'save')}>Save</button>
-          <button className="share-button" style={hiddenIfNew} onClick={(event) => this.handleClick(event, 'share')}>{shareLabel}</button>
+          {/* <button className="share-button" style={hiddenIfNew} onClick={(event) => this.handleClick(event, 'share')}>{shareLabel}</button> */}
           <button className="copy-button" style={hiddenIfNew} onClick={(event) => this.handleClick(event, 'copy')}>Duplicate</button>
           <button className="download-button" style={hiddenIfNew} onClick={(event) => this.handleClick(event, 'download')}>Download</button>
           <button className="delete-button" style={hiddenIfNew} onClick={(event) => this.handleClick(event, 'delete')}>Delete</button>
@@ -250,7 +250,8 @@ class Editor extends React.Component {
         </div>
         <Tabs activeTab={this.props.activeTab} onNavigate={this.props.onNavigate}>
           <Pane label="Configuration" name="configuration" id="current-configuration-editor">
-            <CodeEditor value={current.content} getRepository={this.props.getRepository}
+            <CodeEditor value={current.content}
+              getRepository={this.props.getRepository}
               onChange={(content) => this.handleUpdate('content', content)}
               readOnly={current.readOnly === true}
               annotations={(content) => this._buildAnnotations(content)}
@@ -259,6 +260,7 @@ class Editor extends React.Component {
               keyboardHandler={this.props.keyboardHandler}
               editorAutocomplete={this.props.editorAutocomplete}
               isDarkMode={this.props.isDarkMode}
+              variables={variables}
             />
           </Pane>
           <Pane label="Variables" name="variables">
@@ -274,9 +276,9 @@ class Editor extends React.Component {
               })}
             </div>
           </Pane>
-          <Pane label="Access Control" name="acl">
+          {/* <Pane label="Access Control" name="acl">
             <AccessControl for={current} />
-          </Pane>
+          </Pane> */}
           <Pane link={(e) => {
             e.preventDefault()
             window.open('https://github.com/Appdynamics/demomonkey/blob/master/SHORTCUTS.md')

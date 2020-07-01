@@ -6,7 +6,7 @@ import MatchRule from './MatchRule'
 import { logger } from '../helpers/logger'
 
 class Configuration {
-  constructor(iniFile, repository, enabled = true, values = {}, featureFlags = {}) {
+  constructor(iniFile, repository, enabled = true, values = {}, featureFlags = {}, globalVariables = []) {
     this.repository = repository
     this.rawContent = iniFile
     this.content = iniFile ? (new Ini(iniFile, repository)).parse() : []
@@ -15,6 +15,8 @@ class Configuration {
     this.enabled = enabled
     this.values = values
     this.featureFlags = featureFlags
+
+    this.globalVariables = globalVariables
   }
 
   isTemplate() {
@@ -172,14 +174,19 @@ class Configuration {
   }
 
   getImports() {
-    var filterImport = function (content) {
+    const maxDepth = 25
+    var filterImport = function (content, depth = 0) {
       return function (result, key) {
+        if (depth > maxDepth) {
+          return result
+        }
+
         if (key.charAt(0) === '+') {
           result.push(key.substring(1))
         }
 
         if (typeof content[key] === 'object' && content[key] !== null) {
-          return result.concat(Object.keys(content[key]).reduce(filterImport(content[key]), []))
+          return result.concat(Object.keys(content[key]).reduce(filterImport(content[key], depth++), []))
         }
 
         return result
@@ -231,7 +238,7 @@ class Configuration {
 
     // Variables are replaced longest first, to have a consistent behaviour for #35
     // Also, "local variables" are shadowing variables of imports
-    const variables = Object.keys(this.content).reduce(filterVariable(this.content), [])
+    const variables = Object.keys(this.content).reduce(filterVariable(this.content), this.globalVariables.map(v => new Variable(v.key, v.value, '', 'global')))
       .sort((a, b) => {
         return b.name.length - a.name.length
       }).reduce((carry, variable) => {
@@ -293,13 +300,13 @@ class Configuration {
             return result.concat(Object.keys(content[key]).reduce(filterConfiguration(content[key]), []))
           }
 
-          const lhs = variables.reduce((value, variable) => {
+          const applyVariables = (target) => variables.reduce((value, variable) => {
             return variable.apply(value)
-          }, key)
+          }, target)
 
-          const rhs = variables.reduce((value, variable) => {
-            return variable.apply(value)
-          }, content[key])
+          // We apply the variables twice to allow dependencies like: $domain = $name.$tld
+          const lhs = applyVariables(applyVariables(key))
+          const rhs = applyVariables(applyVariables(content[key]))
 
           result.push(commandBuilder.build(lhs, rhs))
 

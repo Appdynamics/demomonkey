@@ -22,7 +22,7 @@ class CodeEditor extends React.Component {
     })
     // Make sure that an error in auto completion does not break the whole editor.
     try {
-      autocomplete(props.getRepository)
+      autocomplete(props.getRepository, props.variables)
     } catch (e) {
       logger('error', e).write()
     }
@@ -38,7 +38,8 @@ class CodeEditor extends React.Component {
     editorAutocomplete: PropTypes.bool.isRequired,
     annotations: PropTypes.func.isRequired,
     keyboardHandler: PropTypes.string,
-    isDarkMode: PropTypes.bool.isRequired
+    isDarkMode: PropTypes.bool.isRequired,
+    variables: PropTypes.array.isRequired
   }
 
   handleChange(content, event) {

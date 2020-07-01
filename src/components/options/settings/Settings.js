@@ -4,8 +4,8 @@ import PropTypes from 'prop-types'
 import AceEditor from 'react-ace'
 import Tabs from '../../shared/Tabs'
 import Pane from '../../shared/Pane'
-import ServerSettings from './ServerSettings'
 import DemoMonkeyServer from '../../../models/DemoMonkeyServer'
+import GlobalVariables from './GlobalVariables'
 
 import 'brace/theme/xcode'
 import 'brace/theme/merbivore'
@@ -18,6 +18,7 @@ class Settings extends React.Component {
     settings: PropTypes.object.isRequired,
     configurations: PropTypes.arrayOf(PropTypes.object).isRequired,
     onSetBaseTemplate: PropTypes.func.isRequired,
+    onSaveGlobalVariables: PropTypes.func.isRequired,
     demoMonkeyServer: PropTypes.instanceOf(DemoMonkeyServer).isRequired,
     onSetMonkeyInterval: PropTypes.func.isRequired,
     onSetDemoMonkeyServer: PropTypes.func.isRequired,
@@ -186,12 +187,15 @@ class Settings extends React.Component {
                   onChange={this.props.onSetBaseTemplate} />
               </div>
             </Pane>
-            <Pane label="Demo Monkey Server (beta)" name="demoMonkeyServer">
+            {/* <Pane label="Demo Monkey Server (beta)" name="demoMonkeyServer">
               <ServerSettings
                 demoMonkeyServer={this.props.demoMonkeyServer}
                 onSetDemoMonkeyServer={this.props.onSetDemoMonkeyServer}
                 onDownloadAll={this.props.onDownloadAll}
               />
+            </Pane> */}
+            <Pane label="Global Variables" name="globalVariables">
+              <GlobalVariables globalVariables={this.props.settings.globalVariables} onSaveGlobalVariables={this.props.onSaveGlobalVariables} isDarkMode={this.props.isDarkMode} />
             </Pane>
             <Pane label="More" name="more">
               <h2>{'Monkey\'s Behavior'}</h2>

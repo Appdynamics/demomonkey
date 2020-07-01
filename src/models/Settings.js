@@ -6,6 +6,7 @@ class Settings {
     this.monkeyInterval = typeof settings.monkeyInterval === 'number' ? settings.monkeyInterval : parseInt(settings.monkeyInterval)
     this.debugMode = typeof settings.debugMode === 'boolean' ? settings.debugMode : false
     this.liveMode = typeof settings.liveMode === 'boolean' ? settings.liveMode : false
+    this.globalVariables = Array.isArray(settings.globalVariables) ? settings.globalVariables : []
   }
 
   isFeatureEnabled(featureName) {

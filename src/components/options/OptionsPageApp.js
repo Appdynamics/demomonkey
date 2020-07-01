@@ -258,6 +258,10 @@ class App extends React.Component {
     this.props.actions.setBaseTemplate(baseTemplate)
   }
 
+  saveGlobalVariables(globalVariables) {
+    this.props.actions.saveGlobalVariables(globalVariables)
+  }
+
   setMonkeyInterval(interval) {
     this.props.actions.setMonkeyInterval(interval)
   }
@@ -283,6 +287,7 @@ class App extends React.Component {
             demoMonkeyServer={this.props.demoMonkeyServer}
             onToggleOptionalFeature={(feature) => this.toggleOptionalFeature(feature)}
             onSetBaseTemplate={(baseTemplate) => this.setBaseTemplate(baseTemplate)}
+            onSaveGlobalVariables={(globalVariables) => this.saveGlobalVariables(globalVariables)}
             onSetMonkeyInterval={(value) => this.setMonkeyInterval(value)}
             onSetDemoMonkeyServer={(value) => this.setDemoMonkeyServer(value)}
             onDownloadAll={(event) => this.downloadAll(event)}
@@ -298,7 +303,9 @@ class App extends React.Component {
           if (typeof configuration === 'undefined') {
             return <ErrorBox error={{ message: `Unknown Configuration ${segments[1]}` }} />
           }
-          return <Editor getRepository={() => this.getRepository()} currentConfiguration={configuration}
+          return <Editor getRepository={() => this.getRepository()}
+            currentConfiguration={configuration}
+            globalVariables={this.props.settings.globalVariables}
             autoSave={this.props.settings.optionalFeatures.autoSave}
             saveOnClose={this.props.settings.optionalFeatures.saveOnClose}
             editorAutocomplete={this.props.settings.optionalFeatures.editorAutocomplete}
@@ -438,6 +445,9 @@ const OptionsPageApp = connect(
       },
       setBaseTemplate: (baseTemplate) => {
         dispatch({ type: 'SET_BASE_TEMPLATE', baseTemplate })
+      },
+      saveGlobalVariables: (globalVariables) => {
+        dispatch({ type: 'SAVE_GLOBAL_VARIABLES', globalVariables })
       },
       toggleOptionalFeature: (optionalFeature) => {
         return dispatch({ type: 'TOGGLE_OPTIONAL_FEATURE', optionalFeature })

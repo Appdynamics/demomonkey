@@ -49,6 +49,11 @@ const settings = function (state = '', action) {
         ...state,
         baseTemplate: action.baseTemplate
       }
+    case 'SAVE_GLOBAL_VARIABLES':
+      return {
+        ...state,
+        globalVariables: action.globalVariables
+      }
     case 'TOGGLE_DEBUG_MODE':
       return {
         ...state,

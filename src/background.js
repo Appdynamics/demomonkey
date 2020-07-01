@@ -213,6 +213,12 @@ import { logger, connectLogger } from './helpers/logger'
     settings: {
       baseTemplate: require('../examples/baseTemplate.mnky'),
       optionalFeatures: defaultsForOptionalFeatures,
+      globalVariables: [
+        {
+          key: 'adPurple',
+          value: '7e69d2'
+        }
+      ],
       debugMode: false,
       monkeyInterval: 100,
       demoMonkeyServer: '',

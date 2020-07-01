@@ -13,7 +13,7 @@ function signature2snippet(signature) {
   return signature.replace(/\${(\d):[^}]*}/g, (match, d) => { return '${' + d + '}' })
 }
 
-function autocomplete(getRepository) {
+function autocomplete(getRepository, variables) {
   // Build auto completion for all commands
   let cmds = [{ caption: '!/regex/', snippet: '!/${1}/${2} = ${3}' }].concat(registry.filter(e => e.signature && !e.deprecated).map(e => {
     return {
@@ -88,14 +88,7 @@ function autocomplete(getRepository) {
       if (prefix.startsWith('+') && pos.column - prefix.length === 0) {
         callback(null, getRepository().getNames().sort().map(c => { return { caption: '+' + c, value: '+' + c, meta: 'import' } }))
       } else if (prefix.startsWith('$') && pos.column - prefix.length > 0) {
-        // Capture namespaces for the auto completion
-        const varPattern = /^(\$[^=;# ]*)\s*=\s*(.*)$/mg
-        let match
-        const variables = []
-        while ((match = varPattern.exec(editor.getValue()))) {
-          variables.push({ caption: match[1] + ' = ' + match[2], value: match[1], meta: 'variable' })
-        }
-        callback(null, variables)
+        callback(null, variables.map(v => { return { caption: v.name + ' = ' + v.value, value: '${' + v.name + '}', meta: v.owner === 'global' ? 'global variable' : 'variable' } }))
       } else if (prefix.startsWith('@') && pos.column - prefix.length === 0) {
         callback(null, options)
       } else if (prefix.startsWith('!') && pos.column - prefix.length === 0) {

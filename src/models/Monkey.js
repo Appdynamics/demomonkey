@@ -4,8 +4,9 @@ import UndoElement from '../commands/UndoElement'
 import { logger } from '../helpers/logger'
 
 class Monkey {
-  constructor(rawConfigurations, scope, withUndo = true, intervalTime = 100, urlManager = false, ajaxManager = false, featureFlags = {}) {
+  constructor(rawConfigurations, scope, globalVariables, withUndo = true, intervalTime = 100, urlManager = false, ajaxManager = false, featureFlags = {}) {
     this.scope = scope
+    this.globalVariables = globalVariables
     this.undo = []
     this.repository = new Repository({})
     this.withUndo = withUndo
@@ -19,7 +20,7 @@ class Monkey {
     this.intervals = []
 
     this.configurations = rawConfigurations.map((rawConfig) => {
-      var config = new Configuration(rawConfig.content, this.repository, rawConfig.enabled === true, rawConfig.values, featureFlags)
+      var config = new Configuration(rawConfig.content, this.repository, rawConfig.enabled === true, rawConfig.values, featureFlags, globalVariables)
       this.repository.addConfiguration(rawConfig.name, config)
       return [rawConfig.name, config]
     })

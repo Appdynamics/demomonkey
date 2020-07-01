@@ -121,7 +121,7 @@ try {
         }
       }
 
-      var $DEMO_MONKEY = new Monkey(store.getState().configurations, scope, settings.isFeatureEnabled('undo'), settings.monkeyInterval, urlManager, ajaxManager, {
+      var $DEMO_MONKEY = new Monkey(store.getState().configurations, scope, settings.globalVariables, settings.isFeatureEnabled('undo'), settings.monkeyInterval, urlManager, ajaxManager, {
         withEvalCommand: settings.isFeatureEnabled('withEvalCommand'),
         hookIntoAjax: settings.isFeatureEnabled('hookIntoAjax'),
         webRequestHook: settings.isFeatureEnabled('webRequestHook')
@@ -135,7 +135,7 @@ try {
         logger('debug', 'Restart DemoMonkey').write()
         // Update settings
         var settings = new Settings(store.getState().settings)
-        var newMonkey = new Monkey(store.getState().configurations, scope, settings.isFeatureEnabled('undo'), settings.monkeyInterval, urlManager, ajaxManager, {
+        var newMonkey = new Monkey(store.getState().configurations, scope, settings.globalVariables, settings.isFeatureEnabled('undo'), settings.monkeyInterval, urlManager, ajaxManager, {
           withEvalCommand: settings.isFeatureEnabled('withEvalCommand'),
           hookIntoAjax: settings.isFeatureEnabled('hookIntoAjax'),
           webRequestHook: settings.isFeatureEnabled('webRequestHook')
