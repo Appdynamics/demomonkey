@@ -52,7 +52,6 @@ class ConfigurationSync {
       url: `${this.remoteUrl}/latestBackup`
     }).then(response => {
       if (response.data.created_at + 86400000 > Date.now()) {
-        console.log('No backup necessary.')
         return
       }
       this.backupNow()
@@ -69,7 +68,6 @@ class ConfigurationSync {
 
   connect() {
     if (this.connected) {
-      console.log('Please disconnect before connecting again.')
       return
     }
     this.actions.setState('Connecting')
@@ -91,7 +89,6 @@ class ConfigurationSync {
     })
 
     this.configStream.onerror = (e) => {
-      console.log(e)
       this.reconnect('an error occured')
     }
 
@@ -145,7 +142,7 @@ class ConfigurationSync {
   }
 
   start() {
-    console.log('Starting to sync with ', this.remoteUrl)
+    // console.log('Starting to sync with ', this.remoteUrl)
     this.listener = (changes, namespace) => this.changeListener(changes, namespace)
     this.storage.onChanged.addListener(this.listener)
 

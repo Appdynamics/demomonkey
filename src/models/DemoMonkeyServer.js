@@ -6,7 +6,6 @@ import axios from 'axios'
  */
 class DemoMonkeyServer {
   constructor(url, connectionState) {
-    console.log(url, connectionState)
     this.url = url.replace(/\/*$/, '')
     this.connectionState = connectionState
   }

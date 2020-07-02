@@ -6,6 +6,7 @@ import Tabs from '../../shared/Tabs'
 import Pane from '../../shared/Pane'
 import DemoMonkeyServer from '../../../models/DemoMonkeyServer'
 import GlobalVariables from './GlobalVariables'
+import ServerSettings from './ServerSettings'
 
 import 'brace/theme/xcode'
 import 'brace/theme/merbivore'
@@ -187,13 +188,13 @@ class Settings extends React.Component {
                   onChange={this.props.onSetBaseTemplate} />
               </div>
             </Pane>
-            {/* <Pane label="Demo Monkey Server (beta)" name="demoMonkeyServer">
+            <Pane label="Demo Monkey Server (beta)" name="demoMonkeyServer">
               <ServerSettings
                 demoMonkeyServer={this.props.demoMonkeyServer}
                 onSetDemoMonkeyServer={this.props.onSetDemoMonkeyServer}
                 onDownloadAll={this.props.onDownloadAll}
               />
-            </Pane> */}
+            </Pane>
             <Pane label="Global Variables" name="globalVariables">
               <GlobalVariables globalVariables={this.props.settings.globalVariables} onSaveGlobalVariables={this.props.onSaveGlobalVariables} isDarkMode={this.props.isDarkMode} />
             </Pane>

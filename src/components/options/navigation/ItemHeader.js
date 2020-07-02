@@ -71,11 +71,15 @@ class ItemHeader extends React.Component {
           <a href={'#configuration/' + this.props.node.id} onClick={(event) => event.preventDefault()}>{label}</a>
         </div>
         <div className="configuration-updated-at" style={style.timestamp}>
-          { this.props.node.updated_at
-            ? <time dateTime={updatedAt.format()} title={updatedAt.format()}>
-              {updatedAt.fromNow(true)}
-            </time>
-            : ''
+          {
+            this.props.node.enabled
+              ? <span style={{ color: 'red' }}>enabled</span>
+              : (this.props.node.updated_at
+                ? <time dateTime={updatedAt.format()} title={updatedAt.format()}>
+                  {updatedAt.fromNow(true)}
+                </time>
+                : ''
+              )
           }
         </div>
         <div className="configuration-options" style={{ visibility: this.state.optionsVisible ? 'visible' : 'hidden' }}>

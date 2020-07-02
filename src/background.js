@@ -244,7 +244,6 @@ import { logger, connectLogger } from './helpers/logger'
 
   function updateStorage(store) {
     const configurations = store.getState().configurations
-
     const settings = store.getState().settings
 
     // Sync data back into chrome.storage
@@ -253,9 +252,7 @@ import { logger, connectLogger } from './helpers/logger'
       settings,
       monkeyID: store.getState().monkeyID
     })
-
     syncConfigs(settings.optionalFeatures.configSync, settings.demoMonkeyServer, store)
-
     hookIntoWebRequests(settings.optionalFeatures.webRequestHook, configurations.filter(c => c.enabled).length > 0)
   }
 

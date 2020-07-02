@@ -45,7 +45,8 @@ class Navigation extends React.Component {
         var result = {
           name: dir,
           nodeType: 'directory',
-          id: id,
+          id,
+          enabled: item.enabled,
           children: [acc]
         }
         // This is required, since the merge might prefer a false from a previous element
