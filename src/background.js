@@ -334,6 +334,16 @@ import { logger, connectLogger } from './helpers/logger'
     })
 
     scope.chrome.contextMenus.create({
+      title: 'Load from page',
+      contexts: ['page'],
+      documentUrlPatterns: ['*://*/*APPS_ALL_DASHBOARD*'],
+      onclick: function (info, tab) {
+        console.log(info, tab)
+        scope.chrome.tabs.sendMessage(tab.id, { action: 'loadFromPage' })
+      }
+    })
+
+    scope.chrome.contextMenus.create({
       title: 'Toggle Debug Mode',
       contexts: ['browser_action'],
       onclick: function () {

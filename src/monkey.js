@@ -17,7 +17,13 @@ try {
     }
 
     scope.chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-      scope['demomonkey-active-tab'] = true
+      console.log(request)
+      if (request.active) {
+        scope['demomonkey-active-tab'] = true
+      }
+      if (request.action && request.action === 'loadFromPage') {
+        console.log("READ FROM PAGE and do some crazy shit")
+      }
     })
 
     const store = new Store({
