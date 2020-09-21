@@ -228,7 +228,7 @@ class Editor extends React.Component {
             />
           </div>
           <b>Name</b>
-          <input type="text" className="text-input" id="configuration-title" placeholder="Please provide a name. You can use slahes (/) in it to create folders." value={current.name} onChange={(event) => this.handleUpdate('name', event.target.value, event)}/>
+          <input type="text" className="text-input" id="configuration-title" placeholder="Please provide a name. You can use slashes (/) in it to create folders." value={current.name} onChange={(event) => this.handleUpdate('name', event.target.value, event)}/>
           <div className="select-hotkeys">
             <Select
               placeholder="Shortcut Groups..."
