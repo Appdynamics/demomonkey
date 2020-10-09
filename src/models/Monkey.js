@@ -207,6 +207,22 @@ class Monkey {
 
       undos.push(new UndoElement(tspan, 'textContent', original, tspan.textContent))
     })
+
+    // The Experience Journey Map in AppDynamics shortens the labels but provides a "data-full-string"
+    // property we can work with
+    this.scope.document.querySelectorAll('eum-user-journey-map-label > div.eum-ui-user-journey-node-body').forEach(node => {
+      var pseudoNode = {
+        value: node.dataset.fullString
+      }
+      configuration.apply(pseudoNode, 'value', 'text')
+      if (node.dataset.fullString !== pseudoNode.value) {
+        var original = node.textContent
+        var replacement = original.length < pseudoNode.value.length ? '...' + pseudoNode.value.substring(pseudoNode.value.length - original.length - 3) : pseudoNode.value
+        node.dataset.fullString = pseudoNode.value
+        node.textContent = replacement
+        undos.push(new UndoElement(node, 'textContent', original, node.textContent))
+      }
+    })
     this.addUndo(undos)
   }
 

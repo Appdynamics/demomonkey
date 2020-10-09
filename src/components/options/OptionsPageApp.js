@@ -382,9 +382,9 @@ class App extends React.Component {
   render() {
     var activeItem = this.state.currentView.indexOf('configuration/') === -1 ? false : this.state.currentView.split('/').pop()
 
-    var configurations = this.getConfigurations()
-
     var withWarning = (!this.hasExtendedPermissions() && !this.props.settings.optionalFeatures.noWarningForMissingPermissions) ? ' with-warning' : ''
+
+    var configurations = this.getConfigurations()
 
     return <Page className={`main-grid${withWarning}`} preferDarkMode={this.props.settings.optionalFeatures.preferDarkMode} syncDarkMode={this.props.settings.optionalFeatures.syncDarkMode}>
       <Popup className="popup" btnClass="popup__btn" />
