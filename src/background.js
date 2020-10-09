@@ -5,7 +5,6 @@ import { v4 as uuidV4 } from 'uuid'
 import Configuration from './models/Configuration'
 import MatchRule from './models/MatchRule'
 import Badge from './models/Badge'
-import ConfigurationSync from './models/ConfigurationSync'
 import match from './helpers/match.js'
 import { logger, connectLogger } from './helpers/logger'
 
@@ -100,46 +99,6 @@ import { logger, connectLogger } from './helpers/logger'
     }
   }
 
-  var configSync = false
-  var previousServer = false
-  var previousIsEnabled = false
-
-  function syncConfigs(isEnabled, server, store) {
-    console.log(isEnabled, server, store)
-    if (server === previousServer && previousIsEnabled === isEnabled) {
-      return
-    }
-    previousServer = server
-    previousIsEnabled = isEnabled
-    console.log('Syncing configurations: ', isEnabled)
-    if (configSync !== false) {
-      console.log('--- STOP')
-      configSync.stop()
-    }
-    if (isEnabled && server.startsWith('http')) {
-      console.log('--- START')
-      configSync = new ConfigurationSync(
-        scope.chrome.storage,
-        {
-          saveConfiguration: (id, configuration) => {
-            store.dispatch({ type: 'SAVE_CONFIGURATION', id, configuration, sync: true })
-          },
-          addConfiguration: (configuration) => {
-            store.dispatch({ type: 'ADD_CONFIGURATION', configuration, sync: true })
-          },
-          setState: (connectionState) => {
-            store.dispatch({ type: 'SET_CONNECTION_STATE', connectionState })
-          }
-        },
-        server,
-        logMessage
-      )
-      configSync.start()
-    } else {
-      console.log(`Not syncing to "${server}"`)
-    }
-  }
-
   // New tab created, initialize badge for given tab
   scope.chrome.tabs.onCreated.addListener(function (tab) {
     // Initialize new tab
@@ -180,7 +139,6 @@ import { logger, connectLogger } from './helpers/logger'
     editorAutocomplete: true,
     inDevTools: true,
     webRequestHook: false,
-    remoteSync: false,
     debugBox: false,
     withEvalCommand: false,
     // This is only a soft toggle, since the user can turn it on and off directly in the popup
@@ -220,9 +178,7 @@ import { logger, connectLogger } from './helpers/logger'
         }
       ],
       debugMode: false,
-      monkeyInterval: 100,
-      demoMonkeyServer: '',
-      remoteConnections: []
+      monkeyInterval: 100
     },
     monkeyID: uuidV4()
   }
@@ -252,7 +208,6 @@ import { logger, connectLogger } from './helpers/logger'
       settings,
       monkeyID: store.getState().monkeyID
     })
-    syncConfigs(settings.optionalFeatures.configSync, settings.demoMonkeyServer, store)
     hookIntoWebRequests(settings.optionalFeatures.webRequestHook, configurations.filter(c => c.enabled).length > 0)
   }
 
@@ -274,8 +229,6 @@ import { logger, connectLogger } from './helpers/logger'
     scope.chrome.storage.local.set({ monkeyID: store.getState().monkeyID })
 
     hookIntoWebRequests(settings.optionalFeatures.webRequestHook, store.getState().configurations.filter(c => c.enabled).length > 0)
-
-    syncConfigs(settings.optionalFeatures.configSync, settings.demoMonkeyServer, store)
 
     store.subscribe(function () {
       const lastAction = store.getState().lastAction

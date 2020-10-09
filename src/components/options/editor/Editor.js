@@ -17,7 +17,6 @@ class Editor extends React.Component {
     globalVariables: PropTypes.array.isRequired,
     getRepository: PropTypes.func.isRequired,
     onSave: PropTypes.func.isRequired,
-    onShare: PropTypes.func.isRequired,
     onCopy: PropTypes.func.isRequired,
     onDownload: PropTypes.func.isRequired,
     onDelete: PropTypes.func.isRequired,
@@ -210,22 +209,18 @@ class Editor extends React.Component {
 
     const autosave = current.id === 'new' ? false : this.props.autoSave
 
-    const shared = (typeof current.shared === 'string')
-
-    const shareLabel = shared ? 'Unshare' : 'Share'
-
-    const sharedUrl = `web+mnky://s/${current.shared}`
-
     return (
       <div className="editor">
         <div className="title">
           <div className="toggle-configuration">
-            <Switch
-              checked={this.props.currentConfiguration.enabled}
-              onChange={() => { this.toggle() }}
-              height={20}
-              width={48}
-            />
+            { hiddenIfNew ? ''
+              : <Switch
+                checked={this.props.currentConfiguration.enabled}
+                onChange={() => { this.toggle() }}
+                height={20}
+                width={48}
+              />
+            }
           </div>
           <b>Name</b>
           <input type="text" className="text-input" id="configuration-title" placeholder="Please provide a name. You can use slahes (/) in it to create folders." value={current.name} onChange={(event) => this.handleUpdate('name', event.target.value, event)}/>
@@ -239,7 +234,6 @@ class Editor extends React.Component {
             />
           </div>
           <button className={'save-button ' + (this.state.unsavedChanges ? '' : 'disabled')} onClick={(event) => this.handleClick(event, 'save')}>Save</button>
-          {/* <button className="share-button" style={hiddenIfNew} onClick={(event) => this.handleClick(event, 'share')}>{shareLabel}</button> */}
           <button className="copy-button" style={hiddenIfNew} onClick={(event) => this.handleClick(event, 'copy')}>Duplicate</button>
           <button className="download-button" style={hiddenIfNew} onClick={(event) => this.handleClick(event, 'download')}>Download</button>
           <button className="delete-button" style={hiddenIfNew} onClick={(event) => this.handleClick(event, 'delete')}>Delete</button>
@@ -283,10 +277,6 @@ class Editor extends React.Component {
             e.preventDefault()
             window.open('https://github.com/Appdynamics/demomonkey/blob/master/SHORTCUTS.md')
           }} label="Shortcuts"/>
-          <Pane style={{ float: 'right' }} visible={ shared } link={(e) => {
-            e.preventDefault()
-            navigator.clipboard.writeText(sharedUrl)
-          }} label={ `Copy share link (${sharedUrl}) to clipboard` }/>
         </Tabs>
       </div>
     )

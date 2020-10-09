@@ -4,7 +4,6 @@ import NavigationHeader from './NavigationHeader'
 import navigationTheme from './NavigationTheme'
 import ItemHeader from './ItemHeader'
 import ErrorBox from '../../shared/ErrorBox'
-import DemoMonkeyServer from '../../../models/DemoMonkeyServer'
 import merge from 'deepmerge'
 import arrayMerge from '../../../helpers/arrayMerge'
 import { Treebeard, decorators } from 'react-treebeard'
@@ -17,8 +16,6 @@ class Navigation extends React.Component {
     onUpload: PropTypes.func.isRequired,
     onDelete: PropTypes.func.isRequired,
     onDownloadAll: PropTypes.func.isRequired,
-    demoMonkeyServer: PropTypes.instanceOf(DemoMonkeyServer).isRequired,
-    remoteLocation: PropTypes.string.isRequired,
     showLogs: PropTypes.bool.isRequired
   }
 
@@ -130,7 +127,6 @@ class Navigation extends React.Component {
       return <ItemHeader
         style={props.style}
         node={props.node}
-        editableDirectories={this.props.demoMonkeyServer.isConnected()}
         onEdit={(id, isDirectory) => this.handleClick(id, isDirectory)}
         onDelete={(event, node) => this.onDelete(event, node)}
       />
@@ -140,7 +136,6 @@ class Navigation extends React.Component {
       <div>
         <div className="navigation-header">
           <NavigationHeader
-            enableGallery={this.props.demoMonkeyServer.isConnected()}
             onUpload={this.props.onUpload}
             onDownloadAll={this.props.onDownloadAll}
             onNavigate={this.props.onNavigate}

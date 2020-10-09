@@ -8,7 +8,6 @@ class NavigationHeader extends React.Component {
     onUpload: PropTypes.func.isRequired,
     onNavigate: PropTypes.func.isRequired,
     onDownloadAll: PropTypes.func.isRequired,
-    enableGallery: PropTypes.bool.isRequired,
     showLogs: PropTypes.bool.isRequired
   }
 
@@ -32,10 +31,7 @@ class NavigationHeader extends React.Component {
         <a href='#settings' onClick={(event) => this.handleClick(event, 'settings')} >Settings</a>
       </li>
       <li>
-        { this.props.enableGallery
-          ? <a href='#backup' onClick={this.props.onDownloadAll} >Backup</a>
-          : <a href='#gallery' onClick={(event) => this.handleClick(event, 'gallery')} >Gallery</a>
-        }
+        <a href='#backup' onClick={this.props.onDownloadAll} >Backup</a>
       </li>
       <li>
         { this.props.showLogs

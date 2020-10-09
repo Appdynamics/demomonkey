@@ -72,9 +72,7 @@ Unless required by applicable law or agreed to in writing, software distributed 
 See the License for the specific language governing permissions and limitations under the License.
 
 ## Attribution
-The monkey icon was made by Freepik from www.flaticon.com
-
-A build of DemoMonkey uses other projects, which are listed in the file DEPENDENCIES.csv
+The Demo Monkey icon was created by Lora Tomova
 
 ## Contact ###
-For any questions you can contact Severin Neumann <severin.neumann@appdynamics.com>
+For any questions you can contact [Severin Neumann](https://github.com/svrnm)

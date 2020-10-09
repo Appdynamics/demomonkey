@@ -10,7 +10,6 @@ import Gallery from './Gallery'
 import AccessControl from './AccessControl'
 import Editor from './editor/Editor'
 import Configuration from '../../models/Configuration'
-import DemoMonkeyServer from '../../models/DemoMonkeyServer'
 import PropTypes from 'prop-types'
 import Repository from '../../models/Repository'
 import { Base64 } from 'js-base64'
@@ -26,7 +25,6 @@ class App extends React.Component {
     actions: PropTypes.objectOf(PropTypes.func).isRequired,
     configurations: PropTypes.arrayOf(PropTypes.object).isRequired,
     initialView: PropTypes.string.isRequired,
-    demoMonkeyServer: PropTypes.instanceOf(DemoMonkeyServer).isRequired,
     onCurrentViewChange: PropTypes.func.isRequired,
     settings: PropTypes.object.isRequired,
     log: PropTypes.arrayOf(PropTypes.object).isRequired,
@@ -108,7 +106,7 @@ class App extends React.Component {
       })
   }
 
-  saveConfiguration(configuration) {
+  saveConfigurationUnguarded(configuration) {
     if (configuration.id === 'new') {
       this.addConfiguration(configuration)
     } else {
@@ -123,6 +121,32 @@ class App extends React.Component {
       }
 
       this.props.actions.saveConfiguration(configuration.id, configuration)
+    }
+  }
+
+  saveConfiguration(configuration) {
+    const configWithSameName = this.props.configurations.find(c => !c.deleted_at && c.name === configuration.name && c.id !== configuration.id)
+    if (configWithSameName) {
+      Popup.create({
+        title: 'Please confirm',
+        content: <span>A configuration with <b>{configuration.name} already exists. Do you really want to use this name</b>?</span>,
+        buttons: {
+          left: [{
+            text: 'Cancel',
+            action: () => Popup.close()
+          }],
+          right: [{
+            text: 'Save',
+            className: 'danger',
+            action: () => {
+              Popup.close()
+              this.saveConfigurationUnguarded(configuration)
+            }
+          }]
+        }
+      })
+    } else {
+      this.saveConfigurationUnguarded(configuration)
     }
   }
 
@@ -142,19 +166,9 @@ class App extends React.Component {
     })
   }
 
-  shareConfiguration(configuration) {
-    // if shared is a string we have an id, so we can check for that.
-    configuration.shared = !(typeof configuration.shared === 'string')
-    this.saveConfiguration(configuration)
-  }
-
   copyConfiguration(configuration) {
     var path = configuration.name.split('/')
     var name = 'Copy of ' + path.pop()
-    if (configuration.connector) {
-      delete configuration.connector
-      delete configuration.remoteLocation
-    }
     this.addConfiguration({
       ...configuration,
       name: path.length > 0 ? (path.join('/') + '/' + name) : name,
@@ -266,10 +280,6 @@ class App extends React.Component {
     this.props.actions.setMonkeyInterval(interval)
   }
 
-  setDemoMonkeyServer(value) {
-    this.props.actions.setDemoMonkeyServer(value)
-  }
-
   getCurrentView() {
     if (this.state.withError) {
       return <ErrorBox error={this.state.withError} />
@@ -284,12 +294,10 @@ class App extends React.Component {
         case 'settings':
           return <Settings settings={this.props.settings}
             configurations={this.props.configurations}
-            demoMonkeyServer={this.props.demoMonkeyServer}
             onToggleOptionalFeature={(feature) => this.toggleOptionalFeature(feature)}
             onSetBaseTemplate={(baseTemplate) => this.setBaseTemplate(baseTemplate)}
             onSaveGlobalVariables={(globalVariables) => this.saveGlobalVariables(globalVariables)}
             onSetMonkeyInterval={(value) => this.setMonkeyInterval(value)}
-            onSetDemoMonkeyServer={(value) => this.setDemoMonkeyServer(value)}
             onDownloadAll={(event) => this.downloadAll(event)}
             onRequestExtendedPermissions={(revoke) => this.requestExtendedPermissions(revoke)}
             hasExtendedPermissions={this.hasExtendedPermissions()}
@@ -312,7 +320,6 @@ class App extends React.Component {
             keyboardHandler={this.props.settings.optionalFeatures.keyboardHandlerVim ? 'vim' : null}
             onDownload={(configuration, _) => this.downloadConfiguration(configuration)}
             onSave={(_, configuration) => this.saveConfiguration(configuration)}
-            onShare={(_, configuration) => this.shareConfiguration(configuration)}
             onCopy={(configuration, _) => this.copyConfiguration(configuration)}
             onDelete={(configuration, _) => this.deleteConfiguration(configuration)}
             toggleConfiguration={() => this.props.actions.toggleConfiguration(configuration.id)}
@@ -392,8 +399,6 @@ class App extends React.Component {
           onDelete={(configuration) => this.deleteConfiguration(configuration)}
           items={configurations}
           onDownloadAll={(event) => this.downloadAll(event)}
-          demoMonkeyServer={this.props.demoMonkeyServer}
-          remoteLocation={this.props.settings.demoMonkeyServer}
           active={activeItem}
           showLogs={this.props.settings.optionalFeatures.writeLogs === true}
         />
@@ -410,8 +415,6 @@ const OptionsPageApp = connect(
   state => {
     return {
       configurations: state.configurations,
-      // currentView: state.currentView,
-      demoMonkeyServer: new DemoMonkeyServer(state.settings.demoMonkeyServer, state.connectionState),
       settings: state.settings,
       log: state.log
     }
@@ -421,9 +424,6 @@ const OptionsPageApp = connect(
     actions: {
       setMonkeyInterval: (monkeyInterval) => {
         dispatch({ type: 'SET_MONKEY_INTERVAL', monkeyInterval })
-      },
-      setDemoMonkeyServer: (demoMonkeyServer) => {
-        dispatch({ type: 'SET_DEMO_MONKEY_SERVER', demoMonkeyServer })
       },
       toggleConfiguration: (id) => {
         dispatch({ type: 'TOGGLE_CONFIGURATION', id: id })

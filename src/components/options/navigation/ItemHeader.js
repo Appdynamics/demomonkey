@@ -7,8 +7,7 @@ class ItemHeader extends React.Component {
     style: PropTypes.object.isRequired,
     node: PropTypes.object.isRequired,
     onDelete: PropTypes.func.isRequired,
-    onEdit: PropTypes.func.isRequired,
-    editableDirectories: PropTypes.bool.isRequired
+    onEdit: PropTypes.func.isRequired
   }
 
   constructor(props) {
@@ -83,11 +82,6 @@ class ItemHeader extends React.Component {
           }
         </div>
         <div className="configuration-options" style={{ visibility: this.state.optionsVisible ? 'visible' : 'hidden' }}>
-          {
-            !isDirectory || this.props.editableDirectories
-              ? <button className="edit-configuration" onClick={(event) => { event.preventDefault(); this.props.onEdit(this.props.node.id, isDirectory) }}>✎</button>
-              : ''
-          }
           <button className="delete-configuration" onClick={(event) => this.props.onDelete(event, this.props.node)}>x</button>
         </div>
         <ul className="context-menu" style={{ display: this.state.contextMenuVisible ? 'block' : 'none', top: this.state.y, left: this.state.x }}>
