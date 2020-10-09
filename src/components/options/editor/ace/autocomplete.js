@@ -72,7 +72,14 @@ function autocomplete(getRepository, variables) {
   langTools.setCompleters([{
     identifierRegexps: [/[a-zA-Z_0-9$!%/@+\-\u00A2-\uFFFF]/],
     getCompletions: function (editor, session, pos, prefix, callback) {
-      // console.log(prefix)
+      // This is a hack. it's not really easily possible to access the popup
+      // so we set this timeout to capture it when it is available and resize it then.
+      setTimeout(() => {
+        console.log(editor.completer.popup)
+        if (editor && editor.completer && editor.completer.popup) {
+          editor.completer.popup.container.style.width = '500px'
+        }
+      }, 50)
       if (prefix.startsWith('%') && pos.column - prefix.length === 0) {
         callback(null, getRepository().getNames().sort().map(c => {
           return {
