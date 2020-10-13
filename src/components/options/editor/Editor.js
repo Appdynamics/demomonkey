@@ -152,7 +152,7 @@ class Editor extends React.Component {
       }
 
       if (line.startsWith('!') && line.length > 1) {
-        const [lhs, rhs] = line.split('=')
+        const [lhs, rhs] = line.replace('\\=', '\u2260').split('=')
         const cmd = cb.build(lhs.trim(), typeof rhs === 'string' ? rhs.trim() : '')
         if (cmd instanceof ErrorCommand) {
           // `Command "${command}" not found.\nPlease check the spelling and\nif all required namespaces are loaded.`

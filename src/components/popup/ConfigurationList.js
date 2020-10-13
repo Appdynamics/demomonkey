@@ -108,10 +108,22 @@ class ConfigurationList extends React.Component {
     </i>
   }
 
+  buildIncludeRegex() {
+    const u = new URL(this.props.currentUrl)
+
+    const protocol = ['https:', 'http:'].includes(u.protocol) ? 'https?:' : u.protocol
+
+    const host = u.hostname
+
+    return '/^' + protocol + '//' + host + '/.*$/'
+  }
+
   render() {
     // If the rendering of the list throws any exception we display an error and the user should still be able to access the options page.
     try {
       return <div>
+        <div><b>Copy the following, to add current page to a configuration:</b></div>
+        <div><code>@include[]&nbsp;=&nbsp;{this.buildIncludeRegex()}</code></div>
         <div><input type="text" onChange={(event) => this.handleSearchUpdate(event)} value={this.state.search} placeholder="Search..." className="searchBox" /></div>
         <div><input type="checkbox" checked={this.state.onlyShowAvailable} onChange={(event) => this.toggleOnlyShowAvailable()} /> Only show configurations available for the current url</div>
         <div><input type="checkbox" checked={this.state.onlyShowActivated} onChange={(event) => this.toggleOnlyShowActivated()} /> Only show activated configurations</div>

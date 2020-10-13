@@ -131,7 +131,7 @@ function autocomplete(getRepository, variables) {
           callback(null, Object.keys(ReplaceFlowmapIcon.icons).map(value => { return { value, meta: 'icon' } }))
         } else if (lineToPos.match(/^!(?:appdynamics.)?(hide|replace)Application\($/)) {
           callback(null, [
-            'AD-DevOps', 'AD-Travel', 'Online-Retail', 'AD-Financial', 'Movie Tickets Online', 'AD-DevOps-Offers', 'ECommerce',
+            'AD-DevOps', 'AD-Travel', 'Online-Retail', 'AD-Financial', 'AD-Financial-Next', 'AD-Fraud-Detection', 'AD-Capital-Rookout', 'AD-Retail', 'Movie Tickets Online', 'AD-DevOps-Offers', 'ECommerce',
             'AD-MovieTickets-Core', 'ECommerce-Fulfillment', 'AD-Financial-Cloud', 'SAP-ERP'
           ].sort().map(value => { return { value, meta: 'application' } }))
         } else if (lineToPos.match(/^!(?:appdynamics.)?recolorDashboard\($/) || fullLine.match(/^!(?:appdynamics.)?recolorDashboard\(.*\)\s*=\s*/)) {
@@ -148,12 +148,29 @@ function autocomplete(getRepository, variables) {
             'ad-pink',
             'ad-red'
           ]).sort().map(value => { return { value, meta: 'color' } }))
+        } else if (lineToPos.match(/^!replaceImage\($/)) {
+          callback(null, [
+            'ad-travel-logo',
+            'ad-logo',
+            'ad-devops-bg-1',
+            'ad-devops-bg-2',
+            'ad-devops-bg-3',
+            'ad-devops-bg-4',
+            'ad-devops-bg-5'
+          ].sort().map(value => { return { value, meta: 'image' } }))
         } else if (fullLine.match(/^!(?:appdynamics.)?replaceDrillDownHealth\(.*\)\s*=\s*/)) {
           callback(null, [
             'normal',
             'warning',
             'critical'
           ].map(value => { return { value, meta: 'status' } }))
+        } else if (fullLine.match(/^@include\[\]\s*=\s*/)) {
+          callback(null, [
+            '/^https?://.*\\.appdynamics\\.com(:[0-9]+)?/.*$/',
+            '/^https?://.*.thousandeyes.com/.*$/',
+            '/^https?://.*.service-now.com/.*$/',
+            '/^https?://.*\\.harness\\.io(:[0-9]+)?/.*$/'
+          ].map(value => { return { value, meta: 'include' } }))
         }
       }
     }
