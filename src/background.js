@@ -135,7 +135,6 @@ import { logger, connectLogger } from './helpers/logger'
     autoReplace: true,
     autoSave: true,
     saveOnClose: true,
-    adrumTracking: true,
     editorAutocomplete: true,
     inDevTools: true,
     webRequestHook: false,

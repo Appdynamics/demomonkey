@@ -75,10 +75,6 @@ store.ready().then(() => {
     connectLogger(store, { source: 'monkey.js' })
   }
 
-  if (window.store.state.settings.optionalFeatures.adrumTracking === false) {
-    window['adrum-disable'] = true
-  }
-
   // updateCurrentPage()
 
   const manifest = new Manifest(chrome)

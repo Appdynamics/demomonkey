@@ -22,11 +22,20 @@ class Navigation extends React.Component {
   // This implementation is not very performant
   // Probably in the long run, the underyling datamodel needs to be changed
   static buildTree(items, state) {
-    var tree = []
-    var cursor = {}
+    let tree = []
+    let cursor = {}
+    let find = () => true
+    if (state.search !== '') {
+      const words = state.search.split(' ')
+      find = (item) => {
+        return words.some(word => {
+          return item.name.toLowerCase().indexOf(word) !== -1 || item.tags.includes(word) || (word === 'enabled' && item.enabled)
+        })
+      }
+    }
     items.forEach((orig, index) => {
       var item = Object.assign({}, orig)
-      if (item.name.toLowerCase().indexOf(state.search) === -1) {
+      if (!find(item)) {
         return
       }
       var currentIsActive = state.active === item.id
@@ -76,13 +85,7 @@ class Navigation extends React.Component {
   }
 
   handleClick(id, isDirectory = false) {
-    console.log(id)
-    if (isDirectory) {
-      id = id.split('/').reverse().join('/')
-      this.props.onNavigate('accessControl/' + id)
-    } else {
-      this.props.onNavigate('configuration/' + id)
-    }
+    this.props.onNavigate('configuration/' + id)
   }
 
   handleSearchUpdate(event) {
@@ -127,7 +130,6 @@ class Navigation extends React.Component {
       return <ItemHeader
         style={props.style}
         node={props.node}
-        onEdit={(id, isDirectory) => this.handleClick(id, isDirectory)}
         onDelete={(event, node) => this.onDelete(event, node)}
       />
     }

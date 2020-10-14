@@ -6,8 +6,7 @@ class ItemHeader extends React.Component {
   static propTypes = {
     style: PropTypes.object.isRequired,
     node: PropTypes.object.isRequired,
-    onDelete: PropTypes.func.isRequired,
-    onEdit: PropTypes.func.isRequired
+    onDelete: PropTypes.func.isRequired
   }
 
   constructor(props) {
@@ -85,9 +84,6 @@ class ItemHeader extends React.Component {
           <button className="delete-configuration" onClick={(event) => this.props.onDelete(event, this.props.node)}>x</button>
         </div>
         <ul className="context-menu" style={{ display: this.state.contextMenuVisible ? 'block' : 'none', top: this.state.y, left: this.state.x }}>
-          <li>
-            <a href={'#configuration/' + this.props.node.id} onClick={() => this.props.onEdit(this.props.node.id, isDirectory)}>Edit</a>
-          </li>
           <li>
             <a href="#" onClick={(event) => this.props.onDelete(event, this.props.node)}>Delete</a>
           </li>

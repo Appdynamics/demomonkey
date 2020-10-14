@@ -6,8 +6,6 @@ import Popup from 'react-popup'
 import Help from './Help'
 import Settings from './settings/Settings'
 import Logs from './Logs'
-import Gallery from './Gallery'
-import AccessControl from './AccessControl'
 import Editor from './editor/Editor'
 import Configuration from '../../models/Configuration'
 import PropTypes from 'prop-types'
@@ -342,12 +340,8 @@ class App extends React.Component {
             activeTab={segments[2]}
             onNavigate={(target) => this.navigateTo('configuration/' + configuration.id + '/' + target)}
           />
-        case 'accessControl':
-          return <AccessControl for={segments[1]} />
         case 'logs':
           return <Logs entries={this.props.log} />
-        case 'gallery':
-          return <Gallery />
         default:
           return <Help />
       }
@@ -394,7 +388,16 @@ class App extends React.Component {
 
     var withWarning = (!this.hasExtendedPermissions() && !this.props.settings.optionalFeatures.noWarningForMissingPermissions) ? ' with-warning' : ''
 
-    var configurations = this.getConfigurations()
+    // Add tags to all configurations
+    var configurations = this.getConfigurations().map(c => {
+      const nsPattern = /^@tags(?:\[\])?\s*=\s*(.*)$/mg
+      let match
+      c.tags = []
+      while ((match = nsPattern.exec(c.content))) {
+        c.tags = c.tags.concat(match[1].split(',').map(t => t.trim().toLowerCase()))
+      }
+      return c
+    })
 
     return <Page className={`main-grid${withWarning}`} preferDarkMode={this.props.settings.optionalFeatures.preferDarkMode} syncDarkMode={this.props.settings.optionalFeatures.syncDarkMode}>
       <Popup className="popup" btnClass="popup__btn" />

@@ -73,11 +73,6 @@ class Settings extends React.Component {
         label: 'Save configuration when it is closed'
       },
       {
-        id: 'adrumTracking',
-        label: 'Allow browser monitoring.',
-        description: 'DemoMonkey uses AppDynamics End-User Monitoring to analyze user behavior. You need to reload your browser window after changing this value!'
-      },
-      {
         id: 'editorAutocomplete',
         label: 'Autocomplete.',
         description: 'The editor for configurations will display an auto completion for commands, options & imports.'
