@@ -16,6 +16,12 @@ describe('Integration', function () {
   this.retries(4)
 
   describe('test page', function () {
+    // Autocomplete & editing the editor via automation does not work
+    it('will disable autoComplete', function () {
+      base.getDriver().sleep(500)
+      return base.disableOptionalFeature('editorAutocomplete')
+    })
+
     it('will create a test configurations', function () {
       base.getDriver().sleep(500)
       return Promise.all([

@@ -1,10 +1,8 @@
 import axios from 'axios'
 
 class ProtocolHandler {
-  constructor(protocol, server) {
+  constructor(protocol) {
     this.protocol = protocol
-    this.server = server
-    console.log(server)
   }
 
   handle(search) {
@@ -29,12 +27,6 @@ class ProtocolHandler {
         return this._handleGist(id, resolve, reject)
       }
 
-      if (url.host === 'sync' || url.host === 's') {
-        const id = url.pathname.substr(1)
-        console.log(id)
-        return this._handleSyncServer(id, resolve, reject)
-      }
-
       this._handleDefault(url, resolve, reject)
     })
   }
@@ -52,19 +44,6 @@ class ProtocolHandler {
       enabled: false,
       content
     }
-  }
-
-  _handleSyncServer(id, resolve, reject) {
-    const url = this.server + '/s/' + id
-    axios({ url }).then(response => {
-      console.log(response)
-      if (response.status === 200 && typeof response.data === 'object') {
-        resolve(this._buildConfiguration(`Shared/${response.data.name}`, response.data.content))
-      }
-    }).catch(error => {
-      error.message = `Could not handle ${url}, error was: ${error.message}`
-      reject(error)
-    })
   }
 
   _handleDefault(url, resolve, reject) {

@@ -212,15 +212,13 @@ class Editor extends React.Component {
     return (
       <div className="editor">
         <div className="title">
-          <div className="toggle-configuration">
-            { hiddenIfNew ? ''
-              : <Switch
-                checked={this.props.currentConfiguration.enabled}
-                onChange={() => { this.toggle() }}
-                height={20}
-                width={48}
-              />
-            }
+          <div className="toggle-configuration" style={hiddenIfNew}>
+            <Switch
+              checked={!!this.props.currentConfiguration.enabled}
+              onChange={() => { this.toggle() }}
+              height={20}
+              width={48}
+            />
           </div>
           <b>Name</b>
           <input type="text" className="text-input" id="configuration-title" placeholder="Please provide a name. You can use slashes (/) in it to create folders." value={current.name} onChange={(event) => this.handleUpdate('name', event.target.value, event)}/>

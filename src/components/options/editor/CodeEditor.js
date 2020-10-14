@@ -42,6 +42,10 @@ class CodeEditor extends React.Component {
     variables: PropTypes.array.isRequired
   }
 
+  autoSave() {
+    this.props.onAutoSave(event)
+  }
+
   handleChange(content, event) {
     if (event) {
       event.preventDefault()
@@ -91,7 +95,7 @@ class CodeEditor extends React.Component {
           bindKey: { win: 'Enter', mac: 'Enter' },
           exec: (editor) => {
             editor.insert('\n')
-            this.props.onAutoSave(event)
+            this.autoSave()
           }
         }
       ]}

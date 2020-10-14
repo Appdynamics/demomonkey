@@ -22,6 +22,10 @@ describe('Integration (Simple)', function () {
   describe('tampered webpage', function () {
     this.timeout(10000)
     this.retries(4)
+    // Autocomplete & editing the editor via automation does not work
+    it('will disable autoComplete', function () {
+      return base.disableOptionalFeature('editorAutocomplete')
+    })
     it('allows to create new configurations', function () {
       return base.createConfig('testape', 'demomonkey = testape\n@include = /.*/\n')
     })

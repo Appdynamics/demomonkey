@@ -109,13 +109,16 @@ class ConfigurationList extends React.Component {
   }
 
   buildIncludeRegex() {
-    const u = new URL(this.props.currentUrl)
+    if (this.props.currentUrl) {
+      const u = new URL(this.props.currentUrl)
 
-    const protocol = ['https:', 'http:'].includes(u.protocol) ? 'https?:' : u.protocol
+      const protocol = ['https:', 'http:'].includes(u.protocol) ? 'https?:' : u.protocol
 
-    const host = u.hostname
+      const host = u.hostname
 
-    return '/^' + protocol + '//' + host + '/.*$/'
+      return '/^' + protocol + '//' + host + '/.*$/'
+    }
+    return ''
   }
 
   render() {

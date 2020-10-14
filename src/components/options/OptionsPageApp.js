@@ -37,6 +37,7 @@ class App extends React.Component {
 
   constructor(props) {
     super(props)
+    this.isSaving = false
     this.state = {
       isDarkMode: window.matchMedia('(prefers-color-scheme: dark)').matches,
       withError: false,
@@ -108,7 +109,7 @@ class App extends React.Component {
 
   saveConfigurationUnguarded(configuration) {
     if (configuration.id === 'new') {
-      this.addConfiguration(configuration)
+      return this.addConfiguration(configuration)
     } else {
       if (typeof configuration.values !== 'undefined') {
         const variables = (new Configuration(configuration.content, this.getRepository(), false, configuration.values)).getVariables().map(v => v.id)
@@ -120,7 +121,16 @@ class App extends React.Component {
         })
       }
 
-      this.props.actions.saveConfiguration(configuration.id, configuration)
+      // Auto Save on Enter can lead to some state-props-async issues
+      // We make sure here that "saving" is finished when the state is
+      // written.
+      if (!this.isSaving) {
+        this.isSaving = true
+        this.props.actions.saveConfiguration(configuration.id, configuration).then(() => {
+          this.isSaving = false
+          console.log('Saved')
+        })
+      }
     }
   }
 
@@ -429,7 +439,7 @@ const OptionsPageApp = connect(
         dispatch({ type: 'TOGGLE_CONFIGURATION', id: id })
       },
       saveConfiguration: (id, configuration) => {
-        dispatch({ type: 'SAVE_CONFIGURATION', id, configuration })
+        return dispatch({ type: 'SAVE_CONFIGURATION', id, configuration })
       },
       deleteConfiguration: (id) => {
         dispatch({ type: 'DELETE_CONFIGURATION', id })

@@ -85,7 +85,7 @@ store.ready().then(() => {
 
   logger('debug', `DemoMonkey ${manifest.version()}`).write()
 
-  const protocolHandler = new ProtocolHandler('web+mnky:', store.state.settings.demoMonkeyServer)
+  const protocolHandler = new ProtocolHandler('web+mnky:')
   protocolHandler.handle(window.location.search).catch(error => {
     logger('error', error).write()
     window.history.replaceState({}, document.title, window.location.pathname + window.location.hash)

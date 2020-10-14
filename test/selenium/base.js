@@ -53,6 +53,15 @@ const Base = {
     driver.findElement(button).click()
     return expect(driver.findElement(button).getText()).to.eventually.include('ON')
   },
+  disableOptionalFeature: function (title = 'webRequestHook') {
+    driver.get(this.dashboardUrl)
+    driver.wait(until.elementsLocated(By.css("a[href='#settings']")))
+    driver.findElement(By.css("a[href='#settings']")).click()
+    driver.wait(until.elementsLocated(By.className('toggle-group')))
+    var button = By.css(`#toggle-${title} > div`)
+    driver.findElement(button).click()
+    return expect(driver.findElement(button).getText()).to.eventually.include('OFF')
+  },
   createConfig: function (title = 'Selenium Test', content = 'demomonkey = testape') {
     driver.get(this.dashboardUrl)
     driver.findElement(By.css("a[href='#configuration/new']")).click()

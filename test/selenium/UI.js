@@ -43,7 +43,7 @@ describe('UI', function () {
     driver.wait(until.elementsLocated(By.css('button.popup__btn.popup__btn--danger')))
     driver.findElement(By.css('button.popup__btn.popup__btn--danger')).click()
     return Promise.all([
-      expect(driver.getCurrentUrl()).to.eventually.include('#welcome'),
+      expect(driver.getCurrentUrl()).to.eventually.include('#help'),
       expect(driver.findElement(By.linkText('Example'))).to.eventually.be.rejectedWith(selenium.NoSuchElementException)
     ])
   })

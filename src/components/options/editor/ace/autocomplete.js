@@ -169,7 +169,8 @@ function autocomplete(getRepository, variables) {
             '/^https?://.*\\.appdynamics\\.com(:[0-9]+)?/.*$/',
             '/^https?://.*.thousandeyes.com/.*$/',
             '/^https?://.*.service-now.com/.*$/',
-            '/^https?://.*\\.harness\\.io(:[0-9]+)?/.*$/'
+            '/^https?://.*\\.harness\\.io(:[0-9]+)?/.*$/',
+            '/^https?://.*\\.rookout\\.com/.*$/'
           ].map(value => { return { value, meta: 'include' } }))
         }
       }
