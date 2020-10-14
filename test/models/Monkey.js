@@ -6,16 +6,16 @@ var assert = require('assert')
 var intervalId = 0
 
 var tspans = [
-  {textContent: 'test this'},
-  {textContent: 'tspans'}
+  { textContent: 'test this' },
+  { textContent: 'tspans' }
 ]
 
 var node = {
-  'data': 'monkey-demo',
-  'parentNode': {
-    'tagName': 'title',
-    'parentNode': {
-      'tagName': 'text'
+  data: 'monkey-demo',
+  parentNode: {
+    tagName: 'title',
+    parentNode: {
+      tagName: 'text'
     }
   }
 }
@@ -174,7 +174,7 @@ describe('Monkey', function () {
         content: 'monkey = ape\n@include = ',
         name: 'a',
         enabled: true
-      }], scope, false)
+      }], scope, [], false)
 
       monkey.start()
       assert.equal(node.data, 'ape-demo')

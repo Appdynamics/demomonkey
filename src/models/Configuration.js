@@ -16,7 +16,7 @@ class Configuration {
     this.values = values
     this.featureFlags = featureFlags
 
-    this.globalVariables = globalVariables
+    this.globalVariables = Array.isArray(globalVariables) ? globalVariables : []
   }
 
   isTemplate() {
