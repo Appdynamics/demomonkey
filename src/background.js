@@ -15,14 +15,6 @@ import { logger, connectLogger } from './helpers/logger'
 
   const badge = new Badge(scope.chrome.browserAction)
 
-  function logMessage(message) {
-    console.log('MESSAGE', message)
-    scope.chrome.runtime.sendMessage({
-      receiver: 'dashboard',
-      logMessage: message
-    })
-  }
-
   var liveModeInterval = -1
   var liveModeStartTime = -1
 
@@ -86,23 +78,58 @@ import { logger, connectLogger } from './helpers/logger'
   function hookIntoWebRequests(feature, running) {
     if (!hookedIntoWebRequests && feature && running) {
       console.log('Hooking into web requests')
-      scope.chrome.webRequest.onBeforeRequest.addListener(
-        webRequestHook,
-        { urls: ['<all_urls>'] },
-        ['blocking']
-      )
-      hookedIntoWebRequests = true
+      scope.chrome.permissions.request({
+        permissions: ['webRequestBlocking', 'webRequest']
+      }, function (granted) {
+        if (granted) {
+          scope.chrome.webRequest.onBeforeRequest.addListener(
+            webRequestHook,
+            { urls: ['<all_urls>'] },
+            ['blocking']
+          )
+          hookedIntoWebRequests = true
+          console.log('-- hooked')
+        } else {
+          logger('warn', 'Could not grant webRequest permissions')
+        }
+      })
     } else if (hookedIntoWebRequests && (!feature || !running)) {
-      console.log('De-Hooking into web requests')
-      scope.chrome.webRequest.onBeforeRequest.removeListener(webRequestHook)
-      hookedIntoWebRequests = false
+      console.log('Remove hook into web requests')
+      scope.chrome.permissions.remove({
+        permissions: ['webRequestBlocking', 'webRequest']
+      }, function (removed) {
+        if (removed) {
+          scope.chrome.webRequest.onBeforeRequest.removeListener(webRequestHook)
+          hookedIntoWebRequests = false
+          console.log('-- removed')
+        } else {
+          logger('warn', 'Could not remove webRequest permissions')
+        }
+      })
     }
   }
 
   // New tab created, initialize badge for given tab
   scope.chrome.tabs.onCreated.addListener(function (tab) {
     // Initialize new tab
+    console.log(tab)
     badge.updateDemoCounter(0, tab.id)
+  })
+
+  /*
+   * The following replaces the decelerative content scripts, which require
+   * high host permissions.
+   */
+  scope.chrome.tabs.onUpdated.addListener(function (tabId, changeInfo) {
+    console.log(tabId, changeInfo)
+    if (changeInfo.status === 'loading') {
+      console.log('Injecting Monkey.JS')
+      scope.chrome.tabs.executeScript(tabId, {
+        file: 'js/monkey.js',
+        allFrames: true,
+        runAt: 'document_start'
+      }, () => console.log('Injected'))
+    }
   })
 
   scope.chrome.tabs.onRemoved.addListener(function (tabId) {

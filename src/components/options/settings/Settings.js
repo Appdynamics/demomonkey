@@ -90,7 +90,7 @@ class Settings extends React.Component {
       {
         id: 'webRequestHook',
         label: 'Hook into Web Requests.',
-        description: 'Turn this feature on, if you want to use the commands !delayUrl, !blockUrl and !redirectUrl. This will allow DemoMonkey to hook into web requests.'
+        description: <span>Turn this feature on, if you want to use the commands !delayUrl, !blockUrl and !redirectUrl. <b>This will allow DemoMonkey to intercept, block, or modify requests in-flight</b>. To learn what this means, read about <a target="blank" rel="noopener noreferer" href="https://developer.chrome.com/extensions/webRequest">chrome.webRequest</a></span>
       },
       {
         id: 'debugBox',
@@ -110,7 +110,7 @@ class Settings extends React.Component {
       {
         id: 'hookIntoAjax',
         label: 'Hook into Ajax.',
-        description: 'Turn this feature on, if you want to use commands !removeFlowmapNode, !addFlowmapNode, etc. Those commands are implemented by hooking into ajax calls, use with caution!'
+        description: '(Experimental) Turn this feature on, if you want to use commands !removeFlowmapNode, !addFlowmapNode, etc. Those commands are implemented by hooking into ajax calls, use with caution!'
       },
       {
         id: 'syncDarkMode',
@@ -193,7 +193,7 @@ class Settings extends React.Component {
               <div className="toggle-group" id="toggle-beta_configSync">
                 <ToggleButton onToggle={() => this.props.onRequestExtendedPermissions(this.props.hasExtendedPermissions)} value={this.props.hasExtendedPermissions}/><label><b>Allow access on all sites.</b> Allow DemoMonkey to read and change data on all sites you visit.</label>
               </div>
-              You can not revoke permissions from here. Go to the extensions page, choose Demo Monkey, click on <i>Details</i> and there set <i>Site Access</i> to <i>On click</i>
+              If you can not revoke permissions from here, go to the extensions page, choose Demo Monkey, click on <i>Details</i> and there set <i>Site Access</i> to <i>On click</i>
               <h2>Backup</h2>
               You can always open the <a href="backup.html">backup page</a> to download your files or manipulate your settings. Please use with caution!
               <button className="save-button" onClick={(event) => this.props.onDownloadAll(event)}>Download all configurations</button>

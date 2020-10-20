@@ -98,10 +98,12 @@ class App extends React.Component {
 
     zip.generateAsync({ type: 'base64' })
       .then(function (content) {
-        window.chrome.downloads.download({
-          url: 'data:application/zip;base64,' + content,
-          filename: 'demomonkey-' + (new Date()).toISOString().split('T')[0] + '.zip' // Optional
-        })
+        const link = document.createElement('a')
+        link.href = 'data:application/zip;base64,' + content
+        link.download = 'demomonkey-' + (new Date()).toISOString().split('T')[0] + '.zip'
+        const event = document.createEvent('MouseEvents')
+        event.initEvent('click', true, true)
+        link.dispatchEvent(event)
       })
   }
 
@@ -187,17 +189,12 @@ class App extends React.Component {
   }
 
   downloadConfiguration(configuration) {
-    window.chrome.downloads.download({
-      url: 'data:text/octet-stream;base64,' + Base64.encode(configuration.content),
-      filename: configuration.name.split('/').pop() + '.mnky'
-    }, () => {
-      if (chrome.runtime.lastError && chrome.runtime.lastError.message === 'Invalid filename') {
-        window.chrome.downloads.download({
-          url: 'data:text/octet-stream;base64,' + Base64.encode(configuration.content),
-          saveAs: true
-        })
-      }
-    })
+    const link = document.createElement('a')
+    link.href = 'data:text/octet-stream;base64,' + Base64.encode(configuration.content)
+    link.download = configuration.name.split('/').pop() + '.mnky'
+    const event = document.createEvent('MouseEvents')
+    event.initEvent('click', true, true)
+    link.dispatchEvent(event)
   }
 
   deleteConfiguration(configuration) {
