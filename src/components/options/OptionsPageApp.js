@@ -402,7 +402,7 @@ class App extends React.Component {
         ? <WarningBox onDismiss={() => this.toggleOptionalFeature('noWarningForMissingPermissions')}
           onRequestExtendedPermissions={() => this.requestExtendedPermissions()}
         />
-        : '' }
+        : <div id="has-extended-permissions" style={{ display: 'none' }}>GRANTED</div> }
       <div className="navigation">
         <Navigation onNavigate={(target) => this.navigateTo(target)}
           onUpload={(upload) => this.uploadConfiguration(upload)}

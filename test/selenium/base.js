@@ -2,6 +2,7 @@ import selenium from 'selenium-webdriver'
 import chrome from 'selenium-webdriver/chrome'
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
+import fs from 'fs'
 
 // const extensionID = 'hgegamnnggfbjfpjjalciinpfoghjcnj'
 const extensionID = 'jppkhbnbdfkchpfplppanilmladmdfbf'
@@ -21,12 +22,22 @@ const Base = {
   },
   start: function (done) {
     this.timeout(10000)
-    var options = new chrome.Options()
+    const options = new chrome.Options()
+
+    // The following is a hack to grant permissions in a testing environment
+    // I didn't find a proper way to allow those permissions.
+    const rawManifest = fs.readFileSync('./build/manifest.json', 'utf8')
+    const manifest = JSON.parse(rawManifest)
+    manifest.permissions.push('<all_urls>')
+    manifest.permissions.push('webRequest')
+    fs.writeFileSync('./build/manifest.json', JSON.stringify(manifest))
 
     options.addArguments('--load-extension=./build')
 
     driver = new selenium.Builder().forBrowser('chrome').setChromeOptions(options).build()
     driver.getWindowHandle().then(function () {
+      // Revert the manifest file, important!
+      fs.writeFileSync('./build/manifest.json', rawManifest)
       done()
     })
   },
@@ -71,6 +82,7 @@ const Base = {
     // Slow down the input, since sometimes not all chars are send
     driver.findElement(By.css('#contentarea > textarea')).sendKeys(';;;;\n')
     driver.findElement(By.css('#contentarea > textarea')).sendKeys(content)
+    driver.findElement(By.css('#contentarea > textarea')).sendKeys('\n;;;;')
     driver.findElement(By.className('save-button')).click()
     return Promise.all([
       expect(driver.findElement(By.css('.navigation .items')).getText()).to.eventually.include(title),

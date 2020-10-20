@@ -17,16 +17,9 @@
     "js/background.js.map",
     "js/monkey.js.map"
   ],
-  "not_content_scripts": [{
-    "matches": ["http://*/*", "https://*/*"],
-    "js": ["js/monkey.js"],
-    "all_frames": true,
-    "run_at": "document_start"
-  }],
   "background": {
     "page": "background.html"
   },
-  "not_devtools_page": "devtools.html",
   "options_ui": {
     "page": "options.html",
     "open_in_tab": true
