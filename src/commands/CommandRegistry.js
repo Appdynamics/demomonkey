@@ -24,6 +24,7 @@ import ReplaceUrl from './ReplaceUrl'
 import Eval from './Eval'
 import Stage from './Stage'
 import UndoElement from './UndoElement'
+import QuerySelector from './QuerySelector'
 import extractParameters from '../helpers/extractParameters'
 
 export default [
@@ -81,6 +82,14 @@ export default [
     signature: '(${1}, ${2}, ${3}) = ${4}',
     command: function (value, parameters, location, includeRules, excludeRules, cmdBuilder) {
       return new Style(parameters[0], parameters[1], parameters[2], value)
+    }
+  },
+  {
+    name: 'querySelector',
+    aliases: ['query'],
+    signature: '(${1}, ${2}) = ${3}',
+    command: function (value, parameters, location, includeRules, excludeRules, cmdBuilder) {
+      return new QuerySelector(parameters[0], parameters[1], value)
     }
   },
   {
