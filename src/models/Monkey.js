@@ -25,7 +25,7 @@ class Monkey {
       return [rawConfig.name, config]
     })
     this.urlManager = urlManager === false ? { add: () => {}, remove: () => {}, clear: () => {} } : urlManager
-    this.ajaxManager = ajaxManager === false ? { add: () => {}, run: () => {} } : ajaxManager
+    // this.ajaxManager = ajaxManager === false ? { add: () => {}, run: () => {} } : ajaxManager
     this.observers = []
   }
 
@@ -67,8 +67,8 @@ class Monkey {
   applyOnce(configuration) {
     // Execute the commands for webRequest hooks only once
     this.addUndo(configuration.apply(this.urlManager, 'value', 'url'))
-    this.addUndo(configuration.apply(this.ajaxManager, 'value', 'ajax'))
-    this.ajaxManager.run()
+    // this.addUndo(configuration.apply(this.ajaxManager, 'value', 'ajax'))
+    // this.ajaxManager.run()
   }
 
   apply(configuration) {
@@ -228,7 +228,8 @@ class Monkey {
 
   run(configuration) {
     this.applyOnce(configuration)
-    return this.scope.setInterval(() => this.apply(configuration), this.intervalTime)
+    return this.scope.setInterval(() => {
+      this.apply(configuration), this.intervalTime)
   }
 
   start() {

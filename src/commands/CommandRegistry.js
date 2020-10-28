@@ -553,9 +553,9 @@ export default [
     {
       name: 'addFlowmapNode',
       aliases: [],
-      signature: '(${1})',
+      signature: '(${1}) = ${2}',
       command: function (value, parameters, location, includeRules, excludeRules, cmdBuilder) {
-        return new AddFlowmapNode(parameters[0], parameters[1])
+        return new AddFlowmapNode(value, parameters[0])
       }
     }
     ]

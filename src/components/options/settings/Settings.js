@@ -83,11 +83,6 @@ class Settings extends React.Component {
         description: 'Set the default value for the popup toggle, which hides configurations that are not available for the current url.'
       },
       {
-        id: 'inDevTools',
-        label: 'Integrate with Chrome Dev Tools.',
-        description: 'Turn this option on to see the DemoMonkey dashboard within the Chrome Developer Toolbar.'
-      },
-      {
         id: 'webRequestHook',
         label: 'Hook into Web Requests.',
         description: <span>Turn this feature on, if you want to use the commands !delayUrl, !blockUrl and !redirectUrl. <b>This will allow DemoMonkey to intercept, block, or modify requests in-flight</b>. To learn what this means, read about <a target="blank" rel="noopener noreferer" href="https://developer.chrome.com/extensions/webRequest">chrome.webRequest</a></span>
@@ -107,11 +102,11 @@ class Settings extends React.Component {
         label: 'Allow !eval.',
         description: 'By turning on this flag, you can use the command !eval which allows you to write arbitrary javascript code. Use with caution!'
       },
-      {
+      /* {
         id: 'hookIntoAjax',
         label: 'Hook into Ajax.',
         description: '(Experimental) Turn this feature on, if you want to use commands !removeFlowmapNode, !addFlowmapNode, etc. Those commands are implemented by hooking into ajax calls, use with caution!'
-      },
+      }, */
       {
         id: 'syncDarkMode',
         label: 'Sync Dark/Light mode with OS setting.',

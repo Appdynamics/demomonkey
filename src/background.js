@@ -123,7 +123,7 @@ import { logger, connectLogger } from './helpers/logger'
   scope.chrome.tabs.onUpdated.addListener(function (tabId, changeInfo) {
     console.log(tabId, changeInfo)
     if (changeInfo.status === 'loading') {
-      console.log('Injecting Monkey.JS')
+      console.log('Injecting Monkey.JS', tabId)
       scope.chrome.tabs.executeScript(tabId, {
         file: 'js/monkey.js',
         allFrames: true,
@@ -225,6 +225,7 @@ import { logger, connectLogger } from './helpers/logger'
   })
 
   function updateStorage(store) {
+    console.log('Updating Storage.')
     const configurations = store.getState().configurations
     const settings = store.getState().settings
 
@@ -309,16 +310,6 @@ import { logger, connectLogger } from './helpers/logger'
       contexts: ['browser_action'],
       onclick: function () {
         store.dispatch({ type: 'TOGGLE_LIVE_MODE' })
-      }
-    })
-
-    scope.chrome.contextMenus.create({
-      title: 'Load from page',
-      contexts: ['page'],
-      documentUrlPatterns: ['*://*/*APPS_ALL_DASHBOARD*'],
-      onclick: function (info, tab) {
-        console.log(info, tab)
-        scope.chrome.tabs.sendMessage(tab.id, { action: 'loadFromPage' })
       }
     })
 
