@@ -229,7 +229,8 @@ class Monkey {
   run(configuration) {
     this.applyOnce(configuration)
     return this.scope.setInterval(() => {
-      this.apply(configuration), this.intervalTime)
+      this.apply(configuration)
+    }, this.intervalTime)
   }
 
   start() {
