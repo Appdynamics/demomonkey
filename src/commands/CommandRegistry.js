@@ -25,9 +25,38 @@ import Eval from './Eval'
 import Stage from './Stage'
 import UndoElement from './UndoElement'
 import QuerySelector from './QuerySelector'
+import If from './If'
 import extractParameters from '../helpers/extractParameters'
 
 export default [
+  {
+    name: 'if',
+    aliases: [],
+    signature: '(${1}, ${2}, ${3}) = ${4}',
+    command: function (value, parameters, location, includeRules, excludeRules, cmdBuilder) {
+      const locationFilter = parameters.shift()
+      const cssFilter = parameters.shift()
+      return new If(locationFilter, cssFilter, cmdBuilder.build(parameters.join(','), value), location)
+    }
+  },
+  {
+    name: 'ifLocation',
+    aliases: [],
+    signature: '(${1}, ${2}) = ${3}',
+    command: function (value, parameters, location, includeRules, excludeRules, cmdBuilder) {
+      const locationFilter = parameters.shift()
+      return new If(locationFilter, '', cmdBuilder.build(parameters.join(','), value), location)
+    }
+  },
+  {
+    name: 'ifSelector',
+    aliases: ['ifQuery', 'ifCss'],
+    signature: '(${1}, ${2}) = ${3}',
+    command: function (value, parameters, location, includeRules, excludeRules, cmdBuilder) {
+      const cssFilter = parameters.shift()
+      return new If('', cssFilter, cmdBuilder.build(parameters.join(','), value), location)
+    }
+  },
   {
     name: 'replace',
     aliases: [],

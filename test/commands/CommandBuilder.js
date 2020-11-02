@@ -1,6 +1,7 @@
 import SearchAndReplace from '../../src/commands/SearchAndReplace'
 import Hide from '../../src/commands/Hide'
 import Group from '../../src/commands/Group'
+import If from '../../src/commands/If'
 import ReplaceFlowmapIcon from '../../src/commands/appdynamics/ReplaceFlowmapIcon'
 import ReplaceNeighbor from '../../src/commands/ReplaceNeighbor'
 import Command from '../../src/commands/Command'
@@ -184,6 +185,12 @@ describe('Command', function () {
       expect(command.helpers[2]).to.be.an.instanceof(ReplaceNeighbor)
       expect(command.helpers[3]).to.be.an.instanceof(ReplaceNeighbor)
       expect(command.helpers[4]).to.be.an.instanceof(SearchAndReplace)
+    })
+
+    it('should create an If command with child for !if', function () {
+      var command = new CommandBuilder(['appdynamics']).build('!if(test, .test, !replaceFlowmapIcon(service1))', 'service2')
+      expect(command).to.be.an.instanceof(If)
+      expect(command.thenCmd).to.be.an.instanceof(ReplaceFlowmapIcon)
     })
   })
 })

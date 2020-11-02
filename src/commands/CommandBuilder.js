@@ -121,10 +121,15 @@ class CommandBuilder {
   }
 
   _innerBuild(key, value) {
+    if (typeof key === 'undefined' || key === null) {
+      key = ''
+    }
+
     // Reverse of the replacement of \= defined in Ini.js
     if (typeof value === 'string') {
       value = value.replace('\u2260', '=')
     }
+
     if (typeof key === 'string') {
       key = key.replace('\u2260', '=')
     }

@@ -75,7 +75,7 @@ describe('SearchAndReplace', function () {
     })
 
     it('should only replace a with b if css selector is matched', function () {
-      let node1 = {
+      const node1 = {
         value: 'asdf',
         parentNode: {
           matches: (selector) => {
@@ -84,7 +84,7 @@ describe('SearchAndReplace', function () {
         }
       }
 
-      let node2 = {
+      const node2 = {
         value: 'asdf',
         parentNode: {
           matches: (selector) => {
