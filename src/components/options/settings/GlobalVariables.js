@@ -30,7 +30,39 @@ class GlobalVariables extends React.Component {
     })
   }
 
-  deleteVariable(index) {
+  showColorDialog(event, index, key) {
+    event.preventDefault()
+    const picker = document.getElementById('variable-color-' + index)
+    picker.addEventListener('change', (event) => {
+      this.updateVariable(index, key, event.target.value)
+    })
+    picker.click()
+  }
+
+  showUploadDialog(event, index, key) {
+    event.preventDefault()
+    const upload = document.getElementById('variable-upload-' + index)
+    const uploadForm = document.getElementById('variable-form-' + index)
+
+    upload.addEventListener('change', (event) => {
+      const files = event.target.files
+      const reader = new window.FileReader()
+      for (let i = 0; i < files.length; i++) {
+        const file = files.item(i)
+        reader.onloadend = () => {
+          console.log(reader.result)
+          this.updateVariable(index, key, reader.result)
+        }
+        reader.readAsDataURL(file)
+      }
+      uploadForm.reset()
+    })
+
+    upload.click()
+  }
+
+  deleteVariable(event, index) {
+    event.preventDefault()
     const globalVariables = this.state.globalVariables.filter((v, i) => i !== index)
 
     console.log(globalVariables)
@@ -59,18 +91,33 @@ class GlobalVariables extends React.Component {
     const variables = this.state.globalVariables.filter(v => v != null).map(v => new Variable(v.key, v.value))
 
     return (<div>
+      <p>
+        Global variables defined here can be used in all your configurations. You can store images and colors as variables to simplify the process of replacing them.
+      </p>
       {variables.length > 0 ? '' : <div className="no-variables">No variables defined</div>}
       {variables.map((variable, index) => {
         return (<div className="variable-box" key={index}>
           <label htmlFor="variable-1">
             <input type="text" value={variable.name} onChange={(e) => this.updateVariable(index, e.target.value, variable.value)} />&nbsp;
-            <small><a href="#" onClick={(e) => this.deleteVariable(index)}>(delete)</a></small>
+            <form id={'variable-form-' + index } style={{ display: 'none' }}>
+              <input multiple id={'variable-upload-' + index} type="file"/>
+            </form>
+            <small><a href="#" onClick={(e) => this.showUploadDialog(e, index, variable.name)}>
+              (from image)
+            </a>&nbsp;</small>
+            <input type="color" id={'variable-color-' + index} style={{ display: 'none' }} />
+            <small><a href="#" onClick={(e) => this.showColorDialog(e, index, variable.name)}>
+              (from color)
+            </a>&nbsp;</small>
+            <small><a href="#" onClick={(e) => { e.preventDefault(); this.updateVariable(index, variable.name, '') }}>(reset)</a>&nbsp;</small>
+            <small><a href="#" onClick={(e) => this.deleteVariable(e, index)}>(delete)</a></small>
           </label>
           <AceEditor height="4.5em" width="700px"
             name={variable.id}
-            minLines={1}
+            minLines={5}
             theme={ this.props.isDarkMode ? 'merbivore' : 'xcode' }
             mode="html"
+            wrapEnabled={true}
             highlightActiveLine={false}
             showGutter={false}
             autoScrollEditorIntoView={true}
@@ -80,6 +127,13 @@ class GlobalVariables extends React.Component {
             editorProps={{ $blockScrolling: 'Infinity' }}
           />
           <div className="help">{variable.description}</div>
+          <div>
+            {
+              variable.value.startsWith('data:image')
+                ? <img src={variable.value} style={{ width: '100px', heigth: '100px' }} />
+                : ''
+            }
+          </div>
         </div>)
       })}
       <button className="save-button" onClick={() => this.addVariable()}>Add Variable</button>
