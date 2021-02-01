@@ -1,3 +1,4 @@
+/* global gapi */
 import { createStore } from 'redux'
 import { wrapStore } from 'webext-redux'
 import reducers from './reducers'
@@ -6,17 +7,18 @@ import Configuration from './models/Configuration'
 import MatchRule from './models/MatchRule'
 import Badge from './models/Badge'
 import match from './helpers/match.js'
+import remoteBackup from './helpers/remoteBackup.js'
 import { logger, connectLogger } from './helpers/logger'
 
 (function (scope) {
   'use strict'
 
-  var enabledHotkeyGroup = -1
+  let enabledHotkeyGroup = -1
 
   const badge = new Badge(scope.chrome.browserAction)
 
-  var liveModeInterval = -1
-  var liveModeStartTime = -1
+  let liveModeInterval = -1
+  let liveModeStartTime = -1
 
   function doLiveMode(liveMode) {
     if (liveMode && liveModeInterval < 0) {
@@ -40,15 +42,19 @@ import { logger, connectLogger } from './helpers/logger'
     }
   }
 
-  var hookedIntoWebRequests = false
+  window.sync = function (store) {
+    return remoteBackup(scope, store)
+  }
 
-  var hookedUrls = {}
+  let hookedIntoWebRequests = false
 
-  var hooks = {
+  let hookedUrls = {}
+
+  const hooks = {
     block: () => { return { cancel: true } },
     delay: (options) => {
-      var counter = 0
-      for (var start = Date.now(); Date.now() - start < options.delay * 1000;) {
+      let counter = 0
+      for (let start = Date.now(); Date.now() - start < options.delay * 1000;) {
         counter++
         if (counter % 10000000 === 0) {
           console.log('Delay', counter)
@@ -112,7 +118,7 @@ import { logger, connectLogger } from './helpers/logger'
   // New tab created, initialize badge for given tab
   scope.chrome.tabs.onCreated.addListener(function (tab) {
     // Initialize new tab
-    console.log(tab)
+    // console.log(tab)
     badge.updateDemoCounter(0, tab.id)
   })
 
@@ -121,15 +127,39 @@ import { logger, connectLogger } from './helpers/logger'
    * high host permissions.
    */
   scope.chrome.tabs.onUpdated.addListener(function (tabId, changeInfo) {
-    console.log(tabId, changeInfo)
-    if (changeInfo.status === 'loading') {
-      console.log('Injecting Monkey.JS', tabId)
-      scope.chrome.tabs.executeScript(tabId, {
-        file: 'js/monkey.js',
-        allFrames: true,
-        runAt: 'document_start'
-      }, () => console.log('Injected'))
+    if (changeInfo.status !== 'loading') {
+      return
     }
+
+    scope.chrome.tabs.get(tabId, (tab) => {
+      if (tab.url) {
+        scope.chrome.tabs.executeScript(tabId, {
+          code: 'typeof window["demomonkey-F588C641-43BA-4E48-86F4-36100F9765E9"] === "boolean"',
+          runAt: 'document_start',
+          allFrames: true
+        }, (result) => {
+          if (result[0] === true) {
+            console.log('Already injected.')
+            return
+          }
+          scope.chrome.tabs.executeScript(tabId, {
+            file: 'js/monkey.js',
+            allFrames: true,
+            runAt: 'document_start'
+          }, () => {
+            scope.chrome.tabs.executeScript(tabId, {
+              code: 'window["demomonkey-F588C641-43BA-4E48-86F4-36100F9765E9"] = true;',
+              allFrames: true,
+              runAt: 'document_start'
+            }, () => {
+              console.log('Injection completed for', tabId, tab.url)
+            })
+          })
+        })
+      } else {
+        console.log('Did not inject into tab ', tabId, 'Permission denied')
+      }
+    })
   })
 
   scope.chrome.tabs.onRemoved.addListener(function (tabId) {
@@ -240,7 +270,7 @@ import { logger, connectLogger } from './helpers/logger'
 
   function run(state, revisions = {}) {
     console.log('Background Script started')
-    var store = createStore(reducers, state)
+    const store = createStore(reducers, state)
     wrapStore(store, { portName: 'DEMO_MONKEY_STORE' })
 
     // Make the store accessible from dev console.
@@ -273,12 +303,12 @@ import { logger, connectLogger } from './helpers/logger'
     })
 
     function toggleHotkeyGroup(group) {
-      var toggle = enabledHotkeyGroup !== group
+      const toggle = enabledHotkeyGroup !== group
 
       enabledHotkeyGroup = toggle ? group : -1
 
       store.getState().configurations.forEach(function (c) {
-        var config = (new Configuration(c.content, null, false, c.values))
+        const config = (new Configuration(c.content, null, false, c.values))
         if (config.isTemplate() || !config.isRestricted()) {
           return
         }
@@ -294,7 +324,7 @@ import { logger, connectLogger } from './helpers/logger'
     scope.chrome.commands.onCommand.addListener(function (command) {
       console.log('Command:', command)
       if (command.startsWith('toggle-hotkey-group')) {
-        var group = parseInt(command.split('-').pop())
+        const group = parseInt(command.split('-').pop())
         toggleHotkeyGroup(group)
       }
       if (command === 'live-mode') {

@@ -15,7 +15,6 @@
     "plugin:import/warnings"
   ],
   "plugins": [
-    "standard",
     "promise",
     "json",
     "react",

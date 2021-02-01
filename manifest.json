@@ -2,10 +2,10 @@
   "manifest_version": 2,
   "name": "DemoMonkey",
   "description": "Tamper your application's UI to demo almost anything",
-  "version": "7.0.1",
+  "version": "7.0.2",
   "author": "Severin Neumann <severin.neumann@altmuehlnet.de>",
   "homepage_url": "https://github.com/Appdynamics/demomonkey/",
-  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
+  "content_security_policy": "script-src 'self' 'unsafe-eval' https://apis.google.com; object-src 'self'",
   "icons": {
     "16": "icons/monkey_16.png",
     "48": "icons/monkey_48.png",
@@ -29,8 +29,18 @@
     "default_title": "DemoMonkey",
     "default_popup": "popup.html"
   },
+  "oauth2": {
+  "client_id_stable": "534261080696-0kbmc92ddf5mmqm1qqubs8qepvj23tc1.apps.googleusercontent.com",
+  "client_id_dev": "534261080696-0kbmc92ddf5mmqm1qqubs8qepvj23tc1.apps.googleusercontent.com",
+  "client_id": "534261080696-p6noculfhpdt1qhv1o6m9qc42ht2a18r.apps.googleusercontent.com",
+  "scopes":[
+    "https://www.googleapis.com/auth/drive",
+    "https://www.googleapis.com/auth/drive.file",
+    "https://www.googleapis.com/auth/drive.appdata"
+  ]
+},
   "permissions": [
-    "storage", "unlimitedStorage", "activeTab", "contextMenus"
+    "storage", "unlimitedStorage", "activeTab", "contextMenus", "identity"
   ],
   "optional_permissions": [
     "<all_urls>", "webRequest", "webRequestBlocking"

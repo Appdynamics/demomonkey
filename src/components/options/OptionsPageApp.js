@@ -88,9 +88,9 @@ class App extends React.Component {
     })
   }
 
-  downloadAll() {
+  downloadAll(cb = () => {}) {
     event.preventDefault()
-    var zip = new JSZip()
+    const zip = new JSZip()
 
     this.props.configurations.forEach((configuration) => {
       zip.file(configuration.name + '.mnky', configuration.content)
@@ -104,7 +104,33 @@ class App extends React.Component {
         const event = document.createEvent('MouseEvents')
         event.initEvent('click', true, true)
         link.dispatchEvent(event)
+        cb()
       })
+  }
+
+  deleteAll() {
+    Popup.create({
+      title: 'Please confirm',
+      content: <span>Do you really want to delete all configurations?</span>,
+      buttons: {
+        left: [{
+          text: 'Cancel',
+          action: () => Popup.close()
+        }],
+        right: [{
+          text: 'Delete',
+          className: 'danger',
+          action: () => {
+            Popup.close()
+            this.downloadAll(() => {
+              this.props.configurations.forEach(config => {
+                this.props.actions.deleteConfiguration(config.id)
+              })
+            })
+          }
+        }]
+      }
+    })
   }
 
   saveConfigurationUnguarded(configuration) {
@@ -177,12 +203,13 @@ class App extends React.Component {
   }
 
   copyConfiguration(configuration) {
-    var path = configuration.name.split('/')
-    var name = 'Copy of ' + path.pop()
+    const path = configuration.name.split('/')
+    const name = 'Copy of ' + path.pop()
     this.addConfiguration({
       ...configuration,
       name: path.length > 0 ? (path.join('/') + '/' + name) : name,
       id: 'new',
+      file_id: undefined,
       enabled: false,
       readOnly: false
     })
@@ -291,7 +318,8 @@ class App extends React.Component {
     }
 
     try {
-      var segments = this.state.currentView.split('/')
+      const segments = this.state.currentView.split('/')
+      const configuration = this.getConfiguration(segments[1])
 
       this.updateRepository()
 
@@ -304,6 +332,7 @@ class App extends React.Component {
             onSaveGlobalVariables={(globalVariables) => this.saveGlobalVariables(globalVariables)}
             onSetMonkeyInterval={(value) => this.setMonkeyInterval(value)}
             onDownloadAll={(event) => this.downloadAll(event)}
+            onDeleteAll={(event) => this.deleteAll(event)}
             onRequestExtendedPermissions={(revoke) => this.requestExtendedPermissions(revoke)}
             hasExtendedPermissions={this.hasExtendedPermissions()}
             isDarkMode={this._getDarkMode()}
@@ -311,7 +340,6 @@ class App extends React.Component {
             onNavigate={(target) => this.navigateTo('settings/' + target)}
           />
         case 'configuration':
-          var configuration = this.getConfiguration(segments[1])
           // If an unknown ID is selected, we throw an error.
           if (typeof configuration === 'undefined') {
             return <ErrorBox error={{ message: `Unknown Configuration ${segments[1]}` }} />
@@ -381,12 +409,12 @@ class App extends React.Component {
   }
 
   render() {
-    var activeItem = this.state.currentView.indexOf('configuration/') === -1 ? false : this.state.currentView.split('/').pop()
+    const activeItem = this.state.currentView.indexOf('configuration/') === -1 ? false : this.state.currentView.split('/').pop()
 
-    var withWarning = (!this.hasExtendedPermissions() && !this.props.settings.optionalFeatures.noWarningForMissingPermissions) ? ' with-warning' : ''
+    const withWarning = (!this.hasExtendedPermissions() && !this.props.settings.optionalFeatures.noWarningForMissingPermissions) ? ' with-warning' : ''
 
     // Add tags to all configurations
-    var configurations = this.getConfigurations().map(c => {
+    const configurations = this.getConfigurations().map(c => {
       const nsPattern = /^@tags(?:\[\])?\s*=\s*(.*)$/mg
       let match
       c.tags = []
