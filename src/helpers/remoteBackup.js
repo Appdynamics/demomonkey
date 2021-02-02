@@ -177,7 +177,7 @@ function remoteBackup (scope, store) {
     scope,
     store,
     'Demo Monkey Backup',
-    'AIzaSyB69Wajh2AzrkSvJ05fS3KiU_gJESBIVwE'
+    '<API_KEY>'
   )
   remoteStorage.backup()
 }

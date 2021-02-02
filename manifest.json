@@ -30,8 +30,6 @@
     "default_popup": "popup.html"
   },
   "oauth2": {
-  "client_id_stable": "534261080696-0kbmc92ddf5mmqm1qqubs8qepvj23tc1.apps.googleusercontent.com",
-  "client_id_dev": "534261080696-0kbmc92ddf5mmqm1qqubs8qepvj23tc1.apps.googleusercontent.com",
   "client_id": "534261080696-p6noculfhpdt1qhv1o6m9qc42ht2a18r.apps.googleusercontent.com",
   "scopes":[
     "https://www.googleapis.com/auth/drive",

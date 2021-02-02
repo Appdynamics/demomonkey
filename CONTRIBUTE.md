@@ -6,7 +6,7 @@ The following document explains, how you can setup a development environment, so
 
 ## Setup Environment
 
-Before you start, make sure you have *nodejs*, *gulp* and *mocha* installed, as well as *imagemagick* and *graphicsmagick*
+Before you start, make sure you have *nodejs*, *webpack* and *mocha* installed.
 
 To get started, you need to checkout the latest development version via git:
 
@@ -23,10 +23,10 @@ npm install
 
 The DemoMonkey repository includes configurations for eslint, csscomb, jsbeautify and lesshint. Install those tools and the required plugins for your IDE to have a more convenient development.
 
-When `npm install` is finished you can run `gulp`, which will monitor the directory for code changes and auto-build updates:
+When `npm install` is finished you can run `webpack`, which will monitor the directory for code changes and auto-build updates:
 
 ```shell
-gulp
+npm start
 ```
 
 After a few seconds, the initial build is ready and you can go to [chrome://extensions/](chrome://extensions/) and load the `build` directory via the **Load unpacked** button as Chrome Extension.
@@ -68,7 +68,7 @@ if (command === 'helloWorld') {
 }
 ```
 
-If `gulp` is still running, it will tell you that it has written some bytes and that it is watching again. If anything went wrong, you should see some errors!
+If `webpack` is still running, it will tell you that it has written some bytes and that it is watching again. If anything went wrong, you should see some errors!
 
 Go back to [chrome://extensions/](chrome://extensions/) and reload your extension.
 

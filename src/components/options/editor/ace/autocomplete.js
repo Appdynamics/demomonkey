@@ -1,13 +1,11 @@
 /* eslint no-template-curly-in-string: "off" */
-import brace from 'brace'
-import 'brace/ext/language_tools'
+import langTools from 'ace-builds/src-noconflict/ext-language_tools'
 import colors from 'color-name'
 import ReplaceFlowmapIcon from '../../../../commands/appdynamics/ReplaceFlowmapIcon'
 
 import registry from '../../../../commands/CommandRegistry'
 
-var langTools = brace.acequire('ace/ext/language_tools')
-var { snippetManager } = (brace.acequire('ace/snippets'))
+import { snippetManager } from 'ace-builds/src-noconflict/snippets/snippets'
 
 function signature2snippet(signature) {
   return signature.replace(/\${(\d):[^}]*}/g, (match, d) => { return '${' + d + '}' })

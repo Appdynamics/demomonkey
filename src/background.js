@@ -1,4 +1,3 @@
-/* global gapi */
 import { createStore } from 'redux'
 import { wrapStore } from 'webext-redux'
 import reducers from './reducers'
@@ -7,7 +6,7 @@ import Configuration from './models/Configuration'
 import MatchRule from './models/MatchRule'
 import Badge from './models/Badge'
 import match from './helpers/match.js'
-import remoteBackup from './helpers/remoteBackup.js'
+// import remoteBackup from './helpers/remoteBackup.js'
 import { logger, connectLogger } from './helpers/logger'
 
 (function (scope) {
@@ -42,9 +41,11 @@ import { logger, connectLogger } from './helpers/logger'
     }
   }
 
+  /*
   window.sync = function (store) {
     return remoteBackup(scope, store)
   }
+  */
 
   let hookedIntoWebRequests = false
 

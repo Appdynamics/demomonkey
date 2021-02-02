@@ -1,4 +1,8 @@
 /* global chrome */
+import '../styles/main.less'
+import '../icons/monkey.png'
+import '../icons/monkey-dev.png'
+
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { Provider } from 'react-redux'

@@ -6,9 +6,9 @@ import Tabs from '../../shared/Tabs'
 import Pane from '../../shared/Pane'
 import GlobalVariables from './GlobalVariables'
 
-import 'brace/theme/xcode'
-import 'brace/theme/merbivore'
-import 'brace/ext/searchbox'
+import 'ace-builds/src-noconflict/theme-xcode'
+import 'ace-builds/src-noconflict//theme-merbivore'
+import 'ace-builds/src-noconflict/ext-searchbox'
 
 import '../editor/ace/mnky'
 

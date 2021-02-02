@@ -3,9 +3,9 @@ import VariableModle from '../../../models/Variable'
 import PropTypes from 'prop-types'
 import AceEditor from 'react-ace'
 
-import 'brace/theme/xcode'
-import 'brace/theme/merbivore'
-import 'brace/mode/html'
+import 'ace-builds/src-noconflict/theme-xcode'
+import 'ace-builds/src-noconflict/theme-merbivore'
+import 'ace-builds/src-noconflict/mode-html'
 
 class Variable extends React.Component {
   static propTypes = {

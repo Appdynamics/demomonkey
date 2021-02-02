@@ -1,7 +1,8 @@
 .DS_Store
 node_modules
 build
-build-dev
+build-dev-release
+build-release
 *.pem
 *.crx
 DemoMonkey-*.zip
