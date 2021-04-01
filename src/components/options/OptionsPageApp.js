@@ -88,7 +88,7 @@ class App extends React.Component {
     })
   }
 
-  downloadAll(cb = () => {}) {
+  downloadAll(event, cb = () => {}) {
     event.preventDefault()
     const zip = new JSZip()
 

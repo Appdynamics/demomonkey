@@ -81,7 +81,7 @@ class ConfigurationList extends React.Component {
   }
 
   renderLatest() {
-    if (this.getConfigurations().length < 20) {
+    if (this.getConfigurations().length < 12) {
       return
     }
     return <div className="latest-configurations">
