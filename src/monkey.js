@@ -4,6 +4,7 @@ import Settings from './models/Settings'
 import Manifest from './models/Manifest'
 import { Store } from 'webext-redux'
 import { logger, connectLogger } from './helpers/logger'
+import match from './helpers/match.js'
 
 // Firefox does not display errors in the console, so we catch them ourselves and print them to console.
 try {
@@ -56,7 +57,7 @@ try {
 
         // We don't use the redux store, since below we restart demo monkey
         // every time the store is updated, which would lead to a loop.
-        var urlManager = {
+        let urlManager = {
           add: (url) => {
             scope.chrome.runtime.sendMessage({
               receiver: 'background',
@@ -79,9 +80,10 @@ try {
           }
         }
 
-        // let ajaxManager = false
+        let ajaxManager = false
 
-        /*
+        console.log('HOOK?', settings.isFeatureEnabled('hookIntoAjax'))
+
         if (settings.isFeatureEnabled('hookIntoAjax')) {
           ajaxManager = {
             functions: [],
@@ -89,20 +91,25 @@ try {
               this.functions.push('[' + f.toString() + ',' + JSON.stringify(c) + ']')
             },
             run: function () {
-              const intercept = (fs, url, response) => {
+              const oldScript = scope.document.getElementById('demo-monkey-ajax-manager')
+              if (oldScript) {
+                oldScript.remove()
+              }
+              const intercept = (fs, url, response, match) => {
                 return fs.reduce((r, e) => {
-                  return e[0](url, r, e[1])
+                  return e[0](url, r, e[1], match)
                 }, response)
               }
               const script = `
               const fs = [${this.functions}]
               const openPrototype = XMLHttpRequest.prototype.open
+              ${match.toString()}
               ${intercept.toString()}
               XMLHttpRequest.prototype.open = function () {
                 const url = arguments[1]
                 this.addEventListener('readystatechange', function (event) {
                   if (this.readyState === 4) {
-                    var response = intercept(fs, url, event.target.responseText)
+                    var response = intercept(fs, url, event.target.responseText, match)
                     Object.defineProperty(this, 'response', {writable: true})
                     Object.defineProperty(this, 'responseText', {writable: true})
                     this.response = this.responseText = response
@@ -111,13 +118,16 @@ try {
                 return openPrototype.apply(this, arguments)
               };`
               const s = scope.document.createElement('script')
+              s.setAttribute('id', 'demo-monkey-ajax-manager')
               s.innerHTML = script
+
+              console.log('HOOK INTO AJAX')
+              console.log(s)
 
               scope.document.head.append(s)
             }
           }
         }
-        */
 
         // frames don't need an independent url manager
         if (!isTopFrame()) {
@@ -128,7 +138,7 @@ try {
           }
         }
 
-        var $DEMO_MONKEY = new Monkey(store.getState().configurations, scope, settings.globalVariables, settings.isFeatureEnabled('undo'), settings.monkeyInterval, urlManager, false, {
+        let $DEMO_MONKEY = new Monkey(store.getState().configurations, scope, settings.globalVariables, settings.isFeatureEnabled('undo'), settings.monkeyInterval, urlManager, ajaxManager, {
           withEvalCommand: settings.isFeatureEnabled('withEvalCommand'),
           hookIntoAjax: settings.isFeatureEnabled('hookIntoAjax'),
           webRequestHook: settings.isFeatureEnabled('webRequestHook')
@@ -136,13 +146,13 @@ try {
         updateBadge($DEMO_MONKEY.start())
         logger('debug', 'DemoMonkey enabled. Tampering the content. Interval: ', settings.monkeyInterval).write()
 
-        var modeManager = new ModeManager(scope, $DEMO_MONKEY, new Manifest(scope.chrome), settings.isDebugEnabled(), settings.isFeatureEnabled('debugBox'), settings.isLiveModeEnabled())
+        const modeManager = new ModeManager(scope, $DEMO_MONKEY, new Manifest(scope.chrome), settings.isDebugEnabled(), settings.isFeatureEnabled('debugBox'), settings.isLiveModeEnabled())
 
         function restart() {
           logger('debug', 'Restart DemoMonkey').write()
           // Update settings
-          var settings = new Settings(store.getState().settings)
-          var newMonkey = new Monkey(store.getState().configurations, scope, settings.globalVariables, settings.isFeatureEnabled('undo'), settings.monkeyInterval, urlManager, false, {
+          const settings = new Settings(store.getState().settings)
+          const newMonkey = new Monkey(store.getState().configurations, scope, settings.globalVariables, settings.isFeatureEnabled('undo'), settings.monkeyInterval, urlManager, ajaxManager, {
             withEvalCommand: settings.isFeatureEnabled('withEvalCommand'),
             hookIntoAjax: settings.isFeatureEnabled('hookIntoAjax'),
             webRequestHook: settings.isFeatureEnabled('webRequestHook')

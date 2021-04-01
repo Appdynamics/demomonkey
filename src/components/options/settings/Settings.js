@@ -103,11 +103,11 @@ class Settings extends React.Component {
         label: 'Allow !eval.',
         description: 'By turning on this flag, you can use the command !eval which allows you to write arbitrary javascript code. Use with caution!'
       },
-      /* {
+      {
         id: 'hookIntoAjax',
         label: 'Hook into Ajax.',
         description: '(Experimental) Turn this feature on, if you want to use commands !removeFlowmapNode, !addFlowmapNode, etc. Those commands are implemented by hooking into ajax calls, use with caution!'
-      }, */
+      },
       {
         id: 'syncDarkMode',
         label: 'Sync Dark/Light mode with OS setting.',

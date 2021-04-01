@@ -20,12 +20,12 @@ class Monkey {
     this.intervals = []
 
     this.configurations = rawConfigurations.map((rawConfig) => {
-      var config = new Configuration(rawConfig.content, this.repository, rawConfig.enabled === true, rawConfig.values, featureFlags, globalVariables)
+      const config = new Configuration(rawConfig.content, this.repository, rawConfig.enabled === true, rawConfig.values, featureFlags, globalVariables)
       this.repository.addConfiguration(rawConfig.name, config)
       return [rawConfig.name, config]
     })
     this.urlManager = urlManager === false ? { add: () => {}, remove: () => {}, clear: () => {} } : urlManager
-    // this.ajaxManager = ajaxManager === false ? { add: () => {}, run: () => {} } : ajaxManager
+    this.ajaxManager = ajaxManager === false ? { add: () => {}, run: () => {} } : ajaxManager
     this.observers = []
   }
 
@@ -67,8 +67,8 @@ class Monkey {
   applyOnce(configuration) {
     // Execute the commands for webRequest hooks only once
     this.addUndo(configuration.apply(this.urlManager, 'value', 'url'))
-    // this.addUndo(configuration.apply(this.ajaxManager, 'value', 'ajax'))
-    // this.ajaxManager.run()
+    this.addUndo(configuration.apply(this.ajaxManager, 'value', 'ajax'))
+    this.ajaxManager.run()
   }
 
   apply(configuration) {

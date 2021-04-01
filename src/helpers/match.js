@@ -1,8 +1,3 @@
-// Copied from https://developer.mozilla.org/en/docs/Web/JavaScript/Guide/Regular_Expressions
-function escapeRegExp (string) {
-  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') // $& meint den komplett erkannten String
-}
-
 function match(original, search, replace) {
   // This also works with "startsWithNot" (see below)
   // !search === replace becomes search !== replace
@@ -24,8 +19,10 @@ function match(original, search, replace) {
 
   // The '*' is at any other place (not start, not end, not both)
   if (search.includes('*')) {
-    const parts = search.split('*').map(escapeRegExp).join('.*')
-    console.log(parts)
+    const parts = search.split('*').map(function (string) {
+      // Copied from https://developer.mozilla.org/en/docs/Web/JavaScript/Guide/Regular_Expressions
+      return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') // $& meint den komplett erkannten String
+    }).join('.*')
     return new RegExp(parts).test(original)
   }
 

@@ -26,9 +26,18 @@ import Stage from './Stage'
 import UndoElement from './UndoElement'
 import QuerySelector from './QuerySelector'
 import If from './If'
+import ReplaceAjaxResponse from './ReplaceAjaxResponse'
 import extractParameters from '../helpers/extractParameters'
 
 export default [
+  {
+    name: 'replaceAjaxResponse',
+    aliases: ['replaceAjax', 'replaceResponse'],
+    signature: '(${1}, ${2}) = ${3}',
+    command: function (value, parameters, location, includeRules, excludeRules, cmdBuilder) {
+      return new ReplaceAjaxResponse(parameters[0], parameters[1], value)
+    }
+  },
   {
     name: 'if',
     aliases: [],

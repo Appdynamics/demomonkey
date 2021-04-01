@@ -41,7 +41,7 @@ class Configuration {
     if (this.isDisabled() || !this.isRestricted()) {
       return false
     }
-    var options = this.getOptions()
+    const options = this.getOptions()
     return new MatchRule(options.include, options.exclude).test(url)
   }
 
@@ -49,7 +49,7 @@ class Configuration {
     if (this.enabled === false || this.isDisabled() || !this.isRestricted()) {
       return false
     }
-    var options = this.getOptions()
+    const options = this.getOptions()
     return new MatchRule(options.include, options.exclude).test(url)
   }
 
@@ -62,8 +62,8 @@ class Configuration {
   }
 
   isTagBlacklisted(node) {
-    var blacklist = this.getOptions().blacklist
-    var whitelist = this.getOptions().whitelist
+    let blacklist = this.getOptions().blacklist
+    let whitelist = this.getOptions().whitelist
 
     if (!Array.isArray(blacklist)) {
       blacklist = []
@@ -94,7 +94,7 @@ class Configuration {
       return []
     }
 
-    var undos = this._getConfiguration().reduce(function (carry, command) {
+    const undos = this._getConfiguration().reduce(function (carry, command) {
       if (!command.isApplicableForGroup(groupName)) {
         return carry
       }
@@ -104,8 +104,10 @@ class Configuration {
         return carry
       }
 
+      let undo
+
       try {
-        var undo = command.apply(node, key)
+        undo = command.apply(node, key)
       } catch (e) {
         console.log(e)
         logger('error', e).write()
@@ -140,11 +142,11 @@ class Configuration {
 
   getOptions() {
     if (this.options === false) {
-      var filterOption = function (content, section) {
+      const filterOption = function (content, section) {
         return function (result, key) {
           // By default ini.parse sets "true" as the value
           if (key.charAt(0) === '@' && key.length > 1) {
-            var value = content[key]
+            let value = content[key]
 
             if (typeof value === 'string') {
               value = [value]
@@ -175,7 +177,7 @@ class Configuration {
 
   getImports() {
     const maxDepth = 25
-    var filterImport = function (content, depth = 0) {
+    const filterImport = function (content, depth = 0) {
       return function (result, key) {
         if (depth > maxDepth) {
           return result
