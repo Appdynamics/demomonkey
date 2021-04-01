@@ -1,14 +1,10 @@
 // this.gapi.client.drive.files.list({ q: 'properties has { key="dmid" and value="ab315878-0a9f-4a90-82b2-070f5052fef7" }' }).then(console.log)
 
 import { logger } from './logger'
-import googleapis from 'googleapis'
-
-window.googleapis = googleapis
-
 class RemoteStorage {
-  constructor(scope, store, rootFolderName, apiKey) {
+  constructor(scope, gapi, store, rootFolderName, apiKey) {
     this.scope = scope
-    this.gapi = googleapis
+    this.gapi = gapi
     this.store = store
     this.rootFolderName = rootFolderName
     this.apiKey = apiKey
@@ -17,18 +13,11 @@ class RemoteStorage {
   authenticate() {
     return new Promise((resolve, reject) => {
       this.gapi.load('client:auth2', () => {
-        this.gapi.client.init({
-          apiKey: this.apiKey,
-          discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest']
-        }).then(() => {
-          this.scope.chrome.identity.getAuthToken({ interactive: true }, function (token) {
-            this.gapi.auth.setToken({
-              access_token: token
-            })
-            resolve()
+        this.scope.chrome.identity.getAuthToken({ interactive: true }, function (token) {
+          this.gapi.auth.setToken({
+            access_token: token
           })
-        }, (error) => {
-          reject(error)
+          resolve()
         })
       })
     })
@@ -172,9 +161,10 @@ class RemoteStorage {
   }
 }
 
-function remoteBackup (scope, store) {
+function remoteBackup (scope, gapi, store) {
   const remoteStorage = new RemoteStorage(
     scope,
+    gapi,
     store,
     'Demo Monkey Backup',
     '<API_KEY>'

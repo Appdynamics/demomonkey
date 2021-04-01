@@ -6,7 +6,7 @@ import Configuration from './models/Configuration'
 import MatchRule from './models/MatchRule'
 import Badge from './models/Badge'
 import match from './helpers/match.js'
-// import remoteBackup from './helpers/remoteBackup.js'
+import remoteBackup from './helpers/remoteBackup.js'
 import { logger, connectLogger } from './helpers/logger'
 
 (function (scope) {
@@ -41,11 +41,9 @@ import { logger, connectLogger } from './helpers/logger'
     }
   }
 
-  /*
-  window.sync = function (store) {
-    return remoteBackup(scope, store)
+  scope.sync = function (store) {
+    return remoteBackup(scope, scope.gapi, store)
   }
-  */
 
   let hookedIntoWebRequests = false
 
@@ -82,6 +80,7 @@ import { logger, connectLogger } from './helpers/logger'
     }, {})
   }
 
+  // This place seems to throw the "background.html:1 Unchecked runtime.lastError: This function must be called during a user gesture"
   function hookIntoWebRequests(feature, running) {
     if (!hookedIntoWebRequests && feature && running) {
       console.log('Hooking into web requests')

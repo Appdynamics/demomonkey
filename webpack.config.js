@@ -9,6 +9,7 @@ const CopyPlugin = require('copy-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const GitRevisionPlugin = require('git-revision-webpack-plugin')
 const ZipPlugin = require('zip-webpack-plugin')
+const ExtensionReloader = require('webpack-extension-reloader')
 
 const manifest = JSON.parse(fs.readFileSync('./manifest.json'))
 
@@ -62,7 +63,8 @@ module.exports = env => {
       filename: 'background.html',
       inject: 'head',
       appname: '',
-      htmlClass: ''
+      htmlClass: '',
+      background: true
     }),
     new CopyPlugin({
       patterns: [
@@ -88,6 +90,7 @@ module.exports = env => {
         { from: 'USAGE.md', to: '.' },
         { from: 'LICENSE', to: '.' },
         { from: 'src/test.js', to: '.' },
+        { from: 'src/gapi.js', to: 'js' },
         { from: 'pages/test.html', to: '.' },
         { from: 'src/backup.js', to: '.' },
         { from: 'pages/backup.html', to: '.' }
@@ -103,6 +106,15 @@ module.exports = env => {
     plugins.push(new ZipPlugin({
       filename: `DemoMonkey-${manifest.version}-${releaseSuffix}.zip`,
       path: '..'
+    }))
+  } else {
+    plugins.push(new ExtensionReloader({
+      reloadPage: true, // Force the reload of the page also
+      entries: { // The entries used for the content/background scripts or extension pages
+        contentScript: 'monkey',
+        background: 'background',
+        extensionPage: 'app'
+      }
     }))
   }
 

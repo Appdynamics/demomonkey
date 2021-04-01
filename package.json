@@ -28,7 +28,6 @@
     "json5": "^2.2.0",
     "jszip": "^3.5.0",
     "lodash.omit": "^4.5.0",
-    "mini-css-extract-plugin": "^1.3.5",
     "moment": "^2.29.1",
     "mousetrap": "^1.6.5",
     "prop-types": "^15.7.2",
@@ -57,7 +56,7 @@
     "chai": "^3.5.0",
     "chai-as-promised": "^7.1.1",
     "chai-webdriver": "^1.2.3",
-    "chromedriver": "^87.0.0",
+    "chromedriver": "^88.0.0",
     "copy-webpack-plugin": "^7.0.0",
     "css-loader": "^5.0.1",
     "eslint": "^7.19.0",
@@ -72,6 +71,7 @@
     "jimp": "^0.16.1",
     "less": "^4.1.1",
     "less-loader": "^8.0.0",
+    "mini-css-extract-plugin": "^1.3.5",
     "mocha": "^8.2.1",
     "postcss": "^8.2.4",
     "raw-loader": "^4.0.2",
@@ -79,6 +79,7 @@
     "selenium-webdriver": "^3.6.0",
     "webpack": "^5.19.0",
     "webpack-cli": "^4.5.0",
+    "webpack-extension-reloader": "^1.1.4",
     "zip-webpack-plugin": "^4.0.1"
   },
   "mocha": {
