@@ -13,9 +13,7 @@
   },
   "web_accessible_resources": [
     "manifest.json",
-    "js/app.js.map",
-    "js/background.js.map",
-    "js/monkey.js.map"
+    "js/inline.js"
   ],
   "background": {
     "page": "background.html"

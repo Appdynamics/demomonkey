@@ -72,8 +72,8 @@ class Monkey {
   }
 
   apply(configuration) {
-    var t0 = this.scope.performance.now()
-    var sum = {}
+    const t0 = this.scope.performance.now()
+    const sum = {}
     // Some UIs provide corner cases we want to cover with DemoMonkey for ease of use
     // Most of them are text, that is shortened or split over multiple elements.
     // We do them early, because later modfications may cause problems to get them solved.
@@ -253,6 +253,7 @@ class Monkey {
     }
 
     this.urlManager.clear()
+    this.ajaxManager.clear()
   }
 
   runAll() {

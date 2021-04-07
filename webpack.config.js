@@ -122,7 +122,8 @@ module.exports = env => {
     entry: {
       app: './src/app.js',
       background: './src/background.js',
-      monkey: './src/monkey.js'
+      monkey: './src/monkey.js',
+      inline: './src/inline.js'
     },
     output: {
       filename: 'js/[name].js',

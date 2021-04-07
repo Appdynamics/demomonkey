@@ -2,9 +2,10 @@ import Monkey from './models/Monkey'
 import ModeManager from './models/ModeManager'
 import Settings from './models/Settings'
 import Manifest from './models/Manifest'
+import AjaxManager from './models/AjaxManager'
+import UrlManager from './models/UrlManager'
 import { Store } from 'webext-redux'
 import { logger, connectLogger } from './helpers/logger'
-import match from './helpers/match.js'
 
 // Firefox does not display errors in the console, so we catch them ourselves and print them to console.
 try {
@@ -19,6 +20,10 @@ try {
         /* global chrome */
         scope.chrome = chrome
       }
+
+      const inlineScriptTag = scope.document.createElement('script')
+      inlineScriptTag.src = scope.chrome.extension.getURL('js/inline.js')
+      scope.document.head.append(inlineScriptTag)
 
       scope.chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         if (request.active) {
@@ -57,86 +62,9 @@ try {
 
         // We don't use the redux store, since below we restart demo monkey
         // every time the store is updated, which would lead to a loop.
-        let urlManager = {
-          add: (url) => {
-            scope.chrome.runtime.sendMessage({
-              receiver: 'background',
-              task: 'addUrl',
-              url
-            })
-          },
-          remove: (id) => {
-            scope.chrome.runtime.sendMessage({
-              receiver: 'background',
-              task: 'removeUrl',
-              id
-            })
-          },
-          clear: () => {
-            scope.chrome.runtime.sendMessage({
-              receiver: 'background',
-              task: 'clearUrls'
-            })
-          }
-        }
+        const urlManager = new UrlManager(scope, isTopFrame())
 
-        let ajaxManager = false
-
-        console.log('HOOK?', settings.isFeatureEnabled('hookIntoAjax'))
-
-        if (settings.isFeatureEnabled('hookIntoAjax')) {
-          ajaxManager = {
-            functions: [],
-            add: function (f, c) {
-              this.functions.push('[' + f.toString() + ',' + JSON.stringify(c) + ']')
-            },
-            run: function () {
-              const oldScript = scope.document.getElementById('demo-monkey-ajax-manager')
-              if (oldScript) {
-                oldScript.remove()
-              }
-              const intercept = (fs, url, response, match) => {
-                return fs.reduce((r, e) => {
-                  return e[0](url, r, e[1], match)
-                }, response)
-              }
-              const script = `
-              const fs = [${this.functions}]
-              const openPrototype = XMLHttpRequest.prototype.open
-              ${match.toString()}
-              ${intercept.toString()}
-              XMLHttpRequest.prototype.open = function () {
-                const url = arguments[1]
-                this.addEventListener('readystatechange', function (event) {
-                  if (this.readyState === 4) {
-                    var response = intercept(fs, url, event.target.responseText, match)
-                    Object.defineProperty(this, 'response', {writable: true})
-                    Object.defineProperty(this, 'responseText', {writable: true})
-                    this.response = this.responseText = response
-                  }
-                })
-                return openPrototype.apply(this, arguments)
-              };`
-              const s = scope.document.createElement('script')
-              s.setAttribute('id', 'demo-monkey-ajax-manager')
-              s.innerHTML = script
-
-              console.log('HOOK INTO AJAX')
-              console.log(s)
-
-              scope.document.head.append(s)
-            }
-          }
-        }
-
-        // frames don't need an independent url manager
-        if (!isTopFrame()) {
-          urlManager = {
-            add: (url) => {},
-            remove: (id) => {},
-            clear: () => {}
-          }
-        }
+        const ajaxManager = new AjaxManager(scope, settings.isFeatureEnabled('hookIntoAjax'))
 
         let $DEMO_MONKEY = new Monkey(store.getState().configurations, scope, settings.globalVariables, settings.isFeatureEnabled('undo'), settings.monkeyInterval, urlManager, ajaxManager, {
           withEvalCommand: settings.isFeatureEnabled('withEvalCommand'),
