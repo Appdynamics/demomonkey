@@ -21,10 +21,6 @@ try {
         scope.chrome = chrome
       }
 
-      const inlineScriptTag = scope.document.createElement('script')
-      inlineScriptTag.src = scope.chrome.extension.getURL('js/inline.js')
-      scope.document.head.append(inlineScriptTag)
-
       scope.chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         if (request.active) {
           scope['demomonkey-active-tab'] = true
@@ -59,6 +55,19 @@ try {
         }
 
         const settings = new Settings(store.getState().settings)
+
+        const inlineConfig = {
+          hookIntoAjax: settings.isFeatureEnabled('hookIntoAjax'),
+          hookIntoCanvas: false
+        }
+
+        const inlineConfigScriptTag = scope.document.createElement('script')
+        inlineConfigScriptTag.innerHTML = 'window.demoMonkeyConfig = ' + JSON.stringify(inlineConfig)
+        scope.document.head.append(inlineConfigScriptTag)
+
+        const inlineScriptTag = scope.document.createElement('script')
+        inlineScriptTag.src = scope.chrome.extension.getURL('js/inline.js')
+        scope.document.head.append(inlineScriptTag)
 
         // We don't use the redux store, since below we restart demo monkey
         // every time the store is updated, which would lead to a loop.

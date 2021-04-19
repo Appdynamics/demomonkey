@@ -68,7 +68,6 @@ class Monkey {
     // Execute the commands for webRequest hooks only once
     this.addUndo(configuration.apply(this.urlManager, 'value', 'url'))
     this.addUndo(configuration.apply(this.ajaxManager, 'value', 'ajax'))
-    this.ajaxManager.run()
   }
 
   apply(configuration) {
@@ -258,7 +257,7 @@ class Monkey {
 
   runAll() {
     return this.configurations.reduce((result, cfg) => {
-      var configuration = cfg[1]
+      const configuration = cfg[1]
 
       if (configuration.isEnabledForUrl(this.scope.location.href)) {
         result.push(this.run(configuration))
