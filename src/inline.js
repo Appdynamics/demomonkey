@@ -1,65 +1,79 @@
 import match from './helpers/match'
+import * as jsonpatch from 'fast-json-patch'
+import JSON5 from 'json5'
 
 (function (scope, config) {
   let ajaxFilters = []
-  window.addEventListener('message', function (event) {
+  let konvaHookInterval = -1
+  scope.addEventListener('message', function (event) {
     if (event.source !== window) {
       return
     }
-    console.log(event)
-    if (event.data.task && event.data.task === 'add-ajax-filter') {
-      ajaxFilters.push(event.data.filter)
-    }
-    if (event.data.task && event.data.task === 'clear-ajax-filter') {
-      ajaxFilters = []
+    if (event.data.task) {
+      switch (event.data.task) {
+        case 'add-ajax-filter':
+          ajaxFilters.push(event.data.filter)
+          break
+        case 'clear-ajax-filter':
+          ajaxFilters = []
+          break
+        case 'hook-into-konva':
+          console.log(konvaHookInterval, scope.Konva)
+          if (konvaHookInterval === -1 && scope.Konva) {
+            konvaHookInterval = setInterval(() => {
+              const stages = []
+              Object.keys(scope.Konva.shapes).forEach(id => {
+                const shape = scope.Konva.shapes[id]
+                if (typeof shape.text === 'function') {
+                  let helper = document.getElementById('demomonkey-konva-helper-' + id)
+                  const current = shape.text()
+                  if (!helper) {
+                    helper = scope.document.createElement('div')
+                    helper.setAttribute('id', 'demomonkey-konva-helper-' + id)
+                    helper.setAttribute('style', 'display: none;')
+                    helper.setAttribute('class', 'demomonkey-konva-helper')
+                    helper.setAttribute('width', shape.width())
+                    helper.innerHTML = current
+                    document.body.appendChild(helper)
+                  }
+                  if (helper.innerHTML !== current) {
+                    shape.text(helper.innerHTML)
+                    shape.align('center')
+                    shape.width(helper.getAttribute('width'))
+                    stages.push(shape.getStage())
+                  }
+                }
+              })
+              stages.forEach(stage => stage && stage.draw())
+            }, 100)
+          }
+          break
+        case 'remove-hook-into-konva':
+          if (konvaHookInterval > -1) {
+            setTimeout(() => {
+              clearInterval(konvaHookInterval)
+              const helpers = document.getElementsByClassName('demomonkey-konva-helper')
+              while (helpers[0]) {
+                helpers[0].parentNode.removeChild(helpers[0])
+              }
+              konvaHookInterval = -1
+            }, 200)
+          }
+          break
+      }
     }
   })
-  console.log('registered')
-  /*
-  if (config.hookIntoCanvas) {
-    for (const m in CanvasRenderingContext2D.prototype) {
-      try {
-        if (typeof CanvasRenderingContext2D.prototype[m] === 'function') {
-          const orig = CanvasRenderingContext2D.prototype[m]
-          CanvasRenderingContext2D.prototype[m] = function () {
-            console.log(m, orig, this, arguments)
-            console.trace()
-            return orig.apply(this, arguments)
-          }
-        // Todo: Preserve "arity"
-        // console.log(m, orig.length, CanvasRenderingContext2D.prototype[m].length)
-        }
-      } catch {
-        console.log(m)
-      }
-    }
-  }
-  */
-  /*
-  const konvaWait = setInterval(() => {
-    if (typeof Konva !== 'undefined') {
-      clearInterval(konvaWait)
-      scope.document.body.insertAdjacentHTML('beforeend', '<div style="display: none;" id="demomonkey-konva-helper"></div>')
-      const oldText = Konva.Text.prototype._setTextData
-      const helper = document.getElementById('demomonkey-konva-helper')
-      let shapeId = 1
-      Konva.Text.prototype._setTextData = function () {
-        if (!this.demoMonkeyHelper) {
-          helper.insertAdjacentHTML('beforeend', `<div data-demo-monkey-shape-id='${shapeId}'></div>`)
-          this.demoMonkeyHelper = document.querySelector(`[data-demo-monkey-shape-id='${shapeId}']`)
-          shapeId++
-        }
-        console.log(this.demoMonkeyHelper)
-        this.demoMonkeyHelper.innerHTML = this.text()
-        return oldText.apply(this, arguments)
-      }
-      console.log(oldText)
-    }
-  }, 100)
-  */
 
   if (config.hookIntoAjax) {
     const functions = {
+      patchAjaxResponse: (url, response, context) => {
+        const link = scope.document.createElement('a')
+        link.href = url
+        if (match(url, context.urlPattern) || match(link.href, context.urlPattern)) {
+          return JSON.stringify(jsonpatch.applyPatch(JSON5.parse(response), JSON5.parse(context.patch)).newDocument)
+        }
+        return response
+      },
       replaceAjaxResponse: (url, response, context) => {
         const link = scope.document.createElement('a')
         link.href = url
@@ -75,7 +89,13 @@ import match from './helpers/match'
     }
     const intercept = (fs, url, response) => {
       return fs.reduce((r, e) => {
-        return functions[e[0]](url, r, e[1])
+        try {
+          const r2 = functions[e[0]](url, r, e[1])
+          return r2
+        } catch (err) {
+          console.warn(`Could not run ${e[0]}, because of an error: "${err.message}"`)
+        }
+        return r
       }, response)
     }
     const openPrototype = XMLHttpRequest.prototype.open

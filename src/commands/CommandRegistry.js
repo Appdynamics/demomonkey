@@ -27,6 +27,7 @@ import UndoElement from './UndoElement'
 import QuerySelector from './QuerySelector'
 import If from './If'
 import ReplaceAjaxResponse from './ReplaceAjaxResponse'
+import PatchAjaxResponse from './PatchAjaxResponse'
 import extractParameters from '../helpers/extractParameters'
 
 export default [
@@ -36,6 +37,14 @@ export default [
     signature: '(${1}, ${2}) = ${3}',
     command: function (value, parameters, location, includeRules, excludeRules, cmdBuilder) {
       return new ReplaceAjaxResponse(parameters[0], parameters[1], value)
+    }
+  },
+  {
+    name: 'patchAjaxResponse',
+    aliases: ['patchAjax', 'patchResponse'],
+    signature: '(${1}) = ${3}',
+    command: function (value, parameters, location, includeRules, excludeRules, cmdBuilder) {
+      return new PatchAjaxResponse(parameters[0], value)
     }
   },
   {

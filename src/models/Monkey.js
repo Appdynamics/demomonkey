@@ -27,6 +27,8 @@ class Monkey {
     this.urlManager = urlManager === false ? { add: () => {}, remove: () => {}, clear: () => {} } : urlManager
     this.ajaxManager = ajaxManager === false ? { add: () => {}, run: () => {} } : ajaxManager
     this.observers = []
+
+    this.hookIntoKonvaSent = false
   }
 
   addObserver(observer) {
@@ -93,6 +95,13 @@ class Monkey {
 
     // Finally we can apply document commands on the document itself.
     this.addUndo(configuration.apply(this.scope.document, 'documentElement', 'document'))
+
+    if (!this.hookIntoKonvaSent && this.scope.document.querySelectorAll('.konvajs-content').length > 0) {
+      this.scope.postMessage({
+        task: 'hook-into-konva'
+      })
+      this.hookIntoKonvaSent = true
+    }
 
     this.notifyObservers({
       type: 'applied',
@@ -226,7 +235,9 @@ class Monkey {
   }
 
   run(configuration) {
-    this.applyOnce(configuration)
+    this.scope.setTimeout(() => {
+      this.applyOnce(configuration)
+    }, this.intervalTime)
     return this.scope.setInterval(() => {
       this.apply(configuration)
     }, this.intervalTime)
@@ -253,6 +264,13 @@ class Monkey {
 
     this.urlManager.clear()
     this.ajaxManager.clear()
+
+    if (this.hookIntoKonvaSent) {
+      this.scope.postMessage({
+        task: 'remove-hook-into-konva'
+      })
+      this.hookIntoKonvaSent = false
+    }
   }
 
   runAll() {

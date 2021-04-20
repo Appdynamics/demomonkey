@@ -212,15 +212,17 @@ class Configuration {
         // $ is not a legal variable name
         if (key.charAt(0) === '$' && key.length > 1) {
           // By default ini.parse sets "true" as the value
-          const t = content[key] === true ? ['', ''] : ((value) => {
-            const ar = value.split(/([^:])\/\//)
-            if (ar.length > 1) {
-              const comment = ar.pop()
-              return [ar.join(''), comment]
-            }
-            // add an empty comment
-            return ar.concat('')
-          })(content[key])
+          const t = (content[key] === true || typeof content[key] !== 'string')
+            ? ['', '']
+            : ((value) => {
+                const ar = value.split(/([^:])\/\//)
+                if (ar.length > 1) {
+                  const comment = ar.pop()
+                  return [ar.join(''), comment]
+                }
+                // add an empty comment
+                return ar.concat('')
+              })(content[key])
           result.push(new Variable(key.substring(1), t[0], t[1] ? t[1] : '', owner))
           localNames.push(key.substring(1))
           return result
