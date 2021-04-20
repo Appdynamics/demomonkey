@@ -1,16 +1,17 @@
 import Monkey from '../../src/models/Monkey'
 import Configuration from '../../src/models/Configuration'
 
-var assert = require('assert')
+const assert = require('assert')
 
-var intervalId = 0
+let intervalId = 0
+let timeoutId = 0
 
-var tspans = [
+const tspans = [
   { textContent: 'test this' },
   { textContent: 'tspans' }
 ]
 
-var node = {
+const node = {
   data: 'monkey-demo',
   parentNode: {
     tagName: 'title',
@@ -20,7 +21,7 @@ var node = {
   }
 }
 
-var scope = {
+const scope = {
   chrome: {
     runtime: {
       getManifest: function () {
@@ -39,8 +40,15 @@ var scope = {
     callback()
     return intervalId++
   },
+  setTimeout: function (callback, timeout) {
+    callback()
+    return timeoutId++
+  },
   clearInterval: function (id) {
     intervalId--
+  },
+  clearTimeout: function (id) {
+    timeoutId--
   },
   location: {
     href: 'https://monkey-demo.appdynamics.com/controller'
@@ -79,7 +87,7 @@ var scope = {
 describe('Monkey', function () {
   describe('#run', function () {
     it('should return an interval id', function () {
-      var monkey = new Monkey([], scope)
+      const monkey = new Monkey([], scope)
       assert.equal(0, monkey.run(new Configuration()))
       assert.equal(1, monkey.run(new Configuration()))
     })
@@ -87,14 +95,14 @@ describe('Monkey', function () {
 
   describe('#apply', function () {
     it('should change the found text nodes', function () {
-      var monkey = new Monkey([], scope)
+      const monkey = new Monkey([], scope)
       monkey.apply(new Configuration('monkey = ape'))
       assert.equal(node.data, 'ape-demo')
       assert.equal(scope.document.title, 'demoapedemo')
     })
 
     it('should change the found text on svg nodes with tspans', function () {
-      var monkey = new Monkey([], scope)
+      const monkey = new Monkey([], scope)
       monkey.apply(new Configuration('test this tspans = this is a success'))
       assert.equal(tspans[0].textContent, 'this is')
       assert.equal(tspans[1].textContent, '...')
@@ -104,7 +112,7 @@ describe('Monkey', function () {
   describe('#runAll', function () {
     it('should return an array of interval ids', function () {
       intervalId = 0
-      var monkey = new Monkey([{
+      let monkey = new Monkey([{
         content: '@include = ',
         name: 'a',
         enabled: true
@@ -140,7 +148,7 @@ describe('Monkey', function () {
       intervalId = 0
       scope.document.title = 'demomonkeydemo'
       node.data = 'monkey-demo'
-      var monkey = new Monkey([{
+      const monkey = new Monkey([{
         content: '@include = ',
         name: 'a',
         enabled: true
@@ -155,7 +163,7 @@ describe('Monkey', function () {
       assert.equal(0, intervalId)
     })
     it('should undo all replacements', function () {
-      var monkey = new Monkey([{
+      const monkey = new Monkey([{
         content: 'monkey = ape\n@include = ',
         name: 'a',
         enabled: true
@@ -170,7 +178,7 @@ describe('Monkey', function () {
       assert.equal(scope.document.title, 'demomonkeydemo')
     })
     it('should not undo all replacements with undo disabled', function () {
-      var monkey = new Monkey([{
+      const monkey = new Monkey([{
         content: 'monkey = ape\n@include = ',
         name: 'a',
         enabled: true

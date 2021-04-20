@@ -1,10 +1,8 @@
 import selenium from 'selenium-webdriver'
 import chai from 'chai'
-import chaiAsPromised from 'chai-as-promised'
 import base from './base'
 
 const expect = chai.expect
-chai.use(chaiAsPromised)
 const By = selenium.By
 const until = selenium.until
 
@@ -17,47 +15,40 @@ describe('Integration', function () {
 
   describe('test page', function () {
     // Autocomplete & editing the editor via automation does not work
-    it('will disable autoComplete', function () {
-      base.getDriver().sleep(500)
+    it('will disable autoComplete', async function () {
+      await base.getDriver().sleep(500)
       return base.disableOptionalFeature('editorAutocomplete')
     })
 
-    it('will create a test configurations', function () {
-      base.getDriver().sleep(500)
-      return Promise.all([
-        base.createConfig('GermanCities', 'San Francisco = Berlin\nSeattle = Köln'),
-        base.createConfig('Test Config', '+GermanCities\n@include = /.*/\n!replaceUrl(*demomonkey*) = https://github.com/Appdynamics/api-commandline-tool'),
-        // base.createConfig('AppDynamics Config', '@include = /.*/\n@namespace[] = appdynamics\n!replaceFlowmapIcon(ECommerce-Services) = php\nECommerce = Selenium\n!replace(San Francisco,,,data-label) = Berlin')
-        base.createConfig('AppDynamics Config', '@textAttributes[] = data-label,data-another\n@include = /.*/\n@namespace[] = appdynamics\n!replaceFlowmapIcon(ECommerce-Services) = php\nECommerce = Selenium')
-      ])
+    it('will create a test configurations', async function () {
+      await base.getDriver().sleep(500)
+      await base.createConfig('GermanCities', 'San Francisco = Berlin\nSeattle = Köln')
+      await base.createConfig('Test Config', '+GermanCities\n@include = /.*/\n!replaceUrl(*demomonkey*) = https://github.com/Appdynamics/api-commandline-tool')
+      await base.createConfig('AppDynamics Config', '@textAttributes[] = data-label,data-another\n@include = /.*/\n@namespace[] = appdynamics\n!replaceFlowmapIcon(ECommerce-Services) = php\nECommerce = Selenium')
     })
 
-    it('will enable the test configurations', function () {
-      return Promise.all([
-        base.enableConfig('Test Config'),
-        base.enableConfig('AppDynamics Config')
-      ])
+    it('will enable the test configurations', async function () {
+      await base.enableConfig('Test Config')
+      await base.enableConfig('AppDynamics Config')
     })
 
-    it('will enable webRequestHook', function () {
-      return base.enableOptionalFeature('webRequestHook')
+    it('will enable webRequestHook', async function () {
+      await base.enableOptionalFeature('webRequestHook')
     })
 
-    it('will modify the test page', function () {
-      var driver = base.getDriver()
-      driver.get(base.testUrl)
-      driver.findElement(By.id('input')).sendKeys('San Francisco')
-      driver.wait(until.elementsLocated(By.id('later')))
-      driver.wait(until.elementsLocated(By.css('#APPLICATION_COMPONENT108_3f47 image.adsFlowNodeTypeIcon')))
-      base.getDriver().sleep(2000)
-      return Promise.all([
-        expect(driver.findElement(By.id('static')).getText()).to.eventually.include('Berlin'),
-        expect(driver.findElement(By.id('later')).getText()).to.eventually.include('Köln'),
-        expect(driver.findElement(By.id('ajax')).getText()).to.eventually.include('Command Line Tool'),
-        expect(driver.findElement(By.css('#APPLICATION_COMPONENT108_3f47 image.adsFlowNodeTypeIcon')).getAttribute('xlink:href')).to.eventually.include('images/icon_nodetype_php_100x100.png'),
-        expect(driver.findElement(By.css('#APPLICATION_COMPONENT108_3f47 > g.adsFlowMapTextContainer > text > tspan.adsFlowMapTextFace')).getText()).to.eventually.include('Selenium')
-        // expect(driver.findElement(By.css('[data-label]')).getAttribute('data-label')).to.eventually.include('Berlin')
-      ])
+    it('will modify the test page', async function () {
+      const driver = base.getDriver()
+      await driver.get(base.testUrl)
+      await driver.findElement(By.id('input')).sendKeys('San Francisco')
+      await driver.wait(until.elementsLocated(By.id('later')))
+      await driver.wait(until.elementsLocated(By.css('#APPLICATION_COMPONENT108_3f47 image.adsFlowNodeTypeIcon')))
+      await base.getDriver().sleep(2000)
+      expect(await driver.findElement(By.id('static')).getText()).to.include('Berlin')
+      expect(await driver.findElement(By.id('later')).getText()).to.include('Köln')
+      expect(await driver.findElement(By.id('ajax')).getText()).to.include('Command Line Tool')
+      expect(await driver.findElement(By.css('#APPLICATION_COMPONENT108_3f47 image.adsFlowNodeTypeIcon')).getAttribute('xlink:href')).to.include('images/icon_nodetype_php_100x100.png')
+      expect(await driver.findElement(By.css('#APPLICATION_COMPONENT108_3f47 > g.adsFlowMapTextContainer > text > tspan.adsFlowMapTextFace')).getText()).to.include('Selenium')
+      // expect(driver.findElement(By.css('[data-label]')).getAttribute('data-label')).to.eventually.include('Berlin')
     })
   })
 })

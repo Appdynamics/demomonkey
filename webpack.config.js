@@ -31,7 +31,7 @@ module.exports = env => {
   const plugins = [
     new HtmlWebpackPlugin({
       chunks: ['app'],
-      title: 'Demo Monkey Dasbhoard',
+      title: 'Demo Monkey Dashboard',
       template: 'pages/template.html',
       filename: 'options.html',
       appname: 'OptionsPageApp',

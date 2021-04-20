@@ -25,7 +25,7 @@ class Monkey {
       return [rawConfig.name, config]
     })
     this.urlManager = urlManager === false ? { add: () => {}, remove: () => {}, clear: () => {} } : urlManager
-    this.ajaxManager = ajaxManager === false ? { add: () => {}, run: () => {} } : ajaxManager
+    this.ajaxManager = ajaxManager === false ? { add: () => {}, run: () => {}, clear: () => {} } : ajaxManager
     this.observers = []
 
     this.hookIntoKonvaSent = false
