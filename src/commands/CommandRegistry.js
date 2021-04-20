@@ -600,9 +600,10 @@ export default [
     {
       name: 'addFlowmapNode',
       aliases: [],
-      signature: '(${1}) = ${2}',
+      // constructor(name, type = 'java', nodeCount = 1, cpm = 50, art = 100, x = 400, y = 400) {
+      signature: '(${1}, ${2}, ${3}, ${4}, ${5}, ${6}) = ${7}',
       command: function (value, parameters, location, includeRules, excludeRules, cmdBuilder) {
-        return new AddFlowmapNode(value, parameters[0])
+        return new AddFlowmapNode(value, parameters[0], parameters[1], parameters[2], parameters[3], parameters[4], parameters[5])
       }
     }
     ]

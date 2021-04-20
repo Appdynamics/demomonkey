@@ -3,7 +3,7 @@ import * as jsonpatch from 'fast-json-patch'
 import JSON5 from 'json5'
 
 (function (scope, config) {
-  let ajaxFilters = []
+  const ajaxFilters = []
   let konvaHookInterval = -1
   scope.addEventListener('message', function (event) {
     if (event.source !== window) {
@@ -14,8 +14,8 @@ import JSON5 from 'json5'
         case 'add-ajax-filter':
           ajaxFilters.push(event.data.filter)
           break
-        case 'clear-ajax-filter':
-          ajaxFilters = []
+        case 'clear-ajax-filters':
+          ajaxFilters.length = 0
           break
         case 'hook-into-konva':
           console.log(konvaHookInterval, scope.Konva)
@@ -70,7 +70,11 @@ import JSON5 from 'json5'
         const link = scope.document.createElement('a')
         link.href = url
         if (match(url, context.urlPattern) || match(link.href, context.urlPattern)) {
-          return JSON.stringify(jsonpatch.applyPatch(JSON5.parse(response), JSON5.parse(context.patch)).newDocument)
+          const patch = typeof context.patch === 'string' ? JSON5.parse(context.patch) : context.patch
+          console.log(patch)
+          const patched = jsonpatch.applyPatch(JSON5.parse(response), patch).newDocument
+          console.log(patched)
+          return JSON.stringify(patched)
         }
         return response
       },
@@ -87,23 +91,21 @@ import JSON5 from 'json5'
         return response
       }
     }
-    const intercept = (fs, url, response) => {
-      return fs.reduce((r, e) => {
-        try {
-          const r2 = functions[e[0]](url, r, e[1])
-          return r2
-        } catch (err) {
-          console.warn(`Could not run ${e[0]}, because of an error: "${err.message}"`)
-        }
-        return r
-      }, response)
-    }
     const openPrototype = XMLHttpRequest.prototype.open
     XMLHttpRequest.prototype.open = function () {
       const url = arguments[1]
       this.addEventListener('readystatechange', function (event) {
         if (this.readyState === 4) {
-          const response = intercept(ajaxFilters, url, event.target.responseText)
+          const response = ajaxFilters.reduce((r, e) => {
+            try {
+              const r2 = functions[e[0]](url, r, e[1])
+              return r2
+            } catch (err) {
+              console.warn(`Could not run ${e[0]}, because of an error:`)
+              console.warn(err)
+            }
+            return r
+          }, event.target.responseText)
           Object.defineProperty(this, 'response', { writable: true })
           Object.defineProperty(this, 'responseText', { writable: true })
           this.response = this.responseText = response
