@@ -205,7 +205,8 @@ import { logger, connectLogger } from './helpers/logger'
     preferDarkMode: false,
     noWarningForMissingPermissions: false,
     registerProtocolHandler: false,
-    writeLogs: true
+    writeLogs: true,
+    hookIntoKonva: false
   }
 
   const persistentStates = {

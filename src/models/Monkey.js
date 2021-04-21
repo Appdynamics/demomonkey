@@ -115,8 +115,8 @@ class Monkey {
   }
 
   _applyOnXpathGroup(configuration, xpath, groupName, key) {
-    var text, i
-    var texts = this.scope.document.evaluate(xpath, this.scope.document, null, 6, null)
+    let text, i
+    const texts = this.scope.document.evaluate(xpath, this.scope.document, null, 6, null)
     for (i = 0; (text = texts.snapshotItem(i)) !== null; i += 1) {
       this.addUndo(configuration.apply(text, key, groupName))
     }
@@ -124,7 +124,7 @@ class Monkey {
   }
 
   _cornerCases(configuration) {
-    var undos = []
+    const undos = []
     // On the flowmap nodes might be shorten by name, but the full name is still kept in the title.
     // We can use that knowledge to replace the shortened names
     this.scope.document.querySelectorAll('svg .adsFlowMapNode > title').forEach(title => {
@@ -148,29 +148,29 @@ class Monkey {
     // text over multiple lines. The full text is contained in a <title> tag.
     // So we search for the <title> in the <text> and check if tspans are contained.
     this.scope.document.querySelectorAll('svg text title').forEach(title => {
-      var tspans = title.parentElement.querySelectorAll('tspan')
+      const tspans = title.parentElement.querySelectorAll('tspan')
       if (tspans.length > 1) {
-        var content = []
+        let content = []
         tspans.forEach(function (tspan) {
           content = content.concat(tspan.textContent.split(' '))
         })
-        var counter = content.length
+        const counter = content.length
 
-        var pseudoNode = {
+        const pseudoNode = {
           value: content.join(' ')
         }
 
         configuration.apply(pseudoNode, 'value', 'text')
 
-        var words = pseudoNode.value.split(' ')
+        let words = pseudoNode.value.split(' ')
 
         if (words.length > counter) {
           words = words.slice(0, counter)
           words[counter - 1] = '...'
         }
-        var wordCounter = 0
+        let wordCounter = 0
         tspans.forEach(function (tspan) {
-          var original = tspan.textContent
+          const original = tspan.textContent
           tspan.textContent = words.slice(wordCounter,
             wordCounter + tspan.textContent.split(' ').length).join(' ')
           wordCounter += tspan.textContent.split(' ').length
@@ -183,19 +183,19 @@ class Monkey {
     // In the source it looks like the following: Case <text>Lon...<title>Long Text</title></text>
     this.scope.document.querySelectorAll('svg text title').forEach(title => {
       if (title.parentElement.textContent.includes('...')) {
-        var [short, long] = title.parentElement.textContent.split('...')
+        const [short, long] = title.parentElement.textContent.split('...')
         if (long.startsWith(short)) {
-          var pseudoNode = {
+          const pseudoNode = {
             value: long
           }
 
           configuration.apply(pseudoNode, 'value', 'text')
 
-          var result = pseudoNode.value.substring(0, short.length) + '...'
+          const result = pseudoNode.value.substring(0, short.length) + '...'
 
-          var textNode = Array.from(title.parentElement.childNodes).filter(node => node.nodeType === 3)[0]
+          const textNode = Array.from(title.parentElement.childNodes).filter(node => node.nodeType === 3)[0]
 
-          var original = textNode.data
+          const original = textNode.data
           textNode.data = result
           undos.push(new UndoElement(textNode, 'data', original, textNode.data))
         }
@@ -205,12 +205,12 @@ class Monkey {
     // The Service Now Event Management Dashboard shortens words by space on a box
     // The full name is kept as "name" of the tspan
     this.scope.document.querySelectorAll('svg > g text > tspan[name]').forEach(tspan => {
-      var pseudoNode = {
+      const pseudoNode = {
         value: tspan.attributes.name.value
       }
       configuration.apply(pseudoNode, 'value', 'text')
 
-      var original = tspan.textContent
+      const original = tspan.textContent
       tspan.textContent = pseudoNode.value.substring(0, tspan.textContent.length)
 
       undos.push(new UndoElement(tspan, 'textContent', original, tspan.textContent))
@@ -219,13 +219,13 @@ class Monkey {
     // The Experience Journey Map in AppDynamics shortens the labels but provides a "data-full-string"
     // property we can work with
     this.scope.document.querySelectorAll('eum-user-journey-map-label > div.eum-ui-user-journey-node-body').forEach(node => {
-      var pseudoNode = {
+      const pseudoNode = {
         value: node.dataset.fullString
       }
       configuration.apply(pseudoNode, 'value', 'text')
       if (node.dataset.fullString !== pseudoNode.value) {
-        var original = node.textContent
-        var replacement = original.length < pseudoNode.value.length ? '...' + pseudoNode.value.substring(pseudoNode.value.length - original.length - 3) : pseudoNode.value
+        const original = node.textContent
+        const replacement = original.length < pseudoNode.value.length ? '...' + pseudoNode.value.substring(pseudoNode.value.length - original.length - 3) : pseudoNode.value
         node.dataset.fullString = pseudoNode.value
         node.textContent = replacement
         undos.push(new UndoElement(node, 'textContent', original, node.textContent))

@@ -58,7 +58,7 @@ try {
 
         const inlineConfig = {
           hookIntoAjax: settings.isFeatureEnabled('hookIntoAjax'),
-          hookIntoCanvas: false
+          hookIntoKonva: settings.isFeatureEnabled('hookIntoKonva')
         }
 
         const inlineConfigScriptTag = scope.document.createElement('script')
