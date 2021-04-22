@@ -13,15 +13,10 @@ const ExtensionReloader = require('webpack-extension-reloader')
 
 const manifest = JSON.parse(fs.readFileSync('./manifest.json'))
 
-const clientIds = {
-  stable: '534261080696-0kbmc92ddf5mmqm1qqubs8qepvj23tc1.apps.googleusercontent.com',
-  'dev-channel': '534261080696-0kbmc92ddf5mmqm1qqubs8qepvj23tc1.apps.googleusercontent.com'
-}
-
 module.exports = env => {
   let outputDirectory = 'build'
   let isRelease = false
-  let releaseSuffix = 'stable'
+  let releaseSuffix = 'local'
   if (env.RELEASE) {
     outputDirectory = 'build-release'
     isRelease = true
@@ -76,11 +71,6 @@ module.exports = env => {
               return Buffer.from(content.toString()
                 .replace(/"name": "([^"]*)"/g, '"name": "$1 (dev-channel)"')
                 .replace(/"(default_icon|16|48|128)": "([^_]*)([^"]*)"/g, '"$1": "$2-dev$3"')
-                .replace(/"client_id": "([^"]*)"/g, '"client_id": "' + clientIds['dev-channel'] + '"')
-              )
-            } else if (releaseSuffix === 'stable') {
-              return Buffer.from(content.toString()
-                .replace(/"client_id": "([^"]*)"/g, '"client_id": "' + clientIds.stable + '"')
               )
             }
             return content
@@ -90,7 +80,6 @@ module.exports = env => {
         { from: 'USAGE.md', to: '.' },
         { from: 'LICENSE', to: '.' },
         { from: 'src/test.js', to: '.' },
-        { from: 'src/gapi.js', to: 'js' },
         { from: 'pages/test.html', to: '.' },
         { from: 'src/backup.js', to: '.' },
         { from: 'pages/backup.html', to: '.' }
@@ -130,6 +119,27 @@ module.exports = env => {
       path: path.resolve(__dirname, outputDirectory)
     },
     plugins,
+    // this is currently _only_ needed for the google-apis
+    /*
+    resolve: {
+      fallback: {
+        fs: false,
+        http2: false,
+        tls: false,
+        net: false,
+        child_process: false,
+        crypto: require.resolve('crypto-browserify'),
+        querystring: require.resolve('querystring-es3'),
+        stream: require.resolve('stream-browserify'),
+        zlib: require.resolve('browserify-zlib'),
+        path: require.resolve('path-browserify'),
+        os: require.resolve('os-browserify/browser'),
+        util: require.resolve('util/'),
+        url: require.resolve('url/'),
+        assert: require.resolve('assert/')
+      }
+    },
+    */
     module: {
       rules: [
         {

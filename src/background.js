@@ -6,9 +6,8 @@ import Configuration from './models/Configuration'
 import MatchRule from './models/MatchRule'
 import Badge from './models/Badge'
 import match from './helpers/match.js'
-import remoteBackup from './helpers/remoteBackup.js'
+// import remoteBackup from './helpers/remoteBackup.js'
 import { logger, connectLogger } from './helpers/logger'
-
 (function (scope) {
   'use strict'
 
@@ -39,10 +38,6 @@ import { logger, connectLogger } from './helpers/logger'
       badge.clearTimer()
       liveModeInterval = -1
     }
-  }
-
-  scope.sync = function (store) {
-    return remoteBackup(scope, scope.gapi, store)
   }
 
   let hookedIntoWebRequests = false
