@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "DemoMonkey",
   "description": "Tamper your application's UI to demo almost anything",
-  "version": "7.1.0",
+  "version": "7.1.1",
   "author": "Severin Neumann <severin.neumann@altmuehlnet.de>",
   "homepage_url": "https://github.com/Appdynamics/demomonkey/",
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
@@ -28,7 +28,7 @@
     "default_popup": "popup.html"
   },
   "permissions": [
-    "storage", "unlimitedStorage", "activeTab", "contextMenus", "identity"
+    "storage", "unlimitedStorage", "activeTab", "contextMenus"
   ],
   "optional_permissions": [
     "<all_urls>", "webRequest", "webRequestBlocking"
