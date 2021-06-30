@@ -1,18 +1,50 @@
 # DemoMonkey - Usage
 
-Read on to learn how you can use DemoMonkey, to tamper your web application to demo almost anything.
+**DemoMonkey allows you to turn your software demo in a fully tailored demo for your prospect in minutes: You simply provide text & visual replacements for your application's UI and DemoMonkey turns your generic demo into a personalized experience for your audience.**
+
+**Curious how this works? Read on to learn how you can use DemoMonkey, to tamper your web application to demo almost anything.**
+
+- [Configurations](#configurations)
+- [Options](#options)
+  - [Include and Exclude sites](#include-and-exclude-sites)
+  - [Namespaces](#namespaces)
+  - [Block- and Allowlist tags](#block--and-allowlist-tags)
+  - [Text Attributes](#text-attributes)
+  - [Deprecate configuration](#deprecate-configuration)
+  - [Tags](#tags)
+  - [Authors and more](#authors-and-more)
+- [Variables](#variables)
+  - [Global Variables](#global-variables)
+- [Imports: Reuse existing configurations](#imports-reuse-existing-configurations)
+- [Snippets](#snippets)
+- [Commands](#commands)
+  - [Run regular expressions](#run-regular-expressions)
+  - [Replace with filters](#replace-with-filters)
+  - [Replace Attribute](#replace-attribute)
+  - [Protect text from replacements](#protect-text-from-replacements)
+  - [Hide Elements](#hide-elements)
+  - [Replace Images](#replace-images)
+  - [Recolor images](#recolor-images)
+  - [Block, Delay, Redirect URLs](#block-delay-redirect-urls)
+  - [Conditional Replacements](#conditional-replacements)
+  - [Modify CSS](#modify-css)
+  - [Overwrite HTML](#overwrite-html)
+  - [Replace based on CSS selector](#replace-based-on-css-selector)
+  - [Replace Neighbor](#replace-neighbor)
+  - [Insert before and after a DOM element](#insert-before-and-after-a-dom-element)
+  - [Replace and patch response of AJAX requests](#replace-and-patch-response-of-ajax-requests)
 
 ## Configurations
 
 DemoMonkey is driven by configuration files you write in the integrated editor. You provide lists of search and replace patterns, that will be applied once DemoMonkey is running. The structure of the file is similar to an **ini** file:
 
-```
+```ini
 search = replace
 ```
 
 Like ini files the format provides sections and comments to structure your document:
 
-```
+```ini
 ; Replace all the cities and countries in our webapp
 [Cities]
 San Francisco = Berlin
@@ -24,7 +56,7 @@ France = Italy
 
 Additionally you can use options, commands, imports and variables to achieve even more:
 
-```
+```ini
 ; The configuration only works if the url matches the following regex:
 @include[] = /^https?://.*demo.*\.myapp\.com(:[0-9]+)?/.*$/
 ; You can use $customer in replacements as variable
@@ -41,83 +73,366 @@ Below you will find a list of available options and commands.
 
 ## Options
 
-You can use the following options:
+Options allow you to change the behavior of DemoMonkey. Since you might have multiple options of the same
+name it's good practice to write them in array notation:
 
-- **@include = regex**: The configuration is only available if the url matches the given regex.
-- **@exclude** = regex: The configuration doesn't work if the url matches the given regex.
-- **@blacklist = tag**: The configuration ignores the given tag.
-- **@whitelist = tag**: The configuration includes the given tag (`script` and `style` are blacklisted by default).
-- **@namespace = ns**: Load commands from a given namespace. Read below to learn more about namespaces
-- **@template**: The configuration is only used as template, so no include/exclude is required.
-- **@deprecated**: The configuration is deprecated and will not be available.
-- **@textAttributes**: The given attributes are treated as text. The default is the `placeholder` attribute.
-- **@author = name <email>**: A reserved keyword, you can use to add your name as author to a given configuration.
-
-If you want to use a option multiple time you need to provide it in array notation:
-
-```
-@blacklist[] = input
-@blacklist[] = textarea
+```ini
+@include = ... ; not an array, can be overwritten
+@include[] = ... ; an array, will be appended
 ```
 
-## Commands
+### Include and Exclude sites
 
-Outside of namespaces you can always use the following commands:
+As mentioned before you have to provide either an **@include** or **@exclude** for your configuration to work.
+This protects you from having a monkey on every website:
 
-- **!replace(word, locationFilter, cssFilter, attribute)** = replacement: Replace the given word with the replacement if the locationFilter and the cssFilter matches. By setting the attribute, instead of the text itself an attribute of the parent DOM element is replaced (e.g. `src`)
-- **!replaceAttribute(word, attribute, locationFilter, cssFilter)** = replacement: An alias for the replace command, that takes the attribute as second parameter. Use this if locationFilter and cssFilter are not required.
-- **!/search/modifier = replacement**: Provide a regular expression to run your replacements.
-- **!protect(word)**: Make sure that the given word is not affected by any replacement.
-- **!style(word, property) = replacement**: Change the css property of a node containing word
-- **!hide(word, nthParent, cssFilter, hrefFilter, hashFilter)**: Hide a text field and its nth parent elements. You can apply multiple filters.
-- **!replaceImage(src) = replacement**: Replace the src attribute of an img tag
-- **!overwriteHTML(locationFilter, cssSelector) = replacement**: Overwrite the inner HTML of the first element matching the cssSelector. If no selector is provided the main html can be overwritten. You can filter the application by location (href, hash)
-- **!overwritePage(locationFilter, pageTitle) = url**: Overwrite the whole page with a fullscreen iframe that shows url.
-- **!delayUrl(url) = seconds**: Delay a url by the given number of seconds
-- **!blockUrl(url)**: Block access to url
-- **!redirectUrl(url) = otherurl**: Redirect url to otherurl
-- **!replaceNeighbor(word, nthParent, cssSelector, locationFilter) = replacement**: Search for word, walk up the DOM tree to the nth parent and apply a css selector to find a child where the replacement is applied. This is especially useful to replace labels "close by" a text
-- **!insertBefore(search, nthParent, locationFilter) = html**: Inject HTML before the search word. Use the nthParent parameter to walk up the DOM tree.
-- **!insertAfter(search, nthParent, locationFilter) = html**: Inject HTML after the search word. Use the nthParent parameter to walk up the DOM tree.
+```ini
+; The configuration only works on sites that include demomonkey
+@include[] = /demomonkey/
+; The configuration does not work on demomonkey.net
+@exclude[] = /demomonkey.net/ 
+```
 
-## Namespaces
+If your configuration is a template or snippet (see below), you can disable the warning that an **@include** or **@exclude**
+is required:
 
-Commands specific to a certain web application are provided via a namespace. Currently DemoMonkey only knows the **appdynamics** namespace with the following commands:
+```ini
+@template
+; the following configuration is not used standalone but reused from within others
+...
+...
+```
 
-- **!replaceFlowmapIcon(label) = replacement**: Replace the type of a tier or backend on the flowmap.
-- **!hideApplication(label)**: Hide the given application.
-- **!hideBusinessTransaction(label)**: Hide the given business transaction.
-- **!hideDatabase(label)**: Hide the given database
-- **!hideBrowserApplication(label)**: Hide the given browser application for EUM
-- **!hideMobileApplication(label)**: Hide the given mobile application for EUM
-- **!hideBusinessJourney(label)**: Hide the given business journey
-- **!hideAnalyticsSearch(label)**: Hide the given analytics search
-- **!hideRemoteService(label)**: Hide the given remote service in the list view
-- **!replaceFlowmapConnection(label1, label2, force) = replacement**: Replace the color between two elements on the flowmap. Possible values for **replacement** are Warning, Critical, Unknown, Normal, Async and Hide. Set the force option to replace the label even if no baseline is shown.
-- **!hideFlowmapConnection(label1, label2)**: Hide the connection between two elements on the flowmap.
-- **!replaceMobileScreenshot() = replacement**: Replace a screenshot taken during a mobile session.
-- **!replaceNodeCount(nodeName) = replacement**: Replace the node count on the flowmap for the node with name nodeName
-- **!recolorDashboard(oldColor, dashboardId) = newColor**: Replace the oldColor with newColor on a dashboard. If provided, only if dashboardId matches.
-- **!setDashboardBackground(dashboardID) = background**: Change the background of a dashboard. You can provide an image url or a color. If provided, the background is only replaced if the dashboardId matches.
-- **!replaceApplication(app) = replacement**: If replacement is empty, this behaves like !hideApplication, otherwise app is replaced with replacement.
-- **!replaceBusinessTransactionHealth(bt) = status**: Set the health status of a business transaction.
-- **!replaceInnerNodeHealth(label) = status**: Set the inner health status of a node on the flowmap.
-- **!replaceOuterNodeHealth(label, level) = status**: Set the outer health status of a node on the flowmap. By default the currently normal section is replaced. Give a level to replace warning or critical.
-- **!replaceBusinessTransactionOriginalName(label) = replacement**: Replace the original name of a business transaction.
-- **!replaceBusinessTransactionHealth(label) = replacement**: Replace the health of a business transaction.
-- **!replaceBusinessTransaction(bt) = newName,newOriginalName,newHealth**: If replacement is empty, this behaves like !hideBusinessTransaction, otherwise bt is replaced with newName, the original name is set to newOriginalName and the health is set to newHealth
-- **!replaceFlowmapNode(label) = newName,newCount,newInnerHealth,newOuterHealth**: This command groups the renaming of a node, the node cound and the node health in a single command.
-- **!replaceIOTNumericWidget(label) = replacement**: Change the value of an IOT widget based on the widget label
+### Namespaces
 
+Some commands (see below) are grouped into a namespace. You can _import_ a namespace, so you can use it's commands
+outside the namespace:
+
+```ini
+@namespace[] = appdynamics
+; without the line above you would have to write !appdynamics.hideApplication(test) below
+!hideApplication(test)
+```
+
+### Block- and Allowlist tags
+
+By default DemoMonkey is applied on all tags within the document except `script` and `style`. You can change this by providing allow- and blocklists:
+
+```ini
+@blocklist[] = input
+@blocklist[] = textarea
+@allowlist[] = script
+```
+
+### Text Attributes
+
+In some special cases, you need to replace text elements, that are not captured by the default mechanisms of demo monkey. One example is the placeholder of an input field. You can define textAttributes, that will be replaced like any other visible text on the page:
+
+```ini
+@textAttributes[] = placeholder,data-label
+```
+
+### Deprecate configuration
+If a configuration is outdated and should not appear in the list of available configurations in the popup you can mark it as deprecated:
+
+```ini
+@deprecated
+```
+
+### Tags
+You can provide tags in your configuration, to improve DemoMonkey's search:
+
+```
+@tags[] = my,super,demo
+```
+
+### Authors and more
+
+You can use options to provide further information about your configuration, like adding yourself as the author:
+
+```ini
+@author[] = Demo Monkey <demomonkey@demomonkey.net>
+```
 
 ## Variables
 
-To make a configuration much more reusable you can introduce variables with a default value and a description:
+To improve the reusability of your demo configurations you can add variables:
+
+```ini
+$customer=Example Inc
+$prospect=severin.neumann
+$domain=example.com
+; Use curly braces when using the variables to avoid confusion where the variable name ends.
+api.demoapp.com = api.${domain}
+john.doe@demoapp=${prospect}@${domain}
+```
+
+You can quickly update the values of the variables before meeting with another prospect. 
+
+There is also a `Variables` tab in your demo configuration, where you can update the value. Here you also have a full text editor, 
+so if you need to provide some more complex values, a good approach is defining a variable and setting the value in the background.
+
+### Global Variables
+
+If you go to `Settings > Global Variables` you can provide variables that are useable in all your configurations. 
+Here you also can provide colors via a picker and images via upload which will be base64 encoded for you.
+
+## Imports: Reuse existing configurations
+
+Like variables imports make your configurations reusable. Introduced by a plus sign (`+`) you can load one configuration into another one.
+For example, if you have a list of Cities defined in a configuration called `CitiesTemplate`, you can simply import it:
+
+```ini
++CitiesTemplate
+```
+
+As a good practice have a list of reusable templates like `CitiesTemplate` and mark them as such with the `@template` option, so they will
+not appear in the list of configurations in the popup:
+
+```ini
+@template
+San Francisco = Berlin
+Honolulu = Oslo
+Seattle = Amsterdam
+Cupertino = Paris
+New York = Moscow
+Bangalore = Sydney
+London = Cairo
+New England = Beijing
+Cleveland = Tokyo
+Palo Alto = Vienna
+Redwood City = Sao Paulo
+Mountain View = Dubai
+```
+
+
+Note, that also variables are imported. So if you have a variable $customersHeadquarter in your `CitiesTemplate` configuration, you can
+overwrite this value in the importing configuration.
+
+## Snippets
+
+By default, you have an optional feature enabled that is called `Autocomplete`. This also allows you to use snippets. By typing `%` you get a list
+of all your configurations. Select or type the name of one of them and DemoMonkey will copy the content of the other configuration into the one
+in front of you. 
+
+A @template marker in your configuration will be removed when you load the snippet into a configuration. Also, you can introduce snippet variables
+and you can use <tab> to jump through them:
 
 ```
-$variable = default//description
+@template
+ECommerce = ${1}
+Inventory = ${2:default}
 ```
 
-This is especially useful if you want to have an interchangeable company or domain name.
+Do not make use of variables in your snippet templates since the underlying editor will assume that those are snippet variables and remove them
+before copying the content.
 
-Variables are also helpful if you'd like use HTML in your replacements, especially for **!overwriteHTML**.
+## Commands
+
+Beyond simple text replacements you can use commands to achieve more complex things, like using regular expressions, replace images or URLs. 
+
+### Run regular expressions
+
+Out of the box all patterns you define are simple word-by-word replacements. If you want to apply regular expressions, you can introduce them via a command:
+
+```ini
+!/e?-?commerce/i = Business Intelligence
+```
+
+There is a special modifier `p` that will try to preserve the letter case of your replacement. For example, if you want to replace ORDER and Order with Transfer and TRANSFER you can use the following:
+
+```ini
+!/Order/pi = Transfer
+```
+
+### Replace with filters
+
+You can call the _simple_ search and replace command explicitly using `!replace`. You can then provide additional parameters, to filter by location and by CSS and you can specific the DOM attribute of the parent node which will be replaced instead of the text:
+
+```ini
+!replace(DemoMonkey, /usage.html, h1 > a.external-link, title) = TestMonkey
+```
+
+### Replace Attribute
+The `!replaceAttribute` command is just an alias for `!replace(search, locationFilter, cssFilter, attribute)` with attribute as the second parameter. This is useful if you don't need a location or css filter.
+
+For example, if you have a link `<a href="http://www.demomonkey.net">DemoMonkey</a>` and you want to replace the href attribute you can do the following:
+
+```ini
+!replaceAttribute(DemoMonkey, href) = https://www.appdynamics.com
+```
+
+### Protect text from replacements
+
+Sometimes you want to make sure that certain text is protected from replacements, e.g. links in the navigation or text on a button. You can use `!protect` to make sure that those are not replaced:
+
+```ini
+!protect(DemoMonkey)
+; the following replacement will not be applied on every instance of "DemoMonkey"
+Demo = Test
+```
+
+Note, that the order of patterns in a configuration is important. So it is best practice to put all instances of `!protect` at the top of your demo configuration.
+
+### Hide Elements
+
+If you want to hide elements in your web applications UI you can use the `!hide` command to not only make the text invisible but also a given number of parent elements in the DOM.
+
+For example, if you have a row in a table (`<tr class="row-price"><td>Price</td><td>500 Euro</td></tr>`) you can use the following to hide the whole row:
+
+```ini
+!hide(Price, 2, row-price, /cartpage.html)
+```
+
+### Replace Images
+
+The `src` attribute of an image can be changed with the `!replaceImage` command:
+
+```ini
+!replaceImage(http://your.app/path/to/your/logo.png) = http://your.other.server/image.png
+```
+
+If the image you want to provide is given as [data-url](https://en.wikipedia.org/wiki/Data_URI_scheme), you can use `*` as wildcards in the search pattern and only
+provide a part of the base64 string:
+
+```ini
+!replaceImage(*RFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJ*) = http://your.other.server/image.png
+```
+
+Another option is using global variables. Go to `Settings > Global Variables` and upload an image and give it a name:
+
+```ini
+!replaceImage("${imageVariable}") = http://your.other.server/image.png
+```
+
+
+### Recolor images
+To put a layer with a specific color above an image you can use `!recolorImage`:
+
+```ini
+!recolorImage(http://your.app/path/to/your/logo.png) = rgb(255,0,0)
+```
+
+For the replacement you can either use RGB, a color hex code (without `#`) or a [CSS color](https://www.w3.org/wiki/CSS/Properties/color/keywords) like `midnightblue`
+
+
+
+### Block, Delay, Redirect URLs
+
+You can hook into web requests with DemoMonkey, so that you can either replace the target url, block the request or introduce some delay before the request is completed. 
+Since this set of commands requires higher privileges from your browser, you need to enable DemoMonkey explicitly to hook into your web requests: 
+Go to `Settings > Optional Features` and turn on the **Hook into Web Requests**. With this enabled, you can use the following commands:
+
+```ini
+!blockUrl(http://www.demomonkey.net/)
+!delayUrl(http://api.demomonkey.net/v1/*) = 5
+!redirectUrl(https://www.example.com/checkout) = https://www.example.com/error
+```
+
+Note, that to make those commands work you also need to have an `@include` option to match and no `@exclude` option to block them:
+
+```ini
+@include[] = /demomonkey/
+@exclude[] = /api/
+; the following will be executed
+!blockUrl(http://www.demomonkey.net/)
+; the following will not be executed
+!blockUrl(http://api.demomonkey.net/)
+```
+
+### Conditional Replacements
+
+Some but not all commands of demo monkey allow you to restrict application of the command based on CSS selectors or URL location. The `if` command is a generic
+approach to this:
+
+```ini
+!if(home.html, h1.title, DemoMonkey) = Example
+```
+
+This will replace `DemoMonkey` with `Example` only if the URL contains `home.html` and if the css of the parent node matches the given selector `h1.title`.
+
+If you only want to replace by location or by css selector you can skip one of the parameters or use shorthand commands:
+
+```ini
+!if(home.html,,!replaceImage(*/logo.png)) = https://my-server/other-logo.png
+!ifLocation(home.html,!replaceImage(*/logo.png)) = https://my-server/other-logo.png
+
+!if(,h1.title,!replace(DemoMonkey)) = Example
+!ifSelector(h1.title,!replace(DemoMonkey)) = Example
+```
+
+### Modify CSS
+
+If you'd like to change a style attribute of an element you can use the !style command.
+
+```ini
+; change the font color of every occurrence of DemoMonkey to red.
+!style(DemoMonkey, color) = red
+```
+
+
+### Overwrite HTML
+`!overwriteHTML` allows you to select an element and completely change it's inner HTML:
+
+```ini
+$html=<head>503 - Internal Server Error</head><body>503 - Internal Server Error</body>//Define Some HTML for the broken page
+!overwriteHTML('checkout.html', '') = $html
+```
+
+The second parameter allows you to provide a CSS selector and only replace the selected part of the website.
+
+There is shortcut command called `!overwritePage` which will **not** replace the `<body>` but put a full screen `<iframe>` on top of it
+containing a target URL:
+
+```ini
+!overwritePage('checkout.html', '') = https://svrnm.github.io/error-pages/whoops-no-message/
+```
+
+It's a good practice to use a variable for the replacement, because in the `Variables` tab of your configuration you can use a HTML editor for input.
+
+### Replace based on CSS selector
+Sometimes a simple replacement can not do the job, especially when the word you'd like to replace is short or common. One way to get there is using `!querySelector`:
+
+```ini
+!querySelector(#cart > .items-count) = 15
+```
+
+This will replace the number of items in the cart without you needing to replace every occurrence of `15` or without you needing to make sure that the number of items is fixed.
+
+Additionally you can add an attribute that should be replaced:
+
+```ini
+!querySelector(#cart > .items-count, style.background) = red
+```
+
+### Replace Neighbor
+The command `!replaceNeighbor` allows you to search for labels _close by_ and replace them. This is especially useful to change numbers, which might not be unique or static. You can use this command like the following:
+
+```ini
+!replaceNeighbor(Cart Items, 3, .items-count) = 15
+```
+
+Read this command like the following: Search for an element with text "Cart Items", go up 3 elements in the DOM tree, search for a sibling with selector ".items-count" and replace the text of it with "15"
+
+### Insert before and after a DOM element
+To add content before or after a DOM element you can use `!insertBefore` and `!insertAfter`:
+
+```
+!insertBefore(DemoMonkey, 2, index.html) = $beforeHtml
+!insertAfter(DemoMonkey, 2, index.html) = $afterHtml
+```
+
+### Replace and patch response of AJAX requests
+To hook into AJAX calls and to manipulate their response, you first need to go to `Settings > Optional Features` and turn on `Hook into Ajax`. 
+Now you can replace a response or you can apply a [JSON patch](http://jsonpatch.com/) on them:
+
+```ini
+; replace the whole response with the given replacement
+!replaceAjaxResponse(/v1/items) = '[{"name": "Demo"}, {"name": "Monkey"}]'
+; apply a search and replace on the response, here every occurrence of "Example" is replaced with "DemoMonkey"
+!replaceAjaxResponse(/v1/items, Example) = DemoMonkey
+; apply a json patch on the given response
+!patchAjaxResponse(/v1/items) = [{"op": "replace", "path": "/0/name", "value": "DemoMonkey"}, {"op": "remove", "path": "/1" }]
+```
+
+Use this feature with care, since this will patch native javascript functionality to intercept API calls. 

@@ -134,12 +134,14 @@ class Settings extends React.Component {
         id: 'writeLogs',
         label: 'Write Logs.',
         description: <span>Turn this feature on to have a DemoMonkey logs accessible via the <b>Logs</b> navigation item.</span>
-      },
+      }
+      /*
       {
         id: 'hookIntoKonva',
         label: 'Hook into konva.js API.',
         description: <span>Turn this feature on to allow DemoMonkey to hook into <a href="https://konvajs.org/" target="_blank" rel='noopener noreferrer'>konva.js</a> API to modify text on canvas.</span>
       }
+      */
     ]
 
     return (

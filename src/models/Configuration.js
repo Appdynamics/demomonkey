@@ -61,36 +61,36 @@ class Configuration {
     return result
   }
 
-  isTagBlacklisted(node) {
-    let blacklist = this.getOptions().blacklist
-    let whitelist = this.getOptions().whitelist
+  isTagBlockListed(node) {
+    let blocklist = this.getOptions().blocklist
+    let allowlist = this.getOptions().allowlist
 
-    if (!Array.isArray(blacklist)) {
-      blacklist = []
+    if (!Array.isArray(blocklist)) {
+      blocklist = []
     }
 
-    if (!Array.isArray(whitelist)) {
-      whitelist = []
+    if (!Array.isArray(allowlist)) {
+      allowlist = []
     }
 
-    blacklist.push('style', 'script')
+    blocklist.push('style', 'script')
 
-    blacklist = blacklist.filter(x => !whitelist.includes(x))
+    blocklist = blocklist.filter(x => !allowlist.includes(x))
 
     switch (node.nodeType) {
       // TEXT_NODE
       case 3:
-        return typeof node.parentNode !== 'undefined' && node.parentNode !== null && blacklist.map(tag => tag.toLowerCase()).includes(node.parentNode.nodeName.toLowerCase())
+        return typeof node.parentNode !== 'undefined' && node.parentNode !== null && blocklist.map(tag => tag.toLowerCase()).includes(node.parentNode.nodeName.toLowerCase())
       // ELEMENT_NODE
       case 1:
-        return blacklist.map(tag => tag.toLowerCase()).includes(node.nodeName.toLowerCase())
+        return blocklist.map(tag => tag.toLowerCase()).includes(node.nodeName.toLowerCase())
     }
 
     return false
   }
 
   apply(node, key = 'value', groupName = '*') {
-    if (this.isTagBlacklisted(node)) {
+    if (this.isTagBlockListed(node)) {
       return []
     }
 

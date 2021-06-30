@@ -8,3 +8,4 @@ build-release
 DemoMonkey-*.zip
 package-lock.json
 .nyc_output
+.vscode

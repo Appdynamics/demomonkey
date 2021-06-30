@@ -35,8 +35,8 @@ function autocomplete(getRepository, variables) {
     { caption: '@include', snippet: '@include[] = ${1}' }, /* , docText: 'TBD' */
     { caption: '@exclude', snippet: '@exclude[] = ${1}' },
     { caption: '@namespace', snippet: '@namespace[] = ${1}' },
-    { caption: '@blacklist', snippet: '@blacklist[] = ${1}' },
-    { caption: '@whitelist', snippet: '@whitelist[] = ${1}' },
+    { caption: '@blocklist', snippet: '@blocklist[] = ${1}' },
+    { caption: '@allowlist', snippet: '@allowlist[] = ${1}' },
     { caption: '@author', snippet: '@author[] = ${1}' },
     { caption: '@textAttributes', snippet: '@textAttributes[] = ${1}' },
     { caption: '@template', snippet: '@template\n' },
