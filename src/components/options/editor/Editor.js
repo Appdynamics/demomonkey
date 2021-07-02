@@ -142,8 +142,8 @@ class Editor extends React.Component {
     lines.forEach((line, rowIdx) => {
       // Process each line and add infos, warnings, errors
       // Multiple = signs can lead to issues, add an info
-      if ((line.match(/(?:^=)|(?:[^\\]=)/g) || []).length > 1) {
-        result.push({ row: rowIdx, column: 0, text: 'Your line contains multiple equals signs (=)!\nThe first will be used to seperate search and replacement.\nQuote the equal signs that are part of your patterns.', type: 'warning' })
+      if ((line.replaceAll('\\=', '\u2260').match(/(?:^=)|(?:[^\\]=)/g) || []).length > 1) {
+        result.push({ row: rowIdx, column: 0, text: 'Your line contains multiple equals signs (=)!\nThe first will be used to separate search and replacement.\nQuote the equal signs that are part of your patterns.', type: 'warning' })
       }
 
       // Check if an imported configuration is available
@@ -152,7 +152,7 @@ class Editor extends React.Component {
       }
 
       if (line.startsWith('!') && line.length > 1) {
-        const [lhs, rhs] = line.replace('\\=', '\u2260').split('=')
+        const [lhs, rhs] = line.replaceAll('\\=', '\u2260').split('=')
         const cmd = cb.build(lhs.trim(), typeof rhs === 'string' ? rhs.trim() : '')
         if (cmd instanceof ErrorCommand) {
           // `Command "${command}" not found.\nPlease check the spelling and\nif all required namespaces are loaded.`

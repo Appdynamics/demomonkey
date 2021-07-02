@@ -375,7 +375,7 @@ If you'd like to change a style attribute of an element you can use the !style c
 `!overwriteHTML` allows you to select an element and completely change it's inner HTML:
 
 ```ini
-$html=<head>503 - Internal Server Error</head><body>503 - Internal Server Error</body>//Define Some HTML for the broken page
+$html=<head>503 - Internal Server Error</head><body>503 - Internal Server Error</body>
 !overwriteHTML('checkout.html', '') = $html
 ```
 
@@ -429,10 +429,11 @@ Now you can replace a response or you can apply a [JSON patch](http://jsonpatch.
 ```ini
 ; replace the whole response with the given replacement
 !replaceAjaxResponse(/v1/items) = '[{"name": "Demo"}, {"name": "Monkey"}]'
-; apply a search and replace on the response, here every occurrence of "Example" is replaced with "DemoMonkey"
+; apply a search and replace on the response, 
+; here every occurrence of "Example" is replaced with "DemoMonkey"
 !replaceAjaxResponse(/v1/items, Example) = DemoMonkey
 ; apply a json patch on the given response
-!patchAjaxResponse(/v1/items) = [{"op": "replace", "path": "/0/name", "value": "DemoMonkey"}, {"op": "remove", "path": "/1" }]
+!patchAjaxResponse(/v1/items) = [{"op": "replace", "path": "/0/name", "value": "DemoMonkey"}]
 ```
 
 Use this feature with care, since this will patch native javascript functionality to intercept API calls. 

@@ -5,7 +5,9 @@ import AceEditor from 'react-ace'
 import Tabs from '../../shared/Tabs'
 import Pane from '../../shared/Pane'
 import GlobalVariables from './GlobalVariables'
+import CodeEditor from '../editor/CodeEditor'
 
+import 'ace-builds/src-noconflict/mode-html'
 import 'ace-builds/src-noconflict/theme-xcode'
 import 'ace-builds/src-noconflict//theme-merbivore'
 import 'ace-builds/src-noconflict/ext-searchbox'
@@ -32,6 +34,7 @@ class Settings extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
+      baseTemplate: this.props.settings.baseTemplate,
       monkeyInterval: this.props.settings.monkeyInterval,
       archiveValue: 30
     }
@@ -51,6 +54,16 @@ class Settings extends React.Component {
 
   saveMonkeyInterval() {
     this.props.onSetMonkeyInterval(this.state.monkeyInterval)
+  }
+
+  updateBaseTemplate(baseTemplate) {
+    this.setState({
+      baseTemplate
+    })
+  }
+
+  saveBaseTemplate() {
+    this.props.onSetBaseTemplate(this.state.baseTemplate)
   }
 
   render() {
@@ -169,21 +182,54 @@ class Settings extends React.Component {
             </Pane>
             <Pane label="Base Template" name="baseTemplate">
               <div className="template-box">
-                <label htmlFor="template">This base template will be used for new configurations you create. It will auto-save while you edit it.</label>
+                <label htmlFor="template">
+                  <p>
+                    This base template will be used for new configurations you create. It will auto-save while you edit it.
+                  </p>
+                  <p>
+                    (Do not forget to click on save)
+                  </p>
+                </label>
+                <CodeEditor value={this.state.baseTemplate}
+                  onChange={(content) => this.handleUpdate('content', content)}
+                  annotations={(content) => {}}
+                  getRepository={() => {}}
+                  variables={[]}
+                  onVimWrite={() => this.handleClick(null, 'save')}
+                  onAutoSave={(event) => this.props.settings.optionalFeatures.autoSave ? this.handleClick(event, 'save') : event.preventDefault() }
+                  keyboardHandler={this.props.settings.optionalFeatures.keyboardHandlerVim ? 'vim' : null}
+                  editorAutocomplete={this.props.settings.optionalFeatures.editorAutocomplete}
+                  isDarkMode={this.props.isDarkMode}
+                />
+              </div>
+            </Pane>
+            <Pane label="Global Variables" name="globalVariables">
+              <GlobalVariables globalVariables={this.props.settings.globalVariables} onSaveGlobalVariables={this.props.onSaveGlobalVariables} isDarkMode={this.props.isDarkMode} />
+            </Pane>
+            <Pane label="Demo Analytics" name="more">
+              <div>
+                <label htmlFor="template">
+                  <p>
+                    If your demo team asks you to provide analytics on your usage of their platform, this is the right place!
+                    Put a snippet of any end user monitoring or analytics solution (AppDynamics, Matamo, Plausible) into this box
+                    and it will be injected when an @include[] in your demo configuration matches.
+                  </p>
+                  <p>
+                    (Do not forget to click on save)
+                  </p>
+                </label>
                 <AceEditor
                   height="400px"
                   width="100%"
                   minLines={20}
                   theme={ this.props.isDarkMode ? 'merbivore' : 'xcode' }
-                  mode="mnky"
-                  value={this.props.settings.baseTemplate}
+                  mode="html"
+                  value=''
                   name="template"
                   editorProps={{ $blockScrolling: true }}
-                  onChange={this.props.onSetBaseTemplate} />
+                  />
+                <button className="save-button" onClick=''>Save</button>
               </div>
-            </Pane>
-            <Pane label="Global Variables" name="globalVariables">
-              <GlobalVariables globalVariables={this.props.settings.globalVariables} onSaveGlobalVariables={this.props.onSaveGlobalVariables} isDarkMode={this.props.isDarkMode} />
             </Pane>
             <Pane label="More" name="more">
               <h2>{'Monkey\'s Behavior'}</h2>
